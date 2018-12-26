@@ -1,0 +1,16 @@
+.classpath
+.project
+target
+.idea
+.settings
+*.log
+*.pid
+*.jar
+null
+conf.properties
+*.conf
+conf/slaves
+conf/dew.conf
+dew-collected-data
+Database
+logs
