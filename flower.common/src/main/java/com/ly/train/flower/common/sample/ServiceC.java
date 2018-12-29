@@ -6,8 +6,8 @@ public class ServiceC implements Service {
 
   @Override
   public Object process(Object message) {
-
-    System.out.println(message);
+    MessageA ma = (MessageA) message;
+    System.out.println(ma.getS() + " I am " + ma.getI());
     return null;
   }
 

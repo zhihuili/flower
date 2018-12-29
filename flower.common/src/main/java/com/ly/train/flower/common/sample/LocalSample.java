@@ -12,7 +12,12 @@ public class LocalSample {
     // ActorRef actor = ServiceActorFactory.buildServiceActor("serviceA");
     // actor.tell(" Hello World!", null);
 
-    ServiceFacade.callService("serviceA", " Hello World! ");
+    for (int i = 0; i < 5; i++) {
+      ServiceFacade.callService("serviceA", " Hello World! ");
+    }
+    
+    Thread.sleep(1000);
+    System.exit(0);
   }
 
   public static void buildServiceEnv() {

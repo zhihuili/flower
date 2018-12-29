@@ -4,10 +4,15 @@ import com.ly.train.flower.common.service.Service;
 
 public class ServiceB implements Service {
 
+  int i = 0;
+
   @Override
   public Object process(Object message) {
     if (message != null && message instanceof String) {
-      return ((String) message).toUpperCase();
+      MessageA ma = new MessageA();
+      ma.setI(i++);
+      ma.setS(((String) message).toUpperCase());
+      return ma;
     }
     return "";
   }
