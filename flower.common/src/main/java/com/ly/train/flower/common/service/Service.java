@@ -1,6 +1,6 @@
 package com.ly.train.flower.common.service;
 
-public interface Service {
+public interface Service<T> {
 
-  Object process (Object message);
+  Object process(T message);
 }
