@@ -12,13 +12,13 @@ public class ServiceActorFactory {
 
   public static Map<String, ActorRef> map = new HashMap<String, ActorRef>();
 
-  public static ActorRef buildServiceActor(String serviceName) throws Exception {
+  public static ActorRef buildServiceActor(String flowName, String serviceName) throws Exception {
     ActorRef actor = map.get(serviceName);
     if (actor != null) {
       return actor;
     }
 
-    actor = system.actorOf(Props.create(ServiceActor.class, serviceName));
+    actor = system.actorOf(Props.create(ServiceActor.class, flowName,serviceName));
     map.put(serviceName, actor);
     System.out.println(actor);
     return actor;

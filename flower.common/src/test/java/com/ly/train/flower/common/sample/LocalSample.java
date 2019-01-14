@@ -13,9 +13,9 @@ public class LocalSample {
     // actor.tell(" Hello World!", null);
 
     for (int i = 0; i < 5; i++) {
-      ServiceFacade.asyncCallService("serviceA", " Hello World! ");
+      ServiceFacade.asyncCallService("sample", "serviceA", " Hello World! ");
     }
-    
+
     Thread.sleep(1000);
     System.exit(0);
   }
@@ -29,8 +29,8 @@ public class LocalSample {
         ServiceLoader.getInstance().loadService("com.ly.train.flower.common.sample.ServiceC"));
 
     // serviceA -> serviceB -> serviceC
-    ServiceFlow.buildFlow("serviceA", "serviceB");
-    ServiceFlow.buildFlow("serviceB", "serviceC");
+    ServiceFlow.buildFlow("sample", "serviceA", "serviceB");
+    ServiceFlow.buildFlow("sample", "serviceB", "serviceC");
 
   }
 

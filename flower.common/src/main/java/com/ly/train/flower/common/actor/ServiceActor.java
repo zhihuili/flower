@@ -20,13 +20,13 @@ public class ServiceActor extends UntypedActor {
 
   ActorRef caller;
 
-  public ServiceActor(String serviceName) throws Exception {
+  public ServiceActor(String flowName, String serviceName) throws Exception {
     this.service = ServiceFactory.getService(serviceName);
     nextServiceActors = new HashSet<ActorRef>();
-    Set<String> nextServiceNames = ServiceFlow.getNextFlow(serviceName);
+    Set<String> nextServiceNames = ServiceFlow.getNextFlow(flowName, serviceName);
     if (nextServiceNames != null && !nextServiceNames.isEmpty()) {
       for (String str : nextServiceNames) {
-        nextServiceActors.add(ServiceActorFactory.buildServiceActor(str));
+        nextServiceActors.add(ServiceActorFactory.buildServiceActor(flowName,str));
       }
     }
   }
