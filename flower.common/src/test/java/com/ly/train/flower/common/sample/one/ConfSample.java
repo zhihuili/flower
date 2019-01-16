@@ -22,7 +22,7 @@ public class ConfSample {
 
   public static void buildServiceEnv() throws Exception {
 
-    ServiceFactory.registerService(FileUtil.readService("/services.properties"));
+    ServiceFactory.registerService(FileUtil.readService("/sample.services"));
 
     ServiceFlow.buildFlow("sample", FileUtil.readFlow("/sample.flow"));
 
