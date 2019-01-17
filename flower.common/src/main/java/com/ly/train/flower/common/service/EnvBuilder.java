@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 public class EnvBuilder {
 
-  public void buildEnv() throws Exception {
+  public static void buildEnv() throws Exception {
     Predicate<String> filter = new FilterBuilder().include(".*\\.services").include(".*\\.flow");
     Reflections reflections = new Reflections(new ConfigurationBuilder()
             .filterInputsBy(filter)
