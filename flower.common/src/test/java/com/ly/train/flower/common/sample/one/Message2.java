@@ -1,6 +1,8 @@
 package com.ly.train.flower.common.sample.one;
 
-public class Message2 {
+import com.ly.train.flower.common.service.message.FlowMessage;
+
+public class Message2 extends FlowMessage {
   private String name;
   private int age;
   private int id;

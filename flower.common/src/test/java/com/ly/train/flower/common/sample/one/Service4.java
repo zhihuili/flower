@@ -3,17 +3,20 @@ package com.ly.train.flower.common.sample.one;
 import java.util.Set;
 
 import com.ly.train.flower.common.service.Service;
+import com.ly.train.flower.common.service.message.IntegerMessage;
+import com.ly.train.flower.common.service.message.JointMessage;
+import com.ly.train.flower.common.service.message.StringMessage;
 
-public class Service4 implements Service<Set> {
+public class Service4 implements Service<JointMessage> {
 
   @Override
-  public Object process(Set message) {
+  public Object process(JointMessage message) {
     Message2 m = new Message2();
-    for (Object o : message) {
-      if (o instanceof Integer)
-        m.setAge((Integer) o);
-      if (o instanceof String) {
-        m.setName(o.toString());
+    for (Object o : message.getSet()) {
+      if (o instanceof IntegerMessage)
+        m.setAge(((IntegerMessage) o).getMessage());
+      if (o instanceof StringMessage) {
+        m.setName(((StringMessage) o).getMessage());
       }
 
     }
