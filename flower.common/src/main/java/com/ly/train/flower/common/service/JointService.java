@@ -1,7 +1,6 @@
 package com.ly.train.flower.common.service;
 
 import com.ly.train.flower.common.service.message.FlowMessage;
-import com.ly.train.flower.common.service.message.JointMessage;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +22,7 @@ public class JointService implements Service, Joint {
       resultMap.put(flowMessage.getTransactionId(), objectSet);
       resultNumberMap.put(flowMessage.getTransactionId(), sourceNumber);
     }
-    resultMap.get(flowMessage.getTransactionId()).add(message);
+    resultMap.get(flowMessage.getTransactionId()).add(((FlowMessage) message).getMessage());
 
     Integer integer = resultNumberMap.get(flowMessage.getTransactionId()) - 1;
     resultNumberMap.put(flowMessage.getTransactionId(), integer);
@@ -31,9 +30,8 @@ public class JointService implements Service, Joint {
       Set<Object> returnObject = resultMap.get(flowMessage.getTransactionId());
       resultMap.remove(flowMessage.getTransactionId());
       resultNumberMap.remove(flowMessage.getTransactionId());
-      JointMessage jointMessage = new JointMessage();
-      jointMessage.setSet(returnObject);
-      return jointMessage;
+
+      return returnObject;
     }
     //TODO resultNumberMap memory leak
     return null;

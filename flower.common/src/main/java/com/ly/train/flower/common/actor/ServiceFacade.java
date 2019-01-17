@@ -4,6 +4,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 import akka.pattern.Patterns;
 import akka.util.Timeout;
+import com.ly.train.flower.common.service.message.FlowMessage;
 import scala.concurrent.Await;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
@@ -18,7 +19,9 @@ public class ServiceFacade {
 
   public static Object syncCallService(String flowName, String serviceName, Object o)
       throws Exception {
+    FlowMessage flowMessage = new FlowMessage();
+    flowMessage.setMessage(o);
     return Await.result(Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName),
-        o, new Timeout(duration)), duration);
+            flowMessage, new Timeout(duration)), duration);
   }
 }
