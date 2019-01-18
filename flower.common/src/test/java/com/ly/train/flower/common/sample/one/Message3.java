@@ -1,5 +1,6 @@
 package com.ly.train.flower.common.sample.one;
 
+import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.message.ReturnMessage;
 
 public class Message3 implements ReturnMessage {

@@ -20,7 +20,7 @@ public class ServiceActorFactory {
 
     actor = system.actorOf(Props.create(ServiceActor.class, flowName,serviceName));
     map.put(serviceName, actor);
-    System.out.println(actor);
+    System.out.println(serviceName + ": " + actor);
     return actor;
   }
 
