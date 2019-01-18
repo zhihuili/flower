@@ -12,16 +12,17 @@ import scala.concurrent.duration.FiniteDuration;
 public class ServiceFacade {
   private static FiniteDuration duration = Duration.create(3, SECONDS);
 
-  public static void asyncCallService(String flowName, String serviceName, Object o)
-      throws Exception {
-    ServiceActorFactory.buildServiceActor(flowName, serviceName).tell(o, null);
-  }
-
-  public static Object syncCallService(String flowName, String serviceName, Object o)
-      throws Exception {
+  public static void asyncCallService(String flowName, String serviceName, Object o) throws Exception {
     FlowMessage flowMessage = new FlowMessage();
     flowMessage.setMessage(o);
-    return Await.result(Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName),
-            flowMessage, new Timeout(duration)), duration);
+    ServiceActorFactory.buildServiceActor(flowName, serviceName).tell(flowMessage, null);
+  }
+
+  public static Object syncCallService(String flowName, String serviceName, Object o) throws Exception {
+    FlowMessage flowMessage = new FlowMessage();
+    flowMessage.setMessage(o);
+    return Await.result(
+        Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName), flowMessage, new Timeout(duration)),
+        duration);
   }
 }

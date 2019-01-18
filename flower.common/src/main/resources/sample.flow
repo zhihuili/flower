@@ -5,9 +5,7 @@
 
 service1 -> service2
 service1 -> service3
-service2 -> service6
-service6 -> service5
-service3 -> service7
-service7 -> service5
+service2 -> service5
+service3 -> service5
 service5 -> service4
 service4 -> service1
