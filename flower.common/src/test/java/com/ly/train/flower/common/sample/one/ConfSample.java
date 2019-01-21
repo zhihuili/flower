@@ -1,10 +1,15 @@
 package com.ly.train.flower.common.sample.one;
 
-import com.ly.train.flower.common.actor.ServiceFacade;
-import com.ly.train.flower.common.service.EnvBuilder;
-import junit.framework.Assert;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.ly.train.flower.common.actor.ServiceFacade;
+import com.ly.train.flower.common.service.EnvBuilder;
+import com.ly.train.flower.common.service.ServiceFactory;
+import com.ly.train.flower.common.service.ServiceFlow;
+import com.ly.train.flower.common.util.FileUtil;
+
+import junit.framework.Assert;
 
 public class ConfSample {
 
@@ -34,5 +39,12 @@ public class ConfSample {
     System.out.println("count:" + count + " resultCount:" + resultCount);
     System.out.println("test ok");
     System.exit(0);
+  }
+  
+  public static void buildServiceEnv() throws Exception {
+
+    ServiceFactory.registerService(FileUtil.readService("/sample.services"));
+    ServiceFlow.buildFlow("sample", FileUtil.readFlow("/sample.flow"));
+
   }
 }
