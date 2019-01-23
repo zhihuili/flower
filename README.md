@@ -20,8 +20,8 @@ mvn clean install
 	<version>0.1</version>
 </dependency>
 ```
-### Service
-Flower框架的核心元素是Service（服务）和Message（消息），Service实现一个细粒度的服务功能，Service之间通过Message关联，前一个Service的返回值，必须是后一个Service的输入参数，Flower框架负责将前一个Service的返回值封装成一个消息，发送给后一个Service。
+### Flower框架主要元素
+Flower框架的主要元素包括：Service（服务）、Message（消息）和Flow（流程）。Service实现一个细粒度的服务功能，Service之间通过Message关联，前一个Service的返回值（Message），必须是后一个Service的输入参数（Message），Service按照业务逻辑编辑成一个Flow（流程），Flower框架负责将前一个Service的返回消息，发送给后一个Service。
 ```
 public class Service2 implements Service<Message2> {
 
@@ -43,7 +43,7 @@ public class Service2 implements Service<Message2> {
     ServiceFlow.buildFlow("sample", "serviceB", "serviceC");
 ```
 
-也可以通过可视化方式（//TODO 可视化工具待开发）生成流程文件
+也可以直接编辑、生成流程文件，流程文件命名为*.flow，放在src/main/resources目录下，Flower框架会自动加载
 ```
 // -> service1 -> service2 -> service5 -> service4
 //      ^      |             ^              |
@@ -57,7 +57,7 @@ service3 -> service5
 service5 -> service4
 service4 -> service1
 ```
-流程文件命名为*.flow，放在src/main/resources目录下，Flower框架会自动加载
+
 
 流程文件*.flow中根据service别名进行流程编排，service别名定义在src/main/resources下的*.services文件
 ```
