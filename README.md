@@ -1,6 +1,94 @@
 # 流式微服务框架Flower
+Flower是一个构建在Akka上的流式微服务框架，开发者只需要针对每一个细粒度的业务功能开发一个Service服务，并将这些Service按照业务流程进行可视化编排，即可得到一个反应式系统
+* 即时响应：服务流程的调用者可以得到即时响应，无需等待整个Service流程执行完毕（Flower也支持调用者阻塞，等待整个Service流程执行完毕，得到返回结果）；Service之间无调用阻塞，即时响应。
+* 回弹性：当Service失效、服务器失效，系统能够进行自修复，依然保持响应，不会出现系统崩溃。
+* 弹性：能够对调用负载压力做出响应，能够自动进行资源伸缩适应负载压力，能够根据系统负载能力控制请求的进入速度（回压）。
+* 消息驱动：Service之间通过消息驱动，完成服务流程，Service之间没有任何调用耦合，唯一的耦合就是消息，前一个Service的返回值，必须是后一个Service的输入参数，Flower框架负责将前一个Service的返回值封装成一个消息，发送给后一个Service。
 
-## 概述
+**Flower框架使得开发者无需关注反应式编程细节，即可得到一个反应式系统。**
+
+## 流式微服务编程Quick start
+
+### 依赖
+```
+git clone https://github.com/zhihuili/flower.git
+mvn clean install
+
+<dependency>
+	<groupId>com.ly.train</groupId>
+	<artifactId>flower.common</artifactId>
+	<version>0.1</version>
+</dependency>
+```
+### Service
+Flower框架的核心元素是Service（服务）和Message（消息），Service实现一个细粒度的服务功能，Service之间通过Message关联，前一个Service的返回值，必须是后一个Service的输入参数，Flower框架负责将前一个Service的返回值封装成一个消息，发送给后一个Service。
+```
+public class Service2 implements Service<Message2> {
+
+  @Override
+  public Object process(Message2 message) {
+    return message.getAge() + 1;
+  }
+
+}
+```
+开发Service类必须实现Flower框架的Service接口，在process方法内完成服务业务逻辑。
+
+### 服务编排构建服务流程
+多个服务通过服务编排构成一个服务流程。
+服务编排可以通过编程方式
+```
+    // serviceA -> serviceB -> serviceC
+    ServiceFlow.buildFlow("sample", "serviceA", "serviceB");
+    ServiceFlow.buildFlow("sample", "serviceB", "serviceC");
+```
+
+也可以通过可视化方式（//TODO 可视化工具待开发）生成流程文件
+```
+// -> service1 -> service2 -> service5 -> service4
+//      ^      |             ^              |
+//      |       -> service3 -|              |
+//      |___________________________________|
+
+service1 -> service2
+service1 -> service3
+service2 -> service5
+service3 -> service5
+service5 -> service4
+service4 -> service1
+```
+流程文件命名为*.flow，放在src/main/resources目录下，Flower框架会自动加载
+
+流程文件*.flow中根据service别名进行流程编排，service别名定义在src/main/resources下的*.services文件
+```
+service1 = com.ly.train.flower.common.sample.one.Service1
+service2 = com.ly.train.flower.common.sample.one.Service2
+service3 = com.ly.train.flower.common.sample.one.Service3
+service4 = com.ly.train.flower.common.sample.one.Service4
+service5 = com.ly.train.flower.common.service.JointService
+```
+### 调用流程
+Flower提供了两种调用方式。
+
+一种异步调用方式，调用消息发送给流程第一个服务后，消息在服务流程中处理，调用者立即返回，不阻塞等待。
+```
+ServiceFacade.asyncCallService("sample", "serviceA", " Hello World! ");
+```
+一种是同步调用方式，调用消息发送给流程第一个服务后，消息在服务流程中处理，调用者阻塞等待，直到收到处理结果
+```
+System.out.println(ServiceFacade.syncCallService("sample", "service1", m1));
+```
+
+### sample代码
+异步调用，编程式流程编排sample
+/flower.common/src/test/java/com/ly/train/flower/common/sample/LocalSample.java
+
+同步调用，可视化流程编排sample
+/flower.common/src/test/java/com/ly/train/flower/common/sample/one/Sample.java
+
+## 设计
+
+### 概述
 
 传统的微服务框架通过远程调用的方式实现服务的解耦与分布式部署，使得系统开发、维护、服务复用、集群部署更加方便灵活，但是这种微服务依然许多不足之处
 
@@ -15,8 +103,8 @@
 * 服务的粒度天然控制在消息的层面，每个服务只处理一个消息，而消息对于通常的web开发是天然的，一个请求就是一个消息，一个订单就是一个消息，一个用户也是一个消息，而消息就是模型，所以只要做好领域模型设计，无需用模型再去驱动设计，只需要让模型，也就是消息流动起来就可以了，模型流动到不同的服务，被不断计算、填充完善，最后完成处理就可以了，是真正的面向模型设计。
  
 
-## 架构
-### 部署模型
+### 架构
+#### 部署模型
 <img src="docs/img/dep.png" height="400"/>
 
 Flower将整个应用系统集群统一管理控制，控制中心控制管理集群的所有资源
@@ -29,7 +117,7 @@ Agent部署在集群每一台服务器上，负责加载服务实例，并向控
 
  
 
-### 集群启动与服务部署时序模型
+#### 集群启动与服务部署时序模型
 ![](docs/img/dep_seq.png)
 
 
