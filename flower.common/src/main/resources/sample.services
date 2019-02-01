@@ -1,7 +1,0 @@
-service1 = com.ly.train.flower.common.sample.one.Service1
-service2 = com.ly.train.flower.common.sample.one.Service2
-service3 = com.ly.train.flower.common.sample.one.Service3
-service4 = com.ly.train.flower.common.sample.one.Service4
-service5 = com.ly.train.flower.common.service.JointService
-service6 = com.ly.train.flower.common.service.JointService
-service7 = com.ly.train.flower.common.service.JointService
