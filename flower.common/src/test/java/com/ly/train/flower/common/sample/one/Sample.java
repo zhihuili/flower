@@ -6,7 +6,7 @@ import com.ly.train.flower.common.service.EnvBuilder;
 public class Sample {
 
   public static void main(String[] args) throws Exception {
-    EnvBuilder.buildEnv();
+    EnvBuilder.buildEnv(Sample.class);
 
     Message2 m2 = new Message2(10, "Zhihui");
     Message1 m1 = new Message1();

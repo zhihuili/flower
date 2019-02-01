@@ -14,7 +14,7 @@ import junit.framework.Assert;
 public class BatchSample {
 
   public static void main(String[] args) throws Exception {
-    EnvBuilder.buildEnv();
+    EnvBuilder.buildEnv(BatchSample.class);
 
     int count = 0;
     Map<String, Message1> message1Map = new HashMap<>();

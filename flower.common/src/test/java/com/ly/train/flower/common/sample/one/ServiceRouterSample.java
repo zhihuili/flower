@@ -10,7 +10,7 @@ public class ServiceRouterSample {
 
     int loopNumber = 500;
 
-    EnvBuilder.buildEnv();
+    EnvBuilder.buildEnv(ServiceRouterSample.class);
 
     Message2 m2 = new Message2(10, "Zhihui");
     Message1 m1 = new Message1();
