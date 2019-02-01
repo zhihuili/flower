@@ -14,9 +14,8 @@ public class Sample {
 
     System.out.println(ServiceFacade.syncCallService("sample", "service1", m1));
 
-    Thread.sleep(2000);
-    System.exit(0);
+//    Thread.sleep(2000);
+//    System.exit(0);
   }
-
 
 }

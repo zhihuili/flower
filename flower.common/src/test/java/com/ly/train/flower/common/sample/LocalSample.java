@@ -21,12 +21,9 @@ public class LocalSample {
   }
 
   public static void buildServiceEnv() {
-    ServiceFactory.registerService("serviceA",
-        ServiceLoader.getInstance().loadService("com.ly.train.flower.common.sample.ServiceA"));
-    ServiceFactory.registerService("serviceB",
-        ServiceLoader.getInstance().loadService("com.ly.train.flower.common.sample.ServiceB"));
-    ServiceFactory.registerService("serviceC",
-        ServiceLoader.getInstance().loadService("com.ly.train.flower.common.sample.ServiceC"));
+    ServiceFactory.registerService("serviceA", "com.ly.train.flower.common.sample.ServiceA");
+    ServiceFactory.registerService("serviceB", "com.ly.train.flower.common.sample.ServiceB");
+    ServiceFactory.registerService("serviceC", "com.ly.train.flower.common.sample.ServiceC");
 
     // serviceA -> serviceB -> serviceC
     ServiceFlow.buildFlow("sample", "serviceA", "serviceB");

@@ -1,9 +1,14 @@
 package com.ly.train.flower.common.actor;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
-import com.ly.train.flower.common.service.JointService;
+import com.ly.train.flower.common.service.Joint;
 import com.ly.train.flower.common.service.Service;
+import com.ly.train.flower.common.service.ServiceConstants;
 import com.ly.train.flower.common.service.ServiceFactory;
 import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.service.message.FirstMessage;
@@ -19,7 +24,7 @@ public class ServiceActor extends UntypedActor {
 
   Set<RefType> nextServiceActors;
 
-  Map<String,ActorRef> callers = new HashMap<String,ActorRef>();
+  Map<String, ActorRef> callers = new ConcurrentHashMap<String, ActorRef>();
 
   class RefType {
     ActorRef actorRef;
@@ -41,18 +46,23 @@ public class ServiceActor extends UntypedActor {
       isJoint = joint;
     }
   }
-  public ServiceActor(String flowName, String serviceName) throws Exception {
+
+  public ServiceActor(String flowName, String serviceName, int index) throws Exception {
     this.service = ServiceFactory.getService(serviceName);
+    if (service instanceof Joint) {
+      ((Joint) service).setSourceNumber(
+          ServiceFlow.getServiceConcig(flowName, serviceName).getJointSourceNumber());
+    }
     nextServiceActors = new HashSet<RefType>();
     Set<String> nextServiceNames = ServiceFlow.getNextFlow(flowName, serviceName);
     if (nextServiceNames != null && !nextServiceNames.isEmpty()) {
       for (String str : nextServiceNames) {
         RefType refType = new RefType();
 
-        if (ServiceFactory.getService(str) instanceof JointService) {
+        if (ServiceFactory.getServiceClassName(str).equals(ServiceConstants.JOINT_SERVICE_NAME)) {
           refType.setJoint(true);
         }
-        refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName,str));
+        refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, str, index));
         nextServiceActors.add(refType);
       }
     }
@@ -60,7 +70,7 @@ public class ServiceActor extends UntypedActor {
 
   @Override
   public void onReceive(Object arg0) throws Throwable {
-    if (arg0 == null || ! (arg0 instanceof FlowMessage))
+    if (arg0 == null || !(arg0 instanceof FlowMessage))
       return;
 
     FlowMessage fm = (FlowMessage) arg0;
@@ -77,8 +87,6 @@ public class ServiceActor extends UntypedActor {
       fm.setTransactionId(UUID.randomUUID().toString());
       callers.put(fm.getTransactionId(), getSender());
     }
-
-
 
     Object o = service.process(fm.getMessage());
     if (o == null)// for joint service

@@ -1,7 +1,7 @@
 package com.ly.train.flower.common.service;
 
 public interface Joint {
-  
-  void sourceNumberPlus();
+
+  void setSourceNumber(int number);
 
 }

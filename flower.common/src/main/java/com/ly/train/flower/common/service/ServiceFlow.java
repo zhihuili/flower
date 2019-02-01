@@ -1,20 +1,25 @@
 package com.ly.train.flower.common.service;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ServiceFlow {
-  // Map<flowName,Map<String sourceServiceName,Set<targetServiceName>>>
+
+  // Map<flowName,Map<sourceServiceName,Set<targetServiceName>>>
   private static Map<String, Map<String, Set<String>>> flows =
-      new HashMap<String, Map<String, Set<String>>>();
+      new ConcurrentHashMap<String, Map<String, Set<String>>>();
+
+  // Map<flowName, Map<serviceName, ServiceConfig>>
+  private static Map<String, Map<String, ServiceConfig>> serviceConfigs =
+      new ConcurrentHashMap<String, Map<String, ServiceConfig>>();
 
   public static void buildFlow(String flowName, String preServiceName, String nextServiceName) {
     Map<String, Set<String>> flow = flows.get(flowName);
     if (flow == null) {
-      flow = new HashMap<String, Set<String>>();
+      flow = new ConcurrentHashMap<String, Set<String>>();
       flows.put(flowName, flow);
     }
 
@@ -29,9 +34,19 @@ public class ServiceFlow {
 
     set.add(nextServiceName);
 
-    Service s = ServiceFactory.getService(nextServiceName);
-    if (s instanceof Joint) {
-      ((Joint) s).sourceNumberPlus();
+    String s = ServiceFactory.getServiceClassName(nextServiceName);
+    if (s != null && s.equals(ServiceConstants.JOINT_SERVICE_NAME)) {
+      Map<String, ServiceConfig> serviceConfigMap = serviceConfigs.get(flowName);
+      if (serviceConfigMap == null) {
+        serviceConfigMap = new ConcurrentHashMap<String, ServiceConfig>();
+        serviceConfigs.put(flowName, serviceConfigMap);
+      }
+      ServiceConfig serviceConfig = serviceConfigMap.get(nextServiceName);
+      if (serviceConfig == null) {
+        serviceConfig = new ServiceConfig();
+        serviceConfigMap.put(nextServiceName, serviceConfig);
+      }
+      serviceConfig.jointSourceNumberPlus();
     }
   }
 
@@ -48,5 +63,9 @@ public class ServiceFlow {
     if (flow == null)
       return null;
     return flow.get(serviceName);
+  }
+
+  public static ServiceConfig getServiceConcig(String flowName, String serviceName) {
+    return serviceConfigs.get(flowName).get(serviceName);
   }
 }
