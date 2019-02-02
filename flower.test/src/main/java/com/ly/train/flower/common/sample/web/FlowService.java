@@ -1,9 +1,11 @@
 package com.ly.train.flower.common.sample.web;
 
-import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.ServiceContext;
+import com.ly.train.flower.common.service.HttpService;
+import com.ly.train.flower.common.service.web.Flush;
+import com.ly.train.flower.common.service.web.Last;
+import com.ly.train.flower.common.service.web.Web;
 
-public class FlowService implements Service {
+public class FlowService implements HttpService, Last, Flush {
 
   private ClassA ca;
 
@@ -15,14 +17,14 @@ public class FlowService implements Service {
   /**
    * trim service
    */
-  public Object process(Object message, ServiceContext context) {
+  public Object process(Object message, Web web) throws Exception {
     ca.f();
-    try {
-      Thread.sleep(5000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    System.out.println("FlowService processed");
+
+    web.println(message.toString());
+    web.flush();
+    Thread.sleep(5000);
+
+    System.out.println("FlowService processed "+message.toString());
     return "";
   }
 

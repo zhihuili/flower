@@ -17,7 +17,7 @@ public class ServiceFactory {
 
   }
 
-  public static Service getService(String serviceName) {
+  public static FlowerService getService(String serviceName) {
     return ServiceLoader.getInstance().loadService(serviceMap.get(serviceName));
   }
 

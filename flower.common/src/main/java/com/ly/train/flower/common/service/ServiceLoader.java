@@ -13,9 +13,9 @@ public class ServiceLoader {
     return sl;
   }
 
-  public Service loadService(String serviceClassPath) {
+  public FlowerService loadService(String serviceClassPath) {
     try {
-      Service service = (Service) cl.loadClass(serviceClassPath).newInstance();
+      FlowerService service = (FlowerService) cl.loadClass(serviceClassPath).newInstance();
       return service;
     } catch (Exception e) {
       e.printStackTrace();

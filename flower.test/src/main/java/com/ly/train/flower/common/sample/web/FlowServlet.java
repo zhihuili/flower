@@ -25,11 +25,11 @@ public class FlowServlet extends HttpServlet {
 
     AsyncContext ctx = req.startAsync();
 
-    //flower
-     asyncExe(ctx);
-     
-     //thread
-//    new Thread(new Executor(ctx)).start();
+    // flower
+    asyncExe(ctx);
+
+    // thread
+    // new Thread(new Executor(ctx)).start();
 
     out.println("结束Servlet的时间：" + new Date() + ".");
     out.flush();
@@ -38,7 +38,7 @@ public class FlowServlet extends HttpServlet {
   private void asyncExe(AsyncContext ctx) {
     buildServiceEnv();
     try {
-      ServiceFacade.asyncCallService("flow", "flowService", " Hello World! ");
+      ServiceFacade.asyncCallService("flow", "flowService", " Hello World! ", ctx);
     } catch (Exception e) {
       e.printStackTrace();
     }

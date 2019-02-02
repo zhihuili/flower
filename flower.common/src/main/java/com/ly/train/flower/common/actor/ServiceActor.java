@@ -3,24 +3,37 @@ package com.ly.train.flower.common.actor;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.ly.train.flower.common.service.FlowContext;
+import com.ly.train.flower.common.service.FlowerService;
+import com.ly.train.flower.common.service.HttpService;
 import com.ly.train.flower.common.service.Joint;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.ServiceConstants;
+import com.ly.train.flower.common.service.ServiceContext;
 import com.ly.train.flower.common.service.ServiceFactory;
 import com.ly.train.flower.common.service.ServiceFlow;
+import com.ly.train.flower.common.service.message.DefaultMessage;
 import com.ly.train.flower.common.service.message.FirstMessage;
 import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.message.ReturnMessage;
+import com.ly.train.flower.common.service.web.Flush;
+import com.ly.train.flower.common.service.web.Last;
+import com.ly.train.flower.common.service.web.Web;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 
+/**
+ * Wrap service by actor, make service driven by message.
+ * 
+ * @author zhihui.li
+ *
+ */
 public class ServiceActor extends UntypedActor {
 
-  Service service;
+  FlowerService service;
 
   Set<RefType> nextServiceActors;
 
@@ -84,11 +97,31 @@ public class ServiceActor extends UntypedActor {
 
     // receive started message, set caller
     if (fm.getMessage() instanceof FirstMessage) {
-      fm.setTransactionId(UUID.randomUUID().toString());
       callers.put(fm.getTransactionId(), getSender());
     }
 
-    Object o = service.process(fm.getMessage());
+    ServiceContext context = FlowContext.getServiceContext(fm.getTransactionId());
+    Object o = DefaultMessage.getMessage();// set default
+    if (service instanceof HttpService) {
+      if (context != null) {
+        ((HttpService) service).process(fm.getMessage(), context.getWeb());
+      }
+    }
+    if (service instanceof Service) {
+      o = ((Service) service).process(fm.getMessage());
+    }
+    if (context != null) {
+      Web web = context.getWeb();
+      if (web != null) {
+        if (service instanceof Flush) {
+          web.flush();
+        }
+        if (service instanceof Last) {
+          web.complete();
+          FlowContext.removeServiceContext(fm.getTransactionId());
+        }
+      }
+    }
     if (o == null)// for joint service
       return;
     FlowMessage flowMessage = new FlowMessage();
