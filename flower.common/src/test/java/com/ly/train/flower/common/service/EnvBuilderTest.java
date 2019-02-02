@@ -5,9 +5,8 @@ import junit.framework.TestCase;
 public class EnvBuilderTest extends TestCase {
 
     public void testBuildEnv() {
-        EnvBuilder envBuilder = new EnvBuilder();
         try {
-            envBuilder.buildEnv();
+            EnvBuilder.buildEnv(EnvBuilderTest.class);
         } catch (Exception e) {
             e.printStackTrace();
         }

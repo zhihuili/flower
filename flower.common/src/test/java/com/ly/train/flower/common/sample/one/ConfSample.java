@@ -14,7 +14,7 @@ import junit.framework.Assert;
 public class ConfSample {
 
   public static void main(String[] args) throws Exception {
-    EnvBuilder.buildEnv();
+    EnvBuilder.buildEnv(ConfSample.class);
 
     int count = 0;
     Map<String, Message1> message1Map = new HashMap<>();
@@ -29,7 +29,7 @@ public class ConfSample {
     int resultCount = 0;
     for (String key : message1Map.keySet()) {
       Message1 m1 = message1Map.get(key);
-      Object o = ServiceFacade.syncCallService("sample", "service1", m1);
+      Object o = ServiceFacade.syncCallService("sample2", "service1", m1);
       System.out.println(o);
       Assert.assertEquals(((Message3)o).getM2().getName(), m1.getM2().getName());
       Assert.assertEquals(Integer.parseInt(key), ((Message3) o).getM2().getAge() - 1) ;

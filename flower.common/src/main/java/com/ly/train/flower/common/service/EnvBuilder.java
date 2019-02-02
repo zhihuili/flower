@@ -13,12 +13,19 @@ import java.util.regex.Pattern;
 
 public class EnvBuilder {
 
-  public static void buildEnv() throws Exception {
+  /**
+   *
+   * @param clz Reflections需要从clz类中获取ClassLoader的路径，再遍历Resources目录
+   *            clz填写Resources对应的包下面的Class
+   * @throws Exception
+   */
+  public static void buildEnv(Class clz) throws Exception {
     Predicate<String> filter = new FilterBuilder().include(".*\\.services").include(".*\\.flow");
+
     Reflections reflections = new Reflections(new ConfigurationBuilder()
             .filterInputsBy(filter)
             .setScanners(new ResourcesScanner())
-            .setUrls(ClasspathHelper.forClass(EnvBuilder.class)));
+            .setUrls(ClasspathHelper.forClass(clz)));
 
     Set<String> servicesFiles = reflections.getResources(Pattern.compile(".*\\.services"));
     for (String path : servicesFiles) {
