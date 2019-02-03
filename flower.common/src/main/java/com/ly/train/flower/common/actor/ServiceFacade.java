@@ -7,8 +7,8 @@ import java.util.UUID;
 
 import javax.servlet.AsyncContext;
 
-import com.ly.train.flower.common.service.FlowContext;
-import com.ly.train.flower.common.service.ServiceContext;
+import com.ly.train.flower.common.service.containe.FlowContext;
+import com.ly.train.flower.common.service.containe.ServiceContext;
 import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.web.Web;
 
@@ -23,10 +23,10 @@ public class ServiceFacade {
   public static FiniteDuration duration = Duration.create(300, SECONDS);
 
   public static void asyncCallService(String flowName, String serviceName, Object o,
-      AsyncContext cxt) throws IOException {
+      AsyncContext ctx) throws IOException {
     FlowMessage flowMessage = buildFlowMessage(o);
     ServiceContext serviceContext = new ServiceContext();
-    Web web = new Web(cxt);
+    Web web = new Web(ctx);
     serviceContext.setWeb(web);
     FlowContext.putServiceContext(flowMessage.getTransactionId(), serviceContext);
     ServiceActorFactory.buildServiceActor(flowName, serviceName).tell(flowMessage, null);

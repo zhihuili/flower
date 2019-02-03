@@ -21,7 +21,6 @@ public class FlowService implements HttpService, Last, Flush {
     ca.f();
 
     web.println(message.toString());
-    web.flush();
     Thread.sleep(5000);
 
     System.out.println("FlowService processed "+message.toString());

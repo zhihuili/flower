@@ -1,7 +1,9 @@
-package com.ly.train.flower.common.service;
+package com.ly.train.flower.common.service.containe;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.ly.train.flower.common.service.FlowerService;
 
 public class ServiceFactory {
   private static Map<String, String> serviceMap = new ConcurrentHashMap<String, String>();

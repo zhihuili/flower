@@ -2,7 +2,7 @@ package com.ly.train.flower.common.sample.textflow;
 
 import com.ly.train.flower.common.actor.ServiceFacade;
 import com.ly.train.flower.common.actor.ServiceRouter;
-import com.ly.train.flower.common.service.EnvBuilder;
+import com.ly.train.flower.common.util.EnvBuilder;
 
 public class ServiceRouterSample {
 

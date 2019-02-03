@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ly.train.flower.common.actor.ServiceFacade;
-import com.ly.train.flower.common.service.ServiceFactory;
 import com.ly.train.flower.common.service.ServiceFlow;
+import com.ly.train.flower.common.service.containe.ServiceFactory;
 
 public class FlowServlet extends HttpServlet {
   @Override
@@ -42,7 +42,6 @@ public class FlowServlet extends HttpServlet {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    ctx.complete();
   }
 
   private void buildServiceEnv() {
