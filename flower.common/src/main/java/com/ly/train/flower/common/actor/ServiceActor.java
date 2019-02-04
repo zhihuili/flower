@@ -83,6 +83,7 @@ public class ServiceActor extends UntypedActor {
 
   @Override
   public void onReceive(Object arg0) throws Throwable {
+
     if (arg0 == null || !(arg0 instanceof FlowMessage))
       return;
 
@@ -138,6 +139,7 @@ public class ServiceActor extends UntypedActor {
         refType.getActorRef().tell(flowMessage, getSelf());
       }
     }
+
   }
 
   /**

@@ -56,6 +56,9 @@ public class ServiceFlow {
     for (String[] connection : flow) {
       String sourceServiceName = connection[0];
       String targetServiceName = connection[1];
+      if ("null".equals(targetServiceName.trim().toLowerCase())) {
+        return;
+      }
       buildFlow(flowName, sourceServiceName.trim(), targetServiceName.trim());
     }
   }

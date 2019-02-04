@@ -12,6 +12,7 @@ public class WebServer {
     context.setContextPath("/");
     server.setHandler(context);
     context.addServlet(new ServletHolder(new FlowServlet()), "/flow");
+    context.addServlet(new ServletHolder(new SyncServlet()), "/sync");
 
     server.start();
     server.join();

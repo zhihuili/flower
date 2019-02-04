@@ -18,12 +18,10 @@ public class FlowService implements HttpService, Last, Flush {
    * trim service
    */
   public Object process(Object message, Web web) throws Exception {
-    ca.f();
 
-    web.println(message.toString());
-    Thread.sleep(5000);
-
-    System.out.println("FlowService processed "+message.toString());
+    Thread.sleep(100);
+    web.println(" - end:" + System.currentTimeMillis());
+    // System.out.println("FlowService processed "+message.toString());
     return "";
   }
 

@@ -14,9 +14,9 @@ public class Executor implements Runnable {
 
   public void run() {
     try {
-      Thread.sleep(5000);
+      Thread.sleep(100);
       PrintWriter out = ctx.getResponse().getWriter();
-      out.println("业务处理完毕的时间：" + new Date() + ".");
+      out.println("- end：" + System.currentTimeMillis());
       out.flush();
       ctx.complete();
     } catch (Exception e) {

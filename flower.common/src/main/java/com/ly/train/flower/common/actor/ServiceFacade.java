@@ -3,7 +3,6 @@ package com.ly.train.flower.common.actor;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import javax.servlet.AsyncContext;
 
@@ -24,11 +23,8 @@ public class ServiceFacade {
 
   public static void asyncCallService(String flowName, String serviceName, Object o,
       AsyncContext ctx) throws IOException {
-    FlowMessage flowMessage = buildFlowMessage(o);
-    ServiceContext serviceContext = new ServiceContext();
-    Web web = new Web(ctx);
-    serviceContext.setWeb(web);
-    FlowContext.putServiceContext(flowMessage.getTransactionId(), serviceContext);
+    FlowMessage flowMessage = ServiceUtil.buildFlowMessage(o);
+    ServiceUtil.makeWebContext(flowMessage, ctx);
     ServiceActorFactory.buildServiceActor(flowName, serviceName).tell(flowMessage, null);
 
   }
@@ -40,7 +36,7 @@ public class ServiceFacade {
 
   public static Object syncCallService(String flowName, String serviceName, Object o)
       throws Exception {
-    FlowMessage flowMessage = buildFlowMessage(o);
+    FlowMessage flowMessage = ServiceUtil.buildFlowMessage(o);
     return Await.result(Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName),
         flowMessage, new Timeout(duration)), duration);
   }
@@ -50,12 +46,5 @@ public class ServiceFacade {
     ServiceRouter serviceRouter = new ServiceRouter(flowName, serviceName, flowNumber);
 
     return serviceRouter;
-  }
-
-  private static FlowMessage buildFlowMessage(Object o) {
-    FlowMessage flowMessage = new FlowMessage();
-    flowMessage.setTransactionId(UUID.randomUUID().toString());
-    flowMessage.setMessage(o);
-    return flowMessage;
   }
 }
