@@ -30,7 +30,7 @@ public class FlowServlet extends HttpServlet {
   public void init() {
     buildServiceEnv();
     sr = ServiceFacade.buildServiceRouter("flow", "flowService", 400);
-    actor = ActorSystem.create("sample").actorOf(Props.create(MyActor.class));
+    actor = ActorSystem.create("sample").actorOf(Props.create(RouterActor.class));
   }
 
   @Override
@@ -62,15 +62,14 @@ public class FlowServlet extends HttpServlet {
   }
 
   private void asyncExe(AsyncContext ctx) {
-    long begin = System.currentTimeMillis();
     try {
       sr.asyncCallService(" Hello, Flow World! ", ctx);
+//    ctx.getResponse().getWriter().println("结束Servlet的时间：" + new Date() + ".");
+//      ctx.complete();
       // ServiceFacade.asyncCallService("flow", "flowService", " Hello World! ", ctx);
     } catch (Exception e) {
       e.printStackTrace();
     }
-    long end = System.currentTimeMillis();
-    System.out.println(end - begin);
   }
 
   private void buildServiceEnv() {

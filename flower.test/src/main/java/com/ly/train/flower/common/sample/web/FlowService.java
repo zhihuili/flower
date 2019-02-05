@@ -19,7 +19,9 @@ public class FlowService implements HttpService, Last, Flush {
    */
   public Object process(Object message, Web web) throws Exception {
 
-    Thread.sleep(100);
+    // Thread.sleep(100);
+    WasteTime wt = new WasteTime();
+//    wt.waste100();
     web.println(" - end:" + System.currentTimeMillis());
     // System.out.println("FlowService processed "+message.toString());
     return "";
