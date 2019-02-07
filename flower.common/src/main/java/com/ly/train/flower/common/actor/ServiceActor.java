@@ -4,7 +4,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import static java.util.concurrent.TimeUnit.DAYS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+import com.ly.train.flower.common.service.AfterDelay;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.HttpService;
 import com.ly.train.flower.common.service.Joint;
@@ -19,11 +22,19 @@ import com.ly.train.flower.common.service.message.FirstMessage;
 import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.message.ReturnMessage;
 import com.ly.train.flower.common.service.web.Flush;
-import com.ly.train.flower.common.service.web.Last;
+import com.ly.train.flower.common.service.web.Complete;
 import com.ly.train.flower.common.service.web.Web;
 
 import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
 import akka.actor.UntypedActor;
+import akka.dispatch.Futures;
+import akka.pattern.Patterns;
+import akka.util.Timeout;
+import scala.concurrent.Await;
+import scala.concurrent.Future;
+import scala.concurrent.duration.Duration;
+import scala.concurrent.duration.FiniteDuration;
 
 /**
  * Wrap service by actor, make service driven by message.
@@ -32,12 +43,15 @@ import akka.actor.UntypedActor;
  *
  */
 public class ServiceActor extends UntypedActor {
-
+  ActorSystem system;
   FlowerService service;
 
   Set<RefType> nextServiceActors;
 
   Map<String, ActorRef> callers = new ConcurrentHashMap<String, ActorRef>();
+
+  final Future<String> delayFuture = Futures.successful("delay");
+  final FiniteDuration maxTimeout = Duration.create(9999, DAYS);
 
   class RefType {
     ActorRef actorRef;
@@ -60,7 +74,9 @@ public class ServiceActor extends UntypedActor {
     }
   }
 
-  public ServiceActor(String flowName, String serviceName, int index) throws Exception {
+  public ServiceActor(String flowName, String serviceName, int index, ActorSystem system)
+      throws Exception {
+    this.system = system;
     this.service = ServiceFactory.getService(serviceName);
     if (service instanceof Joint) {
       ((Joint) service).setSourceNumber(
@@ -117,12 +133,21 @@ public class ServiceActor extends UntypedActor {
         if (service instanceof Flush) {
           web.flush();
         }
-        if (service instanceof Last) {
+        if (service instanceof Complete) {
           web.complete();
           FlowContext.removeServiceContext(fm.getTransactionId());
         }
       }
     }
+    
+    // AfterDelay
+    if (service instanceof AfterDelay) {
+      Future<String> delayed =
+          Patterns.after(Duration.create(((AfterDelay) service).delay(), MILLISECONDS),
+              system.scheduler(), system.dispatcher(), this.delayFuture);
+      Await.result(delayed, maxTimeout);
+    }
+    
     if (o == null)// for joint service
       return;
     FlowMessage flowMessage = new FlowMessage();

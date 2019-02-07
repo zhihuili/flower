@@ -1,5 +1,5 @@
 package com.ly.train.flower.common.service.web;
 
-public interface Last {
+public interface Complete {
 
 }

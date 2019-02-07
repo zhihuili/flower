@@ -1,11 +1,12 @@
 package com.ly.train.flower.common.sample.web;
 
+import com.ly.train.flower.common.service.AfterDelay;
 import com.ly.train.flower.common.service.HttpService;
 import com.ly.train.flower.common.service.web.Flush;
-import com.ly.train.flower.common.service.web.Last;
+import com.ly.train.flower.common.service.web.Complete;
 import com.ly.train.flower.common.service.web.Web;
 
-public class FlowService implements HttpService, Last, Flush {
+public class FlowService implements HttpService, Complete, Flush {
 
   private ClassA ca;
 
@@ -19,12 +20,12 @@ public class FlowService implements HttpService, Last, Flush {
    */
   public Object process(Object message, Web web) throws Exception {
 
-    // Thread.sleep(100);
-    WasteTime wt = new WasteTime();
-//    wt.waste100();
     web.println(" - end:" + System.currentTimeMillis());
-    // System.out.println("FlowService processed "+message.toString());
     return "";
+  }
+
+  public long delay() {
+    return 100;
   }
 
 }

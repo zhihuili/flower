@@ -24,7 +24,7 @@ public class ServiceActorFactory {
       return actor;
     }
 
-    actor = system.actorOf(Props.create(ServiceActor.class, flowName, serviceName,index));
+    actor = system.actorOf(Props.create(ServiceActor.class, flowName, serviceName,index,system));
     map.put(flowName + serviceName + index, actor);
     return actor;
   }
