@@ -18,8 +18,11 @@ public class ServiceUtil {
     flowMessage.setMessage(o);
     return flowMessage;
   }
-  
-  public static void makeWebContext(FlowMessage flowMessage,AsyncContext ctx) throws IOException {
+
+  public static void makeWebContext(FlowMessage flowMessage, AsyncContext ctx) throws IOException {
+    if (ctx == null) {
+      return;
+    }
     ServiceContext serviceContext = new ServiceContext();
     Web web = new Web(ctx);
     serviceContext.setWeb(web);
