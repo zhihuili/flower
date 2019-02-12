@@ -1,4 +1,4 @@
-package com.ly.train.flower.common.sample.web;
+package com.ly.train.flower.common.sample.web.sync;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,18 +8,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSONObject;
+import com.ly.train.flower.common.sample.web.User;
+
 public class SyncServlet extends HttpServlet {
+  UserServiceImpl userService = new UserServiceImpl();
+
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
     resp.setContentType("text/html;charset=UTF-8");
+    int id = Integer.valueOf(req.getParameter("id").toString());
+    User user = userService.searchUser(id);
+    String result = JSONObject.toJSONString(user);
     PrintWriter out = resp.getWriter();
-    try {
-      Thread.sleep(100);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    out.println("Hello, Sync World.");
+    out.println(result);
     out.flush();
   }
 }

@@ -44,10 +44,10 @@ public class FlowServlet extends HttpServlet {
     AsyncContext ctx = req.startAsync();
 
     // flower
-//     asyncExe(ctx);
+     asyncExe(ctx);
 
     // thread
-     new Thread(new Executor(ctx)).start();
+//     new Thread(new Executor(ctx)).start();
 
     //actor
 //    ServiceContext serviceContext = new ServiceContext();

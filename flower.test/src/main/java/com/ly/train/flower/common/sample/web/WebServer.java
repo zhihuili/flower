@@ -4,6 +4,9 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
+import com.ly.train.flower.common.sample.web.async.AsyncServlet;
+import com.ly.train.flower.common.sample.web.sync.SyncServlet;
+
 public class WebServer {
 
   public static void main(String[] args) throws Exception {
@@ -13,6 +16,7 @@ public class WebServer {
     server.setHandler(context);
     context.addServlet(new ServletHolder(new FlowServlet()), "/flow");
     context.addServlet(new ServletHolder(new SyncServlet()), "/sync");
+    context.addServlet(new ServletHolder(new AsyncServlet()), "/async");
 
     server.start();
     server.join();

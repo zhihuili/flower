@@ -8,10 +8,8 @@ import com.ly.train.flower.common.service.web.Web;
 
 public class FlowService implements HttpService, Complete, Flush {
 
-  private ClassA ca;
 
   public FlowService() {
-    this.ca = new ClassA();
   }
 
   @Override

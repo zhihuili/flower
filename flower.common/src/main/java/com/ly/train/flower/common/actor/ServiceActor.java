@@ -121,7 +121,7 @@ public class ServiceActor extends UntypedActor {
     Object o = DefaultMessage.getMessage();// set default
     if (service instanceof HttpService) {
       if (context != null) {
-        ((HttpService) service).process(fm.getMessage(), context.getWeb());
+        o = ((HttpService) service).process(fm.getMessage(), context.getWeb());
       }
     }
     if (service instanceof Service) {
@@ -139,7 +139,7 @@ public class ServiceActor extends UntypedActor {
         }
       }
     }
-    
+
     // AfterDelay
     if (service instanceof AfterDelay) {
       Future<String> delayed =
@@ -147,7 +147,7 @@ public class ServiceActor extends UntypedActor {
               system.scheduler(), system.dispatcher(), this.delayFuture);
       Await.result(delayed, maxTimeout);
     }
-    
+
     if (o == null)// for joint service
       return;
     FlowMessage flowMessage = new FlowMessage();
