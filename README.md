@@ -81,10 +81,10 @@ System.out.println(ServiceFacade.syncCallService("sample", "service1", m1));
 
 ### sample代码
 调用者异步调用，编程式流程编排sample
-/flower.test/src/main/java/com/ly/train/flower/common/sample/programflow/Sample.java
+/flower.sample/src/main/java/com/ly/train/flower/common/sample/programflow/Sample.java
 
 调用者同步调用，可视化流程编排sample(sample.flow, sample.service在src/main/resources目录下)
-/flower.test/src/main/java/com/ly/train/flower/common/sample/textflow/Sample.java
+/flower.sample/src/main/java/com/ly/train/flower/common/sample/textflow/Sample.java
 
 ## 设计
 

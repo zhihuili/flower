@@ -10,7 +10,7 @@ public class Sample {
   public static void main(String[] args) throws Exception {
     buildServiceEnv();
 
-    ServiceFacade.asyncCallService("sample", "serviceA", "b");
+    ServiceFacade.asyncCallService("sample", "serviceA", "c");
   }
 
   public static void buildServiceEnv() {
@@ -20,11 +20,17 @@ public class Sample {
         "com.ly.train.flower.common.sample.condition.ServiceB");
     ServiceFactory.registerService("serviceC",
         "com.ly.train.flower.common.sample.condition.ServiceC");
-
+    ServiceFactory.registerService("serviceE",
+        "com.ly.train.flower.common.sample.condition.ServiceE");
+    ServiceFactory.registerService("serviceD",
+        "com.ly.train.flower.common.sample.condition.ServiceD");
     // serviceA -> serviceB
-    //          -> serviceC
+    //          -> serviceC -> serviceD
+    //                      -> serviceE
     ServiceFlow.buildFlow("sample", "serviceA", "serviceB");
     ServiceFlow.buildFlow("sample", "serviceA", "serviceC");
+    ServiceFlow.buildFlow("sample", "serviceC", "serviceD");
+    ServiceFlow.buildFlow("sample", "serviceC", "serviceE");
 
   }
 

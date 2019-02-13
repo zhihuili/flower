@@ -10,7 +10,9 @@ public class ServiceC implements Service<MessageC> {
    */
   public Object process(MessageC message) {
     System.out.println("I am Service C.");
-    return null;
+    MessageX mx = new MessageX();
+    mx.setSrc("serviceE");
+    return mx;
   }
 
 }
