@@ -10,9 +10,9 @@
 		<version>0.1</version>
 	</parent>
 	<groupId>com.ly.train</groupId>
-	<artifactId>flower.test</artifactId>
+	<artifactId>flower.sample</artifactId>
 	<version>0.1</version>
-	<name>flower.test</name>
+	<name>flower.sample</name>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
