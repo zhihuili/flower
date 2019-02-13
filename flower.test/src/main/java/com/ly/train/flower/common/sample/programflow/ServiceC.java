@@ -2,13 +2,13 @@ package com.ly.train.flower.common.sample.programflow;
 
 import com.ly.train.flower.common.service.Service;
 
-public class ServiceC implements Service {
+public class ServiceC implements Service<MessageA> {
 
   @Override
   /**
    * print service
    */
-  public Object process(Object message) {
+  public Object process(MessageA message) {
     MessageA ma = (MessageA) message;
     System.out.println(ma.getS() + " I am " + ma.getI());
     return null;

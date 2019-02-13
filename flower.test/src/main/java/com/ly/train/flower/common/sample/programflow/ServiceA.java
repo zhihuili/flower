@@ -2,7 +2,7 @@ package com.ly.train.flower.common.sample.programflow;
 
 import com.ly.train.flower.common.service.Service;
 
-public class ServiceA implements Service {
+public class ServiceA implements Service<String> {
 
   private ClassA ca;
 
@@ -14,7 +14,7 @@ public class ServiceA implements Service {
   /**
    * trim service
    */
-  public Object process(Object message) {
+  public Object process(String message) {
     ca.f();
     if (message != null && message instanceof String) {
       return ((String) message).trim();

@@ -20,11 +20,12 @@ public class ServiceFactory {
   }
 
   public static FlowerService getService(String serviceName) {
-    return ServiceLoader.getInstance().loadService(serviceMap.get(serviceName));
+    return ServiceLoader.getInstance().loadService(serviceName);
   }
 
   public static String getServiceClassName(String serviceName) {
     return serviceMap.get(serviceName);
   }
+
 
 }

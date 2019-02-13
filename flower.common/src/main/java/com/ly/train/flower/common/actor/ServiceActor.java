@@ -1,11 +1,12 @@
 package com.ly.train.flower.common.actor;
 
+import static java.util.concurrent.TimeUnit.DAYS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import static java.util.concurrent.TimeUnit.DAYS;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import com.ly.train.flower.common.service.AfterDelay;
 import com.ly.train.flower.common.service.FlowerService;
@@ -17,12 +18,13 @@ import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.service.containe.FlowContext;
 import com.ly.train.flower.common.service.containe.ServiceContext;
 import com.ly.train.flower.common.service.containe.ServiceFactory;
+import com.ly.train.flower.common.service.containe.ServiceLoader;
 import com.ly.train.flower.common.service.message.DefaultMessage;
 import com.ly.train.flower.common.service.message.FirstMessage;
 import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.message.ReturnMessage;
-import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.common.service.web.Complete;
+import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.common.service.web.Web;
 
 import akka.actor.ActorRef;
@@ -30,7 +32,6 @@ import akka.actor.ActorSystem;
 import akka.actor.UntypedActor;
 import akka.dispatch.Futures;
 import akka.pattern.Patterns;
-import akka.util.Timeout;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
@@ -55,6 +56,7 @@ public class ServiceActor extends UntypedActor {
 
   class RefType {
     ActorRef actorRef;
+    Class messageType;
     boolean isJoint = false;
 
     public ActorRef getActorRef() {
@@ -71,6 +73,14 @@ public class ServiceActor extends UntypedActor {
 
     public void setJoint(boolean joint) {
       isJoint = joint;
+    }
+
+    public Class getMessageType() {
+      return messageType;
+    }
+
+    public void setMessageType(Class messageType) {
+      this.messageType = messageType;
     }
   }
 
@@ -92,6 +102,7 @@ public class ServiceActor extends UntypedActor {
           refType.setJoint(true);
         }
         refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, str, index));
+        refType.setMessageType(ServiceLoader.getInstance().getServiceMessageType(str));
         nextServiceActors.add(refType);
       }
     }
@@ -161,7 +172,10 @@ public class ServiceActor extends UntypedActor {
           flowMessage1.setTransactionId(fm.getTransactionId());
           flowMessage.setMessage(flowMessage1);
         }
-        refType.getActorRef().tell(flowMessage, getSelf());
+        //condition fork for one-service to multi-service by next service input message type.
+        if (refType.getMessageType().isInstance(o)) {
+          refType.getActorRef().tell(flowMessage, getSelf());
+        }
       }
     }
 
