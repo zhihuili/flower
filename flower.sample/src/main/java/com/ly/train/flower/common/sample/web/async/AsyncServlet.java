@@ -1,8 +1,6 @@
 package com.ly.train.flower.common.sample.web.async;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.UUID;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
@@ -10,24 +8,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import com.ly.train.flower.common.actor.ServiceFacade;
 import com.ly.train.flower.common.actor.ServiceRouter;
+import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.ServiceFlow;
-import com.ly.train.flower.common.service.containe.FlowContext;
-import com.ly.train.flower.common.service.containe.ServiceContext;
 import com.ly.train.flower.common.service.containe.ServiceFactory;
-import com.ly.train.flower.common.service.web.Web;
-
-import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
 
 public class AsyncServlet extends HttpServlet {
   static final long serialVersionUID = 1L;
   ServiceRouter sr;
+  ApplicationContext context;
 
   @Override
   public void init() {
+    context = new ClassPathXmlApplicationContext("spring-mybatis.xml");
     buildServiceEnv();
     sr = ServiceFacade.buildServiceRouter("async", "serviceA", 40);
   }
@@ -55,6 +52,8 @@ public class AsyncServlet extends HttpServlet {
         "com.ly.train.flower.common.sample.web.async.ServiceA");
     ServiceFactory.registerService("serviceB",
         "com.ly.train.flower.common.sample.web.async.ServiceB");
+
+    ServiceFactory.registerFlowerService("serviceB", (FlowerService) context.getBean("serviceB"));
 
     ServiceFlow.buildFlow("async", "serviceA", "serviceB");
 
