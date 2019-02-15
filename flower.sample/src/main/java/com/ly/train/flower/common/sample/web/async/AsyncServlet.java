@@ -26,7 +26,7 @@ public class AsyncServlet extends HttpServlet {
   public void init() {
     context = new ClassPathXmlApplicationContext("spring-mybatis.xml");
     buildServiceEnv();
-    sr = ServiceFacade.buildServiceRouter("async", "serviceA", 40);
+    sr = ServiceFacade.buildServiceRouter("async", "serviceA", 400);
   }
 
   @Override
