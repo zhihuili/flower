@@ -77,20 +77,22 @@ ServiceFacade.asyncCallService("sample", "serviceA", " Hello World! ");
 ```
 一种是带路由功能的调用方式，调用者创建服务路由器ServiceRouter并指定消息处理通道个数（服务流程实例数），然后通过ServiceRouter提交高并发的消息给流程实例处理。
 ```
-ServiceRouter sr = ServiceFacade.buildServiceRouter("async", "serviceA", 400);
+ServiceRouter sr = ServiceFacade.buildServiceRouter("async", "serviceA", 400);//400个通道
 sr.asyncCallService(message);
 ```
 
 ### sample代码
 调用者异步调用，编程式流程编排sample
-/flower.sample/src/main/java/com/ly/train/flower/common/sample/programflow/Sample.java
+```/flower.sample/src/main/java/com/ly/train/flower/common/sample/programflow/Sample.java```
 
 调用者同步调用，可视化流程编排sample(sample.flow, sample.service在src/main/resources目录下)
-/flower.sample/src/main/java/com/ly/train/flower/common/sample/textflow/Sample.java
+```/flower.sample/src/main/java/com/ly/train/flower/common/sample/textflow/Sample.java```
 
 集成Servlet3异步特性、Spring、Mybatis的Web应用sample
+```
 main启动入口：/flower.sample/src/main/java/com/ly/train/flower/common/sample/web/WebServer.java
 request入口：/flower.sample/src/main/java/com/ly/train/flower/common/sample/web/async/AsyncServlet.java
+```
 
 ## Flower应用指南
 
