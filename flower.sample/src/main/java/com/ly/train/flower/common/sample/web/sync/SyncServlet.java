@@ -28,8 +28,10 @@ public class SyncServlet extends HttpServlet {
       throws ServletException, IOException {
     resp.setContentType("text/html;charset=UTF-8");
     int id = Integer.valueOf(req.getParameter("id").toString());
+    
     UserServiceImpl userService = (UserServiceImpl) context.getBean("userService");
     User user = userService.searchUser(id);
+    
     String result = JSONObject.toJSONString(user);
     PrintWriter out = resp.getWriter();
     out.println(result);
