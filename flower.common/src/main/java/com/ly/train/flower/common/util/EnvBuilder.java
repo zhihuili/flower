@@ -3,7 +3,6 @@ package com.ly.train.flower.common.util;
 import com.google.common.base.Predicate;
 import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.service.containe.ServiceFactory;
-
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.util.ClasspathHelper;
@@ -15,26 +14,39 @@ import java.util.regex.Pattern;
 
 public class EnvBuilder {
 
+  public static void buildEnv() throws Exception {
+    buildEnv(null);
+  }
   /**
    *
    * @param clz Reflections需要从clz类中获取ClassLoader的路径，再遍历Resources目录
    *            clz填写Resources对应的包下面的Class
+   *            当clz为null的时候，从所有的jar中读取services和flow文件
    * @throws Exception
    */
   public static void buildEnv(Class clz) throws Exception {
     Predicate<String> filter = new FilterBuilder().include(".*\\.services").include(".*\\.flow");
 
-    Reflections reflections = new Reflections(new ConfigurationBuilder()
-            .filterInputsBy(filter)
-            .setScanners(new ResourcesScanner())
-            .setUrls(ClasspathHelper.forClass(clz)));
+
+    ConfigurationBuilder  configurationBuilder = new  ConfigurationBuilder();
+    configurationBuilder.filterInputsBy(filter)
+            .setScanners(new ResourcesScanner());
+    if (clz != null) {
+      configurationBuilder.setUrls(ClasspathHelper.forClass(clz));
+    } else {
+      configurationBuilder.setUrls(ClasspathHelper.forClassLoader());
+    }
+
+    Reflections reflections = new Reflections(configurationBuilder);
 
     Set<String> servicesFiles = reflections.getResources(Pattern.compile(".*\\.services"));
     for (String path : servicesFiles) {
+      System.out.println(path);
       ServiceFactory.registerService(FileUtil.readService("/" + path));
     }
     Set<String> flowFiles = reflections.getResources(Pattern.compile(".*\\.flow"));
     for (String path : flowFiles) {
+      System.out.println(path);
       String flowName = path.substring(0, path.lastIndexOf("."));
       ServiceFlow.buildFlow(flowName, FileUtil.readFlow("/" + path));
     }

@@ -23,33 +23,33 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 
 public class FlowServlet extends HttpServlet {
-  ServiceRouter sr;
-  ActorRef actor;
+    ServiceRouter sr;
+    ActorRef actor;
 
-  @Override
-  public void init() {
-    buildServiceEnv();
-    sr = ServiceFacade.buildServiceRouter("flow", "flowService", 400);
-    actor = ActorSystem.create("sample").actorOf(Props.create(RouterActor.class));
-  }
+    @Override
+    public void init() {
+        buildServiceEnv();
+        sr = ServiceFacade.buildServiceRouter("flow", "flowService", 400);
+        actor = ActorSystem.create("sample").actorOf(Props.create(RouterActor.class));
+    }
 
-  @Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-      throws ServletException, IOException {
-    resp.setContentType("text/html;charset=UTF-8");
-    PrintWriter out = resp.getWriter();
-     out.println("begin：" + System.currentTimeMillis());
-     out.flush();
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        resp.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = resp.getWriter();
+        out.println("begin：" + System.currentTimeMillis());
+        out.flush();
 
-    AsyncContext ctx = req.startAsync();
+        AsyncContext ctx = req.startAsync();
 
-    // flower
-     asyncExe(ctx);
+        // flower
+        asyncExe(ctx);
 
-    // thread
+        // thread
 //     new Thread(new Executor(ctx)).start();
 
-    //actor
+        //actor
 //    ServiceContext serviceContext = new ServiceContext();
 //    Web web = new Web(ctx);
 //    serviceContext.setWeb(web);
@@ -57,28 +57,28 @@ public class FlowServlet extends HttpServlet {
 //    FlowContext.putServiceContext(uuid, serviceContext);
 //    actor.tell(uuid, null);
 
-    // out.println("结束Servlet的时间：" + new Date() + ".");
-    // out.flush();
-  }
+        // out.println("结束Servlet的时间：" + new Date() + ".");
+        // out.flush();
+    }
 
-  private void asyncExe(AsyncContext ctx) {
-    try {
-      sr.asyncCallService(" Hello, Flow World! ", ctx);
+    private void asyncExe(AsyncContext ctx) {
+        try {
+            sr.asyncCallService(" Hello, Flow World! ", ctx);
 //    ctx.getResponse().getWriter().println("结束Servlet的时间：" + new Date() + ".");
 //      ctx.complete();
-      // ServiceFacade.asyncCallService("flow", "flowService", " Hello World! ", ctx);
-    } catch (Exception e) {
-      e.printStackTrace();
+            // ServiceFacade.asyncCallService("flow", "flowService", " Hello World! ", ctx);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-  }
 
-  private void buildServiceEnv() {
-    ServiceFactory.registerService("flowService",
-        "com.ly.train.flower.common.sample.web.FlowService");
+    private void buildServiceEnv() {
+        ServiceFactory.registerService("flowService",
+                "com.ly.train.flower.common.sample.web.FlowService");
 //    ServiceFactory.registerService("endService",
 //        "com.ly.train.flower.common.service.NothingService");
 
-    ServiceFlow.buildFlow("flower", "flowService", "null");
+        ServiceFlow.buildFlow("flower", "flowService", "null");
 
-  }
+    }
 }

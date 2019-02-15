@@ -21,8 +21,8 @@ public class Service4 implements Service<Set> {
     Message3 m3 = new Message3();
     m3.setM2(m);
     // pi();
-    sleep();
-    System.out.println(System.currentTimeMillis());
+    //sleep();
+    //System.out.println(System.currentTimeMillis());
     return m3;
   }
 
