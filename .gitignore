@@ -14,3 +14,6 @@ conf/dew.conf
 dew-collected-data
 Database
 logs
+*.iml
+.DS_Store
+.vscode/
