@@ -1,4 +1,5 @@
 create database flower;
+USE flower;
 
 CREATE TABLE users (
   id int(11) NOT NULL AUTO_INCREMENT,
