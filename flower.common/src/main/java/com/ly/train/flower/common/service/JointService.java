@@ -36,10 +36,19 @@ public class JointService implements Service, Joint {
       resultMap.remove(flowMessage.getTransactionId());
       resultNumberMap.remove(flowMessage.getTransactionId());
 
-      return returnObject;
+      return buildMessage(returnObject);
     }
     // TODO resultNumberMap&resultMap memory leak
     return null;
+  }
+
+  /**
+   * subclass should override the method.
+   * @param messages: Set<Message>
+   * @return
+   */
+  public Object buildMessage(Set<Object> messages) {
+    return messages;
   }
 
   @Override

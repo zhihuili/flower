@@ -30,7 +30,7 @@
 	<modules>
 		<module>flower.common</module>
 		<module>flower.center</module>
-		<module>flower.test</module>
+		<module>flower.sample</module>
 	</modules>
 
 	<build>
