@@ -186,14 +186,13 @@ public class ServiceActor extends UntypedActor {
         }
         // condition fork for one-service to multi-service
         if (refType.getMessageType().isInstance(o)) {
-          if (!(o instanceof Condition)
-              || refType.getServiceName().equals(((Condition) o).nextSerivceName())) {
+          if (!(o instanceof Condition) || !(((Condition) o).getCondition() instanceof String)
+              || refType.getServiceName().equals(((Condition) o).getCondition())) {
             refType.getActorRef().tell(flowMessage, getSelf());
           }
         }
       }
     }
-
   }
 
   /**

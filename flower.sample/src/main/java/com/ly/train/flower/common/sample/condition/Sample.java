@@ -24,13 +24,20 @@ public class Sample {
         "com.ly.train.flower.common.sample.condition.ServiceE");
     ServiceFactory.registerService("serviceD",
         "com.ly.train.flower.common.sample.condition.ServiceD");
-    // serviceA -> serviceB
-    //          -> serviceC -> serviceD
-    //                      -> serviceE
+    ServiceFactory.registerService("serviceF",
+        "com.ly.train.flower.common.sample.condition.ServiceF");
+    ServiceFactory.registerService("serviceG",
+        "com.ly.train.flower.common.sample.condition.ServiceG");
+    ServiceFactory.registerService("serviceCondition",
+        "com.ly.train.flower.common.service.ConditionService;serviceF,serviceG");
+
     ServiceFlow.buildFlow("sample", "serviceA", "serviceB");
     ServiceFlow.buildFlow("sample", "serviceA", "serviceC");
     ServiceFlow.buildFlow("sample", "serviceC", "serviceD");
     ServiceFlow.buildFlow("sample", "serviceC", "serviceE");
+    ServiceFlow.buildFlow("sample", "serviceE", "serviceCondition");
+    ServiceFlow.buildFlow("sample", "serviceCondition", "serviceF");
+    ServiceFlow.buildFlow("sample", "serviceCondition", "serviceG");
 
   }
 

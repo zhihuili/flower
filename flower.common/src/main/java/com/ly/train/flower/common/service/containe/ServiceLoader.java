@@ -1,5 +1,6 @@
 package com.ly.train.flower.common.service.containe;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,11 +22,16 @@ public class ServiceLoader {
   }
 
   public FlowerService loadService(String serviceName) {
+    FlowerService service;
     try {
       Class serviceClass = cl.loadClass(ServiceFactory.getServiceClassName(serviceName));
-
-      FlowerService service = (FlowerService) serviceClass.newInstance();
-
+      String param = ServiceFactory.getServiceClassParameter(serviceName);
+      if (param != null) {
+        Constructor constructor = serviceClass.getConstructor(String.class);
+        service = (FlowerService) constructor.newInstance(param);
+        return service;
+      }
+      service = (FlowerService) serviceClass.newInstance();
       return service;
     } catch (Exception e) {
       e.printStackTrace();
