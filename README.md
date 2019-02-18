@@ -91,7 +91,9 @@ sr.asyncCallService(message);
 集成Servlet3异步特性、Spring、Mybatis的Web应用sample
 ```
 main启动入口：/flower.sample/src/main/java/com/ly/train/flower/common/sample/web/WebServer.java
-request入口：/flower.sample/src/main/java/com/ly/train/flower/common/sample/web/async/AsyncServlet.java
+request处理入口：/flower.sample/src/main/java/com/ly/train/flower/common/sample/web/async/AsyncServlet.java
+mysql脚本：/flower.sample/src/main/resources/my.sql
+请求URL：http://localhost:8080/async?id=1
 ```
 
 ## Flower应用指南
