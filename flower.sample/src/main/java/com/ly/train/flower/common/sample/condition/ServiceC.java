@@ -11,7 +11,7 @@ public class ServiceC implements Service<MessageC> {
   public Object process(MessageC message) {
     System.out.println("I am Service C.");
     MessageX mx = new MessageX();
-    mx.setSrc("serviceE");
+    mx.setCondition("serviceE");
     return mx;
   }
 
