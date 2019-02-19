@@ -1,6 +1,6 @@
 package com.ly.train.flower.common.service;
 
-public interface Joint {
+public interface Aggregate {
 
   void setSourceNumber(int number);
 
