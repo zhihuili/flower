@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.ly.train.flower.common.service.AfterDelay;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.HttpService;
-import com.ly.train.flower.common.service.Joint;
+import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.ServiceConstants;
 import com.ly.train.flower.common.service.ServiceFlow;
@@ -99,8 +99,8 @@ public class ServiceActor extends UntypedActor {
       throws Exception {
     this.system = system;
     this.service = ServiceFactory.getService(serviceName);
-    if (service instanceof Joint) {
-      ((Joint) service).setSourceNumber(
+    if (service instanceof Aggregate) {
+      ((Aggregate) service).setSourceNumber(
           ServiceFlow.getServiceConcig(flowName, serviceName).getJointSourceNumber());
     }
     nextServiceActors = new HashSet<RefType>();
@@ -109,7 +109,7 @@ public class ServiceActor extends UntypedActor {
       for (String str : nextServiceNames) {
         RefType refType = new RefType();
 
-        if (ServiceFactory.getServiceClassName(str).equals(ServiceConstants.JOINT_SERVICE_NAME)) {
+        if (ServiceFactory.getServiceClassName(str).equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
           refType.setJoint(true);
         }
         refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, str, index));
