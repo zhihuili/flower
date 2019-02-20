@@ -1,13 +1,11 @@
 package com.ly.train.flower.common.actor;
 
-import static java.util.concurrent.TimeUnit.DAYS;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import akka.actor.*;
 import com.ly.train.flower.common.service.AfterDelay;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.HttpService;
@@ -28,15 +26,14 @@ import com.ly.train.flower.common.service.web.Complete;
 import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.common.service.web.Web;
 
-import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.UntypedActor;
 import akka.dispatch.Futures;
 import akka.pattern.Patterns;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
+
+import static java.util.concurrent.TimeUnit.*;
 
 /**
  * Wrap service by actor, make service driven by message.
@@ -122,9 +119,9 @@ public class ServiceActor extends UntypedActor {
 
   @Override
   public void onReceive(Object arg0) throws Throwable {
-
-    if (arg0 == null || !(arg0 instanceof FlowMessage))
+    if (arg0 == null || !(arg0 instanceof FlowMessage)) {
       return;
+    }
 
     FlowMessage fm = (FlowMessage) arg0;
 
@@ -200,5 +197,4 @@ public class ServiceActor extends UntypedActor {
    */
   private void clear() {
   }
-
 }
