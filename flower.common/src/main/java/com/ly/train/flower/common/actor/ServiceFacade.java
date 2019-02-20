@@ -19,7 +19,7 @@ import scala.concurrent.duration.FiniteDuration;
 
 public class ServiceFacade {
   // TODO user define
-  public static FiniteDuration duration = Duration.create(300, SECONDS);
+  public static FiniteDuration duration = Duration.create(3, SECONDS);
 
   public static void asyncCallService(String flowName, String serviceName, Object o,
       AsyncContext ctx) throws IOException {
@@ -34,6 +34,9 @@ public class ServiceFacade {
     asyncCallService(flowName, serviceName, o, null);
   }
 
+  /*
+   * syncCallService 同步调用会引起阻塞，因此需要在外面try catch异常TimeoutException
+   */
   public static Object syncCallService(String flowName, String serviceName, Object o)
       throws Exception {
     FlowMessage flowMessage = ServiceUtil.buildFlowMessage(o);
@@ -46,5 +49,9 @@ public class ServiceFacade {
     ServiceRouter serviceRouter = new ServiceRouter(flowName, serviceName, flowNumber);
 
     return serviceRouter;
+  }
+
+  public static void shutdown() {
+    ServiceActorFactory.shutdown();
   }
 }

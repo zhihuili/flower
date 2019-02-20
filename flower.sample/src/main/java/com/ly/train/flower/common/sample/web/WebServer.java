@@ -24,12 +24,7 @@ public class WebServer {
     @Override public boolean isDebugEnabled() { return false; }
     @Override public void setDebugEnabled(boolean enabled) { }
     @Override public void debug(String msg, Object... args) { }
-
-    @Override
-    public void debug(String s, long l) {
-
-    }
-
+    @Override public void debug(String s, long l) { }
     @Override public void debug(Throwable thrown) { }
     @Override public void debug(String msg, Throwable thrown) { }
     @Override public Logger getLogger(String name) { return this; }
@@ -39,9 +34,8 @@ public class WebServer {
     org.apache.ibatis.logging.LogFactory.useSlf4jLogging();
     ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
     root.setLevel(Level.ERROR);
-
-
     org.eclipse.jetty.util.log.Log.setLog(new NoLogging());
+
     Server server = new Server(8080);
     ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
     context.setContextPath("/");
