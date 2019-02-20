@@ -10,7 +10,7 @@ import com.ly.train.flower.common.sample.web.dao.UserDao;
 public class UserServiceImpl {
 
   @Autowired
-  private UserDao userDao;;
+  private UserDao userDao;
 
   public User searchUser(int id) {
     return userDao.findUser(id);

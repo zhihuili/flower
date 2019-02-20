@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.ly.train.flower.common.service.message.FlowMessage;
 
-public class JointService implements Service, Joint {
+public class AggregateService implements Service, Aggregate {
 
   int sourceNumber = 0;
 

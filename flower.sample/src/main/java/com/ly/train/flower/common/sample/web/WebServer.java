@@ -30,6 +30,7 @@ public class WebServer {
     @Override public Logger getLogger(String name) { return this; }
     @Override public void ignore(Throwable ignored) { }
   }
+  
   public static void main(String[] args) throws Exception {
     org.apache.ibatis.logging.LogFactory.useSlf4jLogging();
     ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
