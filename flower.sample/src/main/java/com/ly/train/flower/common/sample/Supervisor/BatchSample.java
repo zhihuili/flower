@@ -1,10 +1,7 @@
 package com.ly.train.flower.common.sample.Supervisor;
 
 import com.ly.train.flower.common.actor.ServiceFacade;
-import com.ly.train.flower.common.service.ServiceFlow;
-import com.ly.train.flower.common.service.containe.ServiceFactory;
 import com.ly.train.flower.common.util.EnvBuilder;
-import com.ly.train.flower.common.util.FileUtil;
 import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
 
@@ -37,8 +34,10 @@ public class BatchSample {
       Message1 m1 = message1Map.get(key);
       try {
         //
-        Object o = ServiceFacade.syncCallService("sample", "service1", m1);
+        Object o = ServiceFacade.syncCallService("supervisor", "SupervisorService1", m1);
         System.out.println(o);
+        Assert.assertEquals(((Message3)o).getM2().getName(), m1.getM2().getName());
+        Assert.assertEquals(Integer.parseInt(key), ((Message3) o).getM2().getAge() - 1) ;
       } catch (TimeoutException e) {
         e.printStackTrace();
       }
@@ -50,11 +49,5 @@ public class BatchSample {
     System.out.println("test ok");
     ServiceFacade.shutdown();
   }
-  
-  public static void buildServiceEnv() throws Exception {
 
-    ServiceFactory.registerService(FileUtil.readService("/sample.services"));
-    ServiceFlow.buildFlow("sample", FileUtil.readFlow("/sample.flow"));
-
-  }
 }

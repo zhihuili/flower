@@ -145,14 +145,7 @@ public class ServiceActor extends UntypedActor {
       }
     }
     if (service instanceof Service) {
-      try {
-        o = ((Service) service).process(fm.getMessage());
-      } catch (Exception e) {
-        //捕获service的异常，保存环境，发送给他的父Actor
-        CrashActor crashActor = new CrashActor(this, arg0);
-        getContext().parent().tell(crashActor, getSelf());
-        throw e;
-      }
+      o = ((Service) service).process(fm.getMessage());
     }
     if (context != null) {
       Web web = context.getWeb();
