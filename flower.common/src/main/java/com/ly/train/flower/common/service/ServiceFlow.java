@@ -37,7 +37,7 @@ public class ServiceFlow {
     set.add(nextServiceName);
 
     String s = ServiceFactory.getServiceClassName(nextServiceName);
-    if (s != null && s.equals(ServiceConstants.JOINT_SERVICE_NAME)) {
+    if (s != null && s.equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
       Map<String, ServiceConfig> serviceConfigMap = serviceConfigs.get(flowName);
       if (serviceConfigMap == null) {
         serviceConfigMap = new ConcurrentHashMap<String, ServiceConfig>();
