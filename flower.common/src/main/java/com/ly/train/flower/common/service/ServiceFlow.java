@@ -19,6 +19,9 @@ public class ServiceFlow {
       new ConcurrentHashMap<String, Map<String, ServiceConfig>>();
 
   public static void buildFlow(String flowName, String preServiceName, String nextServiceName) {
+    if ("null".equals(nextServiceName.trim().toLowerCase())) {
+      return;
+    }
     Map<String, Set<String>> flow = flows.get(flowName);
     if (flow == null) {
       flow = new ConcurrentHashMap<String, Set<String>>();
@@ -56,9 +59,7 @@ public class ServiceFlow {
     for (String[] connection : flow) {
       String sourceServiceName = connection[0];
       String targetServiceName = connection[1];
-      if ("null".equals(targetServiceName.trim().toLowerCase())) {
-        return;
-      }
+
       buildFlow(flowName, sourceServiceName.trim(), targetServiceName.trim());
     }
   }
