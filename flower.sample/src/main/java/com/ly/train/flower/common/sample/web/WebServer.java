@@ -41,8 +41,8 @@ public class WebServer {
     ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
     context.setContextPath("/");
     server.setHandler(context);
-    context.addServlet(new ServletHolder(new FlowServlet()), "/flow");
-    context.addServlet(new ServletHolder(new SyncServlet()), "/sync");
+    //context.addServlet(new ServletHolder(new FlowServlet()), "/flow");
+    //context.addServlet(new ServletHolder(new SyncServlet()), "/sync");
     context.addServlet(new ServletHolder(new AsyncServlet()), "/async");
 
     server.start();
