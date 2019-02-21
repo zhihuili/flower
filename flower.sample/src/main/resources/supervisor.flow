@@ -1,0 +1,6 @@
+SupervisorService1 -> SupervisorService2
+SupervisorService1 -> SupervisorService3
+SupervisorService2 -> SupervisorService5
+SupervisorService3 -> SupervisorService5
+SupervisorService5 -> SupervisorService4
+SupervisorService4 -> SupervisorService1

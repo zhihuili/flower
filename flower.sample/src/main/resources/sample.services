@@ -5,3 +5,4 @@ service4 = com.ly.train.flower.common.sample.textflow.Service4
 service5 = com.ly.train.flower.common.service.AggregateService
 service6 = com.ly.train.flower.common.service.AggregateService
 service7 = com.ly.train.flower.common.service.AggregateService
+
