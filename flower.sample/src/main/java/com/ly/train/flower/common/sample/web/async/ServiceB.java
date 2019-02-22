@@ -20,6 +20,10 @@ public class ServiceB implements HttpService<Integer>, Flush, Complete {
   @Override
   public Object process(Integer message, Web web) throws Exception {
     User user = userDao.findUser(message);
+    if (user == null) {
+      web.complete();
+      throw new NullPointerException("user:" + message + " is not found.");
+    }
     String result = JSONObject.toJSONString(user);
     web.print(result);
     return null;

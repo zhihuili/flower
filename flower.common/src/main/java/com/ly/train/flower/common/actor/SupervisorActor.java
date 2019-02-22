@@ -21,6 +21,12 @@ public class SupervisorActor extends UntypedActor {
 
       ActorRef child = getContext().actorOf((Props)message);
       getSender().tell(child, getSelf());
+    } else if (message instanceof ActorRef) {
+      getContext().watch((ActorRef)message);
+    } else if (message instanceof String){
+      if ("getContext".equals(message)) {
+        getSender().tell(getContext(), getSelf());
+      }
     } else {
       unhandled(message);
     }
