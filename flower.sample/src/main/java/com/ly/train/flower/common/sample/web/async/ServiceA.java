@@ -7,8 +7,9 @@ public class ServiceA implements HttpService<String> {
 
   @Override
   public Object process(String message, Web web) throws Exception {
-
-    return Integer.valueOf(web.getParameter("id"));
+    //id非Integer的时候会抛出一个异常
+    Integer result = Integer.valueOf(web.getParameter("id"));
+    return result;
   }
 
 }
