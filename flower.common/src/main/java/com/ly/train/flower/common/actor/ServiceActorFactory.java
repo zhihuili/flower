@@ -24,22 +24,19 @@ public class ServiceActorFactory {
   static Duration timeout = Duration.create(5, SECONDS);
   public static Map<String, ActorRef> map = new ConcurrentHashMap<String, ActorRef>();
   static LoggingAdapter log = Logging.getLogger(system, name);
-
+  static {
+    try {
+      supervisorActorContext = (UntypedActorContext)Await.result(Patterns.ask(_supervisorActorRef, "getContext", 5000), timeout);
+    } catch (Exception e) {
+      log.error(e.getMessage());
+    }
+  }
   public static synchronized ActorRef buildServiceActor(String flowName, String serviceName) {
     return buildServiceActor(flowName, serviceName, defaultFlowIndex);
   }
 
   public static synchronized ActorRef buildServiceActor(String flowName, String serviceName,
                                                         int index) {
-
-    if (supervisorActorContext == null) {
-      try {
-        supervisorActorContext = (UntypedActorContext)Await.result(Patterns.ask(_supervisorActorRef, "getContext", 5000), timeout);
-      } catch (Exception e) {
-        log.error(e.getMessage());
-        return null;
-      }
-    }
     ActorRef actor = map.get(flowName + serviceName + index);
     if (actor != null) {
       return actor;
