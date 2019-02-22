@@ -7,7 +7,7 @@ Flower基于Akka的Actor进行开发，将Service封装到Actor里面，Actor收
 
 
 ### Flower核心类
-<img src="docs/img/FlowerCommonClass.png" height="600"/>
+<img src="img/FlowerCommonClass.png" height="600"/>
 
 * 用户开发的Service实现Service或者HttpService接口
 * ServiceFactory负责用户以及框架内置的service实例管理（加载*.services文件）
@@ -15,7 +15,7 @@ Flower基于Akka的Actor进行开发，将Service封装到Actor里面，Actor收
 * ServiceActor将Service封装到Actor
 
 ### Flower初始化及调用时序
-<img src="docs/img/FlowerCommonSequence.png" height="600"/>
+<img src="img/FlowerCommonSequence.png" height="600"/>
 
 服务流程初始化
 * 开发者通过ServiceFacade调用已经定义好的服务流程
@@ -49,7 +49,7 @@ Flower的核心设计不过如此。但是由此延伸出来的应用方法和�
 
 ### 架构
 #### 部署模型
-<img src="docs/img/dep.png" height="400"/>
+<img src="img/dep.png" height="400"/>
 
 Flower将整个应用系统集群统一管理控制，控制中心控制管理集群的所有资源
 
@@ -62,7 +62,7 @@ Agent部署在集群每一台服务器上，负责加载服务实例，并向控
  
 
 #### 集群启动与服务部署时序模型
-![](docs/img/dep_seq.png)
+![](img/dep_seq.png)
 
 
 
