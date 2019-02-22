@@ -72,7 +72,7 @@ ServiceRouter sr = ServiceFacade.buildServiceRouter("async", "serviceA", 400);//
 sr.asyncCallService(message);
 ```
 
-### sample代码
+### Sample代码
 调用者异步调用，编程式流程编排sample
 ```/flower.sample/src/main/java/com/ly/train/flower/common/sample/programflow/Sample.java```
 
