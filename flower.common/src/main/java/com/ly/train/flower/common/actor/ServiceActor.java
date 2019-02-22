@@ -141,7 +141,16 @@ public class ServiceActor extends UntypedActor {
     Object o = DefaultMessage.getMessage();// set default
     if (service instanceof HttpService) {
       if (context != null) {
-        o = ((HttpService) service).process(fm.getMessage(), context.getWeb());
+        try {
+          o = ((HttpService) service).process(fm.getMessage(), context.getWeb());
+        } catch (Exception e) {
+          Web web = context.getWeb();
+          if (web != null) {
+            web.complete();
+            FlowContext.removeServiceContext(fm.getTransactionId());
+          }
+          throw e;
+        }
       }
     }
     if (service instanceof Service) {
