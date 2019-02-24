@@ -3,6 +3,8 @@ package com.ly.train.flower.common.sample.web;
 
 import ch.qos.logback.classic.Level;
 import com.ly.train.flower.common.sample.web.async.AsyncServlet;
+import com.ly.train.flower.common.sample.web.forktest.BlockServlet;
+import com.ly.train.flower.common.sample.web.forktest.ForkServlet;
 import com.ly.train.flower.common.sample.web.sync.SyncServlet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -44,6 +46,8 @@ public class WebServer {
     context.addServlet(new ServletHolder(new FlowServlet()), "/flow");
     context.addServlet(new ServletHolder(new SyncServlet()), "/sync");
     context.addServlet(new ServletHolder(new AsyncServlet()), "/async");
+    context.addServlet(new ServletHolder(new ForkServlet()),"/test/fork");
+    context.addServlet(new ServletHolder(new BlockServlet()),"/test/block");
 
     server.start();
     server.join();

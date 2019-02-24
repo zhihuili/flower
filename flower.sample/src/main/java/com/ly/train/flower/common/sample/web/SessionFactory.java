@@ -2,8 +2,8 @@ package com.ly.train.flower.common.sample.web;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
+import com.ly.train.flower.common.sample.web.mode.User;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
