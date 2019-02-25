@@ -1,13 +1,10 @@
 package com.ly.train.flower.common.sample.web.forktest.service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.ly.train.flower.common.sample.web.dao.GoodsDao;
 import com.ly.train.flower.common.sample.web.dao.OrderDao;
 import com.ly.train.flower.common.sample.web.dao.UserDao;
 import com.ly.train.flower.common.sample.web.mode.Order;
 import com.ly.train.flower.common.sample.web.mode.User;
-import com.ly.train.flower.common.service.HttpService;
-import com.ly.train.flower.common.service.web.Web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +18,7 @@ import java.util.Set;
  */
 
 @Service("BlockService")
-public class BlockService implements HttpService<Integer> {
+public class BlockService{
     @Autowired
     private UserDao userDao;
     @Autowired
@@ -29,11 +26,10 @@ public class BlockService implements HttpService<Integer> {
     @Autowired
     private OrderDao orderDao;
 
-    @Override
-    public Object process(Integer message, Web web) throws Exception {
-        User user = userDao.findUser(message);
-        List<Integer> goodsList = goodsDao.findGoodsIdForRecommend(message);
-        List<Order> orders = orderDao.findByCustomerId(message);
+    public Set<Object> getInfo(Integer userId) {
+        User user = userDao.findUser(userId);
+        List<Integer> goodsList = goodsDao.findGoodsIdForRecommend(userId);
+        List<Order> orders = orderDao.findByCustomerId(userId);
         Set<Object> set = new HashSet<>();
         set.add(user);
         set.add(goodsList);
