@@ -106,7 +106,8 @@ public class ServiceActor extends UntypedActor {
       for (String str : nextServiceNames) {
         RefType refType = new RefType();
 
-        if (ServiceFactory.getServiceClassName(str).equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
+        if (ServiceFactory.getServiceClassName(str)
+            .equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
           refType.setJoint(true);
         }
         refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, str, index));
@@ -193,12 +194,32 @@ public class ServiceActor extends UntypedActor {
         // condition fork for one-service to multi-service
         if (refType.getMessageType().isInstance(o)) {
           if (!(o instanceof Condition) || !(((Condition) o).getCondition() instanceof String)
-              || refType.getServiceName().equals(((Condition) o).getCondition())) {
+              || stringInStrings(refType.getServiceName(),
+                  ((Condition) o).getCondition().toString())) {
             refType.getActorRef().tell(flowMessage, getSelf());
           }
         }
       }
     }
+  }
+
+  /**
+   * Is String s in String ss?
+   * 
+   * @param s "service1"
+   * @param ss “service1,service2”
+   * @return
+   */
+  private boolean stringInStrings(String s, String ss) {
+    String[] sa = ss.split(",");
+    if (sa != null && sa.length > 0) {
+      for (String se : sa) {
+        if (se.equals(s)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**
