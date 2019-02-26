@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ly.train.flower.common.sample.web.User;
+import com.ly.train.flower.common.sample.web.mode.User;
 import com.ly.train.flower.common.sample.web.service.UserServiceImpl;
 
 public class SyncServlet extends HttpServlet {

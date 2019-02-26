@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ly.train.flower.common.sample.web.User;
+import com.ly.train.flower.common.sample.web.mode.User;
 import com.ly.train.flower.common.sample.web.dao.UserDao;
 import com.ly.train.flower.common.service.HttpService;
 import com.ly.train.flower.common.service.web.Complete;
@@ -15,7 +15,7 @@ import com.ly.train.flower.common.service.web.Web;
 public class ServiceB implements HttpService<Integer>, Flush, Complete {
 
   @Autowired
-  private UserDao userDao;;
+  private UserDao userDao;
 
   @Override
   public Object process(Integer message, Web web) throws Exception {

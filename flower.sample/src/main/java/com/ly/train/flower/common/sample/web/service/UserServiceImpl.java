@@ -3,7 +3,7 @@ package com.ly.train.flower.common.sample.web.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ly.train.flower.common.sample.web.User;
+import com.ly.train.flower.common.sample.web.mode.User;
 import com.ly.train.flower.common.sample.web.dao.UserDao;
 
 @Service("userService")

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ly.train.flower.common.sample.web.dao.OrderDao">
+    <select id="findByCustomerId" resultType="com.ly.train.flower.common.sample.web.mode.Order" parameterType="int">
+        select * from orders where customerId = #{customerId}
+    </select>
+</mapper>
