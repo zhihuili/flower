@@ -9,5 +9,4 @@ public class ServiceB implements Service<MessageB> {
     System.out.println("I am Service B.");
     return null;
   }
-
 }

@@ -14,5 +14,4 @@ public class ServiceA implements Service<String> {
     }
     return null;
   }
-
 }
