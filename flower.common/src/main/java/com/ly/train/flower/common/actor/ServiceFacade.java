@@ -55,7 +55,6 @@ public class ServiceFacade {
       serviceRouter = new ServiceRouter(flowName, serviceName, flowNumber);
       mapRouter.put(routerName, serviceRouter);
     }
-    System.out.println(routerName + " " + serviceRouter);
     return serviceRouter;
   }
 
