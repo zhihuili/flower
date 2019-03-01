@@ -158,7 +158,7 @@ public class ServiceActor extends UntypedActor {
       if (service instanceof Flush) {
         web.flush();
       }
-      if (service instanceof HttpComplete) {
+      if (service instanceof HttpComplete || service instanceof Complete) {
         web.complete();
       }
     }
