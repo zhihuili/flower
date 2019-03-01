@@ -24,4 +24,8 @@ public class ServiceContext {
   public Object get(Object key) {
     return map.get(key);
   }
+  
+  public void remove(Object key) {
+    map.remove(key);
+  }
 }
