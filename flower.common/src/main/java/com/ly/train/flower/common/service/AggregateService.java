@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.ly.train.flower.common.service.containe.ServiceContext;
 import com.ly.train.flower.common.service.message.FlowMessage;
 
 public class AggregateService implements Service, Aggregate {
@@ -17,7 +18,7 @@ public class AggregateService implements Service, Aggregate {
   Map<String, Integer> resultNumberMap = new ConcurrentHashMap<String, Integer>();
 
   @Override
-  public Object process(Object message) {
+  public Object process(Object message, ServiceContext context) {
 
     FlowMessage flowMessage = (FlowMessage) message;
 
