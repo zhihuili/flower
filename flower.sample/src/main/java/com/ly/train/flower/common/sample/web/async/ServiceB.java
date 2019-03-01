@@ -6,12 +6,13 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.ly.train.flower.common.sample.web.dao.UserDao;
 import com.ly.train.flower.common.sample.web.mode.User;
+import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.containe.ServiceContext;
-import com.ly.train.flower.common.service.web.HttpComplete;
 import com.ly.train.flower.common.service.web.Flush;
 
 @Service("serviceB")
-public class ServiceB implements com.ly.train.flower.common.service.Service<Integer>, Flush, HttpComplete {
+public class ServiceB
+    implements com.ly.train.flower.common.service.Service<Integer>, Flush, Complete {
 
   @Autowired
   private UserDao userDao;
