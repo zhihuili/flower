@@ -1,13 +1,14 @@
 package com.ly.train.flower.common.sample.textflow;
 
 import com.ly.train.flower.common.service.Service;
+import com.ly.train.flower.common.service.containe.ServiceContext;
 
 import java.util.Set;
 
 public class Service4 implements Service<Set> {
 
   @Override
-  public Object process(Set message) {
+  public Object process(Set message, ServiceContext context) {
     Message2 m = new Message2();
     for (Object o : message) {
 

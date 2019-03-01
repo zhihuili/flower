@@ -20,12 +20,11 @@ public class ServiceUtil {
   }
 
   public static void makeWebContext(FlowMessage flowMessage, AsyncContext ctx) throws IOException {
-    if (ctx == null) {
-      return;
-    }
     ServiceContext serviceContext = new ServiceContext();
-    Web web = new Web(ctx);
-    serviceContext.setWeb(web);
+    if (ctx != null) {
+      Web web = new Web(ctx);
+      serviceContext.setWeb(web);
+    }
     FlowContext.putServiceContext(flowMessage.getTransactionId(), serviceContext);
   }
 

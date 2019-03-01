@@ -1,15 +1,14 @@
 package com.ly.train.flower.common.actor;
 
+import static java.util.concurrent.TimeUnit.DAYS;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import akka.actor.*;
-import com.ly.train.flower.common.service.AfterDelay;
-import com.ly.train.flower.common.service.FlowerService;
-import com.ly.train.flower.common.service.HttpService;
 import com.ly.train.flower.common.service.Aggregate;
+import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.ServiceConstants;
 import com.ly.train.flower.common.service.ServiceFlow;
@@ -26,14 +25,13 @@ import com.ly.train.flower.common.service.web.Complete;
 import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.common.service.web.Web;
 
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import akka.actor.UntypedActor;
 import akka.dispatch.Futures;
-import akka.pattern.Patterns;
-import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
-
-import static java.util.concurrent.TimeUnit.*;
 
 /**
  * Wrap service by actor, make service driven by message.
@@ -140,42 +138,26 @@ public class ServiceActor extends UntypedActor {
 
     ServiceContext context = FlowContext.getServiceContext(fm.getTransactionId());
     Object o = DefaultMessage.getMessage();// set default
-    if (service instanceof HttpService) {
-      if (context != null) {
-        try {
-          o = ((HttpService) service).process(fm.getMessage(), context.getWeb());
-        } catch (Exception e) {
-          Web web = context.getWeb();
-          if (web != null) {
-            web.complete();
-            FlowContext.removeServiceContext(fm.getTransactionId());
-          }
-          throw e;
-        }
-      }
-    }
-    if (service instanceof Service) {
-      o = ((Service) service).process(fm.getMessage());
-    }
-    if (context != null) {
+    try {
+      o = ((Service) service).process(fm.getMessage(), context);
+    } catch (Exception e) {
       Web web = context.getWeb();
       if (web != null) {
-        if (service instanceof Flush) {
-          web.flush();
-        }
-        if (service instanceof Complete) {
-          web.complete();
-          FlowContext.removeServiceContext(fm.getTransactionId());
-        }
+        FlowContext.removeServiceContext(fm.getTransactionId());
+        web.complete();
       }
+      throw e;
     }
 
-    // AfterDelay
-    if (service instanceof AfterDelay) {
-      Future<String> delayed =
-          Patterns.after(Duration.create(((AfterDelay) service).delay(), MILLISECONDS),
-              system.scheduler(), system.dispatcher(), this.delayFuture);
-      Await.result(delayed, maxTimeout);
+    Web web = context.getWeb();
+    if (web != null) {
+      if (service instanceof Flush) {
+        web.flush();
+      }
+      if (service instanceof Complete) {
+        FlowContext.removeServiceContext(fm.getTransactionId());
+        web.complete();
+      }
     }
 
     if (o == null)// for joint service

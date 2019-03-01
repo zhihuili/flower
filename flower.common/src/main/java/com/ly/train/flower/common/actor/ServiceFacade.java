@@ -18,7 +18,7 @@ import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
 
 public class ServiceFacade {
-  // TODO user define
+  // TODO user define duration
   public static FiniteDuration duration = Duration.create(3, SECONDS);
 
   public static void asyncCallService(String flowName, String serviceName, Object o,
@@ -26,7 +26,6 @@ public class ServiceFacade {
     FlowMessage flowMessage = ServiceUtil.buildFlowMessage(o);
     ServiceUtil.makeWebContext(flowMessage, ctx);
     ServiceActorFactory.buildServiceActor(flowName, serviceName).tell(flowMessage, null);
-
   }
 
   public static void asyncCallService(String flowName, String serviceName, Object o)

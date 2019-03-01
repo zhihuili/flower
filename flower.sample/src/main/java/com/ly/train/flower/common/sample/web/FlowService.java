@@ -1,13 +1,11 @@
 package com.ly.train.flower.common.sample.web;
 
-import com.ly.train.flower.common.service.AfterDelay;
-import com.ly.train.flower.common.service.HttpService;
-import com.ly.train.flower.common.service.web.Flush;
+import com.ly.train.flower.common.service.Service;
+import com.ly.train.flower.common.service.containe.ServiceContext;
 import com.ly.train.flower.common.service.web.Complete;
-import com.ly.train.flower.common.service.web.Web;
+import com.ly.train.flower.common.service.web.Flush;
 
-public class FlowService implements HttpService, Complete, Flush {
-
+public class FlowService implements Service, Complete, Flush {
 
   public FlowService() {
   }
@@ -16,9 +14,9 @@ public class FlowService implements HttpService, Complete, Flush {
   /**
    * trim service
    */
-  public Object process(Object message, Web web) throws Exception {
+  public Object process(Object message, ServiceContext context) throws Exception {
 
-    web.println(" - end:" + System.currentTimeMillis());
+    context.getWeb().println(" - end:" + System.currentTimeMillis());
     return "";
   }
 

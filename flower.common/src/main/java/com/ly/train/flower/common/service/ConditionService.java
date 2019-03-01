@@ -1,5 +1,6 @@
 package com.ly.train.flower.common.service;
 
+import com.ly.train.flower.common.service.containe.ServiceContext;
 import com.ly.train.flower.common.service.message.Condition;
 
 public class ConditionService implements Service<Condition> {
@@ -11,7 +12,7 @@ public class ConditionService implements Service<Condition> {
   }
 
   @Override
-  public Object process(Condition message) {
+  public Object process(Condition message, ServiceContext context) {
     Object o = message.getCondition();
     if (o instanceof Boolean) {
       if ((Boolean) o == true) {
