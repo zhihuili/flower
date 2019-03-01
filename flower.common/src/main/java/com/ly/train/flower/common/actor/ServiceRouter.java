@@ -26,9 +26,8 @@ public class ServiceRouter {
     }
   }
 
-  public void asyncCallService(Object message) {
-    FlowMessage flowMessage = ServiceUtil.buildFlowMessage(message);
-    ar[roundIndex()].tell(flowMessage, null);
+  public void asyncCallService(Object message) throws IOException {
+    asyncCallService(message, null);
   }
 
   public void asyncCallService(Object message, AsyncContext ctx) throws IOException {
@@ -40,6 +39,7 @@ public class ServiceRouter {
   public Object syncCallService(Object o) throws Exception {
     FlowMessage flowMessage = new FlowMessage();
     flowMessage.setMessage(o);
+    ServiceUtil.makeWebContext(flowMessage, null);
     return Await.result(
         Patterns.ask(ar[randomIndex()], flowMessage, new Timeout(ServiceFacade.duration)),
         ServiceFacade.duration);
