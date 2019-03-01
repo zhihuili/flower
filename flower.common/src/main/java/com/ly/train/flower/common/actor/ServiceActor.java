@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.ly.train.flower.common.service.Aggregate;
+import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.ServiceConstants;
@@ -21,8 +22,8 @@ import com.ly.train.flower.common.service.message.DefaultMessage;
 import com.ly.train.flower.common.service.message.FirstMessage;
 import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.message.ReturnMessage;
-import com.ly.train.flower.common.service.web.Complete;
 import com.ly.train.flower.common.service.web.Flush;
+import com.ly.train.flower.common.service.web.HttpComplete;
 import com.ly.train.flower.common.service.web.Web;
 
 import akka.actor.ActorRef;
@@ -157,7 +158,7 @@ public class ServiceActor extends UntypedActor {
       if (service instanceof Flush) {
         web.flush();
       }
-      if (service instanceof Complete) {
+      if (service instanceof HttpComplete) {
         web.complete();
       }
     }

@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ly.train.flower.common.service.containe.ServiceContext;
-import com.ly.train.flower.common.service.web.Complete;
+import com.ly.train.flower.common.service.web.HttpComplete;
 import com.ly.train.flower.common.service.web.Flush;
 
 /**
@@ -12,7 +12,7 @@ import com.ly.train.flower.common.service.web.Flush;
  * @Date: 2019/2/24 13:23
  */
 public class ReturnService
-    implements com.ly.train.flower.common.service.Service<Set>, Flush, Complete {
+    implements com.ly.train.flower.common.service.Service<Set>, Flush, HttpComplete {
 
   @Override
   public Object process(Set message, ServiceContext context) throws Exception {
