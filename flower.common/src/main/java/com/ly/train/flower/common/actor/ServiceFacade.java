@@ -45,12 +45,8 @@ public class ServiceFacade {
 
   public static ServiceRouter buildServiceRouter(String flowName, String serviceName,
       int flowNumber) {
-    ServiceRouter serviceRouter = null;
     String routerName = flowName + serviceName;
-    if (mapRouter.containsKey(routerName)) {
-      serviceRouter = mapRouter.get(routerName);
-    }
-
+    ServiceRouter serviceRouter = mapRouter.get(routerName);
     if (serviceRouter == null) {
       serviceRouter = new ServiceRouter(flowName, serviceName, flowNumber);
       mapRouter.put(routerName, serviceRouter);
