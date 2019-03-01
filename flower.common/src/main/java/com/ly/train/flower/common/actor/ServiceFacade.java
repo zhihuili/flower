@@ -39,6 +39,7 @@ public class ServiceFacade {
   public static Object syncCallService(String flowName, String serviceName, Object o)
       throws Exception {
     FlowMessage flowMessage = ServiceUtil.buildFlowMessage(o);
+    ServiceUtil.makeWebContext(flowMessage, null);
     return Await.result(Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName),
         flowMessage, new Timeout(duration)), duration);
   }
