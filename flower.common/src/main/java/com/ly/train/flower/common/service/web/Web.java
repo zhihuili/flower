@@ -45,7 +45,7 @@ public class Web {
    * Get the JSON data submitted by the post method
    * @return String / null
    */
-  public String getJsonString() throws IOException{
+  public String getPostJson() throws IOException{
     HttpServletRequest httpSr = (HttpServletRequest)sr;
     if(!httpSr.getMethod().equalsIgnoreCase("POST") || null == httpSr.getContentType()){
       return null;
