@@ -16,10 +16,10 @@ public class ${className}Controller {
     }
 
     ${BindControllerType}(value = "${BindControllerPath}", method = ${BindControllerMethod})
-    public void path(HttpServletRequest request) {
+    public void path(${BingControllerClass} obj, HttpServletRequest request) {
         AsyncContext context = request.startAsync();
         try {
-            serviceRouter.asyncCallService(null, context);
+            serviceRouter.asyncCallService(obj, context);
         } catch (IOException e) {
             e.printStackTrace();
         }

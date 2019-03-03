@@ -7,4 +7,5 @@ public @interface BindController {
   String type() default "@RequestMapping";
   String path();
   RequestMethod method();
+  Class<?> paramClass() default Void.class;
 }

@@ -19,7 +19,7 @@ public class ServiceA implements Service<String>, InitController {
   }
 
   @Override
-  public Object init() {
+  public ServiceRouter init() {
     buildServiceEnv();
     return ServiceFacade.buildServiceRouter("async", "serviceA", 400);
   }
