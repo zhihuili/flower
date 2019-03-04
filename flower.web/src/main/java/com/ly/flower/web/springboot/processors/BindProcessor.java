@@ -88,6 +88,9 @@ public class BindProcessor extends AbstractProcessor {
             templateName = "BindObjectController.vm";
             String BingControllerClass = typeMirror.toString();
             velocityContext.put("BingControllerClass", BingControllerClass);
+            if (BindControllerMethod == RequestMethod.POST) {
+              templateName = "BindPostJsonController.vm";
+            }
           }
 
           Template velocityEngineTemplate = velocityEngine.getTemplate(templateName);
