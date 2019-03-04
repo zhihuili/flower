@@ -241,6 +241,10 @@ Flower支持Servlet3的异步模式，请求处理线程在调用Flower流程，
 开发支持Servlet3的Flower服务，需要实现框架的Service接口，在方法 `Object process(T message, ServiceContext context) throws Exception;`中，Flower框架会传入一个Web对象，通过`context.getWeb()`得到Web对象，用以获得请求参数和输出处理响应结果。
 
 ### Flower集成Spring boot的web开发模式
+Flower支持Spring boot开发，在Spring boot项目依赖flower.web，实现框架中的Service接口和InitController接口。
+初始化@BindController注解需要的参数，在编译过程中自动由flower.web枚举@BindController注解, 生成Spring boot需要的Controller。
+
+代码示例参考/flower.sample/src/main/java/com/ly/train/flower/common/sample/springboot
 
 ## 使用Flower框架的开发建议
 * 进行流程设计。服务边界，服务流程，消息类型和数据，在系统设计阶段充分考虑，流程设计好了，系统架构也就设计好了。
