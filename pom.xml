@@ -31,16 +31,18 @@
 		<module>flower.common</module>
 		<module>flower.center</module>
 		<module>flower.sample</module>
+		<module>flower.web</module>
 		<module>flower.assembly</module>
 	</modules>
 
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
 				<configuration>
 					<compilerVersion>1.8</compilerVersion>
-					<fork>true</fork>
 					<source>1.8</source>
 					<target>1.8</target>
 				</configuration>

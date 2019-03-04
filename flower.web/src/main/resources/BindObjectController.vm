@@ -1,0 +1,27 @@
+package ${packageName};
+
+import com.ly.train.flower.common.actor.ServiceRouter;
+import org.springframework.web.bind.annotation.*;
+import javax.servlet.AsyncContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
+${BindControllerValue}
+public class ${className}Controller {
+    ServiceRouter serviceRouter = null;
+    public ${className}Controller() {
+        serviceRouter = new ${className}().init();
+    }
+
+    ${BindControllerType}(value = "${BindControllerPath}", method = ${BindControllerMethod})
+    public void path(${BingControllerClass} obj, HttpServletRequest request) {
+        AsyncContext context = request.startAsync();
+        try {
+            serviceRouter.asyncCallService(obj, context);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
