@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>com.ly.train</groupId>
 		<artifactId>flower</artifactId>
-		<version>0.1</version>
+		<version>${project.version}</version>
 	</parent>
 
 	<groupId>com.ly.train</groupId>
 	<artifactId>flower.center</artifactId>
-	<version>0.1</version>
+	<version>${project.version}</version>
 	<name>flower.center</name>
 	<dependencies>
 		<dependency>

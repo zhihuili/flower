@@ -7,11 +7,11 @@
 	<parent>
 		<groupId>com.ly.train</groupId>
 		<artifactId>flower</artifactId>
-		<version>0.1</version>
+		<version>${project.version}</version>
 	</parent>
 	<groupId>com.ly.train</groupId>
 	<artifactId>flower.sample</artifactId>
-	<version>0.1</version>
+	<version>${project.version}</version>
 	<name>flower.sample</name>
 	<dependencies>
 		<dependency>
@@ -23,12 +23,12 @@
 		<dependency>
 			<groupId>com.ly.train</groupId>
 			<artifactId>flower.common</artifactId>
-			<version>0.1</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.ly.train</groupId>
 			<artifactId>flower.web</artifactId>
-			<version>0.1</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>

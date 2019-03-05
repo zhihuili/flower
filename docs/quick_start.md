@@ -8,7 +8,7 @@ mvn clean install
 <dependency>
 	<groupId>com.ly.train</groupId>
 	<artifactId>flower.common</artifactId>
-	<version>0.1</version>
+	<version>0.1.1</version>
 </dependency>
 ```
 ### Flower框架主要元素
