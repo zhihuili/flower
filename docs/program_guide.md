@@ -244,7 +244,7 @@ Flower支持Servlet3的异步模式，请求处理线程在调用Flower流程，
 Flower支持Spring boot开发，在项目中依赖flower.web，实现框架中的Service接口和InitController接口。
 初始化@BindController注解需要的参数，在编译过程中自动由flower.web枚举@BindController注解, 生成Spring boot需要的Controller。
 
-**注意：**flower.web利用annotation为Service生成spring boot所需的Controller类。这个生成过程在程序编译的时候完成，如果IDE环境不支持热编译，需要在命令行执行mvn install生成代码。
+**注意：** flower.web利用annotation为Service生成spring boot所需的Controller类。这个生成过程在程序编译的时候完成，如果IDE环境不支持热编译，需要在命令行执行mvn install生成代码。
 
 代码示例参考/flower.sample/src/main/java/com/ly/train/flower/common/sample/springboot
 
