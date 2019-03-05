@@ -7,5 +7,4 @@ public @interface BindController {
   String type() default "@RequestMapping";
   String path();                            //http url path
   RequestMethod method();                   //http request method
-  Class<?> paramClass() default Void.class; //deserialization class
 }

@@ -11,7 +11,7 @@ import com.ly.train.flower.common.service.containe.ServiceContext;
 import com.ly.train.flower.common.service.containe.ServiceFactory;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@BindController(path = "/ServiceE", method = RequestMethod.POST, paramClass = User.class)
+@BindController(path = "/ServiceE", method = RequestMethod.POST)
 public class ServiceE implements Service<User>, InitController, PostJson {
 
     @Override

@@ -1,7 +1,6 @@
 package com.ly.flower.web.springboot.processors;
 
 import com.ly.flower.web.springboot.annotation.BindController;
-import javassist.bytecode.SignatureAttribute;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -11,14 +10,17 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import java.io.Writer;
 import java.net.URL;
-import java.util.Map;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -26,11 +28,18 @@ import java.util.Set;
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class BindProcessor extends AbstractProcessor {
   private static final String TAG = "[ " + BindProcessor.class.getSimpleName() + " ]:";
-
+  Types mTypesUtils = null;
   @Override
   public Set<String> getSupportedAnnotationTypes() {
     return super.getSupportedAnnotationTypes();
   }
+
+  @Override
+  public synchronized void init(ProcessingEnvironment processingEnv) {
+    super.init(processingEnv);
+    mTypesUtils = processingEnv.getTypeUtils();
+  }
+
   @Override
   public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
     for (Element element : roundEnvironment.getElementsAnnotatedWith(BindController.class)) {
@@ -49,31 +58,23 @@ public class BindProcessor extends AbstractProcessor {
         String BindControllerPath = bindController.path();
         RequestMethod BindControllerMethod = bindController.method();
         TypeMirror typeMirror = null;
-        for (AnnotationMirror annotationMirror : classElement.getAnnotationMirrors()) {
-          Map<? extends ExecutableElement, ? extends AnnotationValue> elementValues
-                  = annotationMirror.getElementValues();
-          for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry
-                  : elementValues.entrySet()) {
-            String key = entry.getKey().getSimpleName().toString();
-            Object value = entry.getValue().getValue();
-            switch (key) {
-              case "paramClass":{
-                //Error:java: [ BindProcessor ]:class com.sun.tools.javac.code.Type$ClassType
-                typeMirror = (TypeMirror)value;
-                break;
-              }
-            }
-          }
-        }
         boolean isPostJsonInterface = false;
         for (TypeMirror interfaceType : classElement.getInterfaces()) {
-          String strInterfaceType = interfaceType.toString();
-          if (strInterfaceType.contains("com.ly.flower.web.springboot.PostJson")) {
+          DeclaredType declaredType = (DeclaredType) interfaceType;
+          TypeElement interfaceElement = (TypeElement)declaredType.asElement();
+          String interfaceTypeName = interfaceElement.getQualifiedName().toString();
+          if (com.ly.train.flower.common.service.Service.class.getName().equals(interfaceTypeName)) {
+            List<TypeMirror> messageTypes = (List<TypeMirror>)declaredType.getTypeArguments();
+            if (!messageTypes.isEmpty()) {
+              typeMirror = messageTypes.get(0);
+              String messageTypeName = ((TypeElement)(mTypesUtils.asElement(typeMirror))).getQualifiedName().toString();
+              loge(messageTypeName);
+            }
+          } else if (com.ly.flower.web.springboot.PostJson.class.getName().equals(interfaceTypeName)) {
             isPostJsonInterface = true;
-            break;
           }
         }
-        //loge(fullClassName + "\n" + className + "\n" + packageName + "\n" + BindControllerValue + " " + BindControllerType + " " + BindControllerPath + " " + BindControllerMethod.toString());
+
         try {
           String templateName = "BindController.vm";
 
@@ -106,13 +107,7 @@ public class BindProcessor extends AbstractProcessor {
 
           JavaFileObject jfo = processingEnv.getFiler().createSourceFile(
               fullClassName + "Controller");
-
-          //loge("creating source file: " + jfo.toUri());
-
           Writer writer = jfo.openWriter();
-
-          //loge("applying velocity template: " + velocityEngineTemplate.getName());
-
           velocityEngineTemplate.merge(velocityContext, writer);
 
           writer.close();

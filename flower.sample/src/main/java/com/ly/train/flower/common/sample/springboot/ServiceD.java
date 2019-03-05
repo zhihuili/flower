@@ -10,7 +10,7 @@ import com.ly.train.flower.common.service.containe.ServiceContext;
 import com.ly.train.flower.common.service.containe.ServiceFactory;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@BindController(path = "/ServiceD", method = RequestMethod.POST, paramClass = User.class)
+@BindController(path = "/ServiceD", method = RequestMethod.POST)
 public class ServiceD implements Service<User>, InitController {
 
     @Override
