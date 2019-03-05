@@ -16,7 +16,7 @@ public class ${className}Controller {
     }
 
     ${BindControllerType}(value = "${BindControllerPath}", method = ${BindControllerMethod})
-    public void path(${BingControllerClass} obj, HttpServletRequest request) {
+    public void path(${hasRequestBody} ${BingControllerClass} obj, HttpServletRequest request) {
         AsyncContext context = request.startAsync();
         try {
             serviceRouter.asyncCallService(obj, context);

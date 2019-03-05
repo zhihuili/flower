@@ -65,7 +65,14 @@ public class BindProcessor extends AbstractProcessor {
             }
           }
         }
-
+        boolean isPostJsonInterface = false;
+        for (TypeMirror interfaceType : classElement.getInterfaces()) {
+          String strInterfaceType = interfaceType.toString();
+          if (strInterfaceType.contains("com.ly.flower.web.springboot.PostJson")) {
+            isPostJsonInterface = true;
+            break;
+          }
+        }
         //loge(fullClassName + "\n" + className + "\n" + packageName + "\n" + BindControllerValue + " " + BindControllerType + " " + BindControllerPath + " " + BindControllerMethod.toString());
         try {
           String templateName = "BindController.vm";
@@ -88,8 +95,10 @@ public class BindProcessor extends AbstractProcessor {
             templateName = "BindObjectController.vm";
             String BingControllerClass = typeMirror.toString();
             velocityContext.put("BingControllerClass", BingControllerClass);
-            if (BindControllerMethod == RequestMethod.POST) {
-              templateName = "BindPostJsonController.vm";
+            if (isPostJsonInterface && (BindControllerMethod == RequestMethod.POST)) {
+              velocityContext.put("hasRequestBody", "@RequestBody");
+            } else {
+              velocityContext.put("hasRequestBody", "");
             }
           }
 
