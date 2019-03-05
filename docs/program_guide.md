@@ -246,6 +246,20 @@ Flower支持Spring boot开发，在Spring boot项目依赖flower.web，实现框
 
 代码示例参考/flower.sample/src/main/java/com/ly/train/flower/common/sample/springboot
 
+@BindController path参数: http请求的url路径
+@BindController method参数: http发起的请求方式（GET， POST）
+@BindController paramClass参数: http发送的参数反序列化的对象类型
+
+@BindController 不指定paramClass，GET和POST方式都需要在process中使用context.getWeb()获取AsyncContext, 自行获取参数
+
+@BindController method=GET paramClass 指定了类，需要实现Service<paramClass>接口，process的第一个参数返回paramClass对象
+
+@BindController method=POST paramClass 指定了类, 没有继承PostJson接口，需要实现Service<paramClass>接口，process的第一个参数返回paramClass对象
+http请求的参数:name=aaa&id=2222, header需要Content-Type: application/x-www-form-urlencoded
+
+@BindController method=POST paramClass 指定了类, 继承PostJson接口，需要实现Service<paramClass>接口，process的第一个参数返回paramClass对象
+http请求的参数:{"name":"aaa","id":111}, header需要Content-Type: Content-Type: application/json;charset=UTF-8
+
 ## 使用Flower框架的开发建议
 * 进行流程设计。服务边界，服务流程，消息类型和数据，在系统设计阶段充分考虑，流程设计好了，系统架构也就设计好了。
 * 进行消息设计。在Flower里，消息也是服务之间的的接口，设计好消息，对服务的输入和输出约束就有了，团队开发时，就可以基于消息接口，各自开发自己的Service，只要严格遵循消息规范，不同开发者在开发的时候不需要彼此依赖，可以提高并行开发速度。而且只要各自做好自己的单元测试，集成测试的时候问题和工作量会少很多。
