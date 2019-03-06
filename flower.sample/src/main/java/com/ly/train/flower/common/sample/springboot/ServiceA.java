@@ -11,11 +11,11 @@ import com.ly.train.flower.common.service.containe.ServiceFactory;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @BindController(path = "/ServiceA", method= RequestMethod.GET)
-public class ServiceA implements Service<String>, InitController {
+public class ServiceA implements Service<User>, InitController {
   @Override
-  public Object process(String message, ServiceContext context) throws Exception {
-    context.getWeb().println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-    return 1111111;
+  public Object process(User message, ServiceContext context) throws Exception {
+    context.getWeb().println(message.toString());
+    return message.getId();
   }
 
   @Override

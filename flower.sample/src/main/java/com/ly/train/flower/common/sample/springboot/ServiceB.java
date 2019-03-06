@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class ServiceB implements Service<Integer>, Flush, Complete {
   @Override
   public Object process(Integer message, ServiceContext context) throws Exception {
-    context.getWeb().println("ServiceB:" + String.valueOf(message));
+    context.getWeb().println("id:" + String.valueOf(message));
     return null;
   }
 }
