@@ -22,11 +22,12 @@
 		<property name="url"
 			value="jdbc:mysql://localhost:3306/flower?characterEncoding=UTF-8&amp;serverTimezone=GMT%2B8" />
 		<property name="username" value="root" />
-		<property name="password" value="flower123" />
+		<property name="password" value="kuche123" />
 		<!-- 初始化连接大小 -->
 		<property name="initialSize" value="5" />
 		<!-- 连接池最大数量 -->
 		<property name="maxActive" value="30" />
+		<property name="validationQuery" value="select version()"></property>
 	</bean>
 
 	<!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
