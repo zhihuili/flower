@@ -4,14 +4,17 @@
 	xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
+	<properties>
+		<revision>0.1.1</revision>
+	</properties>
 	<parent>
 		<groupId>com.ly.train</groupId>
 		<artifactId>flower</artifactId>
-		<version>0.1</version>
+		<version>${revision}</version>
 	</parent>
 	<groupId>com.ly.train</groupId>
 	<artifactId>flower.sample</artifactId>
-	<version>0.1</version>
+	<version>${revision}</version>
 	<name>flower.sample</name>
 	<dependencies>
 		<dependency>
@@ -23,12 +26,12 @@
 		<dependency>
 			<groupId>com.ly.train</groupId>
 			<artifactId>flower.common</artifactId>
-			<version>0.1</version>
+			<version>${revision}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.ly.train</groupId>
 			<artifactId>flower.web</artifactId>
-			<version>0.1</version>
+			<version>${revision}</version>
 		</dependency>
 
 		<dependency>
