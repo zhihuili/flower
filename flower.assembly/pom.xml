@@ -7,16 +7,15 @@
     <parent>
         <groupId>com.ly.train</groupId>
         <artifactId>flower</artifactId>
-        <version>0.1</version>
+        <version>${revision}</version>
     </parent>
     <groupId>com.ly.train</groupId>
     <artifactId>flower.assembly</artifactId>
-    <version>0.1</version>
+    <version>${revision}</version>
     <name>flower.assembly</name>
     <packaging>pom</packaging>
     <url>http://maven.apache.org</url>
     <properties>
-        <project.version>0.1</project.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
@@ -29,35 +28,21 @@
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.center</artifactId>
-            <version>0.1</version>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.common</artifactId>
-            <version>0.1</version>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.sample</artifactId>
-            <version>0.1</version>
+            <version>${revision}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-            <version>5.1.4.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>5.1.5.RELEASE</version>
-        </dependency>
-
     </dependencies>
-
     <build>
-
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -81,6 +66,9 @@
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/spring.schemas</resource>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/spring.factories</resource>
                                 </transformer>
                             </transformers>
                             <filters>

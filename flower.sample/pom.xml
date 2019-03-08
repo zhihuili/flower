@@ -4,14 +4,17 @@
 	xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
+	<properties>
+		<revision>0.1.1</revision>
+	</properties>
 	<parent>
 		<groupId>com.ly.train</groupId>
 		<artifactId>flower</artifactId>
-		<version>0.1</version>
+		<version>${revision}</version>
 	</parent>
 	<groupId>com.ly.train</groupId>
 	<artifactId>flower.sample</artifactId>
-	<version>0.1</version>
+	<version>${revision}</version>
 	<name>flower.sample</name>
 	<dependencies>
 		<dependency>
@@ -19,11 +22,18 @@
 			<artifactId>junit</artifactId>
 			<version>3.8.1</version>
 		</dependency>
+
 		<dependency>
 			<groupId>com.ly.train</groupId>
 			<artifactId>flower.common</artifactId>
-			<version>0.1</version>
+			<version>${revision}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.ly.train</groupId>
+			<artifactId>flower.web</artifactId>
+			<version>${revision}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
@@ -60,29 +70,9 @@
 			<version>1.2.56</version>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>5.1.4.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>5.1.4.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-			<version>5.1.4.RELEASE</version>
-		</dependency>
-		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>druid</artifactId>
 			<version>1.0.12</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
-			<version>5.1.4.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>io.gatling.highcharts</groupId>
@@ -106,10 +96,12 @@
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
+				<version>3.4.6</version>
 			</plugin>
 			<plugin>
 				<groupId>io.gatling</groupId>
 				<artifactId>gatling-maven-plugin</artifactId>
+				<version>3.0.2</version>
 			</plugin>
 		</plugins>
 	</build>

@@ -233,10 +233,34 @@ Flower中的消息全部都是异步处理，也就是服务之间不会互相�
 /flower.sample/src/main/java/com/ly/train/flower/common/sample/textflow/Sample.java
 
 ## Flower web开发模式
+
+### Flower集成Servlet3的web开发模式
 Flower支持Servlet3的异步模式，请求处理线程在调用Flower流程，并传入AsyncContext对象后立即释放。
 代码示例参考/flower.sample/src/main/java/com/ly/train/flower/common/sample/web/async/AsyncServlet.java
 
-开发支持Servlet3的Flower服务，需要实现框架的HttpService接口，在方法 `Object process(T message, Web web) throws Exception;`中，Flower框架会传入一个Web对象，用以获得请求参数和输出处理响应结果。
+开发支持Servlet3的Flower服务，需要实现框架的Service接口，在方法 `Object process(T message, ServiceContext context) throws Exception;`中，Flower框架会传入一个Web对象，通过`context.getWeb()`得到Web对象，用以获得请求参数和输出处理响应结果。
+
+### Flower集成Spring boot的web开发模式
+Flower支持Spring boot开发，在项目中依赖flower.web，实现框架中的Service接口和InitController接口。
+初始化@BindController注解需要的参数，在编译过程中自动由flower.web枚举@BindController注解, 生成Spring boot需要的Controller。
+
+**注意：** flower.web利用annotation为Service生成spring boot所需的Controller类。这个生成过程在程序编译的时候完成，如果IDE环境不支持热编译，需要在命令行执行mvn install生成代码。
+
+代码示例参考/flower.sample/src/main/java/com/ly/train/flower/common/sample/springboot
+
+* @BindController path参数: http请求的url路径
+* @BindController method参数: http发起的请求方式（GET， POST）
+* @BindController paramClass参数: http发送的参数反序列化的对象类型
+
+* @BindController 不指定paramClass，GET和POST方式都需要在process中使用context.getWeb()获取AsyncContext, 自行获取参数
+
+* @BindController method=GET paramClass 指定了类，需要实现Service<paramClass>接口，process的第一个参数返回paramClass对象
+
+* @BindController method=POST paramClass 指定了类, 没有继承PostJson接口，需要实现Service<paramClass>接口，process的第一个参数返回paramClass对象
+http请求的参数:name=aaa&id=2222, header需要Content-Type: application/x-www-form-urlencoded
+
+* @BindController method=POST paramClass 指定了类, 继承PostJson接口，需要实现Service<paramClass>接口，process的第一个参数返回paramClass对象
+http请求的参数:{"name":"aaa","id":111}, header需要Content-Type: Content-Type: application/json;charset=UTF-8
 
 ## 使用Flower框架的开发建议
 * 进行流程设计。服务边界，服务流程，消息类型和数据，在系统设计阶段充分考虑，流程设计好了，系统架构也就设计好了。

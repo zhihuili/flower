@@ -37,8 +37,7 @@ public class ServiceRouter {
   }
 
   public Object syncCallService(Object o) throws Exception {
-    FlowMessage flowMessage = new FlowMessage();
-    flowMessage.setMessage(o);
+    FlowMessage flowMessage = ServiceUtil.buildFlowMessage(o);
     ServiceUtil.makeWebContext(flowMessage, null);
     return Await.result(
         Patterns.ask(ar[randomIndex()], flowMessage, new Timeout(ServiceFacade.duration)),
