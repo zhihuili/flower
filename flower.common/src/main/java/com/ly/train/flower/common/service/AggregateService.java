@@ -1,6 +1,5 @@
 package com.ly.train.flower.common.service;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -9,18 +8,25 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.ly.train.flower.common.service.containe.ServiceContext;
 import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.message.TimerMessage;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 public class AggregateService implements Service, Aggregate {
 
-  private static final long TimeOutMilliseconds = 60000;
+  private static final long DefaultTimeOutMilliseconds = 60000;
 
   int sourceNumber = 0;
+  long timeoutMillis = 0;
 
   // <messageId,Set<message>>
   Map<String, Set<Object>> resultMap = new ConcurrentHashMap<String, Set<Object>>();
   // <messageId,sourceNumber>
   Map<String, Integer> resultNumberMap = new ConcurrentHashMap<String, Integer>();
-  Map<String, Date> resultDateMap = new ConcurrentHashMap<String, Date>();
+  // <messageId,addedTime>
+  Map<String, Long> resultDateMap = new ConcurrentHashMap<String, Long>();
+
+  public AggregateService(String config){
+    this.timeoutMillis = Integer.valueOf(config);
+  }
 
   @Override
   public Object process(Object message, ServiceContext context) {
@@ -37,7 +43,7 @@ public class AggregateService implements Service, Aggregate {
       Set<Object> objectSet = new HashSet<Object>();
       resultMap.put(flowMessage.getTransactionId(), objectSet);
       resultNumberMap.put(flowMessage.getTransactionId(), sourceNumber);
-      resultDateMap.put(flowMessage.getTransactionId(), new Date());
+      resultDateMap.put(flowMessage.getTransactionId(), System.currentTimeMillis());
     }
     resultMap.get(flowMessage.getTransactionId()).add(((FlowMessage) message).getMessage());
 
@@ -72,9 +78,10 @@ public class AggregateService implements Service, Aggregate {
 
   private void doClean(){
     Set<String> transactionIds = resultDateMap.keySet();
-    Date now = new Date();
+    long currentTimeMillis = System.currentTimeMillis();
+    long timeout = this.timeoutMillis > 0 ? this.timeoutMillis : DefaultTimeOutMilliseconds;
     for (String transactionId: transactionIds){
-      if(now.getTime() - resultDateMap.get(transactionId).getTime() > TimeOutMilliseconds){
+      if(currentTimeMillis - resultDateMap.get(transactionId) > timeout){
         resultDateMap.remove(transactionId);
         resultMap.remove(transactionId);
         resultNumberMap.remove(transactionId);

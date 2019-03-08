@@ -59,7 +59,7 @@ public class ForkServlet extends HttpServlet {
         ServiceFactory.registerService("UserService",
                 "com.ly.train.flower.common.sample.web.forktest.service.UserService");
         ServiceFactory.registerService("AggregateService",
-                "com.ly.train.flower.common.service.AggregateService");
+                "com.ly.train.flower.common.service.AggregateService;10000");
         ServiceFactory.registerService("serviceReturn",
                 "com.ly.train.flower.common.sample.web.forktest.service.ReturnService");
 
