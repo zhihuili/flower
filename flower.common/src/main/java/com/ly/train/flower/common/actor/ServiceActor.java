@@ -104,14 +104,15 @@ public class ServiceActor extends UntypedActor {
     if (nextServiceNames != null && !nextServiceNames.isEmpty()) {
       for (String str : nextServiceNames) {
         RefType refType = new RefType();
-
-        if (ServiceFactory.getServiceClassName(str)
-            .equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
-          refType.setJoint(true);
-        }
         refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, str, index));
         refType.setMessageType(ServiceLoader.getInstance().getServiceMessageType(str));
         refType.setServiceName(str);
+
+        if (ServiceFactory.getServiceClassName(str)
+                .equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
+          refType.setJoint(true);
+          AggregateServiceActorTimer.getInstance().add(refType.getActorRef());
+        }
         nextServiceActors.add(refType);
       }
     }
