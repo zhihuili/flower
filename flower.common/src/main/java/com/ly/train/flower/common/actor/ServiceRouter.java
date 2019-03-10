@@ -1,6 +1,7 @@
 package com.ly.train.flower.common.actor;
 
 import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.AsyncContext;
@@ -45,7 +46,7 @@ public class ServiceRouter {
   }
 
   private int randomIndex() {
-    int index = (int) (Math.random() * number);
+    int index = ThreadLocalRandom.current().nextInt(number);
     return index;
   }
 
