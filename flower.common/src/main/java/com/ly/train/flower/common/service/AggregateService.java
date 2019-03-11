@@ -59,7 +59,6 @@ public class AggregateService implements Service, Aggregate {
 
       return buildMessage(returnObject);
     }
-    // TODO resultNumberMap&resultMap memory leak
     return null;
   }
 
