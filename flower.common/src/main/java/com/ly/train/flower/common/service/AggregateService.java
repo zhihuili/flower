@@ -24,6 +24,8 @@ public class AggregateService implements Service, Aggregate {
   // <messageId,addedTime>
   Map<String, Long> resultDateMap = new ConcurrentHashMap<String, Long>();
 
+  public AggregateService(){}
+
   public AggregateService(String config){
     this.timeoutMillis = Integer.valueOf(config);
   }
