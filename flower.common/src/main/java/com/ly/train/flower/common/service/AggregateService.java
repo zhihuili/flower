@@ -15,7 +15,7 @@ public class AggregateService implements Service, Aggregate {
   private static final long DefaultTimeOutMilliseconds = 60000;
 
   int sourceNumber = 0;
-  long timeoutMillis = 0;
+  long timeoutMillis = DefaultTimeOutMilliseconds;
 
   // <messageId,Set<message>>
   Map<String, Set<Object>> resultMap = new ConcurrentHashMap<String, Set<Object>>();
@@ -81,9 +81,8 @@ public class AggregateService implements Service, Aggregate {
   private void doClean(){
     Set<String> transactionIds = resultDateMap.keySet();
     long currentTimeMillis = System.currentTimeMillis();
-    long timeout = this.timeoutMillis > 0 ? this.timeoutMillis : DefaultTimeOutMilliseconds;
     for (String transactionId: transactionIds){
-      if(currentTimeMillis - resultDateMap.get(transactionId) > timeout){
+      if(currentTimeMillis - resultDateMap.get(transactionId) > this.timeoutMillis){
         resultDateMap.remove(transactionId);
         resultMap.remove(transactionId);
         resultNumberMap.remove(transactionId);
