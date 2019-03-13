@@ -13,19 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.sample.condition;
+package com.ly.train.flower.common.service.container;
 
-import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.container.ServiceContext;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class ServiceE implements Service {
+public class FlowContext {
 
-  @Override
-  public Object process(Object message, ServiceContext context) {
-    System.out.println("I am Service E.");
-    MessageX x = new MessageX();
-    x.setCondition(1);
-    return x;
+  private static Map<String, ServiceContext> flowContext =
+      new ConcurrentHashMap<String, ServiceContext>();
+
+  public static void putServiceContext(String uuid, ServiceContext serviceContext) {
+    flowContext.put(uuid, serviceContext);
   }
 
+  public static ServiceContext getServiceContext(String uuid) {
+    return flowContext.get(uuid);
+  }
+
+  public static void removeServiceContext(String uuid) {
+    flowContext.remove(uuid);
+  }
 }
