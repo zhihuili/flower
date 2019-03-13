@@ -1,5 +1,5 @@
 /**
- * Copyright © ${project.inceptionYear} 同程艺龙 (zhihui.li@ly.com)
+ * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.service.FlowerService;
 
 public class ServiceLoader {
+  private static final Logger logger = LoggerFactory.getLogger(ServiceLoader.class);
   private ClassLoader cl;
   private Map<String, Class<?>> messageTypeMap = new ConcurrentHashMap<String, Class<?>>();
 
@@ -49,7 +51,7 @@ public class ServiceLoader {
       service = (FlowerService) serviceClass.newInstance();
       return service;
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("fail load service : " + serviceName, e);
     }
     return null;
   }

@@ -1,5 +1,5 @@
 /**
- * Copyright © ${project.inceptionYear} 同程艺龙 (zhihui.li@ly.com)
+ * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,10 @@
 package com.ly.train.flower.common.actor;
 
 import static java.util.concurrent.TimeUnit.DAYS;
-
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
 import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.FlowerService;
@@ -40,7 +38,6 @@ import com.ly.train.flower.common.service.message.ReturnMessage;
 import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.common.service.web.HttpComplete;
 import com.ly.train.flower.common.service.web.Web;
-
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.UntypedActor;
@@ -225,6 +222,5 @@ public class ServiceActor extends UntypedActor {
   /**
    * clear actor
    */
-  private void clear() {
-  }
+  private void clear() {}
 }

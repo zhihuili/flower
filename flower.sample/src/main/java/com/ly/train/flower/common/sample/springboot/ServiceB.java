@@ -1,5 +1,5 @@
 /**
- * Copyright © ${project.inceptionYear} 同程艺龙 (zhihui.li@ly.com)
+ * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,10 @@
  */
 package com.ly.train.flower.common.sample.springboot;
 
-import com.ly.flower.web.springboot.annotation.BindController;
 import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.web.Flush;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 public class ServiceB implements Service<Integer>, Flush, Complete {
   @Override

@@ -1,5 +1,5 @@
 /**
- * Copyright © ${project.inceptionYear} 同程艺龙 (zhihui.li@ly.com)
+ * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package com.ly.train.flower.common.service;
 
 public class ServiceConstants {
-  public static final String AGGREGATE_SERVICE_NAME = "com.ly.train.flower.common.service.AggregateService";
+  public static final String AGGREGATE_SERVICE_NAME =
+      "com.ly.train.flower.common.service.AggregateService";
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright © ${project.inceptionYear} 同程艺龙 (zhihui.li@ly.com)
+ * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package com.ly.train.flower.common.service.container;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import com.ly.train.flower.common.service.web.Web;
 
 public class ServiceContext {
@@ -39,7 +38,7 @@ public class ServiceContext {
   public Object get(Object key) {
     return map.get(key);
   }
-  
+
   public void remove(Object key) {
     map.remove(key);
   }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright © ${project.inceptionYear} 同程艺龙 (zhihui.li@ly.com)
+# Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

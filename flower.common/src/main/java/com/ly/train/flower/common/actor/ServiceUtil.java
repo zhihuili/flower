@@ -1,5 +1,5 @@
 /**
- * Copyright © ${project.inceptionYear} 同程艺龙 (zhihui.li@ly.com)
+ * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package com.ly.train.flower.common.actor;
 
 import java.io.IOException;
 import java.util.UUID;
-
 import javax.servlet.AsyncContext;
 import com.ly.train.flower.common.service.container.FlowContext;
 import com.ly.train.flower.common.service.container.ServiceContext;

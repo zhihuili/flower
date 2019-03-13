@@ -1,5 +1,5 @@
 /**
- * Copyright © ${project.inceptionYear} 同程艺龙 (zhihui.li@ly.com)
+ * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.sample.Supervisor;
+package com.ly.train.flower.common.sample.supervisor;
 
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import org.apache.commons.io.FileUtils;
 
-public class Service1 implements Service {
+import java.io.File;
+
+public class Service2 implements Service<Message2> {
 
   @Override
-  public Object process(Object message, ServiceContext context) {
-    return ((Message1) message).getM2();
+  public Object process(Message2 message, ServiceContext context) throws Throwable {
+
+    File file = new File("test.file");
+    if (!file.exists()) {
+      FileUtils.write(file, "111", "UTF-8");
+      throw new Exception("Service2");
+    }
+    return message.getAge() + 1;
   }
 
 }

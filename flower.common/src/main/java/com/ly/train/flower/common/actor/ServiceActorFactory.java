@@ -1,5 +1,5 @@
 /**
- * Copyright © ${project.inceptionYear} 同程艺龙 (zhihui.li@ly.com)
+ * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package com.ly.train.flower.common.actor;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
@@ -27,13 +26,13 @@ import scala.concurrent.Await;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import scala.concurrent.duration.Duration;
-
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class ServiceActorFactory {
   final static String name = "LocalFlower";
   final static ActorSystem system = ActorSystem.create(name);
-  final static ActorRef _supervisorActorRef = system.actorOf(Props.create(SupervisorActor.class), "supervisor");
+  final static ActorRef _supervisorActorRef =
+      system.actorOf(Props.create(SupervisorActor.class), "supervisor");
   static UntypedActorContext supervisorActorContext = null;
   final static int defaultFlowIndex = -1;
   static Duration timeout = Duration.create(5, SECONDS);
@@ -41,17 +40,19 @@ public class ServiceActorFactory {
   static LoggingAdapter log = Logging.getLogger(system, name);
   static {
     try {
-      supervisorActorContext = (UntypedActorContext)Await.result(Patterns.ask(_supervisorActorRef, "getContext", 5000), timeout);
+      supervisorActorContext = (UntypedActorContext) Await
+          .result(Patterns.ask(_supervisorActorRef, "getContext", 5000), timeout);
     } catch (Exception e) {
       log.error(e.getMessage());
     }
   }
+
   public static synchronized ActorRef buildServiceActor(String flowName, String serviceName) {
     return buildServiceActor(flowName, serviceName, defaultFlowIndex);
   }
 
   public static synchronized ActorRef buildServiceActor(String flowName, String serviceName,
-                                                        int index) {
+      int index) {
     ActorRef actor = map.get(flowName + serviceName + index);
     if (actor != null) {
       return actor;
@@ -63,6 +64,7 @@ public class ServiceActorFactory {
   }
 
   public static void shutdown() {
+    log.info("akka system terminate");
     system.terminate();
   }
 }

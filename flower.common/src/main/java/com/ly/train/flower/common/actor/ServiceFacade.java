@@ -1,5 +1,5 @@
 /**
- * Copyright © ${project.inceptionYear} 同程艺龙 (zhihui.li@ly.com)
+ * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,17 +21,18 @@ import com.ly.train.flower.common.service.message.FlowMessage;
 import scala.concurrent.Await;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
-
 import javax.servlet.AsyncContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class ServiceFacade {
-
-  public static Map<String, ServiceRouter> mapRouter = new ConcurrentHashMap<String, ServiceRouter>();
+  private static final Logger logger = LoggerFactory.getLogger(ServiceFacade.class);
+  public static Map<String, ServiceRouter> mapRouter =
+      new ConcurrentHashMap<String, ServiceRouter>();
 
   // TODO user define duration
   public static FiniteDuration duration = Duration.create(3, SECONDS);
@@ -66,11 +67,14 @@ public class ServiceFacade {
     if (serviceRouter == null) {
       serviceRouter = new ServiceRouter(flowName, serviceName, flowNumber);
       mapRouter.put(routerName, serviceRouter);
+      logger.info("build service Router. flowName : {}, serviceName : {}, flowNumber : {}",
+          flowName, serviceName, flowNumber);
     }
     return serviceRouter;
   }
 
   public static void shutdown() {
     ServiceActorFactory.shutdown();
+    logger.info("shutdown.");
   }
 }

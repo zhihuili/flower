@@ -1,5 +1,5 @@
 /**
- * Copyright © ${project.inceptionYear} 同程艺龙 (zhihui.li@ly.com)
+ * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.sample.Supervisor;
+package com.ly.train.flower.common.sample.supervisor;
 
-import com.ly.train.flower.common.service.message.ReturnMessage;
+import com.ly.train.flower.common.service.message.FirstMessage;
 
-public class Message3 implements ReturnMessage {
+public class Message1 implements FirstMessage {
   private Message2 m2;
 
   public Message2 getM2() {
@@ -28,7 +28,4 @@ public class Message3 implements ReturnMessage {
     this.m2 = m2;
   }
 
-  public String toString() {
-    return m2.getName() + " is " + m2.getAge() + " years old.";
-  }
 }

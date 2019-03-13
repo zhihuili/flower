@@ -1,5 +1,5 @@
 /**
- * Copyright © ${project.inceptionYear} 同程艺龙 (zhihui.li@ly.com)
+ * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,18 @@ import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@BindController(path = "/ServiceA", method= RequestMethod.GET)
+@BindController(path = "/ServiceA", method = RequestMethod.GET)
 public class ServiceA implements Service<User>, InitController {
+
+  private static final Logger logger = LoggerFactory.getLogger(ServiceA.class);
+
   @Override
   public Object process(User message, ServiceContext context) throws Exception {
+    logger.info("message : {}, context:{}", message, context);
     context.getWeb().println(message.toString());
     return message.getId();
   }

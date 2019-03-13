@@ -1,5 +1,5 @@
 /**
- * Copyright © ${project.inceptionYear} 同程艺龙 (zhihui.li@ly.com)
+ * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 package com.ly.train.flower.common.sample.springboot;
 
 
+import javax.servlet.AsyncContext;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import com.ly.train.flower.common.actor.ServiceFacade;
 import com.ly.train.flower.common.actor.ServiceRouter;
 import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceFactory;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.AsyncContext;
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class Index2Controller {
@@ -37,14 +36,14 @@ public class Index2Controller {
   }
 
   @RequestMapping("/index2")
-  public void index(HttpServletRequest req) {
+  public void index(User user, HttpServletRequest req) {
     AsyncContext context = req.startAsync();
-    asyncExe(context);
+    asyncExe(context, user);
   }
 
-  private void asyncExe(AsyncContext ctx) {
+  private void asyncExe(AsyncContext ctx, User user) {
     try {
-      serviceRouter.asyncCallService(null, ctx);
+      serviceRouter.asyncCallService(user, ctx);
     } catch (Exception e) {
       e.printStackTrace();
     }

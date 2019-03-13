@@ -1,5 +1,5 @@
 /**
- * Copyright © ${project.inceptionYear} 同程艺龙 (zhihui.li@ly.com)
+ * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -59,24 +58,25 @@ public class Web {
 
   /**
    * Get the JSON data submitted by the post method
+   * 
    * @return String / null
    * @throws IOException When an error occurs while reading the InputStream, IOException is thrown
    * @throws UnsupportedEncodingException Thrown when encountering an unresolved character encoding
    * @since JDK 1.7+
    */
   public String getPostJson() throws IOException {
-    HttpServletRequest httpSr = (HttpServletRequest)sr;
-    if(!httpSr.getMethod().equalsIgnoreCase("POST") || null == httpSr.getContentType()){
+    HttpServletRequest httpSr = (HttpServletRequest) sr;
+    if (!httpSr.getMethod().equalsIgnoreCase("POST") || null == httpSr.getContentType()) {
       return null;
     }
-    if(!httpSr.getContentType().toLowerCase().contains("application/json")){
+    if (!httpSr.getContentType().toLowerCase().contains("application/json")) {
       return null;
     }
-    if(httpSr.getContentLength() <= 0){
+    if (httpSr.getContentLength() <= 0) {
       return null;
     }
     String charsetName = httpSr.getCharacterEncoding();
-    if(null == charsetName){
+    if (null == charsetName) {
       charsetName = "UTF-8";
     }
     byte[] b = new byte[httpSr.getContentLength()];

@@ -1,5 +1,5 @@
 /**
- * Copyright © ${project.inceptionYear} 同程艺龙 (zhihui.li@ly.com)
+ * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,22 @@
 package com.ly.train.flower.common.service.message;
 
 public class FlowMessage {
-    String TransactionId;
-    Object message;
+  String TransactionId;
+  Object message;
 
-    public String getTransactionId() {
-        return TransactionId;
-    }
+  public String getTransactionId() {
+    return TransactionId;
+  }
 
-    public void setTransactionId(String transactionId) {
-        this.TransactionId = transactionId;
-    }
+  public void setTransactionId(String transactionId) {
+    this.TransactionId = transactionId;
+  }
 
-    public Object getMessage() {
-        return message;
-    }
+  public Object getMessage() {
+    return message;
+  }
 
-    public void setMessage(Object message) {
-        this.message = message;
-    }
+  public void setMessage(Object message) {
+    this.message = message;
+  }
 }
