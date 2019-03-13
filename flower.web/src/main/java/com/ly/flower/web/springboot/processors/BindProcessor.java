@@ -64,6 +64,7 @@ public class BindProcessor extends AbstractProcessor {
           TypeElement interfaceElement = (TypeElement)declaredType.asElement();
           String interfaceTypeName = interfaceElement.getQualifiedName().toString();
           if (com.ly.train.flower.common.service.Service.class.getName().equals(interfaceTypeName)) {
+            @SuppressWarnings("unchecked")
             List<TypeMirror> messageTypes = (List<TypeMirror>)declaredType.getTypeArguments();
             if (!messageTypes.isEmpty()) {
               typeMirror = messageTypes.get(0);

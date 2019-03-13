@@ -8,37 +8,28 @@
         <groupId>com.ly.train</groupId>
         <artifactId>flower</artifactId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>com.ly.train</groupId>
     <artifactId>flower.assembly</artifactId>
-    <version>${revision}</version>
     <name>flower.assembly</name>
     <packaging>pom</packaging>
     <url>http://maven.apache.org</url>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
-    </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.center</artifactId>
-            <version>${revision}</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.common</artifactId>
-            <version>${revision}</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.sample</artifactId>
-            <version>${revision}</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
     <build>
@@ -46,6 +37,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -53,7 +45,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <outputFile>flower.jar</outputFile>
+                            <outputFile>flower-${project.parent.version}.jar</outputFile>
                             <transformers>
 
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">

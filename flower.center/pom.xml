@@ -3,40 +3,31 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<properties>
-		<revision>0.1.1</revision>
-	</properties>
 	<parent>
 		<groupId>com.ly.train</groupId>
 		<artifactId>flower</artifactId>
 		<version>${revision}</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<groupId>com.ly.train</groupId>
 	<artifactId>flower.center</artifactId>
-	<version>${revision}</version>
 	<name>flower.center</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-http_2.12</artifactId>
-			<version>10.1.7</version>
+			<artifactId>akka-stream_2.12</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-stream_2.12</artifactId>
-			<version>2.5.21</version>
+			<artifactId>akka-http_2.12</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
 			<artifactId>akka-http-jackson_2.12</artifactId>
-			<version>10.1.7</version>
 		</dependency>
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
 			<artifactId>akka-http-testkit_2.12</artifactId>
-			<version>10.1.7</version>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
