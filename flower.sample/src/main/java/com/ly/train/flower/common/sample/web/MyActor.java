@@ -15,10 +15,8 @@
  */
 package com.ly.train.flower.common.sample.web;
 
-import java.util.Date;
 import com.ly.train.flower.common.service.container.FlowContext;
 import com.ly.train.flower.common.service.web.Web;
-
 import akka.actor.AbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;

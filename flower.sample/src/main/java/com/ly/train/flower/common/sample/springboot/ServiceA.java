@@ -15,6 +15,9 @@
  */
 package com.ly.train.flower.common.sample.springboot;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestMethod;
 import com.ly.flower.web.springboot.InitController;
 import com.ly.flower.web.springboot.annotation.BindController;
 import com.ly.train.flower.common.actor.ServiceFacade;
@@ -23,9 +26,6 @@ import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @BindController(path = "/ServiceA", method = RequestMethod.GET)
 public class ServiceA implements Service<User>, InitController {

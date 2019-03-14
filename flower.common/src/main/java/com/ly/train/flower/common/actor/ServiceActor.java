@@ -1,17 +1,15 @@
 /**
  * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.ly.train.flower.common.actor;
 
@@ -20,6 +18,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.FlowerService;
@@ -53,6 +53,7 @@ import scala.concurrent.duration.FiniteDuration;
  *
  */
 public class ServiceActor extends UntypedActor {
+  static final Logger logger = LoggerFactory.getLogger(ServiceActor.class);
   ActorSystem system;
   FlowerService service;
 
@@ -132,6 +133,7 @@ public class ServiceActor extends UntypedActor {
   @Override
   public void onReceive(Object arg0) throws Throwable {
     if (arg0 == null || !(arg0 instanceof FlowMessage)) {
+
       return;
     }
 

@@ -15,6 +15,7 @@
  */
 package com.ly.train.flower.common.sample.springboot;
 
+import org.springframework.web.bind.annotation.RequestMethod;
 import com.ly.flower.web.springboot.InitController;
 import com.ly.flower.web.springboot.PostJson;
 import com.ly.flower.web.springboot.annotation.BindController;
@@ -24,7 +25,6 @@ import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFactory;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @BindController(path = "/ServiceE", method = RequestMethod.POST)
 public class ServiceE implements Service<User>, InitController, PostJson {

@@ -17,22 +17,15 @@ package com.ly.train.flower.common.sample.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.UUID;
-
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import com.ly.train.flower.common.actor.ServiceFacade;
 import com.ly.train.flower.common.actor.ServiceRouter;
 import com.ly.train.flower.common.service.ServiceFlow;
-import com.ly.train.flower.common.service.container.FlowContext;
-import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFactory;
-import com.ly.train.flower.common.service.web.Web;
-
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;

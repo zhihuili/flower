@@ -16,9 +16,6 @@
 package com.ly.train.flower.common.sample.akka;
 
 import akka.actor.AbstractActor;
-import scala.Option;
-
-import java.util.Optional;
 
 class Child extends AbstractActor {
   int state = 0;

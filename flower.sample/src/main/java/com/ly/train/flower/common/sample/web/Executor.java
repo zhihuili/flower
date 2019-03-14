@@ -16,8 +16,6 @@
 package com.ly.train.flower.common.sample.web;
 
 import java.io.PrintWriter;
-import java.util.Date;
-
 import javax.servlet.AsyncContext;
 
 public class Executor implements Runnable {

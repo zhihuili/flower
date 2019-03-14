@@ -15,13 +15,12 @@
  */
 package com.ly.train.flower.common.sample.akka;
 
+import java.time.Duration;
 import akka.actor.AbstractActor;
 import akka.actor.OneForOneStrategy;
 import akka.actor.Props;
 import akka.actor.SupervisorStrategy;
 import akka.japi.pf.DeciderBuilder;
-
-import java.time.Duration;
 
 public class Supervisor extends AbstractActor {
   private static SupervisorStrategy strategy =

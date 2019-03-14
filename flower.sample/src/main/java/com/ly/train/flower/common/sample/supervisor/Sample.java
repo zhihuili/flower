@@ -15,11 +15,10 @@
  */
 package com.ly.train.flower.common.sample.supervisor;
 
+import java.util.concurrent.TimeoutException;
 import com.ly.train.flower.common.actor.ServiceFacade;
 import com.ly.train.flower.common.sample.akka.FaultHandlingTest;
 import com.ly.train.flower.common.util.EnvBuilder;
-
-import java.util.concurrent.TimeoutException;
 
 public class Sample {
 

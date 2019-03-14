@@ -17,7 +17,6 @@ package com.ly.train.flower.common.sample.web;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.Props;

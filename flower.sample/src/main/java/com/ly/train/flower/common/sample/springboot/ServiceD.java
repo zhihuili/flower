@@ -15,6 +15,7 @@
  */
 package com.ly.train.flower.common.sample.springboot;
 
+import org.springframework.web.bind.annotation.RequestMethod;
 import com.ly.flower.web.springboot.InitController;
 import com.ly.flower.web.springboot.annotation.BindController;
 import com.ly.train.flower.common.actor.ServiceFacade;
@@ -23,7 +24,6 @@ import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFactory;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @BindController(path = "/ServiceD", method = RequestMethod.POST)
 public class ServiceD implements Service<User>, InitController {

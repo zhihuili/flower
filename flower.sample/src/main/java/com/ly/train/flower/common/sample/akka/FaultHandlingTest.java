@@ -15,12 +15,12 @@
  */
 package com.ly.train.flower.common.sample.akka;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.pattern.Patterns;
 import scala.concurrent.Await;
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class FaultHandlingTest  {
   static ActorSystem system = ActorSystem.create("FaultHandlingTest");

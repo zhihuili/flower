@@ -15,9 +15,9 @@
  */
 package com.ly.train.flower.common.sample.supervisor;
 
+import java.util.Set;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
-import java.util.Set;
 
 public class Service4 implements Service<Set> {
 
