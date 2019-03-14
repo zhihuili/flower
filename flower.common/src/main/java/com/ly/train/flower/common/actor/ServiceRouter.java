@@ -57,4 +57,26 @@ public class ServiceRouter {
     currentIndex = 0;
     return currentIndex;
   }
+
+
+  /**
+   * 当actor个数为2^n个数时才可以使用
+   * @return
+   */
+  private int bitRandomIndex() {
+    if (currentIndex > 1024) {
+      currentIndex = 0;
+    }
+    return (currentIndex++) & (number-1);
+  }
+
+  /**
+   * @return
+   */
+  private int moduleRandomIndex() {
+    if (currentIndex > 1024) {
+      currentIndex = 0;
+    }
+    return (currentIndex++)%(number);
+  }
 }

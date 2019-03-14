@@ -1,5 +1,3 @@
-package com.ly.train.flower.common.sample.test;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
