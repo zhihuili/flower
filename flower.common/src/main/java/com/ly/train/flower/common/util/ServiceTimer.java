@@ -1,6 +1,7 @@
 package com.ly.train.flower.common.util;
 
 import akka.actor.ActorRef;
+import com.ly.train.flower.common.service.containe.FlowContext;
 import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.message.TimerMessage;
 
@@ -12,7 +13,6 @@ public class ServiceTimer {
 
     private Set<ActorRef> aggregateServiceActors;
     private Timer timer;
-    private boolean isScheduled;
 
     private static ServiceTimer instance = new ServiceTimer();
 
@@ -20,30 +20,27 @@ public class ServiceTimer {
         return instance;
     }
 
-    protected ServiceTimer(){
+    private ServiceTimer(){
         aggregateServiceActors = new HashSet<>();
         timer = new Timer();
-        isScheduled = false;
+        schedule();
     }
 
     public void add(ActorRef actor){
         synchronized (aggregateServiceActors){
             aggregateServiceActors.add(actor);
-            schedule();
         }
     }
 
-    /**
-     * public void add(ActorRef actor) 之外调用会引起并发问题。
-     */
     private void schedule(){
-        if(isScheduled){ return; }
-
-        isScheduled = true;
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
+                    // 清理超时context
+                    FlowContext.clearTimeoutServiceContext();
+
+                    // 清理聚合服务内的超时对象
                     for (ActorRef actor : aggregateServiceActors) {
                         TimerMessage timerMessage = new TimerMessage();
                         timerMessage.setTransactionId(UUID.randomUUID().toString());
@@ -54,7 +51,7 @@ public class ServiceTimer {
                         actor.tell(flowMessage, null);
                     }
                 }catch(Exception e){
-
+                    e.printStackTrace();
                 }
             }
         }, DelayTime, TimePeriod);

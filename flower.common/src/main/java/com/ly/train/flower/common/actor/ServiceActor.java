@@ -144,24 +144,28 @@ public class ServiceActor extends UntypedActor {
     try {
       o = ((Service) service).process(fm.getMessage(), context);
     } catch (Exception e) {
-      Web web = context.getWeb();
-      FlowContext.removeServiceContext(fm.getTransactionId());
-      if (web != null) {
-        web.complete();
+      if(context != null) {
+        Web web = context.getWeb();
+        FlowContext.removeServiceContext(fm.getTransactionId());
+        if (web != null) {
+          web.complete();
+        }
       }
       throw e;
     }
 
-    Web web = context.getWeb();
-    if (service instanceof Complete) {
-      FlowContext.removeServiceContext(fm.getTransactionId());
-    }
-    if (web != null) {
-      if (service instanceof Flush) {
-        web.flush();
+    if(context != null) {
+      Web web = context.getWeb();
+      if (service instanceof Complete) {
+        FlowContext.removeServiceContext(fm.getTransactionId());
       }
-      if (service instanceof HttpComplete || service instanceof Complete) {
-        web.complete();
+      if (web != null) {
+        if (service instanceof Flush) {
+          web.flush();
+        }
+        if (service instanceof HttpComplete || service instanceof Complete) {
+          web.complete();
+        }
       }
     }
 

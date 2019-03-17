@@ -8,6 +8,11 @@ import com.ly.train.flower.common.service.web.Web;
 public class ServiceContext {
   private Map<Object, Object> map = new ConcurrentHashMap<Object, Object>();
   private Web web;
+  private long lastUsedMilliseconds;
+
+  public ServiceContext(){
+    lastUsedMilliseconds = System.currentTimeMillis();
+  }
 
   public Web getWeb() {
     return web;
@@ -27,5 +32,13 @@ public class ServiceContext {
   
   public void remove(Object key) {
     map.remove(key);
+  }
+
+  public long getLastUsedMilliseconds() {
+    return lastUsedMilliseconds;
+  }
+
+  public void setLastUsedMilliseconds(long lastUsedMilliseconds) {
+    this.lastUsedMilliseconds = lastUsedMilliseconds;
   }
 }
