@@ -20,10 +20,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import akka.actor.AbstractActor;
+import akka.actor.AbstractActor.ActorContext;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import akka.actor.UntypedActorContext;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.pattern.Patterns;
@@ -36,14 +37,15 @@ public class ServiceActorFactory {
   final static ActorSystem system = ActorSystem.create(name, config);
   final static ActorRef _supervisorActorRef =
       system.actorOf(Props.create(SupervisorActor.class), "supervisor");
-  static UntypedActorContext supervisorActorContext = null;
+
+  static AbstractActor.ActorContext supervisorActorContext = null;
   final static int defaultFlowIndex = -1;
   static Duration timeout = Duration.create(5, TimeUnit.SECONDS);
   public static Map<String, ActorRef> map = new ConcurrentHashMap<String, ActorRef>();
   static LoggingAdapter log = Logging.getLogger(system, name);
   static {
     try {
-      supervisorActorContext = (UntypedActorContext) Await
+      supervisorActorContext = (ActorContext) Await
           .result(Patterns.ask(_supervisorActorRef, "getContext", 5000), timeout);
     } catch (Exception e) {
       log.error(e.getMessage());

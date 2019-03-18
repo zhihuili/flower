@@ -40,9 +40,9 @@ import com.ly.train.flower.common.service.message.ReturnMessage;
 import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.common.service.web.HttpComplete;
 import com.ly.train.flower.common.service.web.Web;
+import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import akka.actor.UntypedActor;
 import akka.dispatch.Futures;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
@@ -54,23 +54,23 @@ import scala.concurrent.duration.FiniteDuration;
  * @author zhihui.li
  *
  */
-public class ServiceActor extends UntypedActor {
+public class ServiceActor extends AbstractActor {
   static final Logger logger = LoggerFactory.getLogger(ServiceActor.class);
-  ActorSystem system;
-  FlowerService service;
+  private ActorSystem system;
+  private FlowerService service;
 
-  Set<RefType> nextServiceActors;
+  private Set<RefType> nextServiceActors;
 
-  Map<String, ActorRef> callers = new ConcurrentHashMap<String, ActorRef>();
+  private Map<String, ActorRef> callers = new ConcurrentHashMap<String, ActorRef>();
 
-  final Future<String> delayFuture = Futures.successful("delay");
-  final FiniteDuration maxTimeout = Duration.create(9999, TimeUnit.DAYS);
+  protected final Future<String> delayFuture = Futures.successful("delay");
+  protected final FiniteDuration maxTimeout = Duration.create(9999, TimeUnit.DAYS);
 
   class RefType {
     private ActorRef actorRef;
-    private  Class<?> messageType;
-    private  String serviceName;
-    private  boolean isJoint = false;
+    private Class<?> messageType;
+    private String serviceName;
+    private boolean isJoint = false;
 
     public ActorRef getActorRef() {
       return actorRef;
@@ -114,7 +114,7 @@ public class ServiceActor extends UntypedActor {
       ((Aggregate) service).setSourceNumber(
           ServiceFlow.getServiceConcig(flowName, serviceName).getJointSourceNumber());
     }
-    nextServiceActors = new HashSet<RefType>();
+    this.nextServiceActors = new HashSet<RefType>();
     Set<String> nextServiceNames = ServiceFlow.getNextFlow(flowName, serviceName);
     if (nextServiceNames != null && !nextServiceNames.isEmpty()) {
       for (String str : nextServiceNames) {
@@ -133,13 +133,19 @@ public class ServiceActor extends UntypedActor {
   }
 
   @Override
-  public void onReceive(Object arg0) throws Throwable {
-    if (arg0 == null || !(arg0 instanceof FlowMessage)) {
+  public Receive createReceive() {
+    return receiveBuilder().match(FlowMessage.class, fm -> {
+      try {
+        onReceive(fm);
+      } catch (Throwable e) {
+        logger.error("", e);
+      }
+    }).matchAny(no -> {
+      logger.warn("unhandled message, so discard it. {}", no);
+    }).build();
+  }
 
-      return;
-    }
-
-    FlowMessage fm = (FlowMessage) arg0;
+  public void onReceive(FlowMessage fm) throws Throwable {
 
     // receive returned message，send to caller
     if (fm.getMessage() instanceof ReturnMessage) {
@@ -226,5 +232,5 @@ public class ServiceActor extends UntypedActor {
   /**
    * clear actor
    */
-  private void clear() {}
+  void clear() {}
 }

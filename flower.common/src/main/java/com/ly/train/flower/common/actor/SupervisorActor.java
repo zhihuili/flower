@@ -15,32 +15,38 @@
  */
 package com.ly.train.flower.common.actor;
 
-import akka.actor.*;
+import java.util.concurrent.TimeUnit;
+import akka.actor.AbstractActor;
+import akka.actor.ActorRef;
+import akka.actor.OneForOneStrategy;
+import akka.actor.Props;
+import akka.actor.SupervisorStrategy;
 import akka.japi.pf.DeciderBuilder;
 import scala.concurrent.duration.Duration;
-import java.util.concurrent.TimeUnit;
 
-public class SupervisorActor extends UntypedActor {
+public class SupervisorActor extends AbstractActor {
   private SupervisorStrategy strategy =
       new OneForOneStrategy(10, Duration.create(1, TimeUnit.MINUTES),
           DeciderBuilder.matchAny(o -> SupervisorStrategy.resume()).build());
 
-  @Override
-  public void onReceive(Object message) throws Throwable {
-    if (message instanceof Props) {
 
+  @Override
+  public Receive createReceive() {
+    return receiveBuilder().match(Props.class, message -> {
       ActorRef child = getContext().actorOf((Props) message);
       getSender().tell(child, getSelf());
-    } else if (message instanceof ActorRef) {
+
+    }).match(ActorRef.class, message -> {
       getContext().watch((ActorRef) message);
-    } else if (message instanceof String) {
+    }).match(String.class, message -> {
       if ("getContext".equals(message)) {
         getSender().tell(getContext(), getSelf());
       }
-    } else {
+    }).matchAny(message -> {
       unhandled(message);
-    }
+    }).build();
   }
+
 
   @Override
   public SupervisorStrategy supervisorStrategy() {

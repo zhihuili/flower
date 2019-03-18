@@ -97,7 +97,6 @@
 			<groupId>com.typesafe.akka</groupId>
 			<artifactId>akka-slf4j_2.12</artifactId>
 		</dependency>
-
 	</dependencies>
 	<build>
 		<plugins>
