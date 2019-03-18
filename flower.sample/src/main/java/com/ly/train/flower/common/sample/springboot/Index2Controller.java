@@ -19,6 +19,7 @@ package com.ly.train.flower.common.sample.springboot;
 import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.ly.train.flower.common.actor.ServiceFacade;
 import com.ly.train.flower.common.actor.ServiceRouter;
@@ -36,6 +37,7 @@ public class Index2Controller {
   }
 
   @RequestMapping("/index2")
+  @ResponseBody
   public void index(User user, HttpServletRequest req) {
     AsyncContext context = req.startAsync();
     asyncExe(context, user);
@@ -50,10 +52,8 @@ public class Index2Controller {
   }
 
   private void buildServiceEnv() {
-    ServiceFactory.registerService("serviceA",
-        "com.ly.train.flower.common.sample.springboot.ServiceA");
-    ServiceFactory.registerService("serviceB",
-        "com.ly.train.flower.common.sample.springboot.ServiceB");
+    ServiceFactory.registerService("serviceA", ServiceA.class);
+    ServiceFactory.registerService("serviceB", ServiceB.class);
 
     ServiceFlow.buildFlow("async", "serviceA", "serviceB");
 

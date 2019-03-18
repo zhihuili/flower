@@ -28,9 +28,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>flower.assembly</artifactId>
-    <name>flower.assembly</name>
     <packaging>pom</packaging>
-    <url>http://maven.apache.org</url>
 
     <dependencies>
         <dependency>

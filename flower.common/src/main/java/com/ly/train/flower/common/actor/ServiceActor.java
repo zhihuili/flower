@@ -1,23 +1,25 @@
 /**
  * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.ly.train.flower.common.actor;
 
-import static java.util.concurrent.TimeUnit.DAYS;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.service.Aggregate;
@@ -42,7 +44,6 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.UntypedActor;
 import akka.dispatch.Futures;
-import com.ly.train.flower.common.util.ServiceTimer;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
@@ -63,13 +64,13 @@ public class ServiceActor extends UntypedActor {
   Map<String, ActorRef> callers = new ConcurrentHashMap<String, ActorRef>();
 
   final Future<String> delayFuture = Futures.successful("delay");
-  final FiniteDuration maxTimeout = Duration.create(9999, DAYS);
+  final FiniteDuration maxTimeout = Duration.create(9999, TimeUnit.DAYS);
 
   class RefType {
-    ActorRef actorRef;
-    Class messageType;
-    String serviceName;
-    boolean isJoint = false;
+    private ActorRef actorRef;
+    private  Class<?> messageType;
+    private  String serviceName;
+    private  boolean isJoint = false;
 
     public ActorRef getActorRef() {
       return actorRef;
@@ -87,11 +88,11 @@ public class ServiceActor extends UntypedActor {
       isJoint = joint;
     }
 
-    public Class getMessageType() {
+    public Class<?> getMessageType() {
       return messageType;
     }
 
-    public void setMessageType(Class messageType) {
+    public void setMessageType(Class<?> messageType) {
       this.messageType = messageType;
     }
 
@@ -118,15 +119,14 @@ public class ServiceActor extends UntypedActor {
     if (nextServiceNames != null && !nextServiceNames.isEmpty()) {
       for (String str : nextServiceNames) {
         RefType refType = new RefType();
+
+        if (ServiceFactory.getServiceClassName(str)
+            .equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
+          refType.setJoint(true);
+        }
         refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, str, index));
         refType.setMessageType(ServiceLoader.getInstance().getServiceMessageType(str));
         refType.setServiceName(str);
-
-        if (ServiceFactory.getServiceClassName(str)
-                .equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
-          refType.setJoint(true);
-          ServiceTimer.getInstance().add(refType.getActorRef());
-        }
         nextServiceActors.add(refType);
       }
     }

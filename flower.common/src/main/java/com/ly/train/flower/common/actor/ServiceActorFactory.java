@@ -17,25 +17,28 @@ package com.ly.train.flower.common.actor;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActorContext;
-import akka.pattern.Patterns;
-import scala.concurrent.Await;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import akka.pattern.Patterns;
+import scala.concurrent.Await;
 import scala.concurrent.duration.Duration;
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class ServiceActorFactory {
   final static String name = "LocalFlower";
-  final static ActorSystem system = ActorSystem.create(name);
+  final static Config config = ConfigFactory.parseString("").withFallback(ConfigFactory.load());
+  final static ActorSystem system = ActorSystem.create(name, config);
   final static ActorRef _supervisorActorRef =
       system.actorOf(Props.create(SupervisorActor.class), "supervisor");
   static UntypedActorContext supervisorActorContext = null;
   final static int defaultFlowIndex = -1;
-  static Duration timeout = Duration.create(5, SECONDS);
+  static Duration timeout = Duration.create(5, TimeUnit.SECONDS);
   public static Map<String, ActorRef> map = new ConcurrentHashMap<String, ActorRef>();
   static LoggingAdapter log = Logging.getLogger(system, name);
   static {
@@ -64,7 +67,7 @@ public class ServiceActorFactory {
   }
 
   public static void shutdown() {
-    log.info("akka system terminate");
+    log.info("akka system terminate, system : {}", system);
     system.terminate();
   }
 }
