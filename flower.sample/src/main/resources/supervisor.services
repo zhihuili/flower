@@ -1,6 +1,6 @@
-SupervisorService1 = com.ly.train.flower.common.sample.Supervisor.Service1
-SupervisorService2 = com.ly.train.flower.common.sample.Supervisor.Service2
-SupervisorService3 = com.ly.train.flower.common.sample.Supervisor.Service3
-SupervisorService4 = com.ly.train.flower.common.sample.Supervisor.Service4
+SupervisorService1 = com.ly.train.flower.common.sample.supervisor.Service1
+SupervisorService2 = com.ly.train.flower.common.sample.supervisor.Service2
+SupervisorService3 = com.ly.train.flower.common.sample.supervisor.Service3
+SupervisorService4 = com.ly.train.flower.common.sample.supervisor.Service4
 SupervisorService5 = com.ly.train.flower.common.service.AggregateService
 

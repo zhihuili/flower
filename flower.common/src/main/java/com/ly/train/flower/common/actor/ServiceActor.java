@@ -1,22 +1,35 @@
+/**
+ * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.ly.train.flower.common.actor;
 
 import static java.util.concurrent.TimeUnit.DAYS;
-
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.ServiceConstants;
 import com.ly.train.flower.common.service.ServiceFlow;
-import com.ly.train.flower.common.service.containe.FlowContext;
-import com.ly.train.flower.common.service.containe.ServiceContext;
-import com.ly.train.flower.common.service.containe.ServiceFactory;
-import com.ly.train.flower.common.service.containe.ServiceLoader;
+import com.ly.train.flower.common.service.container.FlowContext;
+import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.service.container.ServiceFactory;
+import com.ly.train.flower.common.service.container.ServiceLoader;
 import com.ly.train.flower.common.service.message.Condition;
 import com.ly.train.flower.common.service.message.DefaultMessage;
 import com.ly.train.flower.common.service.message.FirstMessage;
@@ -25,11 +38,11 @@ import com.ly.train.flower.common.service.message.ReturnMessage;
 import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.common.service.web.HttpComplete;
 import com.ly.train.flower.common.service.web.Web;
-
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.UntypedActor;
 import akka.dispatch.Futures;
+import com.ly.train.flower.common.util.ServiceTimer;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
@@ -41,6 +54,7 @@ import scala.concurrent.duration.FiniteDuration;
  *
  */
 public class ServiceActor extends UntypedActor {
+  static final Logger logger = LoggerFactory.getLogger(ServiceActor.class);
   ActorSystem system;
   FlowerService service;
 
@@ -104,14 +118,15 @@ public class ServiceActor extends UntypedActor {
     if (nextServiceNames != null && !nextServiceNames.isEmpty()) {
       for (String str : nextServiceNames) {
         RefType refType = new RefType();
-
-        if (ServiceFactory.getServiceClassName(str)
-            .equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
-          refType.setJoint(true);
-        }
         refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, str, index));
         refType.setMessageType(ServiceLoader.getInstance().getServiceMessageType(str));
         refType.setServiceName(str);
+
+        if (ServiceFactory.getServiceClassName(str)
+                .equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
+          refType.setJoint(true);
+          ServiceTimer.getInstance().add(refType.getActorRef());
+        }
         nextServiceActors.add(refType);
       }
     }
@@ -120,6 +135,7 @@ public class ServiceActor extends UntypedActor {
   @Override
   public void onReceive(Object arg0) throws Throwable {
     if (arg0 == null || !(arg0 instanceof FlowMessage)) {
+
       return;
     }
 
@@ -210,6 +226,5 @@ public class ServiceActor extends UntypedActor {
   /**
    * clear actor
    */
-  private void clear() {
-  }
+  private void clear() {}
 }
