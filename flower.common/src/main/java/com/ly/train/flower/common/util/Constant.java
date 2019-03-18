@@ -13,8 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common;
+/**
+ * 
+ */
+package com.ly.train.flower.common.util;
 
-public class EnvBuilderTest {
+/**
+ * @author leeyazhou
+ *
+ */
+public class Constant {
 
+  public static final String DEFAULT_ENCODING = "UTF-8";
 }

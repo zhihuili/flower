@@ -24,7 +24,7 @@ import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.message.TimerMessage;
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
-public class AggregateService implements Service<Object>, Aggregate {
+public class AggregateService implements Service<Object,Object>, Aggregate {
 
   private static final long DefaultTimeOutMilliseconds = 60000;
 

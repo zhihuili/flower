@@ -19,10 +19,10 @@ import java.util.Set;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
-public class Service4 implements Service<Set> {
+public class Service4 implements Service<Set,Message3> {
 
   @Override
-  public Object process(Set message, ServiceContext context) {
+  public Message3 process(Set message, ServiceContext context) {
     Message2 m = new Message2();
     for (Object o : message) {
 

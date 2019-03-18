@@ -13,21 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.sample.programflow;
+package com.ly.train.flower.common.util;
 
-import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.container.ServiceContext;
+import org.junit.Test;
 
-public class ServiceC implements Service<MessageA,Object> {
+public class EnvBuilderTest {
 
-  @Override
-  /**
-   * print service
-   */
-  public Object process(MessageA message, ServiceContext context) {
-    MessageA ma = (MessageA) message;
-    System.out.println(ma.getS() + " I am " + ma.getI());
-    return null;
+  @Test
+  public void testBuildEnv() throws Exception {
+    EnvBuilder.buildEnv();
   }
-
 }

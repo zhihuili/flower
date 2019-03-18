@@ -22,10 +22,10 @@ import com.ly.train.flower.common.service.container.ServiceContext;
  * @Author: fengyu.zhang
  * @Date: 2019/2/24 14:33
  */
-public class BeginService implements Service<String> {
+public class BeginService implements Service<String,Integer> {
 
     @Override
-    public Object process(String message, ServiceContext context) throws Exception {
+    public Integer process(String message, ServiceContext context) throws Exception {
         Integer result = Integer.valueOf(context.getWeb().getParameter("id"));
         return result;
     }

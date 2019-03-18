@@ -18,10 +18,10 @@ package com.ly.train.flower.common.sample.supervisor;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
-public class Service3 implements Service<Message2> {
+public class Service3 implements Service<Message2,String> {
 
   @Override
-  public Object process(Message2 message, ServiceContext context) throws Throwable {
+  public String process(Message2 message, ServiceContext context) throws Throwable {
     // File file = new File("/Users/yang/tmp/test.file");
     // if (!file.exists()) {
     // FileUtils.write(file, "111", "UTF-8");

@@ -18,7 +18,7 @@ package com.ly.train.flower.common.sample.condition;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
-public class ServiceA implements Service<String> {
+public class ServiceA implements Service<String,Object> {
 
   @Override
   public Object process(String message, ServiceContext context) {

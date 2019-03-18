@@ -42,4 +42,17 @@ public class ServiceContext {
   public void remove(Object key) {
     map.remove(key);
   }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("ServiceContext [map=");
+    builder.append(map);
+    builder.append(", web=");
+    builder.append(web);
+    builder.append("]");
+    return builder.toString();
+  }
+  
+  
 }

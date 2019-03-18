@@ -60,6 +60,13 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>com.ly.train</groupId>
+				<artifactId>flower-bom</artifactId>
+				<version>${project.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>${junit.version}</version>
@@ -191,6 +198,7 @@
 		<module>flower.sample</module>
 		<module>flower.web</module>
 		<module>flower.assembly</module>
+		<module>flower-bom</module>
 	</modules>
 
 	<build>

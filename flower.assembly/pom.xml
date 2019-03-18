@@ -34,17 +34,14 @@
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.center</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.common</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.sample</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
     <build>

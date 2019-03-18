@@ -25,9 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 
 public class Web {
 
-  AsyncContext context;
-  PrintWriter writer;
-  ServletRequest sr;
+  private AsyncContext context;
+  private PrintWriter writer;
+  private ServletRequest sr;
 
   public Web(AsyncContext context) throws IOException {
     this.context = context;

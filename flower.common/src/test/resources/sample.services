@@ -1,0 +1,3 @@
+service1 = com.ly.train.flower.common.sample.textflow.Service1
+service2 = com.ly.train.flower.common.sample.textflow.Service2
+service3 = com.ly.train.flower.common.sample.textflow.Service3

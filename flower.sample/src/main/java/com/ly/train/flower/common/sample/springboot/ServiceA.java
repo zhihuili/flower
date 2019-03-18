@@ -28,12 +28,12 @@ import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFactory;
 
 @BindController(path = "/ServiceA", method = RequestMethod.GET)
-public class ServiceA implements Service<User>, InitController {
+public class ServiceA implements Service<User,Integer>, InitController {
 
   private static final Logger logger = LoggerFactory.getLogger(ServiceA.class);
 
   @Override
-  public Object process(User message, ServiceContext context) throws Exception {
+  public Integer process(User message, ServiceContext context) throws Exception {
     logger.info("message : {}, context:{}", message, context);
     context.getWeb().println(message.toString());
     return message.getId();

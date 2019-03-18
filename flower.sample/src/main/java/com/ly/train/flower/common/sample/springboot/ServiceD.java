@@ -26,7 +26,7 @@ import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFactory;
 
 @BindController(path = "/ServiceD", method = RequestMethod.POST)
-public class ServiceD implements Service<User>, InitController {
+public class ServiceD implements Service<User,Integer>, InitController {
 
     @Override
     public ServiceRouter init() {
@@ -44,7 +44,7 @@ public class ServiceD implements Service<User>, InitController {
     }
 
     @Override
-    public Object process(User message, ServiceContext context) throws Throwable {
+    public Integer process(User message, ServiceContext context) throws Throwable {
         context.getWeb().println("User:" + message.getName());
         return message.getId();
     }

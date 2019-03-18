@@ -20,7 +20,7 @@ import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.web.Flush;
 
-public class ServiceB implements Service<Integer>, Flush, Complete {
+public class ServiceB implements Service<Integer, Object>, Flush, Complete {
   @Override
   public Object process(Integer message, ServiceContext context) throws Exception {
     context.getWeb().println("id:" + String.valueOf(message));

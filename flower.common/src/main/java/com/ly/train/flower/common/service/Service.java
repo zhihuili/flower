@@ -17,7 +17,7 @@ package com.ly.train.flower.common.service;
 
 import com.ly.train.flower.common.service.container.ServiceContext;
 
-public interface Service<T> extends FlowerService {
+public interface Service<P, R> extends FlowerService {
 
-  Object process(T message, ServiceContext context) throws Throwable;
+  R process(P message, ServiceContext context) throws Throwable;
 }
