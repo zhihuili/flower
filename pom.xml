@@ -57,6 +57,7 @@
 		<slf4j-api.version>1.7.26</slf4j-api.version>
 		<logback.version>1.2.3</logback.version>
 		<jetty.version>9.4.14.v20181114</jetty.version>
+		<javassist.version>3.24.1-GA</javassist.version>
 	</properties>
 
 	<dependencyManagement>
@@ -196,6 +197,12 @@
 				<artifactId>jetty-continuation</artifactId>
 				<version>${jetty.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.javassist</groupId>
+				<artifactId>javassist</artifactId>
+				<version>${javassist.version}</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
