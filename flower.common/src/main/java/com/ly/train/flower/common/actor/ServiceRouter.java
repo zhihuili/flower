@@ -14,6 +14,8 @@
 package com.ly.train.flower.common.actor;
 
 import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.AsyncContext;
 import com.ly.train.flower.common.service.message.FlowMessage;
 import akka.actor.ActorRef;
@@ -57,7 +59,7 @@ public class ServiceRouter {
     if (number == 1) {
       return 0;
     }
-    int index = (int) (Math.random() * number);
+    int index = ThreadLocalRandom.current().nextInt(number);
     return index;
   }
 
@@ -67,5 +69,27 @@ public class ServiceRouter {
     }
     currentIndex = 0;
     return currentIndex;
+  }
+
+
+  /**
+   * 当actor个数为2^n个数时才可以使用
+   * @return
+   */
+  private int bitRandomIndex() {
+    if (currentIndex > 1024) {
+      currentIndex = 0;
+    }
+    return (currentIndex++) & (number-1);
+  }
+
+  /**
+   * @return
+   */
+  private int moduleRandomIndex() {
+    if (currentIndex > 1024) {
+      currentIndex = 0;
+    }
+    return (currentIndex++)%(number);
   }
 }
