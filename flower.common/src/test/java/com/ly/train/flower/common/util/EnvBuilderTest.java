@@ -15,12 +15,27 @@
  */
 package com.ly.train.flower.common.util;
 
+import java.lang.reflect.Method;
+import java.util.Set;
 import org.junit.Test;
+import org.reflections.Reflections;
+import com.ly.train.flower.common.annotation.FlowerService;
 
 public class EnvBuilderTest {
 
   @Test
   public void testBuildEnv() throws Exception {
     EnvBuilder.buildEnv();
+  }
+
+  @Test
+  public void testScanner() {
+    Reflections reflections = new Reflections("com");
+    Set<Class<?>> classes = reflections.getTypesAnnotatedWith(FlowerService.class);
+    Set<Method> methods = reflections.getMethodsAnnotatedWith(FlowerService.class);
+    
+    for (Class<?> c : classes) {
+      System.out.println(c);
+    }
   }
 }

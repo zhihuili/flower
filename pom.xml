@@ -55,6 +55,8 @@
 		<velocity.version>1.7</velocity.version>
 		<spring.version>5.1.5.RELEASE</spring.version>
 		<slf4j-api.version>1.7.26</slf4j-api.version>
+		<logback.version>1.2.3</logback.version>
+		<jetty.version>9.4.14.v20181114</jetty.version>
 	</properties>
 
 	<dependencyManagement>
@@ -175,19 +177,25 @@
 				<version>${slf4j-api.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${logback.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-server</artifactId>
-				<version>9.4.14.v20181114</version>
+				<version>${jetty.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-webapp</artifactId>
-				<version>9.4.14.v20181114</version>
+				<version>${jetty.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-continuation</artifactId>
-				<version>9.4.14.v20181114</version>
+				<version>${jetty.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

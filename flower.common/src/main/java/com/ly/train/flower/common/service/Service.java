@@ -17,7 +17,22 @@ package com.ly.train.flower.common.service;
 
 import com.ly.train.flower.common.service.container.ServiceContext;
 
+/**
+ * 
+ * @author leeyazhou
+ *
+ * @param <P> 方法参数
+ * @param <R> 方法处理结果
+ */
 public interface Service<P, R> extends FlowerService {
 
+  /**
+   * 服务处理
+   * 
+   * @param message 信息
+   * @param context 服务上下文
+   * @return 结果
+   * @throws Throwable exception
+   */
   R process(P message, ServiceContext context) throws Throwable;
 }
