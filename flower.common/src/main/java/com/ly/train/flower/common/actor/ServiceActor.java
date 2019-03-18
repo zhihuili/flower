@@ -42,6 +42,7 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.UntypedActor;
 import akka.dispatch.Futures;
+import com.ly.train.flower.common.util.ServiceTimer;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
@@ -117,14 +118,15 @@ public class ServiceActor extends UntypedActor {
     if (nextServiceNames != null && !nextServiceNames.isEmpty()) {
       for (String str : nextServiceNames) {
         RefType refType = new RefType();
-
-        if (ServiceFactory.getServiceClassName(str)
-            .equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
-          refType.setJoint(true);
-        }
         refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, str, index));
         refType.setMessageType(ServiceLoader.getInstance().getServiceMessageType(str));
         refType.setServiceName(str);
+
+        if (ServiceFactory.getServiceClassName(str)
+                .equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
+          refType.setJoint(true);
+          ServiceTimer.getInstance().add(refType.getActorRef());
+        }
         nextServiceActors.add(refType);
       }
     }
