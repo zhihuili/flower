@@ -20,7 +20,7 @@ import com.ly.train.flower.logging.LoggerFactory;
  *
  */
 public class FlowerApplicationListener implements ApplicationListener<ContextRefreshedEvent>, ApplicationContextAware {
-  private static final Logger logger = LoggerFactory.getLogger(FlowerApplicationListener.class);
+  static final Logger logger = LoggerFactory.getLogger(FlowerApplicationListener.class);
   private ApplicationContext applicationContext;
 
   @Override
@@ -38,7 +38,7 @@ public class FlowerApplicationListener implements ApplicationListener<ContextRef
           serviceName = flowerService2.value();
         }
         ServiceFactory.registerFlowerService(serviceName, flowerService);
-        logger.info("注入实例 : " + flowerService);
+        // logger.info("注入实例 : " + flowerService);
       }
     }
 
