@@ -18,7 +18,7 @@ package com.ly.train.flower.common.actor;
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.servlet.AsyncContext;
-import com.ly.train.flower.common.service.message.FlowMessage;
+import com.ly.train.flower.common.service.container.ServiceContext;
 import akka.actor.ActorRef;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
@@ -26,7 +26,7 @@ import scala.concurrent.Await;
 
 public class ServiceRouter {
 
-  private int number;
+  private int number = 2 << 6;
   private int currentIndex = 0;
   private ActorRef[] ar;
   private String flowName;
@@ -36,7 +36,7 @@ public class ServiceRouter {
     this.number = number;
     this.ar = new ActorRef[number];
     for (int i = 0; i < number; i++) {
-      ar[i] = ServiceActorFactory.buildServiceActor(flowName, serviceName, i);
+      this.ar[i] = ServiceActorFactory.buildServiceActor(flowName, serviceName, i);
     }
   }
 
@@ -44,16 +44,29 @@ public class ServiceRouter {
     asyncCallService(message, null);
   }
 
-  public void asyncCallService(Object message, AsyncContext ctx) throws IOException {
-    FlowMessage flowMessage = ServiceUtil.buildFlowMessage(message);
-    ServiceUtil.makeWebContext(flowMessage, ctx);
-    ar[randomIndex()].tell(flowMessage, null);
+  /**
+   * 异步调用
+   * 
+   * @param message
+   * @param ctx
+   * @throws IOException
+   */
+  public <T> void asyncCallService(T message, AsyncContext ctx) throws IOException {
+    ServiceContext serviceContext = ServiceContext.context(message, ctx);
+    this.ar[randomIndex()].tell(serviceContext, ActorRef.noSender());
   }
 
-  public Object syncCallService(Object o) throws Exception {
-    FlowMessage flowMessage = ServiceUtil.buildFlowMessage(o);
-    ServiceUtil.makeWebContext(flowMessage, null);
-    return Await.result(Patterns.ask(ar[randomIndex()], flowMessage, new Timeout(ServiceFacade.duration)),
+  /**
+   * 同步调用
+   * 
+   * @param message message
+   * @return
+   * @throws Exception
+   */
+  public Object syncCallService(Object message) throws Exception {
+    ServiceContext serviceContext = ServiceContext.context(message);
+
+    return Await.result(Patterns.ask(ar[randomIndex()], serviceContext, new Timeout(ServiceFacade.duration)),
         ServiceFacade.duration);
   }
 

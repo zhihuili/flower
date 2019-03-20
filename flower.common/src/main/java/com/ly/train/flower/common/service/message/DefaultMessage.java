@@ -18,10 +18,10 @@ package com.ly.train.flower.common.service.message;
 public class DefaultMessage {
   private DefaultMessage() {}
 
-  private static DefaultMessage i = new DefaultMessage();
+  private static DefaultMessage defaultMessage = new DefaultMessage();
 
   public static DefaultMessage getMessage() {
-    return i;
+    return defaultMessage;
   }
 
 }

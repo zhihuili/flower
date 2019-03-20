@@ -26,16 +26,20 @@ import com.ly.train.flower.common.util.Constant;
 
 public class Web {
 
-  private AsyncContext context;
+  private AsyncContext asyncContext;
   private PrintWriter writer;
-  private ServletRequest sr;
+  private ServletRequest servletRequest;
 
-  public Web(AsyncContext context) throws IOException {
-    this.context = context;
-    this.sr = context.getRequest();
+  public Web(AsyncContext context) {
+    this.asyncContext = context;
+    this.servletRequest = context.getRequest();
     context.getResponse().setContentType(Constant.DEFAULT_CONTENT_TEXT);
     context.getResponse().setCharacterEncoding(Constant.ENCODING_UTF_8);
-    this.writer = context.getResponse().getWriter();
+    try {
+      this.writer = context.getResponse().getWriter();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   public void print(String s) throws IOException {
@@ -51,11 +55,11 @@ public class Web {
   }
 
   public void complete() {
-    context.complete();
+    asyncContext.complete();
   }
 
   public String getParameter(String para) {
-    return sr.getParameter(para);
+    return servletRequest.getParameter(para);
   }
 
   /**
@@ -67,7 +71,7 @@ public class Web {
    * @since JDK 1.7+
    */
   public String getPostJson() throws IOException {
-    HttpServletRequest httpSr = (HttpServletRequest) sr;
+    HttpServletRequest httpSr = (HttpServletRequest) servletRequest;
     if (!httpSr.getMethod().equalsIgnoreCase("POST") || null == httpSr.getContentType()) {
       return null;
     }

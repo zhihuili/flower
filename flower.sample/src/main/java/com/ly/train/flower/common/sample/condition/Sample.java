@@ -28,20 +28,13 @@ public class Sample {
   }
 
   public static void buildServiceEnv() {
-    ServiceFactory.registerService("serviceA",
-        "com.ly.train.flower.common.sample.condition.ServiceA");
-    ServiceFactory.registerService("serviceB",
-        "com.ly.train.flower.common.sample.condition.ServiceB");
-    ServiceFactory.registerService("serviceC",
-        "com.ly.train.flower.common.sample.condition.ServiceC");
-    ServiceFactory.registerService("serviceE",
-        "com.ly.train.flower.common.sample.condition.ServiceE");
-    ServiceFactory.registerService("serviceD",
-        "com.ly.train.flower.common.sample.condition.ServiceD");
-    ServiceFactory.registerService("serviceF",
-        "com.ly.train.flower.common.sample.condition.ServiceF");
-    ServiceFactory.registerService("serviceG",
-        "com.ly.train.flower.common.sample.condition.ServiceG");
+    ServiceFactory.registerService("serviceA", ServiceA.class);
+    ServiceFactory.registerService("serviceB", ServiceB.class);
+    ServiceFactory.registerService("serviceC", ServiceC.class);
+    ServiceFactory.registerService("serviceE", ServiceE.class);
+    ServiceFactory.registerService("serviceD", ServiceD.class);
+    ServiceFactory.registerService("serviceF", ServiceF.class);
+    ServiceFactory.registerService("serviceG", ServiceG.class);
     ServiceFactory.registerService("serviceCondition",
         "com.ly.train.flower.common.service.ConditionService;serviceF,serviceG");
 

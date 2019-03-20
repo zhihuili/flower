@@ -17,58 +17,49 @@ package com.ly.train.flower.common.actor;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import akka.actor.AbstractActor;
-import akka.actor.AbstractActor.ActorContext;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import akka.actor.Props;
-import akka.event.Logging;
-import akka.event.LoggingAdapter;
-import akka.pattern.Patterns;
-import scala.concurrent.Await;
-import scala.concurrent.duration.Duration;
 
 public class ServiceActorFactory {
-  final static String name = "LocalFlower";
-  final static Config config = ConfigFactory.parseString("").withFallback(ConfigFactory.load());
-  final static ActorSystem system = ActorSystem.create(name, config);
-  final static ActorRef _supervisorActorRef = system.actorOf(Props.create(SupervisorActor.class), "supervisor");
-
-  static AbstractActor.ActorContext supervisorActorContext = null;
-  final static int defaultFlowIndex = -1;
-  static Duration timeout = Duration.create(5, TimeUnit.SECONDS);
-  public static Map<String, ActorRef> map = new ConcurrentHashMap<String, ActorRef>();
-  static LoggingAdapter log = Logging.getLogger(system, name);
-  static {
-    try {
-      supervisorActorContext =
-          (ActorContext) Await.result(Patterns.ask(_supervisorActorRef, "getContext", 5000), timeout);
-    } catch (Exception e) {
-      log.error(e.getMessage());
-    }
-  }
+  private static final Logger logger = LoggerFactory.getLogger(ServiceActorFactory.class);
+  private static ActorSystem actorSystem;
+  private final static int defaultFlowIndex = -1;
+  private static Map<String, ActorRef> actorRefCache = new ConcurrentHashMap<String, ActorRef>();
 
   public static synchronized ActorRef buildServiceActor(String flowName, String serviceName) {
     return buildServiceActor(flowName, serviceName, defaultFlowIndex);
   }
 
   public static synchronized ActorRef buildServiceActor(String flowName, String serviceName, int index) {
-    final String cacheKey = flowName + serviceName + index;
-    ActorRef actor = map.get(cacheKey);
-    if (actor != null) {
-      return actor;
+    final String cacheKey = flowName + "_" + serviceName + "_" + index;
+    ActorRef actorRef = actorRefCache.get(cacheKey);
+    if (actorRef != null) {
+      return actorRef;
     }
-    Props props = Props.create(ServiceActor.class, flowName, serviceName, index, system);
-    actor = supervisorActorContext.actorOf(props);
-    map.put(cacheKey, actor);
-    return actor;
+    actorRef = getActorSystem().actorOf(ServiceActor.props(flowName, serviceName, index, getActorSystem()));
+    actorRefCache.put(cacheKey, actorRef);
+    return actorRef;
+  }
+
+  private static ActorSystem getActorSystem() {
+    if (actorSystem == null) {
+      synchronized (ServiceActorFactory.class) {
+        if (actorSystem == null) {
+          String name = "LocalFlower";
+          Config config = ConfigFactory.parseString("").withFallback(ConfigFactory.load());
+          ServiceActorFactory.actorSystem = ActorSystem.create(name, config);
+        }
+      }
+    }
+    return actorSystem;
   }
 
   public static void shutdown() {
-    log.info("akka system terminate, system : {}", system);
-    system.terminate();
+    logger.info("akka system terminate, system : {}", actorSystem);
+    actorSystem.terminate();
   }
 }

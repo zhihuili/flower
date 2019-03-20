@@ -28,7 +28,6 @@ import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.ServiceConstants;
 import com.ly.train.flower.common.service.ServiceFlow;
-import com.ly.train.flower.common.service.container.FlowContext;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceLoader;
@@ -40,9 +39,11 @@ import com.ly.train.flower.common.service.message.ReturnMessage;
 import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.common.service.web.HttpComplete;
 import com.ly.train.flower.common.service.web.Web;
+import com.ly.train.flower.common.util.CloneUtil;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.actor.Props;
 import akka.dispatch.Futures;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
@@ -56,7 +57,6 @@ import scala.concurrent.duration.FiniteDuration;
  */
 public class ServiceActor extends AbstractActor {
   static final Logger logger = LoggerFactory.getLogger(ServiceActor.class);
-  private ActorSystem system;
   private FlowerService service;
   private String serviceName;
   private Set<RefType> nextServiceActors;
@@ -66,7 +66,130 @@ public class ServiceActor extends AbstractActor {
   protected final Future<String> delayFuture = Futures.successful("delay");
   protected final FiniteDuration maxTimeout = Duration.create(9999, TimeUnit.DAYS);
 
-  class RefType {
+  static public Props props(String flowName, String serviceName, int index, ActorSystem system) {
+    return Props.create(ServiceActor.class, () -> new ServiceActor(flowName, serviceName, index, system));
+  }
+
+  public ServiceActor(String flowName, String serviceName, int index, ActorSystem system) throws Exception {
+    this.serviceName = serviceName;
+    this.service = ServiceFactory.getService(serviceName);
+    if (service instanceof Aggregate) {
+      ((Aggregate) service).setSourceNumber(ServiceFlow.getServiceConcig(flowName, serviceName).getJointSourceNumber());
+    }
+    this.nextServiceActors = new HashSet<RefType>();
+    Set<String> nextServiceNames = ServiceFlow.getNextFlow(flowName, serviceName);
+    if (nextServiceNames != null && !nextServiceNames.isEmpty()) {
+      for (String nextServiceName : nextServiceNames) {
+        RefType refType = new RefType();
+
+        if (ServiceFactory.getServiceClassName(nextServiceName).equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
+          refType.setJoint(true);
+        }
+        refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, nextServiceName, index));
+        refType.setMessageType(ServiceLoader.getInstance().getServiceMessageType(nextServiceName));
+        refType.setServiceName(nextServiceName);
+        nextServiceActors.add(refType);
+      }
+    }
+  }
+
+  @Override
+  public Receive createReceive() {
+    return receiveBuilder().match(ServiceContext.class, fm -> {
+      try {
+        onReceive(fm);
+      } catch (Throwable e) {
+        logger.error("", e);
+      }
+    }).matchAny(no -> {
+      logger.warn("unhandled message, so discard it. {}", no);
+    }).build();
+  }
+
+  public void onReceive(ServiceContext serviceContext) throws Throwable {
+    FlowMessage fm = serviceContext.getFlowMessage();
+    // receive returned message，send to caller
+    if (fm.getMessage() instanceof ReturnMessage) {
+      callers.get(fm.getTransactionId()).tell(fm.getMessage(), getSelf());
+      clear(fm.getTransactionId());
+      return;
+    }
+
+    // receive started message, set caller
+    if (fm.getMessage() instanceof FirstMessage) {
+      callers.put(fm.getTransactionId(), getSender());
+    }
+
+    Object retsult = DefaultMessage.getMessage();// set default
+    try {
+      this.service = ServiceFactory.getService(serviceName);
+      retsult = ((Service) service).process(fm.getMessage(), serviceContext);
+    } catch (Throwable e) {
+      Web web = serviceContext.getWeb();
+      if (web != null) {
+        web.complete();
+      }
+      throw e;
+    }
+
+    Web web = serviceContext.getWeb();
+    if (service instanceof Complete) {
+      // FlowContext.removeServiceContext(fm.getTransactionId());
+    }
+    if (web != null) {
+      if (service instanceof Flush) {
+        web.flush();
+      }
+      if (service instanceof HttpComplete || service instanceof Complete) {
+        web.complete();
+      }
+    }
+
+    if (retsult == null)// for joint service
+      return;
+    FlowMessage flowMessage = new FlowMessage();
+    flowMessage.setMessage(retsult);
+    flowMessage.setTransactionId(fm.getTransactionId());
+    if (nextServiceActors != null && !nextServiceActors.isEmpty()) {
+      for (RefType refType : nextServiceActors) {
+        if (refType.isJoint()) {
+          FlowMessage flowMessage1 = (FlowMessage) CloneUtil.clone(fm);
+          flowMessage1.setMessage(retsult);
+          serviceContext.setFlowMessage(flowMessage1);
+        }
+        // condition fork for one-service to multi-service
+        if (refType.getMessageType().isInstance(retsult)) {
+          if (!(retsult instanceof Condition) || !(((Condition) retsult).getCondition() instanceof String)
+              || stringInStrings(refType.getServiceName(), ((Condition) retsult).getCondition().toString())) {
+            refType.getActorRef().tell(serviceContext, getSelf());
+          }
+        }
+      }
+    } else {
+
+    }
+  }
+
+  /**
+   * Is String s in String ss?
+   * 
+   * @param s "service1"
+   * @param ss “service1,service2”
+   * @return
+   */
+  private boolean stringInStrings(String s, String ss) {
+    String[] sa = ss.split(",");
+    if (sa != null && sa.length > 0) {
+      for (String se : sa) {
+        if (se.equals(s)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private class RefType {
     private ActorRef actorRef;
     private Class<?> messageType;
     private String serviceName;
@@ -106,131 +229,10 @@ public class ServiceActor extends AbstractActor {
 
   }
 
-  public ServiceActor(String flowName, String serviceName, int index, ActorSystem system) throws Exception {
-    this.system = system;
-    this.serviceName = serviceName;
-    this.service = ServiceFactory.getService(serviceName);
-    if (service instanceof Aggregate) {
-      ((Aggregate) service).setSourceNumber(ServiceFlow.getServiceConcig(flowName, serviceName).getJointSourceNumber());
-    }
-    this.nextServiceActors = new HashSet<RefType>();
-    Set<String> nextServiceNames = ServiceFlow.getNextFlow(flowName, serviceName);
-    if (nextServiceNames != null && !nextServiceNames.isEmpty()) {
-      for (String str : nextServiceNames) {
-        RefType refType = new RefType();
-
-        if (ServiceFactory.getServiceClassName(str).equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
-          refType.setJoint(true);
-        }
-        refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, str, index));
-        refType.setMessageType(ServiceLoader.getInstance().getServiceMessageType(str));
-        refType.setServiceName(str);
-        nextServiceActors.add(refType);
-      }
-    }
-  }
-
-  @Override
-  public Receive createReceive() {
-    return receiveBuilder().match(FlowMessage.class, fm -> {
-      try {
-        onReceive(fm);
-      } catch (Throwable e) {
-        logger.error("", e);
-      }
-    }).matchAny(no -> {
-      logger.warn("unhandled message, so discard it. {}", no);
-    }).build();
-  }
-
-  public void onReceive(FlowMessage fm) throws Throwable {
-
-    // receive returned message，send to caller
-    if (fm.getMessage() instanceof ReturnMessage) {
-      callers.get(fm.getTransactionId()).tell(fm.getMessage(), getSelf());
-      callers.remove(fm.getTransactionId());
-      return;
-    }
-
-    // receive started message, set caller
-    if (fm.getMessage() instanceof FirstMessage) {
-      callers.put(fm.getTransactionId(), getSender());
-    }
-
-    ServiceContext context = FlowContext.getServiceContext(fm.getTransactionId());
-    Object o = DefaultMessage.getMessage();// set default
-    try {
-      this.service = ServiceFactory.getService(serviceName);
-      o = ((Service) service).process(fm.getMessage(), context);
-    } catch (Exception e) {
-      Web web = context.getWeb();
-      FlowContext.removeServiceContext(fm.getTransactionId());
-      if (web != null) {
-        web.complete();
-      }
-      throw e;
-    }
-
-    Web web = context.getWeb();
-    if (service instanceof Complete) {
-      FlowContext.removeServiceContext(fm.getTransactionId());
-    }
-    if (web != null) {
-      if (service instanceof Flush) {
-        web.flush();
-      }
-      if (service instanceof HttpComplete || service instanceof Complete) {
-        web.complete();
-      }
-    }
-
-    if (o == null)// for joint service
-      return;
-    FlowMessage flowMessage = new FlowMessage();
-    flowMessage.setMessage(o);
-    flowMessage.setTransactionId(fm.getTransactionId());
-    if (nextServiceActors != null && !nextServiceActors.isEmpty()) {
-      for (RefType refType : nextServiceActors) {
-        if (refType.isJoint()) {
-          FlowMessage flowMessage1 = new FlowMessage();
-          flowMessage1.setMessage(o);
-          flowMessage1.setTransactionId(fm.getTransactionId());
-          flowMessage.setMessage(flowMessage1);
-        }
-        // condition fork for one-service to multi-service
-        if (refType.getMessageType().isInstance(o)) {
-          if (!(o instanceof Condition) || !(((Condition) o).getCondition() instanceof String)
-              || stringInStrings(refType.getServiceName(), ((Condition) o).getCondition().toString())) {
-            refType.getActorRef().tell(flowMessage, getSelf());
-          }
-        }
-      }
-    } else {
-
-    }
-  }
-
-  /**
-   * Is String s in String ss?
-   * 
-   * @param s "service1"
-   * @param ss “service1,service2”
-   * @return
-   */
-  private boolean stringInStrings(String s, String ss) {
-    String[] sa = ss.split(",");
-    if (sa != null && sa.length > 0) {
-      for (String se : sa) {
-        if (se.equals(s)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
   /**
    * clear actor
    */
-  void clear() {}
+  void clear(String transactionId) {
+    callers.remove(transactionId);
+  }
 }

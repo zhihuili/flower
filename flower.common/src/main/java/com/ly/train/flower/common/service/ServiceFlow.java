@@ -27,7 +27,7 @@ import com.ly.train.flower.common.util.StringUtil;
 public class ServiceFlow {
 
   // Map<flowName,Map<sourceServiceName,Set<targetServiceName>>>
-  private static Map<String, Map<String, Set<String>>> flows =
+  private static Map<String, Map<String, Set<String>>> flowCache =
       new ConcurrentHashMap<String, Map<String, Set<String>>>();
 
   // Map<flowName, Map<serviceName, ServiceConfig>>
@@ -53,10 +53,10 @@ public class ServiceFlow {
     if ("null".equals(nextServiceName.trim().toLowerCase())) {
       return;
     }
-    Map<String, Set<String>> flow = flows.get(flowName);
+    Map<String, Set<String>> flow = flowCache.get(flowName);
     if (flow == null) {
       flow = new ConcurrentHashMap<String, Set<String>>();
-      flows.put(flowName, flow);
+      flowCache.put(flowName, flow);
     }
 
     Set<String> set = flow.get(preServiceName);
@@ -94,7 +94,7 @@ public class ServiceFlow {
   }
 
   public static Set<String> getNextFlow(String flowName, String serviceName) {
-    Map<String, Set<String>> flow = flows.get(flowName);
+    Map<String, Set<String>> flow = flowCache.get(flowName);
     if (flow == null)
       return null;
     return flow.get(serviceName);

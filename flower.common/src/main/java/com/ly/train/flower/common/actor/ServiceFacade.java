@@ -15,12 +15,12 @@
  */
 package com.ly.train.flower.common.actor;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.AsyncContext;
-import com.ly.train.flower.common.service.message.FlowMessage;
+import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 import akka.pattern.Patterns;
@@ -31,16 +31,15 @@ import scala.concurrent.duration.FiniteDuration;
 
 public class ServiceFacade {
   private static final Logger logger = LoggerFactory.getLogger(ServiceFacade.class);
-  public static Map<String, ServiceRouter> mapRouter = new ConcurrentHashMap<String, ServiceRouter>();
+  private static Map<String, ServiceRouter> mapRouter = new ConcurrentHashMap<String, ServiceRouter>();
 
   // TODO user define duration
-  public static FiniteDuration duration = Duration.create(3, SECONDS);
+  static FiniteDuration duration = Duration.create(3, TimeUnit.SECONDS);
 
-  public static void asyncCallService(String flowName, String serviceName, Object o, AsyncContext ctx)
+  public static void asyncCallService(String flowName, String serviceName, Object message, AsyncContext ctx)
       throws IOException {
-    FlowMessage flowMessage = ServiceUtil.buildFlowMessage(o);
-    ServiceUtil.makeWebContext(flowMessage, ctx);
-    ServiceActorFactory.buildServiceActor(flowName, serviceName).tell(flowMessage, null);
+    ServiceContext context = ServiceContext.context(message, ctx);
+    ServiceActorFactory.buildServiceActor(flowName, serviceName).tell(context, null);
   }
 
   public static void asyncCallService(String flowName, String serviceName, Object o) throws IOException {
@@ -50,11 +49,10 @@ public class ServiceFacade {
   /*
    * syncCallService 同步调用会引起阻塞，因此需要在外面try catch异常TimeoutException
    */
-  public static Object syncCallService(String flowName, String serviceName, Object o) throws Exception {
-    FlowMessage flowMessage = ServiceUtil.buildFlowMessage(o);
-    ServiceUtil.makeWebContext(flowMessage, null);
+  public static Object syncCallService(String flowName, String serviceName, Object message) throws Exception {
+    ServiceContext context = ServiceContext.context(message);
     return Await.result(
-        Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName), flowMessage, new Timeout(duration)),
+        Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName), context, new Timeout(duration)),
         duration);
   }
 

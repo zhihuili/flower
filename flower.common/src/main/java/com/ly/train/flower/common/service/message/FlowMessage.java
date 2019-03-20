@@ -15,16 +15,25 @@
  */
 package com.ly.train.flower.common.service.message;
 
-public class FlowMessage {
-  private String TransactionId;
+import java.io.Serializable;
+import java.util.UUID;
+
+public class FlowMessage implements Serializable {
+  private static final long serialVersionUID = 1L;
+  private String transactionId;
   private Object message;
 
-  public String getTransactionId() {
-    return TransactionId;
+  public FlowMessage() {
+    this.transactionId = UUID.randomUUID().toString().replaceAll("-", "");
   }
 
-  public void setTransactionId(String transactionId) {
-    this.TransactionId = transactionId;
+  public FlowMessage(Object message) {
+    this();
+    this.message = message;
+  }
+
+  public String getTransactionId() {
+    return transactionId;
   }
 
   public Object getMessage() {
@@ -34,4 +43,9 @@ public class FlowMessage {
   public void setMessage(Object message) {
     this.message = message;
   }
+
+  public void setTransactionId(String transactionId) {
+    this.transactionId = transactionId;
+  }
+
 }

@@ -16,12 +16,37 @@
 package com.ly.train.flower.common.service.container;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.servlet.AsyncContext;
+import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.web.Web;
 
 public class ServiceContext {
-  private Map<Object, Object> map = new ConcurrentHashMap<Object, Object>();
+
+  /**
+   * 附属参数
+   */
+  private Map<String, Object> attachments;
+  private final String id = UUID.randomUUID().toString().replaceAll("-", "");
   private Web web;
+
+  private FlowMessage flowMessage;
+
+  private ServiceContext() {}
+
+  public static <T> ServiceContext context(T message, AsyncContext ctx) {
+    ServiceContext context = new ServiceContext();
+    context.setFlowMessage(new FlowMessage(message));
+    if (ctx != null) {
+      context.setWeb(new Web(ctx));
+    }
+    return context;
+  }
+
+  public static <T> ServiceContext context(T message) {
+    return context(message, null);
+  }
 
   public Web getWeb() {
     return web;
@@ -31,28 +56,45 @@ public class ServiceContext {
     this.web = web;
   }
 
-  public void put(Object key, Object value) {
-    map.put(key, value);
+  public void addAttachment(String key, Object value) {
+    if (attachments == null) {
+      attachments = new ConcurrentHashMap<String, Object>();
+    }
+    attachments.put(key, value);
   }
 
-  public Object get(Object key) {
-    return map.get(key);
+  public Object getAttachment(String key) {
+    return attachments.get(key);
   }
 
-  public void remove(Object key) {
-    map.remove(key);
+  public void removeAttachment(String key) {
+    attachments.remove(key);
+  }
+
+
+
+  public FlowMessage getFlowMessage() {
+    return flowMessage;
+  }
+
+  public void setFlowMessage(FlowMessage flowMessage) {
+    this.flowMessage = flowMessage;
+  }
+
+  public String getId() {
+    return id;
   }
 
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("ServiceContext [map=");
-    builder.append(map);
+    builder.append("ServiceContext [attachments=");
+    builder.append(attachments);
     builder.append(", web=");
     builder.append(web);
     builder.append("]");
     return builder.toString();
   }
-  
-  
+
+
 }
