@@ -28,7 +28,7 @@ import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFactory;
 
 @BindController(path = "/ServiceA", method = RequestMethod.GET)
-public class ServiceA implements Service<User,Integer>, InitController {
+public class ServiceA implements Service<User, Integer>, InitController {
 
   private static final Logger logger = LoggerFactory.getLogger(ServiceA.class);
 
@@ -46,10 +46,8 @@ public class ServiceA implements Service<User,Integer>, InitController {
   }
 
   private static void buildServiceEnv() {
-    ServiceFactory.registerService("serviceA",
-        "com.ly.train.flower.common.sample.springboot.ServiceA");
-    ServiceFactory.registerService("serviceB",
-        "com.ly.train.flower.common.sample.springboot.ServiceB");
+    ServiceFactory.registerService("serviceA", ServiceA.class.getName());
+    ServiceFactory.registerService("serviceB", ServiceB.class.getName());
 
     ServiceFlow.buildFlow("async", "serviceA", "serviceB");
   }

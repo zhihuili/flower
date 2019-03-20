@@ -20,8 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class FlowContext {
 
-  private static final Map<String, ServiceContext> flowContext =
-      new ConcurrentHashMap<String, ServiceContext>();
+  private static final Map<String, ServiceContext> flowContext = new ConcurrentHashMap<String, ServiceContext>();
 
   public static void putServiceContext(String uuid, ServiceContext serviceContext) {
     flowContext.put(uuid, serviceContext);

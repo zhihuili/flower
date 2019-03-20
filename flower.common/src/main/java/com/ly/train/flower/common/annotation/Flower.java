@@ -16,18 +16,28 @@
 /**
  * 
  */
-package com.ly.train.flower.common.util;
+package com.ly.train.flower.common.annotation;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author leeyazhou
  *
  */
-public class ArrayUtil {
-  public static boolean isEmpty(final Object[] array) {
-    return array == null || array.length == 0;
-  }
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Flower {
 
-  public static boolean isNotEmpty(final Object[] array) {
-    return !isEmpty(array);
-  }
+  /**
+   * flow name
+   * 
+   * @return flowName
+   */
+  String value();
+
 }

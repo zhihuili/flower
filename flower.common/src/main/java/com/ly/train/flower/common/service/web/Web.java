@@ -22,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import com.ly.train.flower.common.util.Constant;
 
 public class Web {
 
@@ -32,8 +33,9 @@ public class Web {
   public Web(AsyncContext context) throws IOException {
     this.context = context;
     this.sr = context.getRequest();
+    context.getResponse().setContentType(Constant.DEFAULT_CONTENT_TEXT);
+    context.getResponse().setCharacterEncoding(Constant.ENCODING_UTF_8);
     this.writer = context.getResponse().getWriter();
-
   }
 
   public void print(String s) throws IOException {
@@ -77,7 +79,7 @@ public class Web {
     }
     String charsetName = httpSr.getCharacterEncoding();
     if (null == charsetName) {
-      charsetName = "UTF-8";
+      charsetName = Constant.ENCODING_UTF_8;
     }
     byte[] b = new byte[httpSr.getContentLength()];
     try (InputStream is = httpSr.getInputStream()) {

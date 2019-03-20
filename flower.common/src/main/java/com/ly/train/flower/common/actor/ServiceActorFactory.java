@@ -35,8 +35,7 @@ public class ServiceActorFactory {
   final static String name = "LocalFlower";
   final static Config config = ConfigFactory.parseString("").withFallback(ConfigFactory.load());
   final static ActorSystem system = ActorSystem.create(name, config);
-  final static ActorRef _supervisorActorRef =
-      system.actorOf(Props.create(SupervisorActor.class), "supervisor");
+  final static ActorRef _supervisorActorRef = system.actorOf(Props.create(SupervisorActor.class), "supervisor");
 
   static AbstractActor.ActorContext supervisorActorContext = null;
   final static int defaultFlowIndex = -1;
@@ -45,8 +44,8 @@ public class ServiceActorFactory {
   static LoggingAdapter log = Logging.getLogger(system, name);
   static {
     try {
-      supervisorActorContext = (ActorContext) Await
-          .result(Patterns.ask(_supervisorActorRef, "getContext", 5000), timeout);
+      supervisorActorContext =
+          (ActorContext) Await.result(Patterns.ask(_supervisorActorRef, "getContext", 5000), timeout);
     } catch (Exception e) {
       log.error(e.getMessage());
     }
@@ -56,15 +55,15 @@ public class ServiceActorFactory {
     return buildServiceActor(flowName, serviceName, defaultFlowIndex);
   }
 
-  public static synchronized ActorRef buildServiceActor(String flowName, String serviceName,
-      int index) {
-    ActorRef actor = map.get(flowName + serviceName + index);
+  public static synchronized ActorRef buildServiceActor(String flowName, String serviceName, int index) {
+    final String cacheKey = flowName + serviceName + index;
+    ActorRef actor = map.get(cacheKey);
     if (actor != null) {
       return actor;
     }
     Props props = Props.create(ServiceActor.class, flowName, serviceName, index, system);
     actor = supervisorActorContext.actorOf(props);
-    map.put(flowName + serviceName + index, actor);
+    map.put(cacheKey, actor);
     return actor;
   }
 

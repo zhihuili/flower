@@ -29,10 +29,12 @@ public class ServiceRouter {
   private int number;
   private int currentIndex = 0;
   private ActorRef[] ar;
+  private String flowName;
+  private String serviceName;
 
   public ServiceRouter(String flowName, String serviceName, int number) {
     this.number = number;
-    ar = new ActorRef[number];
+    this.ar = new ActorRef[number];
     for (int i = 0; i < number; i++) {
       ar[i] = ServiceActorFactory.buildServiceActor(flowName, serviceName, i);
     }
@@ -51,8 +53,7 @@ public class ServiceRouter {
   public Object syncCallService(Object o) throws Exception {
     FlowMessage flowMessage = ServiceUtil.buildFlowMessage(o);
     ServiceUtil.makeWebContext(flowMessage, null);
-    return Await.result(
-        Patterns.ask(ar[randomIndex()], flowMessage, new Timeout(ServiceFacade.duration)),
+    return Await.result(Patterns.ask(ar[randomIndex()], flowMessage, new Timeout(ServiceFacade.duration)),
         ServiceFacade.duration);
   }
 
@@ -103,4 +104,22 @@ public class ServiceRouter {
     }
     return (currentIndex++) % (number);
   }
+
+  public String getFlowName() {
+    return flowName;
+  }
+
+  public void setFlowName(String flowName) {
+    this.flowName = flowName;
+  }
+
+  public String getServiceName() {
+    return serviceName;
+  }
+
+  public void setServiceName(String serviceName) {
+    this.serviceName = serviceName;
+  }
+
+
 }

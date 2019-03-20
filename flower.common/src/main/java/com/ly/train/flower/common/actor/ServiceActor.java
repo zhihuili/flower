@@ -58,7 +58,7 @@ public class ServiceActor extends AbstractActor {
   static final Logger logger = LoggerFactory.getLogger(ServiceActor.class);
   private ActorSystem system;
   private FlowerService service;
-
+  private String serviceName;
   private Set<RefType> nextServiceActors;
 
   private Map<String, ActorRef> callers = new ConcurrentHashMap<String, ActorRef>();
@@ -106,13 +106,12 @@ public class ServiceActor extends AbstractActor {
 
   }
 
-  public ServiceActor(String flowName, String serviceName, int index, ActorSystem system)
-      throws Exception {
+  public ServiceActor(String flowName, String serviceName, int index, ActorSystem system) throws Exception {
     this.system = system;
+    this.serviceName = serviceName;
     this.service = ServiceFactory.getService(serviceName);
     if (service instanceof Aggregate) {
-      ((Aggregate) service).setSourceNumber(
-          ServiceFlow.getServiceConcig(flowName, serviceName).getJointSourceNumber());
+      ((Aggregate) service).setSourceNumber(ServiceFlow.getServiceConcig(flowName, serviceName).getJointSourceNumber());
     }
     this.nextServiceActors = new HashSet<RefType>();
     Set<String> nextServiceNames = ServiceFlow.getNextFlow(flowName, serviceName);
@@ -120,8 +119,7 @@ public class ServiceActor extends AbstractActor {
       for (String str : nextServiceNames) {
         RefType refType = new RefType();
 
-        if (ServiceFactory.getServiceClassName(str)
-            .equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
+        if (ServiceFactory.getServiceClassName(str).equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
           refType.setJoint(true);
         }
         refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, str, index));
@@ -162,6 +160,7 @@ public class ServiceActor extends AbstractActor {
     ServiceContext context = FlowContext.getServiceContext(fm.getTransactionId());
     Object o = DefaultMessage.getMessage();// set default
     try {
+      this.service = ServiceFactory.getService(serviceName);
       o = ((Service) service).process(fm.getMessage(), context);
     } catch (Exception e) {
       Web web = context.getWeb();
@@ -201,12 +200,13 @@ public class ServiceActor extends AbstractActor {
         // condition fork for one-service to multi-service
         if (refType.getMessageType().isInstance(o)) {
           if (!(o instanceof Condition) || !(((Condition) o).getCondition() instanceof String)
-              || stringInStrings(refType.getServiceName(),
-                  ((Condition) o).getCondition().toString())) {
+              || stringInStrings(refType.getServiceName(), ((Condition) o).getCondition().toString())) {
             refType.getActorRef().tell(flowMessage, getSelf());
           }
         }
       }
+    } else {
+
     }
   }
 

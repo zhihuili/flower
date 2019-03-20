@@ -16,18 +16,43 @@
 /**
  * 
  */
-package com.ly.train.flower.common.util;
+package com.ly.train.flower.springboot.model;
 
 /**
  * @author leeyazhou
  *
  */
-public class ArrayUtil {
-  public static boolean isEmpty(final Object[] array) {
-    return array == null || array.length == 0;
+public class User {
+
+  private String name;
+  private int age;
+
+  public String getName() {
+    return name;
   }
 
-  public static boolean isNotEmpty(final Object[] array) {
-    return !isEmpty(array);
+  public void setName(String name) {
+    this.name = name;
   }
+
+  public int getAge() {
+    return age;
+  }
+
+  public void setAge(int age) {
+    this.age = age;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("User [name=");
+    builder.append(name);
+    builder.append(", age=");
+    builder.append(age);
+    builder.append("]");
+    return builder.toString();
+  }
+
+
 }

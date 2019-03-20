@@ -24,17 +24,17 @@ import com.ly.train.flower.common.service.FlowerService;
 public class ServiceFactory {
   private static final Logger logger = LoggerFactory.getLogger(ServiceFactory.class);
   private static Map<String, String> serviceMap = new ConcurrentHashMap<String, String>();
-  private static Map<String, FlowerService> flowerServiceMap =
-      new ConcurrentHashMap<String, FlowerService>();
+  private static Map<String, FlowerService> flowerServiceMap = new ConcurrentHashMap<String, FlowerService>();
 
   public static void registerService(String serviceName, String serviceClass) {
     String ret = serviceMap.put(serviceName, serviceClass);
     if (ret != null) {
-      logger.warn("service is alread exist. serviceName : {}, serviceClass : {}", serviceName,
-          serviceClass);
+      logger.warn("service is alread exist. serviceName : {}, serviceClass : {}", serviceName, serviceClass);
+    } else {
+      logger.info("register service {} : {}", serviceName, serviceClass);
     }
   }
-  
+
   public static void registerService(String serviceName, Class<?> serviceClass) {
     registerService(serviceName, serviceClass.getName());
   }
@@ -49,8 +49,10 @@ public class ServiceFactory {
   public static void registerFlowerService(String serviceName, FlowerService flowerService) {
     FlowerService ret = flowerServiceMap.put(serviceName, flowerService);
     if (ret != null) {
-      logger.warn("flower service is alread exist. serviceName : {}, flowerService : {}", serviceName,
+      logger.warn("flower service is alread exist, do discard it. serviceName : {}, flowerService : {}", serviceName,
           flowerService);
+    } else {
+      logger.info("register flowerservice : {}", flowerService);
     }
   }
 

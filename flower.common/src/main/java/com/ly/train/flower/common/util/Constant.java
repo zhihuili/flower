@@ -24,5 +24,9 @@ package com.ly.train.flower.common.util;
  */
 public class Constant {
 
-  public static final String DEFAULT_ENCODING = "UTF-8";
+  public static final String ENCODING_UTF_8 = "UTF-8";
+  
+  public static final String DEFAULT_CONTENT_TEXT = "text/html;charset==" + ENCODING_UTF_8;
+  
+  public static final String DEFAULT_CONTENT_JSON = "application/json;charset==" + ENCODING_UTF_8;
 }

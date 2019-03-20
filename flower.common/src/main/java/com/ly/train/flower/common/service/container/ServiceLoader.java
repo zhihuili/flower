@@ -31,7 +31,7 @@ public class ServiceLoader {
   private static ServiceLoader sl = new ServiceLoader();
 
   private ServiceLoader() {
-    cl = this.getClass().getClassLoader();
+    this.cl = this.getClass().getClassLoader();
   }
 
   public static ServiceLoader getInstance() {
@@ -52,6 +52,7 @@ public class ServiceLoader {
       return service;
     } catch (Exception e) {
       logger.error("fail load service : " + serviceName, e);
+      System.exit(0);
     }
     return null;
   }
@@ -65,8 +66,8 @@ public class ServiceLoader {
           try {
             Class<?> serviceClass = cl.loadClass(ServiceFactory.getServiceClassName(serviceName));
 
-            messageType = (Class<?>) ((ParameterizedType) serviceClass.getGenericInterfaces()[0])
-                .getActualTypeArguments()[0];
+            messageType =
+                (Class<?>) ((ParameterizedType) serviceClass.getGenericInterfaces()[0]).getActualTypeArguments()[0];
             messageTypeMap.put(serviceName, messageType);
           } catch (Exception e) {
             messageType = Object.class;

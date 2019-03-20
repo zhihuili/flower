@@ -20,7 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.service.container.ServiceFactory;
+import com.ly.train.flower.common.util.StringUtil;
 
 public class ServiceFlow {
 
@@ -31,6 +33,21 @@ public class ServiceFlow {
   // Map<flowName, Map<serviceName, ServiceConfig>>
   private static Map<String, Map<String, ServiceConfig>> serviceConfigs =
       new ConcurrentHashMap<String, Map<String, ServiceConfig>>();
+
+  public static void buildFlow(String flowName, Class<?> preServiceClass, Class<?> nextServiceClass) {
+    final FlowerService preServiceAnnotation = preServiceClass.getAnnotation(FlowerService.class);
+    final FlowerService nextServiceAnnotation = nextServiceClass.getAnnotation(FlowerService.class);
+    String preServiceName = preServiceClass.getSimpleName();
+    String nextServiceName = nextServiceClass.getSimpleName();
+
+    if (preServiceAnnotation != null && StringUtil.isNotBlank(preServiceAnnotation.value())) {
+      preServiceName = preServiceAnnotation.value();
+    }
+    if (nextServiceAnnotation != null && StringUtil.isNotBlank(nextServiceAnnotation.value())) {
+      nextServiceName = nextServiceAnnotation.value();
+    }
+    buildFlow(flowName, preServiceName, nextServiceName);
+  }
 
   public static void buildFlow(String flowName, String preServiceName, String nextServiceName) {
     if ("null".equals(nextServiceName.trim().toLowerCase())) {

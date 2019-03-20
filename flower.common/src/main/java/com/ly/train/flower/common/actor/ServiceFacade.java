@@ -31,44 +31,49 @@ import scala.concurrent.duration.FiniteDuration;
 
 public class ServiceFacade {
   private static final Logger logger = LoggerFactory.getLogger(ServiceFacade.class);
-  public static Map<String, ServiceRouter> mapRouter =
-      new ConcurrentHashMap<String, ServiceRouter>();
+  public static Map<String, ServiceRouter> mapRouter = new ConcurrentHashMap<String, ServiceRouter>();
 
   // TODO user define duration
   public static FiniteDuration duration = Duration.create(3, SECONDS);
 
-  public static void asyncCallService(String flowName, String serviceName, Object o,
-      AsyncContext ctx) throws IOException {
+  public static void asyncCallService(String flowName, String serviceName, Object o, AsyncContext ctx)
+      throws IOException {
     FlowMessage flowMessage = ServiceUtil.buildFlowMessage(o);
     ServiceUtil.makeWebContext(flowMessage, ctx);
     ServiceActorFactory.buildServiceActor(flowName, serviceName).tell(flowMessage, null);
   }
 
-  public static void asyncCallService(String flowName, String serviceName, Object o)
-      throws IOException {
+  public static void asyncCallService(String flowName, String serviceName, Object o) throws IOException {
     asyncCallService(flowName, serviceName, o, null);
   }
 
   /*
    * syncCallService 同步调用会引起阻塞，因此需要在外面try catch异常TimeoutException
    */
-  public static Object syncCallService(String flowName, String serviceName, Object o)
-      throws Exception {
+  public static Object syncCallService(String flowName, String serviceName, Object o) throws Exception {
     FlowMessage flowMessage = ServiceUtil.buildFlowMessage(o);
     ServiceUtil.makeWebContext(flowMessage, null);
-    return Await.result(Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName),
-        flowMessage, new Timeout(duration)), duration);
+    return Await.result(
+        Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName), flowMessage, new Timeout(duration)),
+        duration);
   }
 
-  public static ServiceRouter buildServiceRouter(String flowName, String serviceName,
-      int flowNumber) {
-    String routerName = flowName + serviceName;
+  /**
+   * will cache by flowName + "_" + serviceName
+   * 
+   * @param flowName
+   * @param serviceName
+   * @param flowNumbe 数量
+   * @return
+   */
+  public static ServiceRouter buildServiceRouter(String flowName, String serviceName, int flowNumbe) {
+    final String routerName = flowName + "_" + serviceName;
     ServiceRouter serviceRouter = mapRouter.get(routerName);
     if (serviceRouter == null) {
-      serviceRouter = new ServiceRouter(flowName, serviceName, flowNumber);
+      serviceRouter = new ServiceRouter(flowName, serviceName, flowNumbe);
       mapRouter.put(routerName, serviceRouter);
-      logger.info("build service Router. flowName : {}, serviceName : {}, flowNumber : {}",
-          flowName, serviceName, flowNumber);
+      logger.info("build service Router. flowName : {}, serviceName : {}, flowNumbe : {}", flowName, serviceName,
+          flowNumbe);
     }
     return serviceRouter;
   }
