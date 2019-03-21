@@ -86,7 +86,7 @@ public class ServiceActor extends AbstractActor {
           refType.setJoint(true);
         }
         refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, nextServiceName, index));
-        refType.setMessageType(ServiceLoader.getInstance().getServiceMessageType(nextServiceName));
+        refType.setMessageType(ServiceLoader.getInstance().loadServiceMeta(nextServiceName).getParamType());
         refType.setServiceName(nextServiceName);
         nextServiceActors.add(refType);
       }

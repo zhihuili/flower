@@ -13,9 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service.message;
+/**
+ * 
+ */
+package com.ly.train.flower.common.exception;
 
-public class TimerMessage extends FlowMessage {
+/**
+ * @author leeyazhou
+ *
+ */
+public class ServiceNotFoundException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
+
+  public ServiceNotFoundException() {
+    super();
+  }
+
+  public ServiceNotFoundException(String message) {
+    super(message);
+  }
+
+  public ServiceNotFoundException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public ServiceNotFoundException(Throwable cause) {
+    super(cause);
+  }
 }

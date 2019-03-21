@@ -81,6 +81,11 @@ public class ServiceContext {
     this.flowMessage = flowMessage;
   }
 
+  /**
+   * 服务ID
+   * 
+   * @return string
+   */
   public String getId() {
     return id;
   }

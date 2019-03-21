@@ -49,7 +49,7 @@ public class ServiceActorTest {
     final ServiceRouter router = ServiceFacade.buildServiceRouter("test", ServiceA.class.getSimpleName(), 2 << 4);
 
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 1; i++) {
       new Thread(() -> {
         User user = new User();
         user.setName("响应式编程");

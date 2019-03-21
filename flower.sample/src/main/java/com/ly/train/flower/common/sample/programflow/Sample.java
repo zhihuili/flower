@@ -31,17 +31,14 @@ public class Sample {
       ServiceFacade.asyncCallService("sample", "serviceA", " Hello World! ");
     }
     Thread.sleep(1000);
-    System.out.println((ServiceLoader.getInstance().getServiceMessageType("serviceB")));
+    System.out.println((ServiceLoader.getInstance().loadServiceMeta("serviceB").getParamType()));
     System.exit(0);
   }
 
   public static void buildServiceEnv() {
-    ServiceFactory.registerService("serviceA",
-        "com.ly.train.flower.common.sample.programflow.ServiceA");
-    ServiceFactory.registerService("serviceB",
-        "com.ly.train.flower.common.sample.programflow.ServiceB");
-    ServiceFactory.registerService("serviceC",
-        "com.ly.train.flower.common.sample.programflow.ServiceC");
+    ServiceFactory.registerService("serviceA", "com.ly.train.flower.common.sample.programflow.ServiceA");
+    ServiceFactory.registerService("serviceB", "com.ly.train.flower.common.sample.programflow.ServiceB");
+    ServiceFactory.registerService("serviceC", "com.ly.train.flower.common.sample.programflow.ServiceC");
 
     // serviceA -> serviceB -> serviceC
     ServiceFlow.buildFlow("sample", "serviceA", "serviceB");

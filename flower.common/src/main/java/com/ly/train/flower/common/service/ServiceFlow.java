@@ -21,7 +21,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import com.ly.train.flower.common.annotation.FlowerService;
-import com.ly.train.flower.common.service.container.ServiceFactory;
+import com.ly.train.flower.common.exception.FlowerException;
+import com.ly.train.flower.common.service.container.ServiceLoader;
+import com.ly.train.flower.common.service.container.ServiceMeta;
 import com.ly.train.flower.common.util.StringUtil;
 
 public class ServiceFlow {
@@ -53,6 +55,8 @@ public class ServiceFlow {
     if ("null".equals(nextServiceName.trim().toLowerCase())) {
       return;
     }
+    validateFlow(preServiceName, nextServiceName);
+
     Map<String, Set<String>> flow = flowCache.get(flowName);
     if (flow == null) {
       flow = new ConcurrentHashMap<String, Set<String>>();
@@ -67,9 +71,8 @@ public class ServiceFlow {
     }
 
     set.add(nextServiceName);
-
-    String s = ServiceFactory.getServiceClassName(nextServiceName);
-    if (s != null && s.equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
+    String s = ServiceLoader.getInstance().loadServiceMeta(nextServiceName).getServiceClass().getName();
+    if (ServiceConstants.AGGREGATE_SERVICE_NAME.equals(s)) {
       Map<String, ServiceConfig> serviceConfigMap = serviceConfigs.get(flowName);
       if (serviceConfigMap == null) {
         serviceConfigMap = new ConcurrentHashMap<String, ServiceConfig>();
@@ -102,5 +105,25 @@ public class ServiceFlow {
 
   public static ServiceConfig getServiceConcig(String flowName, String serviceName) {
     return serviceConfigs.get(flowName).get(serviceName);
+  }
+
+  private static void validateFlow(String preServiceName, String nextServiceName) {
+    ServiceMeta preServiceMata = ServiceLoader.getInstance().loadServiceMeta(preServiceName);
+    ServiceMeta nextServiceMata = ServiceLoader.getInstance().loadServiceMeta(nextServiceName);
+    if (preServiceMata == null || nextServiceMata == null) {
+      return;
+    }
+
+    Class<?> preReturnType = preServiceMata.getResultType();
+    Class<?> nextParamType = nextServiceMata.getParamType();
+    if (preReturnType == null || nextParamType == null) {
+      throw new FlowerException();
+    }
+
+    if (!nextParamType.isAssignableFrom(preReturnType)) {
+      throw new FlowerException("build flower error, because " + preServiceName + " (" + preReturnType
+          + ") is not compatible for " + nextServiceName + "(" + nextParamType + ")");
+    }
+
   }
 }

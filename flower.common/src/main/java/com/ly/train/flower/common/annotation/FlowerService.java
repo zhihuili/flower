@@ -33,6 +33,11 @@ import java.lang.annotation.Target;
 @Documented
 public @interface FlowerService {
 
+  /**
+   * 服务名字
+   * 
+   * @return 服务名字
+   */
   String value() default "";
 
 }
