@@ -18,13 +18,13 @@ package com.ly.train.flower.common.sample.condition;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
-public class ServiceC implements Service<MessageC> {
+public class ServiceC implements Service<MessageC,MessageX> {
 
   @Override
   /**
    * print service
    */
-  public Object process(MessageC message, ServiceContext context) {
+  public MessageX process(MessageC message, ServiceContext context) {
     System.out.println("I am Service C.");
     MessageX mx = new MessageX();
     mx.setCondition("serviceE,serviceD");

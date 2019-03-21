@@ -18,10 +18,10 @@ package com.ly.train.flower.common.sample.textflow;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
-public class Service2 implements Service<Message2> {
+public class Service2 implements Service<Message2,Integer> {
 
   @Override
-  public Object process(Message2 message, ServiceContext context) {
+  public Integer process(Message2 message, ServiceContext context) {
     return message.getAge() + 1;
   }
 

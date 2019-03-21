@@ -27,7 +27,7 @@ import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFactory;
 
 @BindController(path = "/ServiceE", method = RequestMethod.POST)
-public class ServiceE implements Service<User>, InitController, PostJson {
+public class ServiceE implements Service<User,Integer>, InitController, PostJson {
 
     @Override
     public ServiceRouter init() {
@@ -45,7 +45,7 @@ public class ServiceE implements Service<User>, InitController, PostJson {
     }
 
     @Override
-    public Object process(User message, ServiceContext context) throws Throwable {
+    public Integer process(User message, ServiceContext context) throws Throwable {
         context.getWeb().println("User:" + message.getName());
         return message.getId();
     }

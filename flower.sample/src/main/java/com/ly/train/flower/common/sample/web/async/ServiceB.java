@@ -27,13 +27,13 @@ import com.ly.train.flower.common.service.web.Flush;
 
 @Service("serviceB")
 public class ServiceB
-    implements com.ly.train.flower.common.service.Service<Integer>, Flush, Complete {
+    implements com.ly.train.flower.common.service.Service<Integer,Void>, Flush, Complete {
 
   @Autowired
   private UserDao userDao;
 
   @Override
-  public Object process(Integer message, ServiceContext context) throws Exception {
+  public Void process(Integer message, ServiceContext context) throws Exception {
     User user = userDao.findUser(message);
     if (user == null) {
       context.getWeb().complete();

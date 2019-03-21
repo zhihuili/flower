@@ -20,7 +20,6 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.web.bind.annotation.RequestMethod;
-
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -43,7 +42,8 @@ import java.util.Set;
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class BindProcessor extends AbstractProcessor {
   private static final String TAG = "[ " + BindProcessor.class.getSimpleName() + " ]:";
-  Types mTypesUtils = null;
+  private Types mTypesUtils = null;
+
   @Override
   public Set<String> getSupportedAnnotationTypes() {
     return super.getSupportedAnnotationTypes();
@@ -52,14 +52,14 @@ public class BindProcessor extends AbstractProcessor {
   @Override
   public synchronized void init(ProcessingEnvironment processingEnv) {
     super.init(processingEnv);
-    mTypesUtils = processingEnv.getTypeUtils();
+    this.mTypesUtils = processingEnv.getTypeUtils();
   }
 
   @Override
   public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
     for (Element element : roundEnvironment.getElementsAnnotatedWith(BindController.class)) {
-      if (element instanceof  TypeElement) {
-        TypeElement classElement = (TypeElement)element;
+      if (element instanceof TypeElement) {
+        TypeElement classElement = (TypeElement) element;
         PackageElement packageElement = (PackageElement) classElement.getEnclosingElement();
 
         String fullClassName = classElement.getQualifiedName().toString();
@@ -76,14 +76,15 @@ public class BindProcessor extends AbstractProcessor {
         boolean isPostJsonInterface = false;
         for (TypeMirror interfaceType : classElement.getInterfaces()) {
           DeclaredType declaredType = (DeclaredType) interfaceType;
-          TypeElement interfaceElement = (TypeElement)declaredType.asElement();
+          TypeElement interfaceElement = (TypeElement) declaredType.asElement();
           String interfaceTypeName = interfaceElement.getQualifiedName().toString();
           if (com.ly.train.flower.common.service.Service.class.getName().equals(interfaceTypeName)) {
             @SuppressWarnings("unchecked")
-            List<TypeMirror> messageTypes = (List<TypeMirror>)declaredType.getTypeArguments();
+            List<TypeMirror> messageTypes = (List<TypeMirror>) declaredType.getTypeArguments();
             if (!messageTypes.isEmpty()) {
               typeMirror = messageTypes.get(0);
-              String messageTypeName = ((TypeElement)(mTypesUtils.asElement(typeMirror))).getQualifiedName().toString();
+              String messageTypeName =
+                  ((TypeElement) (mTypesUtils.asElement(typeMirror))).getQualifiedName().toString();
               loge(messageTypeName);
             }
           } else if (com.ly.flower.web.springboot.PostJson.class.getName().equals(interfaceTypeName)) {
@@ -121,8 +122,7 @@ public class BindProcessor extends AbstractProcessor {
 
           Template velocityEngineTemplate = velocityEngine.getTemplate(templateName);
 
-          JavaFileObject jfo = processingEnv.getFiler().createSourceFile(
-              fullClassName + "Controller");
+          JavaFileObject jfo = processingEnv.getFiler().createSourceFile(fullClassName + "Controller");
           Writer writer = jfo.openWriter();
           velocityEngineTemplate.merge(velocityContext, writer);
 

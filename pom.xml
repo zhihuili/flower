@@ -16,13 +16,6 @@
     limitations under the License.
 
 -->
-<!-- Copyright © 2019 同程艺龙 (zhihui.li@ly.com) Licensed under the Apache License, 
-	Version 2.0 (the "License"); you may not use this file except in compliance 
-	with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
-	Unless required by applicable law or agreed to in writing, software distributed 
-	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
-	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
-	the specific language governing permissions and limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -37,6 +30,7 @@
 		<revision>0.1.1</revision>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 		<java.version>1.8</java.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -61,10 +55,20 @@
 		<velocity.version>1.7</velocity.version>
 		<spring.version>5.1.5.RELEASE</spring.version>
 		<slf4j-api.version>1.7.26</slf4j-api.version>
+		<logback.version>1.2.3</logback.version>
+		<jetty.version>9.4.14.v20181114</jetty.version>
+		<javassist.version>3.24.1-GA</javassist.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>com.ly.train</groupId>
+				<artifactId>flower-bom</artifactId>
+				<version>${project.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
@@ -173,6 +177,31 @@
 				<artifactId>slf4j-api</artifactId>
 				<version>${slf4j-api.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${logback.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-server</artifactId>
+				<version>${jetty.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-webapp</artifactId>
+				<version>${jetty.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-continuation</artifactId>
+				<version>${jetty.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.javassist</groupId>
+				<artifactId>javassist</artifactId>
+				<version>${javassist.version}</version>
+			</dependency>
 
 		</dependencies>
 	</dependencyManagement>
@@ -183,6 +212,7 @@
 		<module>flower.sample</module>
 		<module>flower.web</module>
 		<module>flower.assembly</module>
+		<module>flower-bom</module>
 	</modules>
 
 	<build>
@@ -283,6 +313,7 @@
 					</properties>
 					<excludes>
 						<exclude>**/README</exclude>
+						<exclude>**/*.txt</exclude>
 						<exclude>src/test/resources/**</exclude>
 						<exclude>src/main/resources/**</exclude>
 					</excludes>
@@ -302,5 +333,9 @@
 	<name>flower</name>
 	<description>流式微服务框架Flower
 </description>
-	<url>https://github.com/zhihuili/flower.git</url>
+	<url>https://github.com/tongchengyilong/flower.git</url>
+	<organization>
+		<name>同程艺龙</name>
+		<url>www.ly.com</url>
+	</organization>
 </project>

@@ -18,7 +18,7 @@ package com.ly.train.flower.common.sample.programflow;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
-public class ServiceC implements Service<MessageA> {
+public class ServiceC implements Service<MessageA, Object> {
 
   @Override
   /**

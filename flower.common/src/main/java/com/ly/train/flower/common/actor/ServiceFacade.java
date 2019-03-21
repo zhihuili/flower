@@ -15,60 +15,63 @@
  */
 package com.ly.train.flower.common.actor;
 
-import akka.pattern.Patterns;
-import akka.util.Timeout;
-import com.ly.train.flower.common.service.message.FlowMessage;
-import scala.concurrent.Await;
-import scala.concurrent.duration.Duration;
-import scala.concurrent.duration.FiniteDuration;
-import javax.servlet.AsyncContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import static java.util.concurrent.TimeUnit.SECONDS;
+import java.util.concurrent.TimeUnit;
+import javax.servlet.AsyncContext;
+import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
+import akka.pattern.Patterns;
+import akka.util.Timeout;
+import scala.concurrent.Await;
+import scala.concurrent.duration.Duration;
+import scala.concurrent.duration.FiniteDuration;
 
 public class ServiceFacade {
   private static final Logger logger = LoggerFactory.getLogger(ServiceFacade.class);
-  public static Map<String, ServiceRouter> mapRouter =
-      new ConcurrentHashMap<String, ServiceRouter>();
+  private static Map<String, ServiceRouter> mapRouter = new ConcurrentHashMap<String, ServiceRouter>();
 
   // TODO user define duration
-  public static FiniteDuration duration = Duration.create(3, SECONDS);
+  static FiniteDuration duration = Duration.create(3, TimeUnit.SECONDS);
 
-  public static void asyncCallService(String flowName, String serviceName, Object o,
-      AsyncContext ctx) throws IOException {
-    FlowMessage flowMessage = ServiceUtil.buildFlowMessage(o);
-    ServiceUtil.makeWebContext(flowMessage, ctx);
-    ServiceActorFactory.buildServiceActor(flowName, serviceName).tell(flowMessage, null);
+  public static void asyncCallService(String flowName, String serviceName, Object message, AsyncContext ctx)
+      throws IOException {
+    ServiceContext context = ServiceContext.context(message, ctx);
+    ServiceActorFactory.buildServiceActor(flowName, serviceName).tell(context, null);
   }
 
-  public static void asyncCallService(String flowName, String serviceName, Object o)
-      throws IOException {
+  public static void asyncCallService(String flowName, String serviceName, Object o) throws IOException {
     asyncCallService(flowName, serviceName, o, null);
   }
 
   /*
    * syncCallService 同步调用会引起阻塞，因此需要在外面try catch异常TimeoutException
    */
-  public static Object syncCallService(String flowName, String serviceName, Object o)
-      throws Exception {
-    FlowMessage flowMessage = ServiceUtil.buildFlowMessage(o);
-    ServiceUtil.makeWebContext(flowMessage, null);
-    return Await.result(Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName),
-        flowMessage, new Timeout(duration)), duration);
+  public static Object syncCallService(String flowName, String serviceName, Object message) throws Exception {
+    ServiceContext context = ServiceContext.context(message);
+    return Await.result(
+        Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName), context, new Timeout(duration)),
+        duration);
   }
 
-  public static ServiceRouter buildServiceRouter(String flowName, String serviceName,
-      int flowNumber) {
-    String routerName = flowName + serviceName;
+  /**
+   * will cache by flowName + "_" + serviceName
+   * 
+   * @param flowName
+   * @param serviceName
+   * @param flowNumbe 数量
+   * @return
+   */
+  public static ServiceRouter buildServiceRouter(String flowName, String serviceName, int flowNumbe) {
+    final String routerName = flowName + "_" + serviceName;
     ServiceRouter serviceRouter = mapRouter.get(routerName);
     if (serviceRouter == null) {
-      serviceRouter = new ServiceRouter(flowName, serviceName, flowNumber);
+      serviceRouter = new ServiceRouter(flowName, serviceName, flowNumbe);
       mapRouter.put(routerName, serviceRouter);
-      logger.info("build service Router. flowName : {}, serviceName : {}, flowNumber : {}",
-          flowName, serviceName, flowNumber);
+      logger.info("build service Router. flowName : {}, serviceName : {}, flowNumbe : {}", flowName, serviceName,
+          flowNumbe);
     }
     return serviceRouter;
   }

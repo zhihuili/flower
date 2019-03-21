@@ -20,10 +20,10 @@ import org.apache.commons.io.FileUtils;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
-public class Service2 implements Service<Message2> {
+public class Service2 implements Service<Message2,Integer> {
 
   @Override
-  public Object process(Message2 message, ServiceContext context) throws Throwable {
+  public Integer process(Message2 message, ServiceContext context) throws Throwable {
 
     File file = new File("test.file");
     if (!file.exists()) {

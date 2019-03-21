@@ -28,25 +28,20 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>flower.assembly</artifactId>
-    <name>flower.assembly</name>
     <packaging>pom</packaging>
-    <url>http://maven.apache.org</url>
 
     <dependencies>
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.center</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.common</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.sample</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
     <build>

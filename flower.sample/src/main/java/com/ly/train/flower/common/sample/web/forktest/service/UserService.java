@@ -17,7 +17,6 @@ package com.ly.train.flower.common.sample.web.forktest.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.ly.train.flower.common.sample.web.dao.UserDao;
 import com.ly.train.flower.common.sample.web.mode.User;
 import com.ly.train.flower.common.service.container.ServiceContext;
@@ -28,12 +27,12 @@ import com.ly.train.flower.common.service.container.ServiceContext;
  */
 
 @Service("UserService")
-public class UserService implements com.ly.train.flower.common.service.Service<Integer> {
+public class UserService implements com.ly.train.flower.common.service.Service<Integer,User> {
     @Autowired
     private UserDao userDao;
 
     @Override
-    public Object process(Integer message, ServiceContext context) throws Exception {
+    public User process(Integer message, ServiceContext context) throws Exception {
         User user = userDao.findUser(message);
         return user == null ? new User():user;
     }

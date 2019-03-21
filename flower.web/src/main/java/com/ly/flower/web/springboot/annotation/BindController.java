@@ -14,12 +14,25 @@
  * limitations under the License.
  */
 package com.ly.flower.web.springboot.annotation;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
 public @interface BindController {
+  
   String value() default "@RestController";
+
   String type() default "@RequestMapping";
-  String path();                            //http url path
-  RequestMethod method();                   //http request method
+
+  String path(); // http url path
+
+  RequestMethod method() default RequestMethod.GET; // http request method
 }

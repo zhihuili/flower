@@ -39,28 +39,23 @@
 		<dependency>
 			<groupId>com.ly.train</groupId>
 			<artifactId>flower.common</artifactId>
-			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.ly.train</groupId>
 			<artifactId>flower.web</artifactId>
-			<version>${project.parent.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
-			<version>9.4.14.v20181114</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-webapp</artifactId>
-			<version>9.4.14.v20181114</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-continuation</artifactId>
-			<version>9.4.14.v20181114</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mybatis</groupId>
@@ -102,7 +97,6 @@
 			<groupId>com.typesafe.akka</groupId>
 			<artifactId>akka-slf4j_2.12</artifactId>
 		</dependency>
-
 	</dependencies>
 	<build>
 		<plugins>

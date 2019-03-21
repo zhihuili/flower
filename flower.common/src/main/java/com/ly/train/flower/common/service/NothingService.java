@@ -17,7 +17,7 @@ package com.ly.train.flower.common.service;
 
 import com.ly.train.flower.common.service.container.ServiceContext;
 
-public class NothingService implements Service<Object> {
+public class NothingService implements Service<Object,Object> {
 
   @Override
   public Object process(Object message, ServiceContext context) {

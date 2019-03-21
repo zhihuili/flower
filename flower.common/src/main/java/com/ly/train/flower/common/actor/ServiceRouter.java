@@ -1,23 +1,24 @@
 /**
  * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.ly.train.flower.common.actor;
 
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.AsyncContext;
-import com.ly.train.flower.common.service.message.FlowMessage;
+import com.ly.train.flower.common.service.container.ServiceContext;
 import akka.actor.ActorRef;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
@@ -25,15 +26,17 @@ import scala.concurrent.Await;
 
 public class ServiceRouter {
 
-  private int number;
+  private int number = 2 << 6;
   private int currentIndex = 0;
   private ActorRef[] ar;
+  private String flowName;
+  private String serviceName;
 
   public ServiceRouter(String flowName, String serviceName, int number) {
     this.number = number;
-    ar = new ActorRef[number];
+    this.ar = new ActorRef[number];
     for (int i = 0; i < number; i++) {
-      ar[i] = ServiceActorFactory.buildServiceActor(flowName, serviceName, i);
+      this.ar[i] = ServiceActorFactory.buildServiceActor(flowName, serviceName, i);
     }
   }
 
@@ -41,17 +44,29 @@ public class ServiceRouter {
     asyncCallService(message, null);
   }
 
-  public void asyncCallService(Object message, AsyncContext ctx) throws IOException {
-    FlowMessage flowMessage = ServiceUtil.buildFlowMessage(message);
-    ServiceUtil.makeWebContext(flowMessage, ctx);
-    ar[randomIndex()].tell(flowMessage, null);
+  /**
+   * 异步调用
+   * 
+   * @param message
+   * @param ctx
+   * @throws IOException
+   */
+  public <T> void asyncCallService(T message, AsyncContext ctx) throws IOException {
+    ServiceContext serviceContext = ServiceContext.context(message, ctx);
+    this.ar[randomIndex()].tell(serviceContext, ActorRef.noSender());
   }
 
-  public Object syncCallService(Object o) throws Exception {
-    FlowMessage flowMessage = ServiceUtil.buildFlowMessage(o);
-    ServiceUtil.makeWebContext(flowMessage, null);
-    return Await.result(
-        Patterns.ask(ar[randomIndex()], flowMessage, new Timeout(ServiceFacade.duration)),
+  /**
+   * 同步调用
+   * 
+   * @param message message
+   * @return
+   * @throws Exception
+   */
+  public Object syncCallService(Object message) throws Exception {
+    ServiceContext serviceContext = ServiceContext.context(message);
+
+    return Await.result(Patterns.ask(ar[randomIndex()], serviceContext, new Timeout(ServiceFacade.duration)),
         ServiceFacade.duration);
   }
 
@@ -63,7 +78,10 @@ public class ServiceRouter {
     return index;
   }
 
-  private synchronized int roundIndex() {
+  protected synchronized int roundIndex() {
+    if (number == 1) {
+      return 0;
+    }
     if (currentIndex < (number - 1)) {
       return ++currentIndex;
     }
@@ -74,22 +92,47 @@ public class ServiceRouter {
 
   /**
    * 当actor个数为2^n个数时才可以使用
+   * 
    * @return
    */
-  private int bitRandomIndex() {
+  protected int bitRandomIndex() {
+    if (number == 1) {
+      return 0;
+    }
     if (currentIndex > 1024) {
       currentIndex = 0;
     }
-    return (currentIndex++) & (number-1);
+    return (currentIndex++) & (number - 1);
   }
 
   /**
    * @return
    */
-  private int moduleRandomIndex() {
+  protected int moduleRandomIndex() {
+    if (number == 1) {
+      return 0;
+    }
     if (currentIndex > 1024) {
       currentIndex = 0;
     }
-    return (currentIndex++)%(number);
+    return (currentIndex++) % (number);
   }
+
+  public String getFlowName() {
+    return flowName;
+  }
+
+  public void setFlowName(String flowName) {
+    this.flowName = flowName;
+  }
+
+  public String getServiceName() {
+    return serviceName;
+  }
+
+  public void setServiceName(String serviceName) {
+    this.serviceName = serviceName;
+  }
+
+
 }

@@ -63,7 +63,7 @@ public class FileUtil {
       String[] kv = sl.split("=");
       if (kv == null || kv.length != 2) {
         close(br, fr);
-        throw new RuntimeException("Illegal flow config:" + path);
+        throw new RuntimeException("Illegal flow config:" + path + ", sl");
       }
       map.put(kv[0], kv[1]);
     }
