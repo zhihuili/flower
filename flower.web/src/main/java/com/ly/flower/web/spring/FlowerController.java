@@ -18,7 +18,11 @@
  */
 package com.ly.flower.web.spring;
 
+import java.io.IOException;
+import javax.servlet.AsyncContext;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.InitializingBean;
+import com.ly.train.flower.common.actor.ServiceFacade;
 import com.ly.train.flower.common.actor.ServiceRouter;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.service.ServiceFlow;
@@ -29,9 +33,15 @@ import com.ly.train.flower.common.service.ServiceFlow;
  */
 public abstract class FlowerController implements InitializingBean {
 
-  protected ServiceRouter serviceRouter;
+  private ServiceRouter serviceRouter;
   private String flowerName;
+  private String serviceName;
 
+
+  protected void doProcess(Object param, HttpServletRequest req) throws IOException {
+    AsyncContext context = req.startAsync();
+    serviceRouter.asyncCallService(param, context);
+  }
 
   @Override
   public void afterPropertiesSet() throws Exception {
@@ -46,7 +56,9 @@ public abstract class FlowerController implements InitializingBean {
    * @see com.ly.train.flower.common.actor.ServiceFacade.buildServiceRouter
    * @return {@code ServiceRouter}
    */
-  public abstract ServiceRouter initServiceRouter();
+  private ServiceRouter initServiceRouter() {
+    return ServiceFacade.buildServiceRouter(getFlowName(), getServiceName(), 2 << 7);
+  }
 
   /**
    * 定义数据处理流
@@ -66,5 +78,13 @@ public abstract class FlowerController implements InitializingBean {
       this.flowerName = bindController.value();
     }
     return flowerName;
+  }
+
+  public String getServiceName() {
+    if (serviceName == null) {
+      Flower bindController = this.getClass().getAnnotation(Flower.class);
+      this.serviceName = bindController.serviceName();
+    }
+    return serviceName;
   }
 }

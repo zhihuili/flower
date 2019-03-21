@@ -40,4 +40,6 @@ public @interface Flower {
    */
   String value();
 
+  String serviceName();
+
 }
