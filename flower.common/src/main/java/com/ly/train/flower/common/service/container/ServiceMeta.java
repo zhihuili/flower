@@ -27,8 +27,8 @@ import java.util.List;
 public class ServiceMeta implements Serializable {
   private static final long serialVersionUID = 1L;
   private String serviceName;
-  private Class<?> paramType;
-  private Class<?> resultType;
+  private Class<?> paramType = Object.class;
+  private Class<?> resultType = Object.class;
   private Class<?> serviceClass;
   private List<String> configs = new ArrayList<>();
 
