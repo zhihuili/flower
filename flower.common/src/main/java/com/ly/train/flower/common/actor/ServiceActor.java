@@ -147,9 +147,7 @@ public class ServiceActor extends AbstractActor {
 
     if (retsult == null)// for joint service
       return;
-    FlowMessage flowMessage = new FlowMessage();
-    flowMessage.setMessage(retsult);
-    flowMessage.setTransactionId(fm.getTransactionId());
+    serviceContext.getFlowMessage().setMessage(retsult);
     if (nextServiceActors != null && !nextServiceActors.isEmpty()) {
       for (RefType refType : nextServiceActors) {
         if (refType.isJoint()) {
