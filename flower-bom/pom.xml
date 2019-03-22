@@ -34,11 +34,5 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	<distributionManagement>
-		<repository>
-			<id>mvn-traffic-release</id>
-			<name>Nexus Release Repository</name>
-			<url>http://nexus.17usoft.com/repository/mvn-traffic-release/</url>
-		</repository>
-	</distributionManagement>
+	
 </project>
