@@ -23,7 +23,7 @@ import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.message.TimerMessage;
 
-public class AggregateService implements Service<FlowMessage, Object>, Aggregate {
+public class AggregateService implements Service<Object, Object>, Aggregate {
 
   private static final long DefaultTimeOutMilliseconds = 60000;
 
@@ -44,8 +44,9 @@ public class AggregateService implements Service<FlowMessage, Object>, Aggregate
   }
 
   @Override
-  public Object process(FlowMessage flowMessage, ServiceContext context) {
+  public Object process(Object message, ServiceContext context) {
 
+    FlowMessage flowMessage = (FlowMessage) message;
     if (flowMessage instanceof TimerMessage) {
       doClean();
       return null;
@@ -83,8 +84,8 @@ public class AggregateService implements Service<FlowMessage, Object>, Aggregate
     return messages;
   }
 
-  @Override
   // sourceNumber++ when initialize
+  @Override
   public void setSourceNumber(int number) {
     sourceNumber = number;
   }
