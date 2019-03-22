@@ -24,8 +24,8 @@
     <parent>
         <groupId>com.ly.train</groupId>
         <artifactId>flower</artifactId>
-        <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>..</relativePath>
+        <version>0.1.1</version>
     </parent>
     <artifactId>flower.web</artifactId>
     <name>flower.web</name>

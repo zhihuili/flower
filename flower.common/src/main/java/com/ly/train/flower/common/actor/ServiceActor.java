@@ -20,8 +20,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.FlowerService;
@@ -40,6 +42,7 @@ import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.common.service.web.HttpComplete;
 import com.ly.train.flower.common.service.web.Web;
 import com.ly.train.flower.common.util.CloneUtil;
+
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
@@ -147,9 +150,8 @@ public class ServiceActor extends AbstractActor {
 
     if (retsult == null)// for joint service
       return;
-    FlowMessage flowMessage = new FlowMessage();
-    flowMessage.setMessage(retsult);
-    flowMessage.setTransactionId(fm.getTransactionId());
+    
+    serviceContext.getFlowMessage().setMessage(retsult);
     if (nextServiceActors != null && !nextServiceActors.isEmpty()) {
       for (RefType refType : nextServiceActors) {
         if (refType.isJoint()) {

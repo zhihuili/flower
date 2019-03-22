@@ -330,12 +330,12 @@
 		</plugins>
 	</build>
 	<distributionManagement>
-		<repository>
-			<id>mvn-traffic-release</id>
-			<name>Nexus Release Repository</name>
-			<url>http://nexus.17usoft.com/repository/mvn-traffic-release/</url>
-		</repository>
-	</distributionManagement>
+	<repository>
+		<id>mvn-traffic-release</id>
+		<name>Nexus Release Repository</name>
+		<url>http://nexus.17usoft.com/repository/mvn-traffic-release/</url>
+	</repository>
+</distributionManagement>
 	<name>flower</name>
 	<description>流式微服务框架Flower</description>
 	<url>https://github.com/tongchengyilong/flower.git</url>
