@@ -114,6 +114,11 @@ public class ServiceFlow {
       return;
     }
 
+    if (preServiceMata.getServiceClass().getName().equals(ServiceConstants.AGGREGATE_SERVICE_NAME)
+        || nextServiceMata.getServiceClass().getName().equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
+      return;
+    }
+
     Class<?> preReturnType = preServiceMata.getResultType();
     Class<?> nextParamType = nextServiceMata.getParamType();
     if (preReturnType == null || nextParamType == null) {
@@ -121,8 +126,9 @@ public class ServiceFlow {
     }
 
     if (!nextParamType.isAssignableFrom(preReturnType)) {
-      throw new FlowerException("build flower error, because " + preServiceName + " (" + preReturnType
-          + ") is not compatible for " + nextServiceName + "(" + nextParamType + ")");
+      throw new FlowerException("build flower error, because " + preServiceMata.getServiceClass() + " ("
+          + preReturnType.getSimpleName() + ") is not compatible for " + nextServiceMata.getServiceClass() + "("
+          + nextParamType.getSimpleName() + ")");
     }
 
   }
