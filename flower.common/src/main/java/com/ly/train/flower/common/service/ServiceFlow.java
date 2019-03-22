@@ -23,9 +23,11 @@ import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.service.container.ServiceLoader;
 import com.ly.train.flower.common.service.container.ServiceMeta;
 import com.ly.train.flower.common.util.StringUtil;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
 public class ServiceFlow {
-
+  private static final Logger logger = LoggerFactory.getLogger(ServiceFlow.class);
   // Map<flowName,Map<sourceServiceName,Set<targetServiceName>>>
   private static Map<String, Map<String, Set<String>>> flowCache = new ConcurrentHashMap<String, Map<String, Set<String>>>();
 
@@ -66,7 +68,11 @@ public class ServiceFlow {
       flow.put(preServiceName, set);
     }
 
-    set.add(nextServiceName);
+    boolean ret = set.add(nextServiceName);
+    if (!ret) {
+      return;
+    }
+    logger.info(" buildFlow : {}, preService : {}, nextService : {}", flowName, preServiceName, nextServiceName);
     String s = ServiceLoader.getInstance().loadServiceMeta(nextServiceName).getServiceClass().getName();
     if (ServiceConstants.AGGREGATE_SERVICE_NAME.equals(s)) {
       Map<String, ServiceConfig> serviceConfigMap = serviceConfigs.get(flowName);
@@ -117,13 +123,15 @@ public class ServiceFlow {
 
     Class<?> preReturnType = preServiceMata.getResultType();
     Class<?> nextParamType = nextServiceMata.getParamType();
+
     if (preReturnType == null || nextParamType == null) {
-      throw new FlowerException();
+      throw new FlowerException(preServiceMata.getServiceClass() + "->preReturnType : " + preReturnType + ", "
+          + nextServiceMata.getServiceClass() + "-> nextParamType : " + nextParamType);
     }
 
     if (!nextParamType.isAssignableFrom(preReturnType)) {
-      throw new FlowerException("build flower error, because " + preServiceName + " (" + preReturnType + ") is not compatible for "
-          + nextServiceName + "(" + nextParamType + ")");
+      throw new FlowerException("build flower error, because " + preServiceMata.getServiceClass() + " (" + preReturnType.getSimpleName()
+          + ") is not compatible for " + nextServiceMata.getServiceClass() + "(" + nextParamType.getSimpleName() + ")");
     }
 
   }

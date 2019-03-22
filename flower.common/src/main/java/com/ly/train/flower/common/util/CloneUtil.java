@@ -27,12 +27,13 @@ import com.ly.train.flower.logging.LoggerFactory;
 public class CloneUtil {
   private static final Logger logger = LoggerFactory.getLogger(CloneUtil.class);
 
-  public static Object clone(Serializable obj) {
+  @SuppressWarnings("unchecked")
+  public static <T> T clone(Serializable obj) {
     Object clone = cloneObject(obj);
     if (clone == null) {
       clone = cloneObject(obj);
     }
-    return clone;
+    return (T) clone;
   }
 
   public static Object cloneObject(Serializable obj) {

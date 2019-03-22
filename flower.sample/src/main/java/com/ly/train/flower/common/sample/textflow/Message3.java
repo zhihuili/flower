@@ -15,9 +15,14 @@
  */
 package com.ly.train.flower.common.sample.textflow;
 
+import java.io.Serializable;
 import com.ly.train.flower.common.service.message.ReturnMessage;
 
-public class Message3 implements ReturnMessage {
+public class Message3 implements ReturnMessage,Serializable {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
   private Message2 m2;
 
   public Message2 getM2() {
@@ -28,7 +33,12 @@ public class Message3 implements ReturnMessage {
     this.m2 = m2;
   }
 
+  @Override
   public String toString() {
-    return m2.getName() + " is " + m2.getAge() + " years old.";
+    StringBuilder builder = new StringBuilder();
+    builder.append("Message3 [m2=");
+    builder.append(m2);
+    builder.append("]");
+    return builder.toString();
   }
 }

@@ -27,10 +27,10 @@ public class Sample {
     Message1 m1 = new Message1();
     m1.setM2(m2);
 
-    System.out.println(ServiceFacade.syncCallService("sample", "service1", m1));
+    System.out.println("返回结果" + ServiceFacade.syncCallService("sample", "service1", m1));
 
-//    Thread.sleep(2000);
-//    System.exit(0);
+    // Thread.sleep(2000);
+    // System.exit(0);
   }
 
 }

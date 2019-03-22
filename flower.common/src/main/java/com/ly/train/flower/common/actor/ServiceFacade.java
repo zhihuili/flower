@@ -36,8 +36,7 @@ public class ServiceFacade {
   // TODO user define duration
   static FiniteDuration duration = Duration.create(3, TimeUnit.SECONDS);
 
-  public static void asyncCallService(String flowName, String serviceName, Object message, AsyncContext ctx)
-      throws IOException {
+  public static void asyncCallService(String flowName, String serviceName, Object message, AsyncContext ctx) throws IOException {
     ServiceContext context = ServiceContext.context(message, ctx);
     ServiceActorFactory.buildServiceActor(flowName, serviceName).tell(context, null);
   }
@@ -51,8 +50,8 @@ public class ServiceFacade {
    */
   public static Object syncCallService(String flowName, String serviceName, Object message) throws Exception {
     ServiceContext context = ServiceContext.context(message);
-    return Await.result(
-        Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName), context, new Timeout(duration)),
+    context.setSync(true);
+    return Await.result(Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName), context, new Timeout(duration)),
         duration);
   }
 
@@ -70,8 +69,7 @@ public class ServiceFacade {
     if (serviceRouter == null) {
       serviceRouter = new ServiceRouter(flowName, serviceName, flowNumbe);
       mapRouter.put(routerName, serviceRouter);
-      logger.info("build service Router. flowName : {}, serviceName : {}, flowNumbe : {}", flowName, serviceName,
-          flowNumbe);
+      logger.info("build service Router. flowName : {}, serviceName : {}, flowNumbe : {}", flowName, serviceName, flowNumbe);
     }
     return serviceRouter;
   }

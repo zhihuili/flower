@@ -48,4 +48,15 @@ public class FlowMessage implements Serializable {
     this.transactionId = transactionId;
   }
 
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("FlowMessage [transactionId=");
+    builder.append(transactionId);
+    builder.append(", message=");
+    builder.append(message);
+    builder.append("]");
+    return builder.toString();
+  }
+
 }

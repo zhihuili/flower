@@ -15,9 +15,14 @@
  */
 package com.ly.train.flower.common.sample.supervisor;
 
+import java.io.Serializable;
 import com.ly.train.flower.common.service.message.FirstMessage;
 
-public class Message1 implements FirstMessage {
+public class Message1 implements FirstMessage ,Serializable{
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
   private Message2 m2;
 
   public Message2 getM2() {
