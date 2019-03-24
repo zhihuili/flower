@@ -18,7 +18,6 @@
  */
 package com.ly.train.flower.common.actor;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import com.ly.train.flower.common.actor.model.User;
@@ -55,8 +54,9 @@ public class ServiceActorTest {
         user.setName("响应式编程");
         user.setAge(2);
         try {
-          router.asyncCallService(user);
-        } catch (IOException e) {
+         Object o = router.syncCallService(user);
+         System.out.println(o);
+        } catch (Exception e) {
           e.printStackTrace();
         }
       }).start();

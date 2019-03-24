@@ -126,9 +126,14 @@ public class ServiceActor extends AbstractActor {
       throw new FlowerException("fail to invoke service " + serviceName + " : " + service + ", param : " + fm.getMessage(), e);
     }
 
+    logger.info("同步处理 ： {}, hasChild : {}", serviceContext.isSync(), hasChildActor());
     if (serviceContext.isSync() && !hasChildActor()) {
-      syncActors.get(serviceContext.getId()).tell(result, getSelf());
-      syncActors.remove(serviceContext.getId());
+      logger.info("返回响应 {}", result);
+      ActorRef actor = syncActors.get(serviceContext.getId());
+      if(actor !=null) {
+        actor.tell(result, getSelf());
+        syncActors.remove(serviceContext.getId());
+      }
       return;
     }
 

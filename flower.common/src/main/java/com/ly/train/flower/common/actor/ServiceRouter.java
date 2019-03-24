@@ -65,9 +65,8 @@ public class ServiceRouter {
    */
   public Object syncCallService(Object message) throws Exception {
     ServiceContext serviceContext = ServiceContext.context(message);
-
-    return Await.result(Patterns.ask(ar[randomIndex()], serviceContext, new Timeout(ServiceFacade.duration)),
-        ServiceFacade.duration);
+    serviceContext.setSync(true);
+    return Await.result(Patterns.ask(ar[randomIndex()], serviceContext, new Timeout(ServiceFacade.duration)), ServiceFacade.duration);
   }
 
   private int randomIndex() {
