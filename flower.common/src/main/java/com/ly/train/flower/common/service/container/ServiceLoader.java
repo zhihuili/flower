@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -33,7 +34,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;
+import com.ly.train.flower.common.service.AggregateService;
+import com.ly.train.flower.common.service.ConditionService;
 import com.ly.train.flower.common.service.FlowerService;
+import com.ly.train.flower.common.service.NothingService;
 import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.util.FileUtil;
 import com.ly.train.flower.common.util.StringUtil;
@@ -47,26 +51,30 @@ public class ServiceLoader {
 
   private volatile ConcurrentMap<String, ServiceMeta> serviceMetaCache = new ConcurrentHashMap<>();
 
-  private static final ServiceLoader serviceLoader = new ServiceLoader();
+  private volatile static ServiceLoader serviceLoader = new ServiceLoader();
+  private volatile AtomicBoolean init = new AtomicBoolean(false);
 
   private ServiceLoader() {
     this.classLoader = this.getClass().getClassLoader();
-    try {
-      init();
-    } catch (Exception e) {
-      logger.error("", e);
-    }
+
   }
 
   public static ServiceLoader getInstance() {
+    if (serviceLoader.init.compareAndSet(false, true)) {
+      try {
+        serviceLoader.loadInnerFlowService();
+        serviceLoader.loadServiceAndFlow();
+      } catch (Exception e) {
+        logger.error("", e);
+      }
+    }
     return serviceLoader;
   }
 
   public boolean registerFlowerService(String serviceName, FlowerService flowerService) {
     Object ret = servicesCache.put(serviceName, flowerService);
     if (ret != null) {
-      logger.warn("flower service is already exist, do discard it. serviceName : {}, flowerService : {}", serviceName,
-          flowerService);
+      logger.warn("flower service is already exist, do discard it. serviceName : {}, flowerService : {}", serviceName, flowerService);
     } else {
       logger.info("register flowerservice : {}", flowerService);
     }
@@ -91,6 +99,7 @@ public class ServiceLoader {
       } else {
         service = (FlowerService) serviceClass.newInstance();
       }
+      logger.info("load flower service --> {} : {}", serviceName, service);
       servicesCache.put(serviceName, service);
       return service;
     } catch (Exception e) {
@@ -132,13 +141,13 @@ public class ServiceLoader {
 
   public boolean registerServiceType(String serviceName, Class<?> serviceClass, String config) {
     initServiceMeta(serviceName, serviceClass, config);
-    logger.info("register service : {} : {}", serviceName, serviceClass);
+    logger.info("register service type -> {} : {}", serviceName, serviceClass);
     return true;
   }
 
   private void initServiceMeta(String serviceName, Class<?> serviceClass, String config) {
     if (serviceMetaCache.containsKey(serviceName)) {
-      logger.warn("service is already exist. {} : {}", serviceName, serviceClass);
+      logger.warn("service type is already exist. {} : {}", serviceName, serviceClass);
       return;
     }
     ServiceMeta serviceMeta = new ServiceMeta(serviceClass);
@@ -152,8 +161,21 @@ public class ServiceLoader {
         paramTypes = ((ParameterizedType) serviceClass.getGenericSuperclass()).getActualTypeArguments();
 
       // logger.info("参数类型 {} : {} : {}", serviceClass, paramTypes[0], paramTypes[1]);
-      serviceMeta.setParamType((Class<?>) paramTypes[0]);
-      serviceMeta.setResultType((Class<?>) paramTypes[1]);
+      Class<?> paramType = null;
+      if (paramTypes[0] instanceof ParameterizedType) {
+        paramType = (Class<?>) ((ParameterizedType) paramTypes[0]).getRawType();
+      } else {
+        paramType = (Class<?>) paramTypes[0];
+      }
+      Class<?> returnType = null;
+      if (paramTypes[1] instanceof ParameterizedType) {
+        returnType = (Class<?>) ((ParameterizedType) paramTypes[1]).getRawType();
+      } else {
+        returnType = (Class<?>) paramTypes[1];
+      }
+
+      serviceMeta.setParamType(paramType);
+      serviceMeta.setResultType(returnType);
 
       if (StringUtil.isNotBlank(config)) {
         String[] tt = config.split(";");
@@ -170,7 +192,14 @@ public class ServiceLoader {
     serviceMetaCache.put(serviceName, serviceMeta);
   }
 
-  protected void init() throws Exception {
+  private void loadInnerFlowService() {
+    registerServiceType(AggregateService.class.getSimpleName(), AggregateService.class);
+    registerServiceType(ConditionService.class.getSimpleName(), ConditionService.class);
+    registerServiceType(NothingService.class.getSimpleName(), NothingService.class);
+
+  }
+
+  protected void loadServiceAndFlow() throws Exception {
 
     Predicate<String> filter = new FilterBuilder().include(".*\\.services").include(".*\\.flow");
 

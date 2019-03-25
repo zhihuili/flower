@@ -15,9 +15,15 @@
  */
 package com.ly.train.flower.common.sample.textflow;
 
+import java.io.Serializable;
 import com.ly.train.flower.common.service.message.FirstMessage;
+import com.ly.train.flower.common.service.message.ReturnMessage;
 
-public class Message1 implements FirstMessage {
+public class Message1 implements FirstMessage, ReturnMessage,Serializable {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
   private Message2 m2;
 
   public Message2 getM2() {
@@ -26,6 +32,15 @@ public class Message1 implements FirstMessage {
 
   public void setM2(Message2 m2) {
     this.m2 = m2;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("Message1 [m2=");
+    builder.append(m2);
+    builder.append("]");
+    return builder.toString();
   }
 
 }

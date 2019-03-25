@@ -18,11 +18,16 @@ package com.ly.train.flower.common.sample.textflow;
 import java.util.Set;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.service.message.ReturnMessage;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
-public class Service4 implements Service<Set,Message3> {
+public class Service4  implements Service<Set<Object>, Message1> ,ReturnMessage {
+  static final Logger logger = LoggerFactory.getLogger(Service4.class);
 
   @Override
-  public Message3 process(Set message, ServiceContext context) {
+  public Message1 process(Set<Object> message, ServiceContext context) {
+    logger.info("处理任务 ： {}", context.getId());
     Message2 m = new Message2();
     for (Object o : message) {
 
@@ -33,26 +38,26 @@ public class Service4 implements Service<Set,Message3> {
         m.setName(String.valueOf(o));
       }
     }
-    Message3 m3 = new Message3();
-    m3.setM2(m);
-    // pi();
-    //sleep();
-    //System.out.println(System.currentTimeMillis());
-    return m3;
+    Message1 m1 = new Message1();
+    m1.setM2(m);
+    pi();
+    sleep();
+    return m1;
   }
 
   /**
    * calculate PI, only waste CPU time
    */
-  private void pi() {
+  void pi() {
     double y = 1.0;
     for (int i = 0; i <= 100; i++) {
+      @SuppressWarnings("unused")
       double π = 3 * Math.pow(2, i) * y;
       y = Math.sqrt(2 - Math.sqrt(4 - y * y));
     }
   }
 
-  private void sleep() {
+  void sleep() {
     try {
       Thread.sleep(10);
     } catch (InterruptedException e) {

@@ -23,7 +23,7 @@ import com.ly.train.flower.common.util.EnvBuilder;
 public class Sample {
 
   public static void main(String[] args) throws Exception {
-    EnvBuilder.buildEnv(Sample.class);
+    EnvBuilder.buildEnv(null);
     {
       Message2 m2 = new Message2(10000, "Zhihui");
       Message1 m1 = new Message1();

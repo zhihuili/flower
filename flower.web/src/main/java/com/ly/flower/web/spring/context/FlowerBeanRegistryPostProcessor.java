@@ -49,6 +49,7 @@ import com.ly.flower.web.springboot.annotation.BindController;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.bytecode.ClassGenerator;
+import com.ly.train.flower.common.service.AggregateService;
 import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.util.StringUtil;
 
@@ -106,7 +107,8 @@ public class FlowerBeanRegistryPostProcessor implements BeanDefinitionRegistryPo
     BeanDefinitionReaderUtils.registerWithGeneratedName(flowerAnnotationBeanPostProcessor, registry);
     BeanDefinitionReaderUtils.registerWithGeneratedName(new RootBeanDefinition(FlowerApplicationListener.class),
         registry);
-
+    
+    ServiceFactory.registerService("AggregateService", AggregateService.class);
 
     FlowerClassPathBeanDefinitionScanner scanner =
         new FlowerClassPathBeanDefinitionScanner(registry, environment, resourceLoader);

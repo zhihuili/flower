@@ -27,7 +27,7 @@ import com.ly.train.flower.common.util.EnvBuilder;
 public class BatchSample {
 
   public static void main(String[] args) throws Exception {
-    EnvBuilder.buildEnv(BatchSample.class);
+    EnvBuilder.buildEnv(null);
     File file = new File("test.file");
     if (file.exists()) {
       System.out.println(file.getAbsolutePath());

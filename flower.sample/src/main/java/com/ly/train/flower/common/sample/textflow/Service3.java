@@ -17,11 +17,14 @@ package com.ly.train.flower.common.sample.textflow;
 
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
 public class Service3 implements Service<Message2,String> {
-
+  static final Logger logger = LoggerFactory.getLogger(Service3.class);
   @Override
   public String process(Message2 message, ServiceContext context) {
+    logger.info("处理任务 ： {}", context.getId());
     return message.getName().toUpperCase();
   }
 

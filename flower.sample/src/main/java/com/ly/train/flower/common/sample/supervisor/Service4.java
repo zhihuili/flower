@@ -19,10 +19,10 @@ import java.util.Set;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
-public class Service4 implements Service<Set,Message3> {
+public class Service4 implements Service<Set<Object>, Message1> {
 
   @Override
-  public Message3 process(Set message, ServiceContext context) {
+  public Message1 process(Set<Object> message, ServiceContext context) {
     Message2 m = new Message2();
     for (Object o : message) {
 
@@ -33,12 +33,12 @@ public class Service4 implements Service<Set,Message3> {
         m.setName(String.valueOf(o));
       }
     }
-    Message3 m3 = new Message3();
-    m3.setM2(m);
-    // pi();
-    // sleep();
+    Message1 m1 = new Message1();
+    m1.setM2(m);
+     pi();
+     sleep();
     // System.out.println(System.currentTimeMillis());
-    return m3;
+    return m1;
   }
 
   /**
