@@ -35,8 +35,7 @@ public class Sample {
     ServiceFactory.registerService("serviceD", ServiceD.class);
     ServiceFactory.registerService("serviceF", ServiceF.class);
     ServiceFactory.registerService("serviceG", ServiceG.class);
-    ServiceFactory.registerService("serviceCondition",
-        "com.ly.train.flower.common.service.ConditionService;serviceF,serviceG");
+    ServiceFactory.registerService("serviceCondition", "com.ly.train.flower.common.service.ConditionService;serviceF,serviceG");
 
     ServiceFlow.buildFlow("sample", "serviceA", "serviceB");
     ServiceFlow.buildFlow("sample", "serviceA", "serviceC");

@@ -27,7 +27,6 @@ import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.ServiceConstants;
 import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFactory;
@@ -37,6 +36,7 @@ import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.common.service.web.HttpComplete;
 import com.ly.train.flower.common.service.web.Web;
+import com.ly.train.flower.common.util.Constant;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
@@ -74,7 +74,7 @@ public class ServiceActor extends AbstractActor {
     this.serviceName = serviceName;
     this.service = ServiceFactory.getService(serviceName);
     if (service instanceof Aggregate) {
-      ((Aggregate) service).setSourceNumber(ServiceFlow.getServiceConcig(flowName, serviceName).getJointSourceNumber());
+      ((Aggregate) service).setSourceNumber(ServiceFlow.getServiceConfig(flowName, serviceName).getJointSourceNumber());
     }
     this.nextServiceActors = new HashSet<RefType>();
     Set<String> nextServiceNames = ServiceFlow.getNextFlow(flowName, serviceName);
@@ -82,7 +82,7 @@ public class ServiceActor extends AbstractActor {
       for (String nextServiceName : nextServiceNames) {
         RefType refType = new RefType();
 
-        if (ServiceFactory.getServiceClassName(nextServiceName).equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
+        if (ServiceFactory.getServiceClassName(nextServiceName).equals(Constant.AGGREGATE_SERVICE_NAME)) {
           refType.setJoint(true);
         }
         refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, nextServiceName, index));
@@ -126,11 +126,11 @@ public class ServiceActor extends AbstractActor {
       throw new FlowerException("fail to invoke service " + serviceName + " : " + service + ", param : " + fm.getMessage(), e);
     }
 
-    logger.info("同步处理 ： {}, hasChild : {}", serviceContext.isSync(), hasChildActor());
+    // logger.info("同步处理 ： {}, hasChild : {}", serviceContext.isSync(), hasChildActor());
     if (serviceContext.isSync() && !hasChildActor()) {
-      logger.info("返回响应 {}", result);
+      // logger.info("返回响应 {}", result);
       ActorRef actor = syncActors.get(serviceContext.getId());
-      if(actor !=null) {
+      if (actor != null) {
         actor.tell(result, getSelf());
         syncActors.remove(serviceContext.getId());
       }

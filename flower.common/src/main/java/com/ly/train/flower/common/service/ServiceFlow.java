@@ -20,10 +20,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.service.container.ServiceLoader;
 import com.ly.train.flower.common.service.container.ServiceMeta;
+import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
@@ -31,10 +33,12 @@ import com.ly.train.flower.logging.LoggerFactory;
 public class ServiceFlow {
   private static final Logger logger = LoggerFactory.getLogger(ServiceFlow.class);
   // Map<flowName,Map<sourceServiceName,Set<targetServiceName>>>
-  private static Map<String, Map<String, Set<String>>> flowCache = new ConcurrentHashMap<String, Map<String, Set<String>>>();
+  private static final ConcurrentMap<String, Map<String, Set<String>>> flowCache =
+      new ConcurrentHashMap<String, Map<String, Set<String>>>();
 
   // Map<flowName, Map<serviceName, ServiceConfig>>
-  private static Map<String, Map<String, ServiceConfig>> serviceConfigs = new ConcurrentHashMap<String, Map<String, ServiceConfig>>();
+  private static final ConcurrentMap<String, Map<String, ServiceConfig>> serviceConfigs =
+      new ConcurrentHashMap<String, Map<String, ServiceConfig>>();
 
   public static void buildFlow(String flowName, Class<?> preServiceClass, Class<?> nextServiceClass) {
     final FlowerService preServiceAnnotation = preServiceClass.getAnnotation(FlowerService.class);
@@ -76,7 +80,7 @@ public class ServiceFlow {
     }
     logger.info(" buildFlow : {}, preService : {}, nextService : {}", flowName, preServiceName, nextServiceName);
     String s = ServiceLoader.getInstance().loadServiceMeta(nextServiceName).getServiceClass().getName();
-    if (ServiceConstants.AGGREGATE_SERVICE_NAME.equals(s)) {
+    if (Constant.AGGREGATE_SERVICE_NAME.equals(s)) {
       Map<String, ServiceConfig> serviceConfigMap = serviceConfigs.get(flowName);
       if (serviceConfigMap == null) {
         serviceConfigMap = new ConcurrentHashMap<String, ServiceConfig>();
@@ -107,7 +111,7 @@ public class ServiceFlow {
     return flow.get(serviceName);
   }
 
-  public static ServiceConfig getServiceConcig(String flowName, String serviceName) {
+  public static ServiceConfig getServiceConfig(String flowName, String serviceName) {
     return serviceConfigs.get(flowName).get(serviceName);
   }
 
@@ -118,8 +122,8 @@ public class ServiceFlow {
       return;
     }
 
-    if (preServiceMata.getServiceClass().getName().equals(ServiceConstants.AGGREGATE_SERVICE_NAME)
-        || nextServiceMata.getServiceClass().getName().equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
+    if (preServiceMata.getServiceClass().getName().equals(Constant.AGGREGATE_SERVICE_NAME)
+        || nextServiceMata.getServiceClass().getName().equals(Constant.AGGREGATE_SERVICE_NAME)) {
       return;
     }
 

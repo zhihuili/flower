@@ -34,7 +34,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;
+import com.ly.train.flower.common.service.AggregateService;
+import com.ly.train.flower.common.service.ConditionService;
 import com.ly.train.flower.common.service.FlowerService;
+import com.ly.train.flower.common.service.NothingService;
 import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.util.FileUtil;
 import com.ly.train.flower.common.util.StringUtil;
@@ -59,6 +62,7 @@ public class ServiceLoader {
   public static ServiceLoader getInstance() {
     if (serviceLoader.init.compareAndSet(false, true)) {
       try {
+        serviceLoader.loadInnerFlowService();
         serviceLoader.loadServiceAndFlow();
       } catch (Exception e) {
         logger.error("", e);
@@ -186,6 +190,13 @@ public class ServiceLoader {
       logger.error("init service meta, serviceName : " + serviceName + ", serviceClass : " + serviceClass, e);
     }
     serviceMetaCache.put(serviceName, serviceMeta);
+  }
+
+  private void loadInnerFlowService() {
+    registerServiceType(AggregateService.class.getSimpleName(), AggregateService.class);
+    registerServiceType(ConditionService.class.getSimpleName(), ConditionService.class);
+    registerServiceType(NothingService.class.getSimpleName(), NothingService.class);
+
   }
 
   protected void loadServiceAndFlow() throws Exception {

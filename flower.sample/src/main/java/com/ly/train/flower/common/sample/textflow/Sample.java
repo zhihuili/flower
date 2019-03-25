@@ -16,12 +16,11 @@
 package com.ly.train.flower.common.sample.textflow;
 
 import com.ly.train.flower.common.actor.ServiceFacade;
-import com.ly.train.flower.common.util.EnvBuilder;
 
 public class Sample {
 
   public static void main(String[] args) throws Exception {
-    EnvBuilder.buildEnv(Sample.class);
+//    EnvBuilder.buildEnv(Sample.class);
 
     Message2 m2 = new Message2(10, "Zhihui");
     Message1 m1 = new Message1();
