@@ -19,6 +19,7 @@
 package com.ly.train.flower.common.service;
 
 import java.util.Arrays;
+import org.junit.Before;
 import org.junit.Test;
 import com.ly.train.flower.base.service.ServiceA;
 import com.ly.train.flower.base.service.ServiceB;
@@ -32,15 +33,21 @@ import com.ly.train.flower.common.service.container.ServiceFactory;
  */
 public class ServiceFlowTest {
 
-  @Test
-  public void testBuild() {
+  @Before
+  public void before() {
     ServiceFactory.registerService(ServiceA.class.getSimpleName(), ServiceA.class);
     ServiceFactory.registerService(ServiceB.class.getSimpleName(), ServiceB.class);
     ServiceFactory.registerService(ServiceC1.class.getSimpleName(), ServiceC1.class);
     ServiceFactory.registerService(ServiceC2.class.getSimpleName(), ServiceC2.class);
-    ServiceFlow serviceFlow = ServiceFlow.getOrCreate("demo").buildFlow(ServiceA.class, ServiceB.class);
+  }
+
+  @Test
+  public void testBuild() {
+
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate("demo");
+    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
     serviceFlow.buildParelelFlow(ServiceB.class, Arrays.asList(ServiceC1.class, ServiceC2.class));
-    serviceFlow.buildParelelFlow("ServiceC1", Arrays.asList("ServiceC2", "ServiceB"));
+    serviceFlow.buildParelelFlow("ServiceC1", Arrays.asList("ServiceC2"));
     System.out.println(serviceFlow.toString());
   }
 

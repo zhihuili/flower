@@ -21,6 +21,8 @@ package com.ly.train.flower.common.util;
 import java.io.Serializable;
 
 /**
+ * 键值对组
+ * 
  * @author leeyazhou
  *
  */

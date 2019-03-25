@@ -15,16 +15,24 @@
  */
 package com.ly.train.flower.common.service;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ServiceConfig {
+/**
+ * 流程服务节点配置
+ * 
+ * @author leeyazhou
+ *
+ */
+public class ServiceConfig implements Serializable {
 
+  private static final long serialVersionUID = 1L;
   private final String flowName;
   private String serviceName;
-  private Set<String> nextServiceNames;
-  private Set<String> previousServiceNames;
+  private Set<ServiceConfig> nextServiceConfigs;
+  private Set<ServiceConfig> previousServiceConfigs;
   private final AtomicInteger jointSourceNumber = new AtomicInteger(0);
 
   public ServiceConfig(String flowName) {
@@ -47,33 +55,102 @@ public class ServiceConfig {
     this.serviceName = serviceName;
   }
 
-  public Set<String> getNextServiceNames() {
-    return nextServiceNames;
+  /**
+   * @return the nextServiceConfigs
+   */
+  public Set<ServiceConfig> getNextServiceConfigs() {
+    return nextServiceConfigs;
   }
 
-  public ServiceConfig addNextServiceName(String nextServiceName) {
-    if (nextServiceNames == null) {
-      this.nextServiceNames = new HashSet<>();
+  /**
+   * @return the previousServiceConfigs
+   */
+  public Set<ServiceConfig> getPreviousServiceConfigs() {
+    return previousServiceConfigs;
+  }
+
+  public ServiceConfig addNextServiceConfig(ServiceConfig nextServiceConfig) {
+    if (nextServiceConfigs == null) {
+      this.nextServiceConfigs = new HashSet<>();
     }
 
-    nextServiceNames.add(nextServiceName);
+    nextServiceConfigs.add(nextServiceConfig);
     return this;
   }
 
-  public Set<String> getPreviousServiceName() {
-    return previousServiceNames;
-  }
 
-  public ServiceConfig addPreviousServiceName(String previousServiceName) {
-    if (previousServiceNames == null) {
-      this.previousServiceNames = new HashSet<>();
+  public ServiceConfig addPreviousServiceConfig(ServiceConfig previousServiceConfig) {
+    if (previousServiceConfigs == null) {
+      this.previousServiceConfigs = new HashSet<>();
     }
-    previousServiceNames.add(previousServiceName);
+    previousServiceConfigs.add(previousServiceConfig);
     return this;
   }
 
   public String getFlowName() {
     return flowName;
+  }
+
+  public boolean hasNextServices() {
+    return nextServiceConfigs != null && nextServiceConfigs.size() > 0;
+  }
+
+  public boolean hasPreviousServices() {
+    return previousServiceConfigs != null && previousServiceConfigs.size() > 0;
+  }
+
+  public String getSimpleDesc() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(getServiceName());
+    sb.append("(");
+    sb.append(previousServiceConfigs == null ? 0 : previousServiceConfigs.size()).append(":");
+    sb.append(nextServiceConfigs == null ? 0 : nextServiceConfigs.size());
+    sb.append(")");
+    return sb.toString();
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((flowName == null) ? 0 : flowName.hashCode());
+    result = prime * result + ((serviceName == null) ? 0 : serviceName.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    ServiceConfig other = (ServiceConfig) obj;
+    if (flowName == null) {
+      if (other.flowName != null)
+        return false;
+    } else if (!flowName.equals(other.flowName))
+      return false;
+    if (serviceName == null) {
+      if (other.serviceName != null)
+        return false;
+    } else if (!serviceName.equals(other.serviceName))
+      return false;
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("ServiceConfig [flowName=");
+    builder.append(flowName);
+    builder.append(", serviceName=");
+    builder.append(serviceName);
+    builder.append(", jointSourceNumber=");
+    builder.append(jointSourceNumber);
+    builder.append("]");
+    return builder.toString();
   }
 
 

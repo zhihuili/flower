@@ -27,6 +27,7 @@ import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.Service;
+import com.ly.train.flower.common.service.ServiceConfig;
 import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFactory;
@@ -77,17 +78,17 @@ public class ServiceActor extends AbstractActor {
       ((Aggregate) service).setSourceNumber(ServiceFlow.getOrCreate(flowName).getServiceConfig(serviceName).getJointSourceNumber());
     }
     this.nextServiceActors = new HashSet<RefType>();
-    Set<String> nextServiceNames = ServiceFlow.getOrCreate(flowName).getNextFlow(serviceName);
-    if (nextServiceNames != null && !nextServiceNames.isEmpty()) {
-      for (String nextServiceName : nextServiceNames) {
+    Set<ServiceConfig> serviceConfigs = ServiceFlow.getOrCreate(flowName).getNextFlow(serviceName);
+    if (serviceConfigs != null) {
+      for (ServiceConfig serviceConfig : serviceConfigs) {
         RefType refType = new RefType();
 
-        if (ServiceFactory.getServiceClassName(nextServiceName).equals(Constant.AGGREGATE_SERVICE_NAME)) {
+        if (ServiceFactory.getServiceClassName(serviceConfig.getServiceName()).equals(Constant.AGGREGATE_SERVICE_NAME)) {
           refType.setJoint(true);
         }
-        refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, nextServiceName, index));
-        refType.setMessageType(ServiceLoader.getInstance().loadServiceMeta(nextServiceName).getParamType());
-        refType.setServiceName(nextServiceName);
+        refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, serviceConfig.getServiceName(), index));
+        refType.setMessageType(ServiceLoader.getInstance().loadServiceMeta(serviceConfig.getServiceName()).getParamType());
+        refType.setServiceName(serviceConfig.getServiceName());
         nextServiceActors.add(refType);
       }
     }

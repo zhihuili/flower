@@ -27,6 +27,7 @@ import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;
 import com.ly.train.flower.common.service.container.ServiceLoader;
 import com.ly.train.flower.common.service.container.ServiceMeta;
+import com.ly.train.flower.common.util.Assert;
 import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.Pair;
 import com.ly.train.flower.common.util.StringUtil;
@@ -37,10 +38,10 @@ public class ServiceFlow {
   private static final Logger logger = LoggerFactory.getLogger(ServiceFlow.class);
   private static final ConcurrentMap<String, ServiceFlow> serviceFlows = new ConcurrentHashMap<>();
 
-  // Map<sourceServiceName,Set<targetServiceName>>
-  private final ConcurrentMap<String, Set<String>> servicesOfFlow = new ConcurrentHashMap<>();
+  // Map<sourceServiceName,Set<targetServiceName>> 流程
+  private final ConcurrentMap<String, Set<ServiceConfig>> servicesOfFlow = new ConcurrentHashMap<>();
 
-  // Map<serviceName, ServiceConfig>
+  // Map<serviceName, ServiceConfig> 每个服务节点的配置信息
   private final ConcurrentMap<String, ServiceConfig> serviceConfigs = new ConcurrentHashMap<>();
 
   private final String flowName;
@@ -48,10 +49,11 @@ public class ServiceFlow {
   /**
    * 流程的第一个服务
    */
-  private String headServiceName;
+  private ServiceConfig headServiceConfig;
 
   private ServiceFlow(String flowName) {
     this.flowName = flowName;
+
   }
 
   /**
@@ -66,10 +68,10 @@ public class ServiceFlow {
   /**
    * 流程的第一个服务
    * 
-   * @return the headServiceName
+   * @return {@link ServiceConfig}
    */
-  public String getHeadServiceName() {
-    return headServiceName;
+  public ServiceConfig getHeadServiceConfig() {
+    return headServiceConfig;
   }
 
   /**
@@ -80,6 +82,7 @@ public class ServiceFlow {
    * @return {@code ServiceFlow}
    */
   public static ServiceFlow getOrCreate(String flowName) {
+    Assert.notNull(flowName, "flowName can't be null !");
     ServiceFlow serviceFlow = serviceFlows.get(flowName);
     if (serviceFlow == null) {
       synchronized (logger) {
@@ -124,39 +127,51 @@ public class ServiceFlow {
   public ServiceFlow buildFlow(String preServiceName, String nextServiceName) {
     validateFlow(preServiceName, nextServiceName);
 
+    ServiceConfig preConfig = getOrCreateServiceConfig(preServiceName);
+    ServiceConfig nextConfig = getOrCreateServiceConfig(nextServiceName);
 
-    Set<String> services = servicesOfFlow.get(preServiceName);
 
-    if (services == null) {
-      services = new HashSet<String>();
-      servicesOfFlow.put(preServiceName, services);
+    Set<ServiceConfig> nextServices = servicesOfFlow.get(preServiceName);
+
+    if (nextServices == null) {
+      nextServices = new HashSet<>();
+      servicesOfFlow.put(preServiceName, nextServices);
     }
-    if (headServiceName == null) {
-      this.headServiceName = preServiceName;
+    if (headServiceConfig == null) {
+      this.headServiceConfig = preConfig;
     }
 
-    boolean ret = services.add(nextServiceName);
+    boolean ret = nextServices.add(nextConfig);
     if (!ret) {
       return this;
     }
+
     logger.info(" buildFlow : {}, preService : {}, nextService : {}", flowName, preServiceName, nextServiceName);
+    // 添加成功，更新配置信息
+    preConfig.addNextServiceConfig(nextConfig);
+    nextConfig.addPreviousServiceConfig(preConfig);
+
+
     ServiceMeta serviceMeta = ServiceLoader.getInstance().loadServiceMeta(nextServiceName);
     if (serviceMeta == null) {
       throw new ServiceNotFoundException("serviceName : " + nextServiceName);
     }
-    String s = serviceMeta.getServiceClass().getName();
-    if (Constant.AGGREGATE_SERVICE_NAME.equals(s)) {
-      ServiceConfig serviceConfig = serviceConfigs.get(nextServiceName);
-      if (serviceConfig == null) {
-        serviceConfig = new ServiceConfig(this.flowName);
-        serviceConfig.setServiceName(nextServiceName);
-        serviceConfigs.put(nextServiceName, serviceConfig);
+    if (Constant.AGGREGATE_SERVICE_NAME.equals(serviceMeta.getServiceClass().getName())) {
+      if (!serviceConfigs.containsKey(nextServiceName)) {
+        serviceConfigs.put(nextServiceName, nextConfig);
       }
-      serviceConfig.jointSourceNumberPlus();
+      nextConfig.jointSourceNumberPlus();
     }
     return this;
   }
 
+  /**
+   * 配置并行服务节点
+   * 
+   * @param previousServiceName 当前服务节点
+   * @param nextServiceNames 下行服务节点名称
+   * @return
+   */
   public ServiceFlow buildParelelFlow(String previousServiceName, Collection<String> nextServiceNames) {
     for (String nextServiceName : nextServiceNames) {
       buildFlow(previousServiceName, nextServiceName);
@@ -164,6 +179,13 @@ public class ServiceFlow {
     return this;
   }
 
+  /**
+   * 配置并行服务节点
+   * 
+   * @param previousServiceName 当前服务节点
+   * @param nextServiceClass 下行服务节点类名称
+   * @return
+   */
   public ServiceFlow buildParelelFlow(Class<?> previousServiceName, Collection<Class<?>> nextServiceClass) {
     for (Class<?> nextServiceName : nextServiceClass) {
       buildFlow(previousServiceName, nextServiceName);
@@ -183,19 +205,51 @@ public class ServiceFlow {
     return this;
   }
 
-  public Set<String> getNextFlow(String serviceName) {
+  /**
+   * 获取 OR 初始化服务节点配置信息
+   * 
+   * @param serviceName 服务节点名称
+   * @return {@link ServiceConfig}
+   */
+  private ServiceConfig getOrCreateServiceConfig(String serviceName) {
+    ServiceConfig serviceConfig = serviceConfigs.get(serviceName);
+    if (serviceConfig == null) {
+      serviceConfig = new ServiceConfig(flowName);
+      serviceConfig.setServiceName(serviceName);
+      serviceConfigs.putIfAbsent(serviceName, serviceConfig);
+    }
+    return serviceConfig;
+  }
+
+  /**
+   * 获取下行服务节点
+   * 
+   * @param serviceName 服务节点名称
+   * @return {@link ServiceConfig}
+   */
+  public Set<ServiceConfig> getNextFlow(String serviceName) {
     return servicesOfFlow.get(serviceName);
   }
 
+  /**
+   * 获取服务节点的配置信息
+   * 
+   * @param serviceName 服务节点名称
+   * @return {@link ServiceConfig}
+   */
   public ServiceConfig getServiceConfig(String serviceName) {
     return serviceConfigs.get(serviceName);
   }
 
+  /**
+   * 校验流程参数是否兼容
+   * 
+   * @param preServiceName 前一个服务节点名称
+   * @param nextServiceName 后一个服务节点名称
+   */
   private void validateFlow(String preServiceName, String nextServiceName) {
-    if (StringUtil.isBlank(preServiceName) || StringUtil.isBlank(nextServiceName)) {
-      throw new FlowerException(
-          "service name can't be null. preServiceName : " + preServiceName + ", nextServiceName : " + nextServiceName);
-    }
+    Assert.notNull(preServiceName, "preServiceName can't be null !");
+    Assert.notNull(nextServiceName, "nextServiceName can't be null !");
 
     ServiceMeta preServiceMata = ServiceLoader.getInstance().loadServiceMeta(preServiceName);
     ServiceMeta nextServiceMata = ServiceLoader.getInstance().loadServiceMeta(nextServiceName);
@@ -229,19 +283,25 @@ public class ServiceFlow {
     builder.append("ServiceFlow [\r\n\tflowName = ");
     builder.append(flowName);
     builder.append("\r\n\t");
-    Set<String> nextServices = servicesOfFlow.get(headServiceName);
+    Set<ServiceConfig> nextServices = servicesOfFlow.get(getHeadServiceConfig().getServiceName());
 
-    builder.append(headServiceName);
-    builder.append(" --> ").append(servicesOfFlow.get(headServiceName));
+    builder.append(getHeadServiceConfig().getSimpleDesc());
+    builder.append(" --> ");
+    getHeadServiceConfig().getNextServiceConfigs().forEach(item -> {
+      builder.append(item.getSimpleDesc()).append(",");
+    });
 
     if (nextServices != null) {
-      for (Map.Entry<String, Set<String>> entry : servicesOfFlow.entrySet()) {
-        if (headServiceName.equals(entry.getKey())) {
+      for (Map.Entry<String, Set<ServiceConfig>> entry : servicesOfFlow.entrySet()) {
+        if (getHeadServiceConfig().getServiceName().equals(entry.getKey())) {
           continue;
         }
         builder.append("\r\n\t");
-        builder.append(entry.getKey());
-        builder.append(" -- > ").append(entry.getValue());
+        builder.append(getServiceConfig(entry.getKey()).getSimpleDesc());
+        builder.append(" -- > ");
+        entry.getValue().forEach(item -> {
+          builder.append(item.getSimpleDesc()).append(", ");
+        });
       }
     }
 

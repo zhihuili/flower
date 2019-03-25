@@ -40,7 +40,7 @@ public class ServiceFacade {
 
   public static void asyncCallService(String flowName, String serviceName, Object message, AsyncContext ctx) throws IOException {
     ServiceContext context = ServiceContext.context(message, ctx);
-    serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceName();
+    serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceConfig().getServiceName();
     ServiceActorFactory.buildServiceActor(flowName, serviceName).tell(context, ActorRef.noSender());
   }
 
@@ -61,7 +61,7 @@ public class ServiceFacade {
   public static Object syncCallService(String flowName, String serviceName, Object message) throws Exception {
     ServiceContext context = ServiceContext.context(message);
     context.setSync(true);
-    serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceName();
+    serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceConfig().getServiceName();
     return Await.result(Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName), context, new Timeout(duration)),
         duration);
   }
@@ -75,7 +75,7 @@ public class ServiceFacade {
    * @return
    */
   public static ServiceRouter buildServiceRouter(String flowName, String serviceName, int flowNumbe) {
-    serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceName();
+    serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceConfig().getServiceName();
     final String routerName = flowName + "_" + serviceName;
 
     ServiceRouter serviceRouter = mapRouter.get(routerName);
