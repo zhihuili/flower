@@ -15,11 +15,13 @@
  */
 package com.ly.train.flower.common.sample.springboot;
 
+import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.web.Flush;
 
+@FlowerService
 public class ServiceB implements Service<Integer, Object>, Flush, Complete {
   @Override
   public Object process(Integer message, ServiceContext context) throws Exception {

@@ -15,9 +15,8 @@
  */
 package com.ly.train.flower.common.util;
 
-import com.google.common.base.Predicate;
-import com.ly.train.flower.common.service.ServiceFlow;
-import com.ly.train.flower.common.service.container.ServiceFactory;
+import java.util.Set;
+import java.util.regex.Pattern;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.util.ClasspathHelper;
@@ -25,8 +24,9 @@ import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.Set;
-import java.util.regex.Pattern;
+import com.google.common.base.Predicate;
+import com.ly.train.flower.common.service.ServiceFlow;
+import com.ly.train.flower.common.service.container.ServiceFactory;
 
 public class EnvBuilder {
   private static final Logger logger = LoggerFactory.getLogger(EnvBuilder.class);
@@ -64,7 +64,7 @@ public class EnvBuilder {
     for (String path : flowFiles) {
       logger.info("find flow file, path : {}", path);
       String flowName = path.substring(0, path.lastIndexOf("."));
-      ServiceFlow.buildFlow(flowName, FileUtil.readFlow("/" + path));
+      ServiceFlow.getOrCreate(flowName).buildFlow(FileUtil.readFlow("/" + path));
     }
   }
 }

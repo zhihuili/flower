@@ -16,9 +16,9 @@
 /**
  * 
  */
-package com.ly.train.flower.common.actor.service;
+package com.ly.train.flower.base.service;
 
-import com.ly.train.flower.common.actor.model.User;
+import com.ly.train.flower.base.model.User;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
@@ -30,8 +30,8 @@ import com.ly.train.flower.logging.LoggerFactory;
  *
  */
 @FlowerService
-public class ServiceA implements Service<User, User> {
-  static final Logger logger = LoggerFactory.getLogger(ServiceA.class);
+public class ServiceC1 implements Service<User, User> {
+  static final Logger logger = LoggerFactory.getLogger(ServiceC1.class);
 
   @Override
   public User process(User message, ServiceContext context) throws Throwable {

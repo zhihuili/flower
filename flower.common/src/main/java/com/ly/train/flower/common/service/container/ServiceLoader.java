@@ -222,7 +222,7 @@ public class ServiceLoader {
     for (String path : flowFiles) {
       logger.info("find flow file, path : {}", path);
       String flowName = path.substring(0, path.lastIndexOf("."));
-      ServiceFlow.buildFlow(flowName, FileUtil.readFlow("/" + path));
+      ServiceFlow.getOrCreate(flowName).buildFlow(FileUtil.readFlow("/" + path));
     }
 
   }

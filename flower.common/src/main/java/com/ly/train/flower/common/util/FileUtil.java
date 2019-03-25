@@ -29,11 +29,11 @@ import org.slf4j.LoggerFactory;
 public class FileUtil {
   private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
-  public static List<String[]> readFlow(String path) throws IOException {
+  public static List<Pair<String, String>> readFlow(String path) throws IOException {
     InputStreamReader fr = new InputStreamReader(FileUtil.class.getResourceAsStream(path));
     BufferedReader br = new BufferedReader(fr);
     String line = "";
-    List<String[]> flow = new ArrayList<String[]>();
+    List<Pair<String, String>> flow = new ArrayList<>();
     while ((line = br.readLine()) != null) {
       String sl = line.trim();
       if ((sl.startsWith("//")) || sl.startsWith("#") || sl.equals("")) {
@@ -43,8 +43,9 @@ public class FileUtil {
       if (connection == null || connection.length != 2) {
         close(br, fr);
         throw new RuntimeException("Illegal flow config:" + path);
+      } else {
+        flow.add(new Pair<String, String>(connection[0].trim(), connection[1].trim()));
       }
-      flow.add(connection);
     }
     close(br, fr);
     return flow;
@@ -54,7 +55,7 @@ public class FileUtil {
     InputStreamReader fr = new InputStreamReader(FileUtil.class.getResourceAsStream(path));
     BufferedReader br = new BufferedReader(fr);
     String line = "";
-    Map<String, String> map = new HashMap<String, String>();
+    Map<String, String> result = new HashMap<String, String>();
     while ((line = br.readLine()) != null) {
       String sl = line.trim();
       if ((sl.startsWith("//")) || sl.startsWith("#") || sl.equals("")) {
@@ -65,10 +66,10 @@ public class FileUtil {
         close(br, fr);
         throw new RuntimeException("Illegal flow config:" + path + ", sl");
       }
-      map.put(kv[0], kv[1]);
+      result.put(kv[0].trim(), kv[1].trim());
     }
     close(br, fr);
-    return map;
+    return result;
   }
 
   static void close(Reader reader, InputStreamReader is) {

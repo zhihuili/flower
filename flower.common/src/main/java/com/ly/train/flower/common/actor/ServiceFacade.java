@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.AsyncContext;
+import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
@@ -39,6 +40,7 @@ public class ServiceFacade {
 
   public static void asyncCallService(String flowName, String serviceName, Object message, AsyncContext ctx) throws IOException {
     ServiceContext context = ServiceContext.context(message, ctx);
+    serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceName();
     ServiceActorFactory.buildServiceActor(flowName, serviceName).tell(context, ActorRef.noSender());
   }
 
@@ -59,6 +61,7 @@ public class ServiceFacade {
   public static Object syncCallService(String flowName, String serviceName, Object message) throws Exception {
     ServiceContext context = ServiceContext.context(message);
     context.setSync(true);
+    serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceName();
     return Await.result(Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName), context, new Timeout(duration)),
         duration);
   }
@@ -72,7 +75,9 @@ public class ServiceFacade {
    * @return
    */
   public static ServiceRouter buildServiceRouter(String flowName, String serviceName, int flowNumbe) {
+    serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceName();
     final String routerName = flowName + "_" + serviceName;
+
     ServiceRouter serviceRouter = mapRouter.get(routerName);
     if (serviceRouter == null) {
       serviceRouter = new ServiceRouter(flowName, serviceName, flowNumbe);

@@ -46,7 +46,7 @@ public class DemoFlower extends FlowerController {
 
   @Override
   public void buildFlower() {
-    ServiceFlow.buildFlow(getFlowName(), UserService.class, UserService2.class);
+    ServiceFlow.getOrCreate(getFlowName()).buildFlow(UserService.class, UserService2.class);
   }
 
 }

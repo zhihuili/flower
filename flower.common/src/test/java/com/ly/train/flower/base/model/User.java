@@ -16,7 +16,7 @@
 /**
  * 
  */
-package com.ly.train.flower.common.actor.model;
+package com.ly.train.flower.base.model;
 
 /**
  * @author leeyazhou

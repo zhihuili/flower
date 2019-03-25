@@ -18,7 +18,6 @@ package com.ly.train.flower.common.actor;
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.servlet.AsyncContext;
-import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import akka.actor.ActorRef;
 import akka.pattern.Patterns;
@@ -35,8 +34,8 @@ public class ServiceRouter {
 
   public ServiceRouter(String flowName, String serviceName, int number) {
     this.number = number;
-    ServiceFlow.getNextFlow(flowName, serviceName);
     this.ar = new ActorRef[number];
+    this.serviceName = serviceName;
     for (int i = 0; i < number; i++) {
       this.ar[i] = ServiceActorFactory.buildServiceActor(flowName, serviceName, i);
     }

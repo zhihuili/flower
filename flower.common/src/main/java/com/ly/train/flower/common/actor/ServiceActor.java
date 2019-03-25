@@ -74,10 +74,10 @@ public class ServiceActor extends AbstractActor {
     this.serviceName = serviceName;
     this.service = ServiceFactory.getService(serviceName);
     if (service instanceof Aggregate) {
-      ((Aggregate) service).setSourceNumber(ServiceFlow.getServiceConfig(flowName, serviceName).getJointSourceNumber());
+      ((Aggregate) service).setSourceNumber(ServiceFlow.getOrCreate(flowName).getServiceConfig(serviceName).getJointSourceNumber());
     }
     this.nextServiceActors = new HashSet<RefType>();
-    Set<String> nextServiceNames = ServiceFlow.getNextFlow(flowName, serviceName);
+    Set<String> nextServiceNames = ServiceFlow.getOrCreate(flowName).getNextFlow(serviceName);
     if (nextServiceNames != null && !nextServiceNames.isEmpty()) {
       for (String nextServiceName : nextServiceNames) {
         RefType refType = new RefType();

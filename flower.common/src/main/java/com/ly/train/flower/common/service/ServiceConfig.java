@@ -15,15 +15,67 @@
  */
 package com.ly.train.flower.common.service;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class ServiceConfig {
 
-  private int jointSourceNumber = 0;
+  private final String flowName;
+  private String serviceName;
+  private Set<String> nextServiceNames;
+  private Set<String> previousServiceNames;
+  private final AtomicInteger jointSourceNumber = new AtomicInteger(0);
+
+  public ServiceConfig(String flowName) {
+    this.flowName = flowName;
+  }
 
   public int getJointSourceNumber() {
-    return jointSourceNumber;
+    return jointSourceNumber.get();
   }
 
-  public void jointSourceNumberPlus() {
-    jointSourceNumber++;
+  public int jointSourceNumberPlus() {
+    return this.jointSourceNumber.incrementAndGet();
   }
+
+  public String getServiceName() {
+    return serviceName;
+  }
+
+  public void setServiceName(String serviceName) {
+    this.serviceName = serviceName;
+  }
+
+  public Set<String> getNextServiceNames() {
+    return nextServiceNames;
+  }
+
+  public ServiceConfig addNextServiceName(String nextServiceName) {
+    if (nextServiceNames == null) {
+      this.nextServiceNames = new HashSet<>();
+    }
+
+    nextServiceNames.add(nextServiceName);
+    return this;
+  }
+
+  public Set<String> getPreviousServiceName() {
+    return previousServiceNames;
+  }
+
+  public ServiceConfig addPreviousServiceName(String previousServiceName) {
+    if (previousServiceNames == null) {
+      this.previousServiceNames = new HashSet<>();
+    }
+    previousServiceNames.add(previousServiceName);
+    return this;
+  }
+
+  public String getFlowName() {
+    return flowName;
+  }
+
+
+
 }
