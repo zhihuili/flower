@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * 
+ */
 package com.ly.train.flower.springboot.service;
 
 import org.slf4j.Logger;
@@ -27,15 +30,17 @@ import com.ly.train.flower.springboot.model.User;
  *
  */
 @FlowerService
-public class UserService2 implements Service<User, User> {
-  private static final Logger logger = LoggerFactory.getLogger(UserService2.class);
+public class HeadService implements Service<User, User> {
+
+  private static final Logger logger = LoggerFactory.getLogger(HeadService.class);
 
   @Override
   public User process(User message, ServiceContext context) throws Throwable {
-    message.setAge(message.getAge() + 1);
-    message.setName(message.getName() + "$修改后");
     logger.info("处理消息：{} ", message);
-    context.getWeb().println("id:" + String.valueOf(message));
+    message.setName(message.getName() + "-->" + "HeaderName");
     return message;
   }
+
+
+
 }

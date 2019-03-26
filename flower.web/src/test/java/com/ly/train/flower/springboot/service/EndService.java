@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * 
+ */
 package com.ly.train.flower.springboot.service;
 
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.annotation.FlowerService;
@@ -27,15 +31,21 @@ import com.ly.train.flower.springboot.model.User;
  *
  */
 @FlowerService
-public class UserService2 implements Service<User, User> {
-  private static final Logger logger = LoggerFactory.getLogger(UserService2.class);
+public class EndService implements Service<Set<User>, Integer> {
+
+  private static final Logger logger = LoggerFactory.getLogger(EndService.class);
 
   @Override
-  public User process(User message, ServiceContext context) throws Throwable {
-    message.setAge(message.getAge() + 1);
-    message.setName(message.getName() + "$修改后");
+  public Integer process(Set<User> message, ServiceContext context) throws Throwable {
     logger.info("处理消息：{} ", message);
-    context.getWeb().println("id:" + String.valueOf(message));
-    return message;
+    int age = 0;
+    for (User user : message) {
+      age += user.getAge();
+    }
+    logger.info("年龄：{}", age);
+    return age;
   }
+
+
+
 }
