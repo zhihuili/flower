@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.exception.FlowerException;
+import com.ly.train.flower.common.exception.ServiceNotFoundException;
 import com.ly.train.flower.common.service.container.ServiceLoader;
 import com.ly.train.flower.common.service.container.ServiceMeta;
 import com.ly.train.flower.common.util.Constant;
@@ -79,8 +80,11 @@ public class ServiceFlow {
       return;
     }
     logger.info(" buildFlow : {}, preService : {}, nextService : {}", flowName, preServiceName, nextServiceName);
-    String s = ServiceLoader.getInstance().loadServiceMeta(nextServiceName).getServiceClass().getName();
-    if (Constant.AGGREGATE_SERVICE_NAME.equals(s)) {
+    ServiceMeta serviceMeta = ServiceLoader.getInstance().loadServiceMeta(nextServiceName);
+    if(serviceMeta == null) {
+      throw new ServiceNotFoundException("serviceName : " + nextServiceName);
+    }
+    if (Constant.AGGREGATE_SERVICE_NAME.equals(serviceMeta.getServiceClass().getName())) {
       Map<String, ServiceConfig> serviceConfigMap = serviceConfigs.get(flowName);
       if (serviceConfigMap == null) {
         serviceConfigMap = new ConcurrentHashMap<String, ServiceConfig>();

@@ -18,10 +18,8 @@ package com.ly.train.flower.springboot.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.annotation.FlowerService;
-import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
-import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.springboot.model.User;
 
 /**
@@ -29,7 +27,7 @@ import com.ly.train.flower.springboot.model.User;
  *
  */
 @FlowerService
-public class UserService2 implements Service<User, User>, Flush, Complete {
+public class UserService2 implements Service<User, User> {
   private static final Logger logger = LoggerFactory.getLogger(UserService2.class);
 
   @Override

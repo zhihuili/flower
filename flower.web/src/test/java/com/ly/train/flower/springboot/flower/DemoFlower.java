@@ -24,8 +24,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ly.flower.web.spring.FlowerController;
 import com.ly.train.flower.common.annotation.Flower;
+import com.ly.train.flower.common.service.AggregateService;
 import com.ly.train.flower.common.service.ServiceFlow;
+import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.springboot.model.User;
+import com.ly.train.flower.springboot.service.HeadService;
 import com.ly.train.flower.springboot.service.UserService;
 import com.ly.train.flower.springboot.service.UserService2;
 
@@ -33,7 +36,7 @@ import com.ly.train.flower.springboot.service.UserService2;
  * @author leeyazhou
  *
  */
-@Flower(value = "flower", serviceName = "UserService")
+@Flower(value = "flower", serviceName = "HeadService")
 @RequestMapping("/flower/")
 @RestController
 public class DemoFlower extends FlowerController {
@@ -42,11 +45,18 @@ public class DemoFlower extends FlowerController {
   @RequestMapping("test")
   public void test(User user, HttpServletRequest req) throws IOException {
     doProcess(user, req);
+    logger.info("请求参数：{}", user);
   }
 
   @Override
   public void buildFlower() {
-    ServiceFlow.buildFlow(getFlowName(), UserService.class, UserService2.class);
+    ServiceFactory.registerService("aggressGateService1", AggregateService.class);
+
+    ServiceFlow.buildFlow(getFlowName(), HeadService.class, UserService.class);
+    ServiceFlow.buildFlow(getFlowName(), HeadService.class, UserService2.class);
+    ServiceFlow.buildFlow(getFlowName(), "UserService", "aggressGateService1");
+    ServiceFlow.buildFlow(getFlowName(), "UserService2", "aggressGateService1");
+    ServiceFlow.buildFlow(getFlowName(), "aggressGateService1", "EndService");
   }
 
 }
