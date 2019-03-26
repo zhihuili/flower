@@ -40,6 +40,7 @@ public class ServiceFacade {
 
   public static void asyncCallService(String flowName, String serviceName, Object message, AsyncContext ctx) throws IOException {
     ServiceContext context = ServiceContext.context(message, ctx);
+    context.setFlowName(flowName);
     serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceConfig().getServiceName();
     ServiceActorFactory.buildServiceActor(flowName, serviceName).tell(context, ActorRef.noSender());
   }

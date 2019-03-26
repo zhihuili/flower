@@ -34,6 +34,7 @@ public class ServiceContext implements Serializable {
   private String id = UUID.randomUUID().toString().replaceAll("-", "");
   private Web web;
   private boolean sync;
+  private String flowName;
 
   private FlowMessage flowMessage;
 
@@ -67,6 +68,7 @@ public class ServiceContext implements Serializable {
     serviceContext.id = this.id;
     serviceContext.setFlowMessage(CloneUtil.clone(flowMessage));
     serviceContext.setSync(this.sync);
+    serviceContext.setFlowName(this.flowName);
     return serviceContext;
   }
 
@@ -123,6 +125,14 @@ public class ServiceContext implements Serializable {
    */
   public void setSync(boolean sync) {
     this.sync = sync;
+  }
+
+  public String getFlowName() {
+    return flowName;
+  }
+
+  public void setFlowName(String flowName) {
+    this.flowName = flowName;
   }
 
   @Override

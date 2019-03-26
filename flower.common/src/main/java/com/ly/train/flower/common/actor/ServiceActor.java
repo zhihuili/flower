@@ -67,7 +67,7 @@ public class ServiceActor extends AbstractActor {
   private FlowerService service;
   private String serviceName;
   private String flowName;
-  private Set<RefType> nextServiceActors;
+  private final Set<RefType> nextServiceActors;
 
   static public Props props(String flowName, String serviceName, int index, ActorSystem system) {
     return Props.create(ServiceActor.class, () -> new ServiceActor(flowName, serviceName, index, system));
@@ -109,7 +109,7 @@ public class ServiceActor extends AbstractActor {
   @SuppressWarnings({"unchecked", "rawtypes"})
   public void onReceive(ServiceContext serviceContext) throws Throwable {
     FlowMessage fm = serviceContext.getFlowMessage();
-    if (serviceContext.isSync() && !syncActors.containsKey(serviceContext.getId())) {
+    if (needCacheActorRef(serviceContext)) {
       syncActors.putIfAbsent(serviceContext.getId(), getSender());
     }
 
@@ -126,7 +126,7 @@ public class ServiceActor extends AbstractActor {
     }
 
     // logger.info("同步处理 ： {}, hasChild : {}", serviceContext.isSync(), hasChildActor());
-    if (serviceContext.isSync() && !hasChildActor()) {
+    if (serviceContext.isSync() && hasNoChildActor()) {
       // logger.info("返回响应 {}", result);
       ActorRef actor = syncActors.get(serviceContext.getId());
       if (actor != null) {
@@ -149,29 +149,24 @@ public class ServiceActor extends AbstractActor {
       }
     }
 
-    if (result == null)// for joint service
+    if (result == null) {// for joint service
       return;
-    if (hasChildActor()) {
-      for (RefType refType : nextServiceActors) {
-        Object resultClone = CloneUtil.clone(result);
-        ServiceContext context = serviceContext.newInstance();
-        context.getFlowMessage().setMessage(resultClone);
-        // if (refType.isJoint()) {
-        // FlowMessage flowMessage1 = CloneUtil.clone(fm);
-        // flowMessage1.setMessage(result);
-        // context.setFlowMessage(flowMessage1);
-        // }
-        // condition fork for one-service to multi-service
-        if (refType.getMessageType().isInstance(result)) {
-          if (!(result instanceof Condition) || !(((Condition) result).getCondition() instanceof String)
-              || stringInStrings(refType.getServiceName(), ((Condition) result).getCondition().toString())) {
-            refType.getActorRef().tell(context, getSelf());
-          }
+    }
+    
+    for (RefType refType : nextServiceActors) {
+      Object resultClone = CloneUtil.clone(result);
+      ServiceContext context = serviceContext.newInstance();
+      context.getFlowMessage().setMessage(resultClone);
+
+      // condition fork for one-service to multi-service
+      if (refType.getMessageType().isInstance(result)) {
+        if (!(result instanceof Condition) || !(((Condition) result).getCondition() instanceof String)
+            || stringInStrings(refType.getServiceName(), ((Condition) result).getCondition().toString())) {
+          refType.getActorRef().tell(context, getSelf());
         }
       }
-    } else {
-
     }
+
   }
 
   /**
@@ -189,8 +184,26 @@ public class ServiceActor extends AbstractActor {
     return service;
   }
 
+  /**
+   * 有子服务节点
+   * 
+   * @return
+   */
   private boolean hasChildActor() {
     return nextServiceActors != null && nextServiceActors.size() > 0;
+  }
+
+  /**
+   * 没有子服务节点
+   * 
+   * @return
+   */
+  private boolean hasNoChildActor() {
+    return !hasChildActor();
+  }
+
+  private boolean needCacheActorRef(ServiceContext serviceContext) {
+    return serviceContext.isSync() && !syncActors.containsKey(serviceContext.getId());
   }
 
   /**

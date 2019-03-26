@@ -54,6 +54,7 @@ public class ServiceRouter {
    */
   public <T> void asyncCallService(T message, AsyncContext ctx) throws IOException {
     ServiceContext serviceContext = ServiceContext.context(message, ctx);
+    serviceContext.setFlowName(flowName);
     this.ar[randomIndex()].tell(serviceContext, ActorRef.noSender());
   }
 
