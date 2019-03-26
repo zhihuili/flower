@@ -15,7 +15,13 @@
  */
 package com.ly.train.flower.common.sample.textflow;
 
-public class Message2  {
+import java.io.Serializable;
+
+public class Message2 implements Serializable {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
   private String name;
   private int age;
   private int id;
@@ -51,4 +57,18 @@ public class Message2  {
   public void setId(int id) {
     this.id = id;
   }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("Message2 [name=");
+    builder.append(name);
+    builder.append(", age=");
+    builder.append(age);
+    builder.append(", id=");
+    builder.append(id);
+    builder.append("]");
+    return builder.toString();
+  }
+  
 }

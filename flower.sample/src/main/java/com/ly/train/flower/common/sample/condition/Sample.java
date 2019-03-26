@@ -35,16 +35,17 @@ public class Sample {
     ServiceFactory.registerService("serviceD", ServiceD.class);
     ServiceFactory.registerService("serviceF", ServiceF.class);
     ServiceFactory.registerService("serviceG", ServiceG.class);
-    ServiceFactory.registerService("serviceCondition",
-        "com.ly.train.flower.common.service.ConditionService;serviceF,serviceG");
+    ServiceFactory.registerService("serviceCondition", "com.ly.train.flower.common.service.ConditionService;serviceF,serviceG");
 
-    ServiceFlow.buildFlow("sample", "serviceA", "serviceB");
-    ServiceFlow.buildFlow("sample", "serviceA", "serviceC");
-    ServiceFlow.buildFlow("sample", "serviceC", "serviceD");
-    ServiceFlow.buildFlow("sample", "serviceC", "serviceE");
-    ServiceFlow.buildFlow("sample", "serviceE", "serviceCondition");
-    ServiceFlow.buildFlow("sample", "serviceCondition", "serviceF");
-    ServiceFlow.buildFlow("sample", "serviceCondition", "serviceG");
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate("sample");
+
+    serviceFlow.buildFlow("serviceA", "serviceB");
+    serviceFlow.buildFlow("serviceA", "serviceC");
+    serviceFlow.buildFlow("serviceC", "serviceD");
+    serviceFlow.buildFlow("serviceC", "serviceE");
+    serviceFlow.buildFlow("serviceE", "serviceCondition");
+    serviceFlow.buildFlow("serviceCondition", "serviceF");
+    serviceFlow.buildFlow("serviceCondition", "serviceG");
 
   }
 

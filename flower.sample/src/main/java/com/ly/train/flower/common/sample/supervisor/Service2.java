@@ -15,8 +15,6 @@
  */
 package com.ly.train.flower.common.sample.supervisor;
 
-import java.io.File;
-import org.apache.commons.io.FileUtils;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
@@ -25,11 +23,11 @@ public class Service2 implements Service<Message2,Integer> {
   @Override
   public Integer process(Message2 message, ServiceContext context) throws Throwable {
 
-    File file = new File("test.file");
-    if (!file.exists()) {
-      FileUtils.write(file, "111", "UTF-8");
-      throw new Exception("Service2");
-    }
+//    File file = new File("test.file");
+//    if (!file.exists()) {
+//      FileUtils.write(file, "111", "UTF-8");
+//      throw new Exception("Service2");
+//    }
     return message.getAge() + 1;
   }
 

@@ -22,24 +22,23 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.ServiceConstants;
+import com.ly.train.flower.common.service.ServiceConfig;
 import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceLoader;
 import com.ly.train.flower.common.service.message.Condition;
-import com.ly.train.flower.common.service.message.DefaultMessage;
-import com.ly.train.flower.common.service.message.FirstMessage;
 import com.ly.train.flower.common.service.message.FlowMessage;
-import com.ly.train.flower.common.service.message.ReturnMessage;
 import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.common.service.web.HttpComplete;
 import com.ly.train.flower.common.service.web.Web;
 import com.ly.train.flower.common.util.CloneUtil;
+import com.ly.train.flower.common.util.Constant;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
@@ -57,37 +56,38 @@ import scala.concurrent.duration.FiniteDuration;
  */
 public class ServiceActor extends AbstractActor {
   static final Logger logger = LoggerFactory.getLogger(ServiceActor.class);
-  private FlowerService service;
-  private String serviceName;
-  private Set<RefType> nextServiceActors;
-
-  private Map<String, ActorRef> callers = new ConcurrentHashMap<String, ActorRef>();
+  /**
+   * 同步要求结果的actor
+   */
+  private static final Map<String, ActorRef> syncActors = new ConcurrentHashMap<String, ActorRef>();
 
   protected final Future<String> delayFuture = Futures.successful("delay");
   protected final FiniteDuration maxTimeout = Duration.create(9999, TimeUnit.DAYS);
+
+  private FlowerService service;
+  private String serviceName;
+  private String flowName;
+  private final Set<RefType> nextServiceActors;
 
   static public Props props(String flowName, String serviceName, int index, ActorSystem system) {
     return Props.create(ServiceActor.class, () -> new ServiceActor(flowName, serviceName, index, system));
   }
 
   public ServiceActor(String flowName, String serviceName, int index, ActorSystem system) throws Exception {
+    this.flowName = flowName;
     this.serviceName = serviceName;
-    this.service = ServiceFactory.getService(serviceName);
-    if (service instanceof Aggregate) {
-      ((Aggregate) service).setSourceNumber(ServiceFlow.getServiceConcig(flowName, serviceName).getJointSourceNumber());
-    }
     this.nextServiceActors = new HashSet<RefType>();
-    Set<String> nextServiceNames = ServiceFlow.getNextFlow(flowName, serviceName);
-    if (nextServiceNames != null && !nextServiceNames.isEmpty()) {
-      for (String nextServiceName : nextServiceNames) {
+    Set<ServiceConfig> serviceConfigs = ServiceFlow.getOrCreate(flowName).getNextFlow(serviceName);
+    if (serviceConfigs != null) {
+      for (ServiceConfig serviceConfig : serviceConfigs) {
         RefType refType = new RefType();
 
-        if (ServiceFactory.getServiceClassName(nextServiceName).equals(ServiceConstants.AGGREGATE_SERVICE_NAME)) {
+        if (ServiceFactory.getServiceClassName(serviceConfig.getServiceName()).equals(Constant.AGGREGATE_SERVICE_NAME)) {
           refType.setJoint(true);
         }
-        refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, nextServiceName, index));
-        refType.setMessageType(ServiceLoader.getInstance().loadServiceMeta(nextServiceName).getParamType());
-        refType.setServiceName(nextServiceName);
+        refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, serviceConfig.getServiceName(), index));
+        refType.setMessageType(ServiceLoader.getInstance().loadServiceMeta(serviceConfig.getServiceName()).getParamType());
+        refType.setServiceName(serviceConfig.getServiceName());
         nextServiceActors.add(refType);
       }
     }
@@ -106,30 +106,34 @@ public class ServiceActor extends AbstractActor {
     }).build();
   }
 
+  @SuppressWarnings({"unchecked", "rawtypes"})
   public void onReceive(ServiceContext serviceContext) throws Throwable {
     FlowMessage fm = serviceContext.getFlowMessage();
-    // receive returned message，send to caller
-    if (fm.getMessage() instanceof ReturnMessage) {
-      callers.get(fm.getTransactionId()).tell(fm.getMessage(), getSelf());
-      clear(fm.getTransactionId());
-      return;
+    if (needCacheActorRef(serviceContext)) {
+      syncActors.putIfAbsent(serviceContext.getId(), getSender());
     }
 
-    // receive started message, set caller
-    if (fm.getMessage() instanceof FirstMessage) {
-      callers.put(fm.getTransactionId(), getSender());
-    }
-
-    Object retsult = DefaultMessage.getMessage();// set default
+    // TODO 没有必要设置默认值,下面执行异常就会抛出异常
+    Object result = null;// DefaultMessage.getMessage();// set default
     try {
-      this.service = ServiceFactory.getService(serviceName);
-      retsult = ((Service) service).process(fm.getMessage(), serviceContext);
+      result = ((Service) getService()).process(fm.getMessage(), serviceContext);
     } catch (Throwable e) {
       Web web = serviceContext.getWeb();
       if (web != null) {
         web.complete();
       }
-      throw e;
+      throw new FlowerException("fail to invoke service " + serviceName + " : " + service + ", param : " + fm.getMessage(), e);
+    }
+
+    // logger.info("同步处理 ： {}, hasChild : {}", serviceContext.isSync(), hasChildActor());
+    if (serviceContext.isSync() && hasNoChildActor()) {
+      // logger.info("返回响应 {}", result);
+      ActorRef actor = syncActors.get(serviceContext.getId());
+      if (actor != null) {
+        actor.tell(result, getSelf());
+        syncActors.remove(serviceContext.getId());
+      }
+      return;
     }
 
     Web web = serviceContext.getWeb();
@@ -145,27 +149,61 @@ public class ServiceActor extends AbstractActor {
       }
     }
 
-    if (retsult == null)// for joint service
+    if (result == null) {// for joint service
       return;
-    serviceContext.getFlowMessage().setMessage(retsult);
-    if (nextServiceActors != null && !nextServiceActors.isEmpty()) {
-      for (RefType refType : nextServiceActors) {
-        if (refType.isJoint()) {
-          FlowMessage flowMessage1 = (FlowMessage) CloneUtil.clone(fm);
-          flowMessage1.setMessage(retsult);
-          serviceContext.setFlowMessage(flowMessage1);
-        }
-        // condition fork for one-service to multi-service
-        if (refType.getMessageType().isInstance(retsult)) {
-          if (!(retsult instanceof Condition) || !(((Condition) retsult).getCondition() instanceof String)
-              || stringInStrings(refType.getServiceName(), ((Condition) retsult).getCondition().toString())) {
-            refType.getActorRef().tell(serviceContext, getSelf());
-          }
+    }
+    
+    for (RefType refType : nextServiceActors) {
+      Object resultClone = CloneUtil.clone(result);
+      ServiceContext context = serviceContext.newInstance();
+      context.getFlowMessage().setMessage(resultClone);
+
+      // condition fork for one-service to multi-service
+      if (refType.getMessageType().isInstance(result)) {
+        if (!(result instanceof Condition) || !(((Condition) result).getCondition() instanceof String)
+            || stringInStrings(refType.getServiceName(), ((Condition) result).getCondition().toString())) {
+          refType.getActorRef().tell(context, getSelf());
         }
       }
-    } else {
-
     }
+
+  }
+
+  /**
+   * 懒加载方式获取服务实例
+   * 
+   * @return {@link FlowerService}
+   */
+  public FlowerService getService() {
+    if (this.service == null) {
+      this.service = ServiceFactory.getService(serviceName);
+      if (service instanceof Aggregate) {
+        ((Aggregate) service).setSourceNumber(ServiceFlow.getOrCreate(flowName).getServiceConfig(serviceName).getJointSourceNumber());
+      }
+    }
+    return service;
+  }
+
+  /**
+   * 有子服务节点
+   * 
+   * @return
+   */
+  private boolean hasChildActor() {
+    return nextServiceActors != null && nextServiceActors.size() > 0;
+  }
+
+  /**
+   * 没有子服务节点
+   * 
+   * @return
+   */
+  private boolean hasNoChildActor() {
+    return !hasChildActor();
+  }
+
+  private boolean needCacheActorRef(ServiceContext serviceContext) {
+    return serviceContext.isSync() && !syncActors.containsKey(serviceContext.getId());
   }
 
   /**
@@ -187,7 +225,7 @@ public class ServiceActor extends AbstractActor {
     return false;
   }
 
-  private class RefType {
+  static class RefType {
     private ActorRef actorRef;
     private Class<?> messageType;
     private String serviceName;
@@ -230,7 +268,7 @@ public class ServiceActor extends AbstractActor {
   /**
    * clear actor
    */
-  void clear(String transactionId) {
-    callers.remove(transactionId);
+  void clear(String id) {
+    syncActors.remove(id);
   }
 }

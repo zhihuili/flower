@@ -15,81 +15,182 @@
  */
 package com.ly.train.flower.common.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import com.ly.train.flower.logging.Logger;
-import com.ly.train.flower.logging.LoggerFactory;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
+/**
+ * 
+ * @author leeyazhou
+ *
+ */
 public class CloneUtil {
-  private static final Logger logger = LoggerFactory.getLogger(CloneUtil.class);
+  /**
+   * 无需进行复制的特殊类型数组
+   */
+  private static final Class<?>[] needlessCloneClasses = new Class[] {String.class, Boolean.class, Character.class, Byte.class, Short.class,
+      Integer.class, Long.class, Float.class, Double.class, Void.class, Object.class, Class.class};
 
-  public static Object clone(Serializable obj) {
-    Object clone = cloneObject(obj);
-    if (clone == null) {
-      clone = cloneObject(obj);
+  /**
+   * 判断该类型对象是否无需复制
+   * 
+   * @param c 指定类型
+   * @return 如果不需要复制则返回真，否则返回假
+   */
+  private static boolean isNeedlessClone(Class<?> c) {
+    if (c.isPrimitive()) {// 基本类型
+      return true;
     }
-    return clone;
-  }
-
-  public static Object cloneObject(Serializable obj) {
-    Object anotherObj = null;
-
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    ObjectOutputStream oos = null;
-
-    ObjectInputStream ois = null;
-    try {
-      oos = new ObjectOutputStream(baos);
-      oos.writeObject(obj);
-      byte[] bytes = baos.toByteArray();
-
-      ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-
-      ois = new ObjectInputStream(bais);
-      anotherObj = ois.readObject();
-    } catch (IOException ex) {
-      throw new RuntimeException(ex.getMessage(), ex);
-    } catch (ClassNotFoundException ex) {
-      throw new RuntimeException(ex.getMessage(), ex);
-    } catch (StackOverflowError error) {
-      logger.error("", error);
-      return null;
-    } finally {
-      if (oos != null)
-        try {
-          oos.close();
-        } catch (IOException localIOException3) {
-        }
-      if (ois != null)
-        try {
-          ois.close();
-        } catch (IOException localIOException4) {
-        }
-    }
-    return anotherObj;
-  }
-
-  public static int getObjectSize(Serializable obj) {
-    ByteArrayOutputStream bs = new ByteArrayOutputStream();
-    ObjectOutputStream os = null;
-    try {
-      os = new ObjectOutputStream(bs);
-      os.writeObject(obj);
-      os.flush();
-    } catch (Exception e) {
-      throw new RuntimeException(e.getMessage(), e);
-    } finally {
-      try {
-        bs.close();
-        if (os != null)
-          os.close();
-      } catch (IOException e) {
+    for (Class<?> tmp : needlessCloneClasses) {// 是否在无需复制类型数组里
+      if (c.equals(tmp)) {
+        return true;
       }
     }
-    return bs.size();
+    return false;
+  }
+
+  /**
+   * 尝试创建新对象
+   * 
+   * @param c 原始对象
+   * @return 新的对象
+   * @throws IllegalAccessException
+   */
+  private static Object createObject(Object value) throws IllegalAccessException {
+    try {
+      return value.getClass().newInstance();
+    } catch (InstantiationException e) {
+      return null;
+    } catch (IllegalAccessException e) {
+      throw e;
+    }
+  }
+
+  /**
+   * 复制对象数据
+   * 
+   * @param value 原始对象
+   * @param level 复制深度。小于0为无限深度，即将深入到最基本类型和Object类级别的数据复制； 大于0则按照其值复制到指定深度的数据，等于0则直接返回对象本身而不进行任何复制行为。
+   * @return 返回复制后的对象
+   * @throws IllegalAccessException
+   * @throws InstantiationException
+   * @throws InvocationTargetException
+   * @throws NoSuchMethodException
+   */
+  public static Object clone(Object value, int level)
+      throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
+    if (value == null) {
+      return null;
+    }
+    if (level == 0) {
+      return value;
+    }
+    Class<?> c = value.getClass();
+    if (isNeedlessClone(c)) {
+      return value;
+    }
+    level--;
+    if (value instanceof Collection) {// 复制新的集合
+      Collection<Object> tmp = (Collection) c.newInstance();
+      for (Object v : (Collection<?>) value) {
+        tmp.add(clone(v, level));// 深度复制
+      }
+      value = tmp;
+    } else if (c.isArray()) {// 复制新的Array
+      // 首先判断是否为基本数据类型
+      if (c.equals(int[].class)) {
+        int[] old = (int[]) value;
+        value = (int[]) Arrays.copyOf(old, old.length);
+      } else if (c.equals(short[].class)) {
+        short[] old = (short[]) value;
+        value = (short[]) Arrays.copyOf(old, old.length);
+      } else if (c.equals(char[].class)) {
+        char[] old = (char[]) value;
+        value = (char[]) Arrays.copyOf(old, old.length);
+      } else if (c.equals(float[].class)) {
+        float[] old = (float[]) value;
+        value = (float[]) Arrays.copyOf(old, old.length);
+      } else if (c.equals(double[].class)) {
+        double[] old = (double[]) value;
+        value = (double[]) Arrays.copyOf(old, old.length);
+      } else if (c.equals(long[].class)) {
+        long[] old = (long[]) value;
+        value = (long[]) Arrays.copyOf(old, old.length);
+      } else if (c.equals(boolean[].class)) {
+        boolean[] old = (boolean[]) value;
+        value = (boolean[]) Arrays.copyOf(old, old.length);
+      } else if (c.equals(byte[].class)) {
+        byte[] old = (byte[]) value;
+        value = (byte[]) Arrays.copyOf(old, old.length);
+      } else {
+        Object[] old = (Object[]) value;
+        Object[] tmp = (Object[]) Arrays.copyOf(old, old.length, old.getClass());
+        for (int i = 0; i < old.length; i++) {
+          tmp[i] = clone(old[i], level);
+        }
+        value = tmp;
+      }
+    } else if (value instanceof Map) {// 复制新的MAP
+      Map<Object, Object> tmp = (Map<Object, Object>) c.newInstance();
+      Map<?, ?> org = (Map<?, ?>) value;
+      for (Object key : org.keySet()) {
+        tmp.put(key, clone(org.get(key), level));// 深度复制
+      }
+      value = tmp;
+    } else {
+      Object tmp = createObject(value);
+      if (tmp == null) {// 无法创建新实例则返回对象本身，没有克隆
+        return value;
+      }
+      Set<Field> fields = new HashSet<Field>();
+      while (c != null && !c.equals(Object.class)) {
+        fields.addAll(Arrays.asList(c.getDeclaredFields()));
+        c = c.getSuperclass();
+      }
+      for (Field field : fields) {
+        if (!Modifier.isFinal(field.getModifiers())) {// 仅复制非final字段
+          field.setAccessible(true);
+          field.set(tmp, clone(field.get(value), level));// 深度复制
+        }
+      }
+      value = tmp;
+    }
+    return value;
+  }
+
+  /**
+   * 浅表复制对象
+   * 
+   * @param value 原始对象
+   * @return 复制后的对象，只复制一层
+   */
+  @SuppressWarnings("unchecked")
+  public static <T> T clone(T value) {
+    try {
+      return (T) clone(value, 1);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  /**
+   * 深度复制对象
+   * 
+   * @param value 原始对象
+   * @return 复制后的对象
+   * @throws IllegalAccessException
+   * @throws InstantiationException
+   * @throws InvocationTargetException
+   * @throws NoSuchMethodException
+   */
+  public static Object deepClone(Object value)
+      throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
+    return clone(value, -1);
   }
 }

@@ -26,13 +26,15 @@ import com.ly.train.flower.common.actor.ServiceFacade;
 import com.ly.train.flower.common.actor.ServiceRouter;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.service.ServiceFlow;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * 
  * @author leeyazhou
  */
 public abstract class FlowerController implements InitializingBean {
-
+  protected final Logger logger =LoggerFactory.getLogger(getClass());
   private ServiceRouter serviceRouter;
   private String flowerName;
   private String serviceName;

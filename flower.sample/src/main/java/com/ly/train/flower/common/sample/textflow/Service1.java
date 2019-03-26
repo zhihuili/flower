@@ -17,12 +17,16 @@ package com.ly.train.flower.common.sample.textflow;
 
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
-public class Service1 implements Service<Message1,Message2> {
+public class Service1 implements Service<Message1, Message2> {
+  static final Logger logger = LoggerFactory.getLogger(Service1.class);
 
   @Override
   public Message2 process(Message1 message, ServiceContext context) {
-    return ((Message1) message).getM2();
+    logger.info("处理任务 ： {}", context.getId());
+    return message.getM2();
   }
 
 }

@@ -16,46 +16,30 @@
 package com.ly.train.flower.common.sample.springboot;
 
 
-import javax.servlet.AsyncContext;
+import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import com.ly.train.flower.common.actor.ServiceFacade;
-import com.ly.train.flower.common.actor.ServiceRouter;
+import com.ly.flower.web.spring.FlowerController;
+import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.service.ServiceFlow;
-import com.ly.train.flower.common.service.container.ServiceFactory;
 
 @RestController
-public class Index2Controller {
-  static final long serialVersionUID = 1L;
-  ServiceRouter serviceRouter;
-
-  public Index2Controller() {
-    buildServiceEnv();
-    serviceRouter = ServiceFacade.buildServiceRouter("async", "serviceA", 400);
-  }
+@Flower(serviceName = "ServiceA", value = "async")
+public class Index2Controller extends FlowerController {
 
   @RequestMapping("/index2")
   @ResponseBody
-  public void index(User user, HttpServletRequest req) {
-    AsyncContext context = req.startAsync();
-    asyncExe(context, user);
+  protected void process(User param, HttpServletRequest req) throws IOException {
+    doProcess(param, req);
   }
 
-  private void asyncExe(AsyncContext ctx, User user) {
-    try {
-      serviceRouter.asyncCallService(user, ctx);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
 
-  private void buildServiceEnv() {
-    ServiceFactory.registerService("serviceA", ServiceA.class);
-    ServiceFactory.registerService("serviceB", ServiceB.class);
-
-    ServiceFlow.buildFlow("async", "serviceA", "serviceB");
+  @Override
+  public void buildFlower() {
+    ServiceFlow.getOrCreate(getFlowName()).buildFlow("ServiceA", "ServiceB");
 
   }
+
 }

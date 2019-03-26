@@ -18,6 +18,7 @@ package com.ly.train.flower.common.service.container;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.ly.train.flower.common.exception.ServiceNotFoundException;
 import com.ly.train.flower.common.service.FlowerService;
 
 public class ServiceFactory {
@@ -48,6 +49,9 @@ public class ServiceFactory {
 
   public static String getServiceClassName(String serviceName) {
     ServiceMeta serviceMeta = ServiceLoader.getInstance().loadServiceMeta(serviceName);
+    if (serviceMeta == null) {
+      throw new ServiceNotFoundException("serviceName : " + serviceName);
+    }
     return serviceMeta.getServiceClass().getName();
   }
 

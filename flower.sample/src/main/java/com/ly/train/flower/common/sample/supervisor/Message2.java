@@ -15,7 +15,13 @@
  */
 package com.ly.train.flower.common.sample.supervisor;
 
-public class Message2  {
+import java.io.Serializable;
+
+public class Message2  implements Serializable{
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
   private String name;
   private int age;
   private int id;

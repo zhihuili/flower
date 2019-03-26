@@ -35,6 +35,7 @@ public class ServiceRouter {
   public ServiceRouter(String flowName, String serviceName, int number) {
     this.number = number;
     this.ar = new ActorRef[number];
+    this.serviceName = serviceName;
     for (int i = 0; i < number; i++) {
       this.ar[i] = ServiceActorFactory.buildServiceActor(flowName, serviceName, i);
     }
@@ -53,6 +54,7 @@ public class ServiceRouter {
    */
   public <T> void asyncCallService(T message, AsyncContext ctx) throws IOException {
     ServiceContext serviceContext = ServiceContext.context(message, ctx);
+    serviceContext.setFlowName(flowName);
     this.ar[randomIndex()].tell(serviceContext, ActorRef.noSender());
   }
 
@@ -65,9 +67,8 @@ public class ServiceRouter {
    */
   public Object syncCallService(Object message) throws Exception {
     ServiceContext serviceContext = ServiceContext.context(message);
-
-    return Await.result(Patterns.ask(ar[randomIndex()], serviceContext, new Timeout(ServiceFacade.duration)),
-        ServiceFacade.duration);
+    serviceContext.setSync(true);
+    return Await.result(Patterns.ask(ar[randomIndex()], serviceContext, new Timeout(ServiceFacade.duration)), ServiceFacade.duration);
   }
 
   private int randomIndex() {

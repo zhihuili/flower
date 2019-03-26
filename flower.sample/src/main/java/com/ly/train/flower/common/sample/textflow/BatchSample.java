@@ -21,17 +21,12 @@ import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.actor.ServiceFacade;
-import com.ly.train.flower.common.service.ServiceFlow;
-import com.ly.train.flower.common.service.container.ServiceFactory;
-import com.ly.train.flower.common.util.EnvBuilder;
-import com.ly.train.flower.common.util.FileUtil;
 
 
 public class BatchSample {
   private static final Logger logger = LoggerFactory.getLogger(BatchSample.class);
 
   public static void main(String[] args) throws Exception {
-    EnvBuilder.buildEnv(BatchSample.class);
 
     int count = 0;
     Map<String, Message1> message1Map = new HashMap<>();
@@ -48,8 +43,8 @@ public class BatchSample {
       Message1 m1 = message1Map.get(key);
       Object o = ServiceFacade.syncCallService("sample", "service1", m1);
       logger.info("" + o);
-      Assert.assertEquals(((Message3) o).getM2().getName(), m1.getM2().getName());
-      Assert.assertEquals(Integer.parseInt(key), ((Message3) o).getM2().getAge() - 1);
+      Assert.assertEquals(((Message1) o).getM2().getName(), m1.getM2().getName());
+      Assert.assertEquals(Integer.parseInt(key), ((Message1) o).getM2().getAge() - 1);
       resultCount++;
     }
     Assert.assertEquals(count, resultCount);
@@ -58,10 +53,4 @@ public class BatchSample {
     System.exit(0);
   }
 
-  public static void buildServiceEnv() throws Exception {
-
-    ServiceFactory.registerService(FileUtil.readService("/sample.services"));
-    ServiceFlow.buildFlow("sample", FileUtil.readFlow("/sample.flow"));
-
-  }
 }

@@ -13,19 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.sample.textflow;
+/**
+ * 
+ */
+package com.ly.train.flower.base.service;
 
+import com.ly.train.flower.base.model.User;
+import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
-public class Service3 implements Service<Message2,String> {
-  static final Logger logger = LoggerFactory.getLogger(Service3.class);
+/**
+ * @author leeyazhou
+ *
+ */
+@FlowerService
+public class ServiceA implements Service<User, User> {
+  static final Logger logger = LoggerFactory.getLogger(ServiceA.class);
+
   @Override
-  public String process(Message2 message, ServiceContext context) {
-    logger.info("处理任务 ： {}", context.getId());
-    return message.getName().toUpperCase();
+  public User process(User message, ServiceContext context) throws Throwable {
+    message.setDesc(message.getDesc() + " --> " + getClass().getSimpleName());
+    message.setAge(message.getAge() + 1);
+    logger.info("结束处理消息, message : {}", message);
+    return message;
   }
 
 }

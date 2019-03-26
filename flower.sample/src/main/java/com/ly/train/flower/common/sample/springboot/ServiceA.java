@@ -17,18 +17,13 @@ package com.ly.train.flower.common.sample.springboot;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestMethod;
-import com.ly.flower.web.springboot.InitController;
-import com.ly.flower.web.springboot.annotation.BindController;
-import com.ly.train.flower.common.actor.ServiceFacade;
-import com.ly.train.flower.common.actor.ServiceRouter;
+import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceContext;
-import com.ly.train.flower.common.service.container.ServiceFactory;
 
-@BindController(path = "/ServiceA", method = RequestMethod.GET)
-public class ServiceA implements Service<User, Integer>, InitController {
+
+@FlowerService
+public class ServiceA implements Service<User, Integer> {
 
   private static final Logger logger = LoggerFactory.getLogger(ServiceA.class);
 
@@ -39,16 +34,4 @@ public class ServiceA implements Service<User, Integer>, InitController {
     return message.getId();
   }
 
-  @Override
-  public ServiceRouter init() {
-    buildServiceEnv();
-    return ServiceFacade.buildServiceRouter("async", "serviceA", 400);
-  }
-
-  private static void buildServiceEnv() {
-    ServiceFactory.registerService("serviceA", ServiceA.class.getName());
-    ServiceFactory.registerService("serviceB", ServiceB.class.getName());
-
-    ServiceFlow.buildFlow("async", "serviceA", "serviceB");
-  }
 }

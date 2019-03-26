@@ -16,14 +16,17 @@
 /**
  * 
  */
-package com.ly.train.flower.common.util.model;
+package com.ly.train.flower.base.model;
 
 /**
  * @author leeyazhou
  *
  */
-public class UserA {
+public class User {
+
   private String name;
+  private String desc;
+  private int age;
 
   public String getName() {
     return name;
@@ -33,11 +36,31 @@ public class UserA {
     this.name = name;
   }
 
+  public int getAge() {
+    return age;
+  }
+
+  public void setAge(int age) {
+    this.age = age;
+  }
+
+  public String getDesc() {
+    return desc;
+  }
+
+  public void setDesc(String desc) {
+    this.desc = desc;
+  }
+
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("UserA [name=");
+    builder.append("User [name=");
     builder.append(name);
+    builder.append(", desc=");
+    builder.append(desc);
+    builder.append(", age=");
+    builder.append(age);
     builder.append("]");
     return builder.toString();
   }

@@ -102,6 +102,12 @@
 				<version>${akka.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>com.typesafe.akka</groupId>
+				<artifactId>akka-testkit_2.12</artifactId>
+				<version>${akka.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-web</artifactId>
 				<version>${spring-boot.version}</version>
