@@ -48,6 +48,7 @@ public class ServiceFlowTest {
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
     serviceFlow.buildParelelFlow(ServiceB.class, Arrays.asList(ServiceC1.class, ServiceC2.class));
     serviceFlow.buildParelelFlow("ServiceC1", Arrays.asList("ServiceC2"));
+    serviceFlow.buildAggregateFlow(Arrays.asList("ServiceC1","ServiceB"));
     System.out.println(serviceFlow.toString());
   }
 

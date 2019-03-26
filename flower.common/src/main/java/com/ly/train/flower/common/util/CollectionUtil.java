@@ -20,22 +20,21 @@ import java.util.SortedSet;
  */
 public class CollectionUtil {
 
-
-  public static boolean isEmpty( Collection<?> collection) {
+  public static boolean isEmpty(Collection<?> collection) {
     return (collection == null || collection.isEmpty());
   }
 
-  public static boolean isEmpty( Map<?, ?> map) {
+  public static boolean isEmpty(Map<?, ?> map) {
     return (map == null || map.isEmpty());
   }
 
   @SuppressWarnings("rawtypes")
-  public static List arrayToList( Object source) {
+  public static List arrayToList(Object source) {
     return Arrays.asList(ObjectUtil.toObjectArray(source));
   }
 
   @SuppressWarnings("unchecked")
-  public static <E> void mergeArrayIntoCollection( Object array, Collection<E> collection) {
+  public static <E> void mergeArrayIntoCollection(Object array, Collection<E> collection) {
     Object[] arr = ObjectUtil.toObjectArray(array);
     for (Object elem : arr) {
       collection.add((E) elem);
@@ -43,7 +42,7 @@ public class CollectionUtil {
   }
 
   @SuppressWarnings("unchecked")
-  public static <K, V> void mergePropertiesIntoMap( Properties props, Map<K, V> map) {
+  public static <K, V> void mergePropertiesIntoMap(Properties props, Map<K, V> map) {
     if (props != null) {
       for (Enumeration<?> en = props.propertyNames(); en.hasMoreElements();) {
         String key = (String) en.nextElement();
@@ -58,7 +57,7 @@ public class CollectionUtil {
   }
 
 
-  public static boolean contains( Iterator<?> iterator, Object element) {
+  public static boolean contains(Iterator<?> iterator, Object element) {
     if (iterator != null) {
       while (iterator.hasNext()) {
         Object candidate = iterator.next();
@@ -70,7 +69,7 @@ public class CollectionUtil {
     return false;
   }
 
-  public static boolean contains( Enumeration<?> enumeration, Object element) {
+  public static boolean contains(Enumeration<?> enumeration, Object element) {
     if (enumeration != null) {
       while (enumeration.hasMoreElements()) {
         Object candidate = enumeration.nextElement();
@@ -82,7 +81,7 @@ public class CollectionUtil {
     return false;
   }
 
-  public static boolean containsInstance( Collection<?> collection, Object element) {
+  public static boolean containsInstance(Collection<?> collection, Object element) {
     if (collection != null) {
       for (Object candidate : collection) {
         if (candidate == element) {
@@ -106,7 +105,7 @@ public class CollectionUtil {
   }
 
   @SuppressWarnings("unchecked")
-  
+
   public static <E> E findFirstMatch(Collection<?> source, Collection<E> candidates) {
     if (isEmpty(source) || isEmpty(candidates)) {
       return null;
@@ -120,8 +119,8 @@ public class CollectionUtil {
   }
 
   @SuppressWarnings("unchecked")
-  
-  public static <T> T findValueOfType(Collection<?> collection,  Class<T> type) {
+
+  public static <T> T findValueOfType(Collection<?> collection, Class<T> type) {
     if (isEmpty(collection)) {
       return null;
     }
@@ -138,7 +137,7 @@ public class CollectionUtil {
     return value;
   }
 
-  
+
   public static Object findValueOfType(Collection<?> collection, Class<?>[] types) {
     if (isEmpty(collection) || ObjectUtil.isEmpty(types)) {
       return null;
@@ -169,7 +168,7 @@ public class CollectionUtil {
     return true;
   }
 
-  
+
   public static Class<?> findCommonElementType(Collection<?> collection) {
     if (isEmpty(collection)) {
       return null;
@@ -187,8 +186,8 @@ public class CollectionUtil {
     return candidate;
   }
 
-  
-  public static <T> T lastElement( Set<T> set) {
+
+  public static <T> T lastElement(Set<T> set) {
     if (isEmpty(set)) {
       return null;
     }
@@ -205,8 +204,8 @@ public class CollectionUtil {
     return last;
   }
 
-  
-  public static <T> T lastElement( List<T> list) {
+
+  public static <T> T lastElement(List<T> list) {
     if (isEmpty(list)) {
       return null;
     }

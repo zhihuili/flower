@@ -15,7 +15,9 @@
  */
 package com.ly.train.flower.common.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +27,10 @@ import java.util.concurrent.ConcurrentMap;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;
+import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceLoader;
 import com.ly.train.flower.common.service.container.ServiceMeta;
+import com.ly.train.flower.common.util.AnnotationUtil;
 import com.ly.train.flower.common.util.Assert;
 import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.Pair;
@@ -34,7 +38,28 @@ import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
-public class ServiceFlow {
+/**
+ * 
+ * 服务流程
+ * 
+ * <p>
+ * <code>
+ * ServiceFlow.getOrCreate("flowSample")
+ *            .buildFlow("serviceA", "serviceB")
+ *            .buildFlow("serviceB","serviceC");
+ * </code>
+ * <p>
+ * <code>
+ * ServiceFlow.getOrCreate("flowSample")
+ *            .buildAggregateFlow(Arrays.asList("serviceB","serviceC");
+ * </code>
+ * 
+ * 
+ * @author zhihui.li
+ * @author leeyazhou
+ *
+ */
+public final class ServiceFlow {
   private static final Logger logger = LoggerFactory.getLogger(ServiceFlow.class);
   private static final ConcurrentMap<String, ServiceFlow> serviceFlows = new ConcurrentHashMap<>();
 
@@ -53,7 +78,6 @@ public class ServiceFlow {
 
   private ServiceFlow(String flowName) {
     this.flowName = flowName;
-
   }
 
   /**
@@ -118,6 +142,66 @@ public class ServiceFlow {
   }
 
   /**
+   * 聚合服务节点名称生成
+   * <p>
+   * 对名字进行排序后拼接成字符串：serviceA
+   * 
+   * @param serviceNames
+   * @return
+   */
+  public String generateAggregateServiceName(List<String> serviceNames) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(flowName).append("$");
+    Collections.sort(serviceNames);
+    for (int i = 0; i < serviceNames.size(); i++) {
+      if (i == 0) {
+        sb.append(serviceNames.get(i));
+      } else {
+        sb.append("_").append(serviceNames.get(i));
+      }
+    }
+    sb.append("$aggregateService");
+    return sb.toString();
+  }
+
+  public String generateAggregateServiceName2(List<Class<?>> serviceNameClasses) {
+    List<String> serviceNames = new ArrayList<>();
+    for (Class<?> cl : serviceNameClasses) {
+      serviceNames.add(AnnotationUtil.getFlowerServiceValue(cl));
+    }
+    return generateAggregateServiceName(serviceNames);
+  }
+
+  /**
+   * 添加聚合服务节点
+   * 
+   * @param preServiceNames 需要聚合的服务名称
+   * @return {@link ServiceFlow}
+   */
+  public ServiceFlow buildAggregateFlow(List<String> preServiceNames) {
+    final String aggregateServiceName = generateAggregateServiceName(preServiceNames);
+    ServiceFactory.registerService(aggregateServiceName, AggregateService.class);
+
+    for (String s : preServiceNames) {
+      buildFlow(s, aggregateServiceName);
+    }
+
+    return this;
+  }
+
+  public ServiceFlow buildAggregateFlow2(List<Class<?>> preServiceNames) {
+    final String aggregateServiceName = generateAggregateServiceName2(preServiceNames);
+    ServiceFactory.registerService(aggregateServiceName, AggregateService.class);
+
+    for (Class<?> s : preServiceNames) {
+      String serviceName = AnnotationUtil.getFlowerServiceValue(s);
+      buildFlow(serviceName, aggregateServiceName);
+    }
+
+    return this;
+  }
+
+  /**
    * 组建流程节点
    * 
    * @param preServiceName 前一个流程服务节点名称
@@ -129,7 +213,6 @@ public class ServiceFlow {
 
     ServiceConfig preConfig = getOrCreateServiceConfig(preServiceName);
     ServiceConfig nextConfig = getOrCreateServiceConfig(nextServiceName);
-
 
     Set<ServiceConfig> nextServices = servicesOfFlow.get(preServiceName);
 
