@@ -54,21 +54,22 @@ public class AggregateService implements Service<Object, Object>, Aggregate {
       return null;
     }
 
+    final String transactionId = flowMessage.getTransactionId();
     // first joint message
-    if (!resultMap.containsKey(context.getId())) {
+    if (!resultMap.containsKey(transactionId)) {
       Set<Object> objectSet = new HashSet<Object>();
-      resultMap.put(context.getId(), objectSet);
-      resultNumberMap.put(context.getId(), new AtomicInteger(sourceNumber));
-      resultDateMap.put(context.getId(), System.currentTimeMillis());
+      resultMap.put(transactionId, objectSet);
+      resultNumberMap.put(transactionId, new AtomicInteger(sourceNumber));
+      resultDateMap.put(transactionId, System.currentTimeMillis());
     }
-    resultMap.get(context.getId()).add(flowMessage.getMessage());
+    resultMap.get(transactionId).add(flowMessage.getMessage());
 
-    int number = resultNumberMap.get(context.getId()).decrementAndGet();
+    int number = resultNumberMap.get(transactionId).decrementAndGet();
     if (number <= 0) {
-      Set<Object> returnObject = resultMap.get(context.getId());
-      resultMap.remove(context.getId());
-      resultNumberMap.remove(context.getId());
-      resultDateMap.remove(context.getId());
+      Set<Object> returnObject = resultMap.get(transactionId);
+      resultMap.remove(transactionId);
+      resultNumberMap.remove(transactionId);
+      resultDateMap.remove(transactionId);
 
       return buildMessage(returnObject);
     }

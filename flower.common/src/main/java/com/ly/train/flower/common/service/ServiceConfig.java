@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import com.ly.train.flower.common.service.container.ServiceFactory;
+import com.ly.train.flower.common.util.Constant;
 
 /**
  * 流程服务节点配置
@@ -97,6 +99,15 @@ public class ServiceConfig implements Serializable {
 
   public boolean hasPreviousServices() {
     return previousServiceConfigs != null && previousServiceConfigs.size() > 0;
+  }
+
+  /**
+   * 聚合服务
+   * 
+   * @return
+   */
+  public boolean isAggregateService() {
+    return ServiceFactory.getServiceClassName(getServiceName()).equals(Constant.AGGREGATE_SERVICE_NAME);
   }
 
   public String getSimpleDesc() {

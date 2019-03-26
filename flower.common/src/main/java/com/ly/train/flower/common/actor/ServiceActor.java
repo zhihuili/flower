@@ -38,7 +38,6 @@ import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.common.service.web.HttpComplete;
 import com.ly.train.flower.common.service.web.Web;
 import com.ly.train.flower.common.util.CloneUtil;
-import com.ly.train.flower.common.util.Constant;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
@@ -82,7 +81,7 @@ public class ServiceActor extends AbstractActor {
       for (ServiceConfig serviceConfig : serviceConfigs) {
         RefType refType = new RefType();
 
-        if (ServiceFactory.getServiceClassName(serviceConfig.getServiceName()).equals(Constant.AGGREGATE_SERVICE_NAME)) {
+        if (serviceConfig.isAggregateService()) {
           refType.setJoint(true);
         }
         refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, serviceConfig.getServiceName(), index));
@@ -152,7 +151,7 @@ public class ServiceActor extends AbstractActor {
     if (result == null) {// for joint service
       return;
     }
-    
+
     for (RefType refType : nextServiceActors) {
       Object resultClone = CloneUtil.clone(result);
       ServiceContext context = serviceContext.newInstance();
