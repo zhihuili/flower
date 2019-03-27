@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
 
 /**
- * Dubbo {@link DubboComponentScan} Bean Registrar
+ * flower {@link FlowerComponentScan} Bean Registrar
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see Service

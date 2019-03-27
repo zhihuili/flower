@@ -62,7 +62,7 @@ public class ServiceRouter {
    * 同步调用
    * 
    * @param message message
-   * @return
+   * @return obj
    * @throws Exception
    */
   public Object syncCallService(Object message) throws Exception {
@@ -94,7 +94,7 @@ public class ServiceRouter {
   /**
    * 当actor个数为2^n个数时才可以使用
    * 
-   * @return
+   * @return int 
    */
   protected int bitRandomIndex() {
     if (number == 1) {
@@ -106,9 +106,6 @@ public class ServiceRouter {
     return (currentIndex++) & (number - 1);
   }
 
-  /**
-   * @return
-   */
   protected int moduleRandomIndex() {
     if (number == 1) {
       return 0;

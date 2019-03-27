@@ -147,7 +147,7 @@ public final class ServiceFlow {
    * 对名字进行排序后拼接成字符串：serviceA
    * 
    * @param serviceNames
-   * @return
+   * @return str
    */
   public String generateAggregateServiceName(List<String> serviceNames) {
     StringBuilder sb = new StringBuilder();
@@ -243,7 +243,7 @@ public final class ServiceFlow {
    * 
    * @param previousServiceName 当前服务节点
    * @param nextServiceNames 下行服务节点名称
-   * @return
+   * @return {@link ServiceFlow}
    */
   public ServiceFlow buildFlow(String previousServiceName, Collection<String> nextServiceNames) {
     for (String nextServiceName : nextServiceNames) {
@@ -409,7 +409,7 @@ public final class ServiceFlow {
    * 内部聚合服务
    * 
    * @param clazz
-   * @return
+   * @return true /false 
    */
   protected boolean isInnerAggregateService(Class<?> clazz) {
     return clazz != null && clazz.getName().equals(Constant.AGGREGATE_SERVICE_NAME);

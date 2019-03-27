@@ -81,8 +81,8 @@ public class AggregateService implements Service<Object, Object>, Aggregate {
   /**
    * subclass should override the method.
    * 
-   * @param messages: Set<Message>
-   * @return
+   * @param messages Set<Message>
+   * @return Object
    */
   public Object buildMessage(Set<Object> messages) {
     return messages;

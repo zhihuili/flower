@@ -53,10 +53,10 @@ public class ServiceFacade {
   /**
    * 同步调用会引起阻塞，因此需要在外面try catch异常TimeoutException
    * 
-   * @param flowName
-   * @param serviceName
-   * @param message
-   * @return
+   * @param flowName flowName
+   * @param serviceName serviceName
+   * @param message message
+   * @return object
    * @throws Exception
    */
   public static Object syncCallService(String flowName, String serviceName, Object message) throws Exception {
@@ -70,10 +70,10 @@ public class ServiceFacade {
   /**
    * will cache by flowName + "_" + serviceName
    * 
-   * @param flowName
-   * @param serviceName
+   * @param flowName flowName
+   * @param serviceName serviceName
    * @param flowNumbe 数量
-   * @return
+   * @return {@link ServiceRouter}
    */
   public static ServiceRouter buildServiceRouter(String flowName, String serviceName, int flowNumbe) {
     serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceConfig().getServiceName();

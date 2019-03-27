@@ -47,7 +47,7 @@ public class ServiceMeta implements Serializable {
   /**
    * 请求参数类型
    * 
-   * @return
+   * @return class
    */
   public Class<?> getParamType() {
     return paramType;
@@ -60,7 +60,7 @@ public class ServiceMeta implements Serializable {
   /**
    * 返回结果类型
    * 
-   * @return
+   * @return class
    */
   public Class<?> getResultType() {
     return resultType;

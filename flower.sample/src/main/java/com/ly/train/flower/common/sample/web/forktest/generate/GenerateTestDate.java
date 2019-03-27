@@ -20,8 +20,8 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
- * @Author: fengyu.zhang
- * @Date: 2019/2/24 18:01
+ * @author fengyu.zhang
+ * @date 2019/2/24 18:01
  */
 public class GenerateTestDate {
     public static void main(String[] args){

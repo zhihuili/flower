@@ -104,7 +104,7 @@ public class ServiceConfig implements Serializable {
   /**
    * 聚合服务
    * 
-   * @return
+   * @return true / false
    */
   public boolean isAggregateService() {
     return ServiceFactory.getServiceClassName(getServiceName()).equals(Constant.AGGREGATE_SERVICE_NAME);

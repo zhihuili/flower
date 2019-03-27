@@ -19,8 +19,8 @@ import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
 /**
- * @Author: fengyu.zhang
- * @Date: 2019/2/24 14:33
+ * @author fengyu.zhang
+ * @date 2019/2/24 14:33
  */
 public class BeginService implements Service<String,Integer> {
 
