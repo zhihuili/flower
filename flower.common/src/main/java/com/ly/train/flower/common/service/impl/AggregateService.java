@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service;
+package com.ly.train.flower.common.service.impl;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import com.ly.train.flower.common.service.Aggregate;
+import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.message.TimerMessage;
@@ -87,7 +89,6 @@ public class AggregateService implements Service<Object, Object>, Aggregate {
   }
 
   // sourceNumber++ when initialize
-  @Override
   public void setSourceNumber(int sourceNumber) {
     this.sourceNumber = sourceNumber;
   }

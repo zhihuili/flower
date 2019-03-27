@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service;
+package com.ly.train.flower.common.service.container;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,9 +27,8 @@ import java.util.concurrent.ConcurrentMap;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;
-import com.ly.train.flower.common.service.container.ServiceFactory;
-import com.ly.train.flower.common.service.container.ServiceLoader;
-import com.ly.train.flower.common.service.container.ServiceMeta;
+import com.ly.train.flower.common.service.config.ServiceConfig;
+import com.ly.train.flower.common.service.impl.AggregateService;
 import com.ly.train.flower.common.util.AnnotationUtil;
 import com.ly.train.flower.common.util.Assert;
 import com.ly.train.flower.common.util.Constant;

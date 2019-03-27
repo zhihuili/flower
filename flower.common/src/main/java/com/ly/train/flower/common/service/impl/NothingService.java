@@ -13,26 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package com.ly.train.flower.common.util;
+package com.ly.train.flower.common.service.impl;
 
-import com.ly.train.flower.common.annotation.FlowerService;
+import com.ly.train.flower.common.service.Service;
+import com.ly.train.flower.common.service.container.ServiceContext;
 
-/**
- * @author leeyazhou
- *
- */
-public class AnnotationUtil {
+public class NothingService implements Service<Object, Object> {
 
-  public static  String getFlowerServiceValue(Class<?> flowServiceClass) {
-    String ret = flowServiceClass.getSimpleName();
-    FlowerService flowerService = flowServiceClass.getAnnotation(FlowerService.class);
-    if (flowerService != null && StringUtil.isNotBlank(flowerService.value())) {
-      ret = flowerService.value();
-    }
-    return ret;
+  @Override
+  public Object process(Object message, ServiceContext context) {
+    return null;
   }
 
 }

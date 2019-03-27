@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service;
+package com.ly.train.flower.common.service.config;
 
 import java.io.Serializable;
 import java.util.HashSet;

@@ -27,11 +27,12 @@ import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.ServiceConfig;
-import com.ly.train.flower.common.service.ServiceFlow;
+import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFactory;
+import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceLoader;
+import com.ly.train.flower.common.service.impl.AggregateService;
 import com.ly.train.flower.common.service.message.Condition;
 import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.web.Flush;
@@ -177,7 +178,8 @@ public class ServiceActor extends AbstractActor {
     if (this.service == null) {
       this.service = ServiceFactory.getService(serviceName);
       if (service instanceof Aggregate) {
-        ((Aggregate) service).setSourceNumber(ServiceFlow.getOrCreate(flowName).getServiceConfig(serviceName).getJointSourceNumber());
+        ((AggregateService) service)
+            .setSourceNumber(ServiceFlow.getOrCreate(flowName).getServiceConfig(serviceName).getJointSourceNumber());
       }
     }
     return service;
