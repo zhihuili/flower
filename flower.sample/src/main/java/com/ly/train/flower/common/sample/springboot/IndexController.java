@@ -16,46 +16,27 @@
 package com.ly.train.flower.common.sample.springboot;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.ly.train.flower.common.actor.ServiceFacade;
-import com.ly.train.flower.common.actor.ServiceRouter;
+import com.ly.flower.web.spring.FlowerController;
+import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.service.ServiceFlow;
-import com.ly.train.flower.common.service.container.ServiceFactory;
 
 @RestController
-public class IndexController {
-  static final long serialVersionUID = 1L;
-  ServiceRouter sr;
+@Flower(serviceName = "ServiceA", value = "async")
+public class IndexController extends FlowerController {
 
-  public IndexController() {
-    buildServiceEnv();
-    sr = ServiceFacade.buildServiceRouter("async", "serviceA", 400);
-  }
 
   @RequestMapping(value = "/", method = POST)
-  public void index(HttpServletRequest req) {
-    AsyncContext context = req.startAsync();
-    asyncExe(context);
+  public void index(Object param, HttpServletRequest req) throws Throwable {
+    doProcess(param, req);
   }
 
-  private void asyncExe(AsyncContext ctx) {
-    try {
-      sr.asyncCallService(null, ctx);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+
+  @Override
+  public void buildFlower() {
+    ServiceFlow.getOrCreate(getFlowName()).buildFlow("ServiceA", "ServiceB");
   }
 
-  private void buildServiceEnv() {
-    ServiceFactory.registerService("serviceA",
-        "com.ly.train.flower.common.sample.springboot.ServiceA");
-    ServiceFactory.registerService("serviceB",
-        "com.ly.train.flower.common.sample.springboot.ServiceB");
-
-    ServiceFlow.buildFlow("async", "serviceA", "serviceB");
-
-  }
 }

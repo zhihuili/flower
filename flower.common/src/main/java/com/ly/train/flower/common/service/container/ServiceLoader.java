@@ -72,40 +72,44 @@ public class ServiceLoader {
   }
 
   public boolean registerFlowerService(String serviceName, FlowerService flowerService) {
-    Object ret = servicesCache.put(serviceName, flowerService);
+    Object ret = servicesCache.putIfAbsent(serviceName, flowerService);
     if (ret != null) {
-      logger.warn("flower service is already exist, do discard it. serviceName : {}, flowerService : {}", serviceName, flowerService);
+      logger.warn("flowerservice is already exist, so discard it. serviceName : {}, flowerService : {}", serviceName, flowerService);
     } else {
-      logger.info("register flowerservice : {}", flowerService);
+      logger.info("register flowerservice success , serviceName : {}, flowerService : {}", serviceName, flowerService);
     }
     return true;
   }
 
   public FlowerService loadService(String serviceName) {
     FlowerService service = (FlowerService) servicesCache.get(serviceName);
-    if (service != null) {
-      return service;
-    }
-    try {
-      final String serviceClassName = ServiceFactory.getServiceClassName(serviceName);
-      if (StringUtil.isBlank(serviceClassName)) {
-        throw new ServiceNotFoundException(serviceClassName);
+    if (service == null) {
+      synchronized (logger) {
+        service = (FlowerService) servicesCache.get(serviceName);;
+        if (service == null) {
+          try {
+            final String serviceClassName = ServiceFactory.getServiceClassName(serviceName);
+            if (StringUtil.isBlank(serviceClassName)) {
+              throw new ServiceNotFoundException(serviceClassName);
+            }
+            Class<?> serviceClass = classLoader.loadClass(serviceClassName);
+            String param = ServiceFactory.getServiceClassParameter(serviceName);
+            if (param != null) {
+              Constructor<?> constructor = serviceClass.getConstructor(String.class);
+              service = (FlowerService) constructor.newInstance(param);
+            } else {
+              service = (FlowerService) serviceClass.newInstance();
+            }
+            logger.info("load flower service --> {} : {}", serviceName, service);
+            servicesCache.put(serviceName, service);
+          } catch (Exception e) {
+            logger.error("fail to load service : " + serviceName, e);
+            throw new FlowerException(e);
+          }
+        }
       }
-      Class<?> serviceClass = classLoader.loadClass(serviceClassName);
-      String param = ServiceFactory.getServiceClassParameter(serviceName);
-      if (param != null) {
-        Constructor<?> constructor = serviceClass.getConstructor(String.class);
-        service = (FlowerService) constructor.newInstance(param);
-      } else {
-        service = (FlowerService) serviceClass.newInstance();
-      }
-      logger.info("load flower service --> {} : {}", serviceName, service);
-      servicesCache.put(serviceName, service);
-      return service;
-    } catch (Exception e) {
-      logger.error("fail to load service : " + serviceName, e);
-      throw new FlowerException(e);
     }
+    return service;
   }
 
   /**
@@ -140,16 +144,14 @@ public class ServiceLoader {
   }
 
   public boolean registerServiceType(String serviceName, Class<?> serviceClass, String config) {
-    initServiceMeta(serviceName, serviceClass, config);
-    logger.info("register service type -> {} : {}", serviceName, serviceClass);
+    if (!serviceMetaCache.containsKey(serviceName)) {
+      initServiceMeta(serviceName, serviceClass, config);
+      logger.info("register service type -> {} : {}", serviceName, serviceClass);
+    }
     return true;
   }
 
   private void initServiceMeta(String serviceName, Class<?> serviceClass, String config) {
-    if (serviceMetaCache.containsKey(serviceName)) {
-      logger.warn("service type is already exist. {} : {}", serviceName, serviceClass);
-      return;
-    }
     ServiceMeta serviceMeta = new ServiceMeta(serviceClass);
     serviceMeta.setServiceName(serviceName);
     try {
@@ -222,7 +224,7 @@ public class ServiceLoader {
     for (String path : flowFiles) {
       logger.info("find flow file, path : {}", path);
       String flowName = path.substring(0, path.lastIndexOf("."));
-      ServiceFlow.buildFlow(flowName, FileUtil.readFlow("/" + path));
+      ServiceFlow.getOrCreate(flowName).buildFlow(FileUtil.readFlow("/" + path));
     }
 
   }

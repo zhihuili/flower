@@ -16,54 +16,57 @@
 /**
  * 
  */
-package com.ly.train.flower.common.actor.model;
+package com.ly.train.flower.common.util;
+
+import java.io.Serializable;
 
 /**
+ * 键值对组
+ * 
  * @author leeyazhou
  *
  */
-public class User {
+public class Pair<K, V> implements Serializable {
 
-  private String name;
-  private String desc;
-  private int age;
+  private static final long serialVersionUID = 1L;
 
-  public String getName() {
-    return name;
+  public Pair() {}
+
+  public Pair(K key, V value) {
+    this.key = key;
+    this.value = value;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  private K key;
+  private V value;
+
+  public K getKey() {
+    return key;
   }
 
-  public int getAge() {
-    return age;
+  public void setKey(K key) {
+    this.key = key;
   }
 
-  public void setAge(int age) {
-    this.age = age;
+  public V getValue() {
+    return value;
   }
 
-  public String getDesc() {
-    return desc;
-  }
-
-  public void setDesc(String desc) {
-    this.desc = desc;
+  public void setValue(V value) {
+    this.value = value;
   }
 
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("User [name=");
-    builder.append(name);
-    builder.append(", desc=");
-    builder.append(desc);
-    builder.append(", age=");
-    builder.append(age);
+    builder.append("Pair [key=");
+    builder.append(key);
+    builder.append(", value=");
+    builder.append(value);
     builder.append("]");
     return builder.toString();
   }
+
 
 
 }

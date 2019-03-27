@@ -41,8 +41,7 @@ public class Sample {
     ServiceFactory.registerService("serviceC", "com.ly.train.flower.common.sample.programflow.ServiceC");
 
     // serviceA -> serviceB -> serviceC
-    ServiceFlow.buildFlow("sample", "serviceA", "serviceB");
-    ServiceFlow.buildFlow("sample", "serviceB", "serviceC");
+    ServiceFlow.getOrCreate("sample").buildFlow("serviceA", "serviceB").buildFlow("serviceB", "serviceC");
 
   }
 

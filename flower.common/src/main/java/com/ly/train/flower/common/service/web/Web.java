@@ -21,24 +21,29 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import com.ly.train.flower.common.util.Constant;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
 public class Web {
-
+  private static final Logger logger = LoggerFactory.getLogger(Web.class);
   private AsyncContext asyncContext;
   private PrintWriter writer;
   private ServletRequest servletRequest;
+  private ServletResponse servletResponse;
 
   public Web(AsyncContext context) {
     this.asyncContext = context;
     this.servletRequest = context.getRequest();
-    context.getResponse().setContentType(Constant.DEFAULT_CONTENT_TEXT);
-    context.getResponse().setCharacterEncoding(Constant.ENCODING_UTF_8);
+    this.servletResponse = context.getResponse();
+    servletResponse.setCharacterEncoding(Constant.ENCODING_UTF_8);
+    servletResponse.setContentType(Constant.DEFAULT_CONTENT_TEXT);
     try {
-      this.writer = context.getResponse().getWriter();
+      this.writer = servletResponse.getWriter();
     } catch (IOException e) {
-      e.printStackTrace();
+      logger.error("", e);
     }
   }
 

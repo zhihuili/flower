@@ -17,8 +17,10 @@ package com.ly.train.flower.common.sample.springboot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.ly.flower.web.spring.context.FlowerComponentScan;
 
 @SpringBootApplication
+@FlowerComponentScan("com.ly.train.flower.common.sample.springboot")
 public class DemoApplication {
   public static void main(String[] args) {
     SpringApplication.run(DemoApplication.class, args);
