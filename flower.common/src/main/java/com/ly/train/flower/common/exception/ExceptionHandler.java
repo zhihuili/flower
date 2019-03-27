@@ -16,19 +16,19 @@
 /**
  * 
  */
-package com.ly.train.flower.common.util;
+package com.ly.train.flower.common.exception;
+
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
  *
  */
-public class Constant {
+public class ExceptionHandler {
+  protected static final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
 
-  public static final String ENCODING_UTF_8 = "UTF-8";
-  
-  public static final String DEFAULT_CONTENT_TEXT = "text/html;charset=" + ENCODING_UTF_8;
-  
-  public static final String DEFAULT_CONTENT_JSON = "application/json;charset=" + ENCODING_UTF_8;
-  
-  public static final String AGGREGATE_SERVICE_NAME = "com.ly.train.flower.common.service.impl.AggregateService";
+  public static void handle(Throwable throwable) {
+    logger.error("", throwable);
+  }
 }

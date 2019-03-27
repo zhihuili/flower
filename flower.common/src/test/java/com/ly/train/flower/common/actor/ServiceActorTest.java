@@ -47,7 +47,7 @@ public class ServiceActorTest {
     serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
     final ServiceRouter router = ServiceFacade.buildServiceRouter("test", ServiceA.class.getSimpleName(), 2 << 4);
 
-    final int threadNum = 1;
+    final int threadNum = 10;
     final int numPerThread = 1;
     for (int i = 0; i < threadNum; i++) {
       new Thread(() -> {

@@ -25,6 +25,7 @@ import com.ly.train.flower.base.service.ServiceA;
 import com.ly.train.flower.base.service.ServiceB;
 import com.ly.train.flower.base.service.ServiceC1;
 import com.ly.train.flower.base.service.ServiceC2;
+import com.ly.train.flower.base.service.ServiceD;
 import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 
@@ -40,17 +41,26 @@ public class ServiceFlowTest {
     ServiceFactory.registerService(ServiceB.class.getSimpleName(), ServiceB.class);
     ServiceFactory.registerService(ServiceC1.class.getSimpleName(), ServiceC1.class);
     ServiceFactory.registerService(ServiceC2.class.getSimpleName(), ServiceC2.class);
+    ServiceFactory.registerService(ServiceD.class.getSimpleName(), ServiceD.class);
   }
 
   @Test
   public void testBuild() {
-
     ServiceFlow serviceFlow = ServiceFlow.getOrCreate("demo");
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildParelelFlow(ServiceB.class, Arrays.asList(ServiceC1.class, ServiceC2.class));
-    serviceFlow.buildParelelFlow("ServiceC1", Arrays.asList("ServiceC2"));
-    serviceFlow.buildAggregateFlow(Arrays.asList("ServiceC1","ServiceB"));
-    System.out.println(serviceFlow.toString());
+    serviceFlow.buildFlow(ServiceB.class, Arrays.asList(ServiceC1.class, ServiceC2.class));
+    // serviceFlow.buildFlow("ServiceC1", Arrays.asList("ServiceD"));
+    // serviceFlow.buildFlow("ServiceC2", Arrays.asList("ServiceD"));
+    serviceFlow.buildFlow(Arrays.asList("ServiceC1", "ServiceC2"), "ServiceD");
+    serviceFlow.build();
+  }
+
+  @Test
+  public void testBuildAggregate() {
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate("demo");
+    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
+    serviceFlow.buildFlow(ServiceB.class, ServiceD.class);
+    serviceFlow.build();
   }
 
 }
