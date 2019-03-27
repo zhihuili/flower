@@ -51,7 +51,7 @@ import com.ly.train.flower.logging.LoggerFactory;
  * <p>
  * <code>
  * ServiceFlow.getOrCreate("flowSample")
- *            .buildAggregateFlow(Arrays.asList("serviceB","serviceC");
+ *            .buildFlow(Arrays.asList("serviceB","serviceC"), "serviceD");
  * </code>
  * 
  * 

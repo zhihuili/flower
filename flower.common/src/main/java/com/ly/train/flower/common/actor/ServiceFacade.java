@@ -38,15 +38,43 @@ public class ServiceFacade {
   // TODO user define duration
   static FiniteDuration duration = Duration.create(3, TimeUnit.SECONDS);
 
+  /**
+   * @deprecated serviceName 不必须，因为可以从流程中获取到首个服务
+   */
+  @Deprecated
   public static void asyncCallService(String flowName, String serviceName, Object message, AsyncContext ctx) throws IOException {
-    ServiceContext context = ServiceContext.context(message, ctx);
+    asyncCallService(flowName, message, ctx);
+  }
+
+  /**
+   * 异步处理服务
+   * 
+   * @param flowName 流程名称
+   * @param message 消息体
+   * @param asyncContext 异步处理上下文
+   * @throws IOException io exception
+   */
+  public static void asyncCallService(String flowName, Object message, AsyncContext asyncContext) throws IOException {
+    ServiceContext context = ServiceContext.context(message, asyncContext);
     context.setFlowName(flowName);
-    serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceConfig().getServiceName();
+    String serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceConfig().getServiceName();
     ServiceActorFactory.buildServiceActor(flowName, serviceName).tell(context, ActorRef.noSender());
   }
 
+  /**
+   * 
+   * @see asyncCallService
+   */
+  @Deprecated
   public static void asyncCallService(String flowName, String serviceName, Object message) throws IOException {
-    asyncCallService(flowName, serviceName, message, null);
+    asyncCallService(flowName, message, null);
+  }
+
+  /**
+   * @see asyncCallService
+   */
+  public static void asyncCallService(String flowName, Object message) throws IOException {
+    asyncCallService(flowName, message, null);
   }
 
 
@@ -59,12 +87,20 @@ public class ServiceFacade {
    * @return object
    * @throws Exception
    */
-  public static Object syncCallService(String flowName, String serviceName, Object message) throws Exception {
+  public static Object syncCallService(String flowName, Object message) throws Exception {
     ServiceContext context = ServiceContext.context(message);
     context.setSync(true);
-    serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceConfig().getServiceName();
+    String serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceConfig().getServiceName();
     return Await.result(Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName), context, new Timeout(duration)),
         duration);
+  }
+
+  /**
+   * @deprecated serviceName 不必须，因为可以从流程中获取到首个服务
+   */
+  @Deprecated
+  public static Object syncCallService(String flowName, String serviceName, Object message) throws Exception {
+    return syncCallService(flowName, message);
   }
 
   /**
