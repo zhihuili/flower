@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.sample.web.forktest.service;
+/**
+ * 
+ */
+package com.ly.train.flower.common.exception;
 
-import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
 /**
- * @author fengyu.zhang
- * @date 2019/2/24 14:33
+ * @author leeyazhou
+ *
  */
-public class BeginService implements Service<String,Integer> {
+public class ExceptionHandler {
+  protected static final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
 
-    @Override
-    public Integer process(String message, ServiceContext context) throws Exception {
-        Integer result = Integer.valueOf(context.getWeb().getParameter("id"));
-        return result;
-    }
+  public static void handle(Throwable throwable) {
+    logger.error("", throwable);
+  }
 }

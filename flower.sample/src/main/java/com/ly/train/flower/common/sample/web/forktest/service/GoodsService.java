@@ -23,8 +23,8 @@ import com.ly.train.flower.common.sample.web.dao.GoodsDao;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
 /**
- * @Author: fengyu.zhang
- * @Date: 2019/2/24 17:16
+ * @author fengyu.zhang
+ * @date 2019/2/24 17:16
  */
 @Service("GoodsService")
 public class GoodsService implements com.ly.train.flower.common.service.Service<Integer,List<Integer>> {

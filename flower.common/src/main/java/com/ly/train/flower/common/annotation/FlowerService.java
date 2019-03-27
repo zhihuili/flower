@@ -40,4 +40,12 @@ public @interface FlowerService {
    */
   String value() default "";
 
+
+  /**
+   * 类型，默认是普通类型
+   * 
+   * @return {@link FlowerType}
+   */
+  FlowerType type() default FlowerType.COMMON;
+
 }

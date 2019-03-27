@@ -23,8 +23,8 @@ import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.web.Flush;
 
 /**
- * @Author: fengyu.zhang
- * @Date: 2019/2/24 13:23
+ * @author fengyu.zhang
+ * @date 2019/2/24 13:23
  */
 public class ReturnService
     implements com.ly.train.flower.common.service.Service<Set,Void>, Flush, Complete {

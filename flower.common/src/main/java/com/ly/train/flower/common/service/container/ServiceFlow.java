@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service;
+package com.ly.train.flower.common.service.container;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,11 +25,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import com.ly.train.flower.common.annotation.FlowerService;
+import com.ly.train.flower.common.annotation.FlowerType;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;
-import com.ly.train.flower.common.service.container.ServiceFactory;
-import com.ly.train.flower.common.service.container.ServiceLoader;
-import com.ly.train.flower.common.service.container.ServiceMeta;
+import com.ly.train.flower.common.service.config.ServiceConfig;
+import com.ly.train.flower.common.service.impl.AggregateService;
 import com.ly.train.flower.common.util.AnnotationUtil;
 import com.ly.train.flower.common.util.Assert;
 import com.ly.train.flower.common.util.Constant;
@@ -51,7 +51,7 @@ import com.ly.train.flower.logging.LoggerFactory;
  * <p>
  * <code>
  * ServiceFlow.getOrCreate("flowSample")
- *            .buildAggregateFlow(Arrays.asList("serviceB","serviceC");
+ *            .buildFlow(Arrays.asList("serviceB","serviceC"), "serviceD");
  * </code>
  * 
  * 
@@ -147,7 +147,7 @@ public final class ServiceFlow {
    * 对名字进行排序后拼接成字符串：serviceA
    * 
    * @param serviceNames
-   * @return
+   * @return str
    */
   public String generateAggregateServiceName(List<String> serviceNames) {
     StringBuilder sb = new StringBuilder();
@@ -172,32 +172,8 @@ public final class ServiceFlow {
     return generateAggregateServiceName(serviceNames);
   }
 
-  /**
-   * 添加聚合服务节点
-   * 
-   * @param preServiceNames 需要聚合的服务名称
-   * @return {@link ServiceFlow}
-   */
-  public ServiceFlow buildAggregateFlow(List<String> preServiceNames) {
-    final String aggregateServiceName = generateAggregateServiceName(preServiceNames);
-    ServiceFactory.registerService(aggregateServiceName, AggregateService.class);
-
-    for (String s : preServiceNames) {
-      buildFlow(s, aggregateServiceName);
-    }
-
-    return this;
-  }
-
-  public ServiceFlow buildAggregateFlow2(List<Class<?>> preServiceNames) {
-    final String aggregateServiceName = generateAggregateServiceName2(preServiceNames);
-    ServiceFactory.registerService(aggregateServiceName, AggregateService.class);
-
-    for (Class<?> s : preServiceNames) {
-      String serviceName = AnnotationUtil.getFlowerServiceValue(s);
-      buildFlow(serviceName, aggregateServiceName);
-    }
-
+  public ServiceFlow build() {
+    logger.info(" build {} success. \n {}", flowName, this);
     return this;
   }
 
@@ -209,41 +185,55 @@ public final class ServiceFlow {
    * @return {@link ServiceFlow}
    */
   public ServiceFlow buildFlow(String preServiceName, String nextServiceName) {
-    validateFlow(preServiceName, nextServiceName);
-
     ServiceConfig preConfig = getOrCreateServiceConfig(preServiceName);
     ServiceConfig nextConfig = getOrCreateServiceConfig(nextServiceName);
 
-    Set<ServiceConfig> nextServices = servicesOfFlow.get(preServiceName);
-
-    if (nextServices == null) {
-      nextServices = new HashSet<>();
-      servicesOfFlow.put(preServiceName, nextServices);
-    }
+    Set<ServiceConfig> nextServices = getOrCreateNextFlow(preServiceName);
     if (headServiceConfig == null) {
       this.headServiceConfig = preConfig;
     }
 
-    boolean ret = nextServices.add(nextConfig);
-    if (!ret) {
-      return this;
+    ServiceMeta preServiceMeta = ServiceLoader.getInstance().loadServiceMeta(preServiceName);
+    ServiceMeta nextServiceMeta = ServiceLoader.getInstance().loadServiceMeta(nextServiceName);
+    if (preServiceMeta == null) {
+      throw new ServiceNotFoundException("serviceName : " + preServiceMeta);
     }
-
-    logger.info(" buildFlow : {}, preService : {}, nextService : {}", flowName, preServiceName, nextServiceName);
-    // 添加成功，更新配置信息
-    preConfig.addNextServiceConfig(nextConfig);
-    nextConfig.addPreviousServiceConfig(preConfig);
-
-
-    ServiceMeta serviceMeta = ServiceLoader.getInstance().loadServiceMeta(nextServiceName);
-    if (serviceMeta == null) {
-      throw new ServiceNotFoundException("serviceName : " + nextServiceName);
+    if (nextServiceMeta == null) {
+      throw new ServiceNotFoundException("serviceName : " + preServiceMeta);
     }
-    if (Constant.AGGREGATE_SERVICE_NAME.equals(serviceMeta.getServiceClass().getName())) {
-      if (!serviceConfigs.containsKey(nextServiceName)) {
-        serviceConfigs.put(nextServiceName, nextConfig);
+    if (!isInnerAggregateService(preServiceMeta.getServiceClass()) && isAggregateService(nextServiceMeta.getServiceClass())) {
+      ServiceConfig serviceConfig = null;
+      Set<ServiceConfig> previousServiceConfigs = nextConfig.getPreviousServiceConfigs();
+      if (previousServiceConfigs != null) {
+        for (ServiceConfig item : previousServiceConfigs) {
+          if (isInnerAggregateService(ServiceLoader.getInstance().loadServiceMeta(item.getServiceName()).getServiceClass())) {
+            serviceConfig = item;
+            break;
+          }
+        }
       }
-      nextConfig.jointSourceNumberPlus();
+
+      String aggregateServiceName = flowName + "$" + preConfig.getServiceName() + "_" + nextConfig.getServiceName() + "_AggregateService";
+      if (serviceConfig != null) {
+        aggregateServiceName = serviceConfig.getServiceName();
+      } else {
+        ServiceFactory.registerService(aggregateServiceName, AggregateService.class);
+      }
+      buildFlow(preServiceName, aggregateServiceName);
+      buildFlow(aggregateServiceName, nextServiceName);
+    } else {
+      boolean ret = nextServices.add(nextConfig);
+      if (!ret) {
+        return this;
+      }
+      // 添加成功，更新配置信息
+      validateFlow(preServiceName, nextServiceName);
+      preConfig.addNextServiceConfig(nextConfig);
+      nextConfig.addPreviousServiceConfig(preConfig);
+      if (Constant.AGGREGATE_SERVICE_NAME.equals(nextServiceMeta.getServiceClass().getName())) {
+        nextConfig.jointSourceNumberPlus();
+      }
+      logger.info(" buildFlow : {}, preService : {}, nextService : {}", flowName, preServiceName, nextServiceName);
     }
     return this;
   }
@@ -253,9 +243,9 @@ public final class ServiceFlow {
    * 
    * @param previousServiceName 当前服务节点
    * @param nextServiceNames 下行服务节点名称
-   * @return
+   * @return {@link ServiceFlow}
    */
-  public ServiceFlow buildParelelFlow(String previousServiceName, Collection<String> nextServiceNames) {
+  public ServiceFlow buildFlow(String previousServiceName, Collection<String> nextServiceNames) {
     for (String nextServiceName : nextServiceNames) {
       buildFlow(previousServiceName, nextServiceName);
     }
@@ -265,21 +255,51 @@ public final class ServiceFlow {
   /**
    * 配置并行服务节点
    * 
-   * @param previousServiceName 当前服务节点
-   * @param nextServiceClass 下行服务节点类名称
-   * @return
+   * @param previousServiceNames 前服务节点集合
+   * @param nextServiceName 下行节点
+   * @return {@link ServiceFlow}
    */
-  public ServiceFlow buildParelelFlow(Class<?> previousServiceName, Collection<Class<?>> nextServiceClass) {
-    for (Class<?> nextServiceName : nextServiceClass) {
-      buildFlow(previousServiceName, nextServiceName);
+  public ServiceFlow buildFlow(Collection<String> previousServiceNames, String nextServiceName) {
+    for (String preServiceName : previousServiceNames) {
+      buildFlow(preServiceName, nextServiceName);
     }
     return this;
   }
 
   /**
+   * 配置并行服务节点
+   * 
+   * @param previousServiceClass 当前服务节点
+   * @param nextServiceClasses 下行服务节点类
+   * @return {@link ServiceFlow}
+   */
+  public ServiceFlow buildFlow(Class<?> previousServiceClass, Collection<Class<?>> nextServiceClasses) {
+    for (Class<?> nextServiceClass : nextServiceClasses) {
+      buildFlow(previousServiceClass, nextServiceClass);
+    }
+    return this;
+  }
+
+  /**
+   * 配置并行服务节点
+   * 
+   * @param previousServiceClasses 前服务节点集合
+   * @param nextServiceClass 下行服务节点
+   * @return {@link ServiceFlow}
+   */
+  public ServiceFlow buildFlow(Collection<Class<?>> previousServiceClasses, Class<?> nextServiceClass) {
+    for (Class<?> preServiceClass : previousServiceClasses) {
+      buildFlow(preServiceClass, nextServiceClass);
+    }
+    return this;
+  }
+
+
+  /**
    * 组建流程节点
    * 
    * @param flow flow
+   * @return {@link ServiceFlow}
    */
   public ServiceFlow buildFlow(List<Pair<String, String>> flow) {
     for (Pair<String, String> pair : flow) {
@@ -312,6 +332,15 @@ public final class ServiceFlow {
    */
   public Set<ServiceConfig> getNextFlow(String serviceName) {
     return servicesOfFlow.get(serviceName);
+  }
+
+  protected Set<ServiceConfig> getOrCreateNextFlow(String serviceName) {
+    Set<ServiceConfig> nextServices = getNextFlow(serviceName);
+    if (nextServices == null) {
+      nextServices = new HashSet<>();
+      servicesOfFlow.put(serviceName, nextServices);
+    }
+    return nextServices;
   }
 
   /**
@@ -358,6 +387,32 @@ public final class ServiceFlow {
           + ") is not compatible for " + nextServiceMata.getServiceClass() + "(" + nextParamType.getSimpleName() + ")");
     }
 
+  }
+
+  /**
+   * 是 聚合服务类型
+   * 
+   * @param clazz class
+   * @return true / false
+   */
+  protected boolean isAggregateService(Class<?> clazz) {
+    if (clazz != null) {
+      FlowerService flowerService = clazz.getAnnotation(FlowerService.class);
+      if (flowerService != null && flowerService.type().equals(FlowerType.AGGREGATE)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * 内部聚合服务
+   * 
+   * @param clazz
+   * @return true /false 
+   */
+  protected boolean isInnerAggregateService(Class<?> clazz) {
+    return clazz != null && clazz.getName().equals(Constant.AGGREGATE_SERVICE_NAME);
   }
 
   @Override

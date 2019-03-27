@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service;
+package com.ly.train.flower.common.service.impl;
 
+import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.message.Condition;
 
-public class ConditionService implements Service<Condition,Condition> {
+public class ConditionService implements Service<Condition, Condition> {
 
   private String[] condition;
 

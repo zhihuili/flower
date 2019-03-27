@@ -13,15 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service;
+/**
+ * 
+ */
+package com.ly.train.flower.common.service.config;
 
-import com.ly.train.flower.common.service.container.ServiceContext;
+import java.io.Serializable;
 
-public class NothingService implements Service<Object,Object> {
+/**
+ * @author leeyazhou
+ *
+ */
+public class FlowConfig implements Serializable {
+  private static final long serialVersionUID = 1L;
+  private boolean aggregate;
 
-  @Override
-  public Object process(Object message, ServiceContext context) {
-    return null;
+  /**
+   * @return the aggregate
+   */
+  public boolean isAggregate() {
+    return aggregate;
   }
-
 }

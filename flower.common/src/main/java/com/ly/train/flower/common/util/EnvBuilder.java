@@ -25,8 +25,8 @@ import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
-import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceFactory;
+import com.ly.train.flower.common.service.container.ServiceFlow;
 
 public class EnvBuilder {
   private static final Logger logger = LoggerFactory.getLogger(EnvBuilder.class);

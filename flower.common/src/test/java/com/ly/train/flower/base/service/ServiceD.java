@@ -13,20 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.sample.web.forktest.service;
+/**
+ * 
+ */
+package com.ly.train.flower.base.service;
 
+import java.util.Set;
+import com.ly.train.flower.base.model.User;
+import com.ly.train.flower.common.annotation.FlowerService;
+import com.ly.train.flower.common.annotation.FlowerType;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
 /**
- * @author fengyu.zhang
- * @date 2019/2/24 14:33
+ * @author leeyazhou
+ *
  */
-public class BeginService implements Service<String,Integer> {
+@FlowerService(type = FlowerType.AGGREGATE)
+public class ServiceD implements Service<Set<User>, Set<User>> {
+  static final Logger logger = LoggerFactory.getLogger(ServiceD.class);
 
-    @Override
-    public Integer process(String message, ServiceContext context) throws Exception {
-        Integer result = Integer.valueOf(context.getWeb().getParameter("id"));
-        return result;
-    }
+  @Override
+  public Set<User> process(Set<User> message, ServiceContext context) throws Throwable {
+    logger.info("结束处理消息, message : {}", message);
+    return message;
+  }
+
 }

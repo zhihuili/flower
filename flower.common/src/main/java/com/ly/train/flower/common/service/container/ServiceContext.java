@@ -58,8 +58,7 @@ public class ServiceContext implements Serializable {
   /**
    * 从当前对象创建一个副本
    * 
-   * @param context
-   * @return
+   * @return {@link ServiceContext}
    */
   public ServiceContext newInstance() {
     ServiceContext serviceContext = new ServiceContext();

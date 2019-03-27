@@ -22,8 +22,8 @@ import com.ly.train.flower.common.sample.web.mode.User;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
 /**
- * @Author: fengyu.zhang
- * @Date: 2019/2/24 17:15
+ * @author fengyu.zhang
+ * @date 2019/2/24 17:15
  */
 
 @Service("UserService")

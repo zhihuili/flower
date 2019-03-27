@@ -30,5 +30,5 @@ public class Constant {
   
   public static final String DEFAULT_CONTENT_JSON = "application/json;charset=" + ENCODING_UTF_8;
   
-  public static final String AGGREGATE_SERVICE_NAME = "com.ly.train.flower.common.service.AggregateService";
+  public static final String AGGREGATE_SERVICE_NAME = "com.ly.train.flower.common.service.impl.AggregateService";
 }

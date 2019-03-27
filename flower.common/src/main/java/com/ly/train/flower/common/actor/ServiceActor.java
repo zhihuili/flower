@@ -27,18 +27,18 @@ import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.ServiceConfig;
-import com.ly.train.flower.common.service.ServiceFlow;
+import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFactory;
+import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceLoader;
+import com.ly.train.flower.common.service.impl.AggregateService;
 import com.ly.train.flower.common.service.message.Condition;
 import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.common.service.web.HttpComplete;
 import com.ly.train.flower.common.service.web.Web;
 import com.ly.train.flower.common.util.CloneUtil;
-import com.ly.train.flower.common.util.Constant;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
@@ -82,7 +82,7 @@ public class ServiceActor extends AbstractActor {
       for (ServiceConfig serviceConfig : serviceConfigs) {
         RefType refType = new RefType();
 
-        if (ServiceFactory.getServiceClassName(serviceConfig.getServiceName()).equals(Constant.AGGREGATE_SERVICE_NAME)) {
+        if (serviceConfig.isAggregateService()) {
           refType.setJoint(true);
         }
         refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, serviceConfig.getServiceName(), index));
@@ -152,7 +152,7 @@ public class ServiceActor extends AbstractActor {
     if (result == null) {// for joint service
       return;
     }
-    
+
     for (RefType refType : nextServiceActors) {
       Object resultClone = CloneUtil.clone(result);
       ServiceContext context = serviceContext.newInstance();
@@ -178,7 +178,8 @@ public class ServiceActor extends AbstractActor {
     if (this.service == null) {
       this.service = ServiceFactory.getService(serviceName);
       if (service instanceof Aggregate) {
-        ((Aggregate) service).setSourceNumber(ServiceFlow.getOrCreate(flowName).getServiceConfig(serviceName).getJointSourceNumber());
+        ((AggregateService) service)
+            .setSourceNumber(ServiceFlow.getOrCreate(flowName).getServiceConfig(serviceName).getJointSourceNumber());
       }
     }
     return service;

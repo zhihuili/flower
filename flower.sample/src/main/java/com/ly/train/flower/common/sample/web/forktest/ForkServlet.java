@@ -18,8 +18,8 @@ package com.ly.train.flower.common.sample.web.forktest;
 import com.ly.train.flower.common.actor.ServiceFacade;
 import com.ly.train.flower.common.actor.ServiceRouter;
 import com.ly.train.flower.common.service.FlowerService;
-import com.ly.train.flower.common.service.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceFactory;
+import com.ly.train.flower.common.service.container.ServiceFlow;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import javax.servlet.AsyncContext;
@@ -30,8 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * @Author: fengyu.zhang
- * @Date: 2019/2/24 13:13
+ * @author fengyu.zhang
+ * @date 2019/2/24 13:13
  */
 public class ForkServlet extends HttpServlet {
   static final long serialVersionUID = 1L;

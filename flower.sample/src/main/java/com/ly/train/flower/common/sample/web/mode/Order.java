@@ -16,8 +16,8 @@
 package com.ly.train.flower.common.sample.web.mode;
 
 /**
- * @Author: fengyu.zhang
- * @Date: 2019/2/24 13:47
+ * @author fengyu.zhang
+ * @date 2019/2/24 13:47
  */
 public class Order {
     private int id;

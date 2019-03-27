@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service;
+package com.ly.train.flower.common.service.impl;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import com.ly.train.flower.common.service.Aggregate;
+import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.message.TimerMessage;
@@ -54,21 +56,22 @@ public class AggregateService implements Service<Object, Object>, Aggregate {
       return null;
     }
 
+    final String transactionId = flowMessage.getTransactionId();
     // first joint message
-    if (!resultMap.containsKey(context.getId())) {
+    if (!resultMap.containsKey(transactionId)) {
       Set<Object> objectSet = new HashSet<Object>();
-      resultMap.put(context.getId(), objectSet);
-      resultNumberMap.put(context.getId(), new AtomicInteger(sourceNumber));
-      resultDateMap.put(context.getId(), System.currentTimeMillis());
+      resultMap.put(transactionId, objectSet);
+      resultNumberMap.put(transactionId, new AtomicInteger(sourceNumber));
+      resultDateMap.put(transactionId, System.currentTimeMillis());
     }
-    resultMap.get(context.getId()).add(flowMessage.getMessage());
+    resultMap.get(transactionId).add(flowMessage.getMessage());
 
-    int number = resultNumberMap.get(context.getId()).decrementAndGet();
+    int number = resultNumberMap.get(transactionId).decrementAndGet();
     if (number <= 0) {
-      Set<Object> returnObject = resultMap.get(context.getId());
-      resultMap.remove(context.getId());
-      resultNumberMap.remove(context.getId());
-      resultDateMap.remove(context.getId());
+      Set<Object> returnObject = resultMap.get(transactionId);
+      resultMap.remove(transactionId);
+      resultNumberMap.remove(transactionId);
+      resultDateMap.remove(transactionId);
 
       return buildMessage(returnObject);
     }
@@ -78,15 +81,14 @@ public class AggregateService implements Service<Object, Object>, Aggregate {
   /**
    * subclass should override the method.
    * 
-   * @param messages: Set<Message>
-   * @return
+   * @param messages Set<Message>
+   * @return Object
    */
   public Object buildMessage(Set<Object> messages) {
     return messages;
   }
 
   // sourceNumber++ when initialize
-  @Override
   public void setSourceNumber(int sourceNumber) {
     this.sourceNumber = sourceNumber;
   }
