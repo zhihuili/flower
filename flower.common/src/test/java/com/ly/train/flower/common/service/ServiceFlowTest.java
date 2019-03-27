@@ -18,49 +18,89 @@
  */
 package com.ly.train.flower.common.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import org.junit.Before;
+import java.util.List;
 import org.junit.Test;
+import com.ly.train.flower.base.TestBase;
 import com.ly.train.flower.base.service.ServiceA;
 import com.ly.train.flower.base.service.ServiceB;
 import com.ly.train.flower.base.service.ServiceC1;
 import com.ly.train.flower.base.service.ServiceC2;
 import com.ly.train.flower.base.service.ServiceD;
-import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
+import com.ly.train.flower.common.util.Pair;
 
 /**
  * @author leeyazhou
  *
  */
-public class ServiceFlowTest {
-
-  @Before
-  public void before() {
-    ServiceFactory.registerService(ServiceA.class.getSimpleName(), ServiceA.class);
-    ServiceFactory.registerService(ServiceB.class.getSimpleName(), ServiceB.class);
-    ServiceFactory.registerService(ServiceC1.class.getSimpleName(), ServiceC1.class);
-    ServiceFactory.registerService(ServiceC2.class.getSimpleName(), ServiceC2.class);
-    ServiceFactory.registerService(ServiceD.class.getSimpleName(), ServiceD.class);
-  }
+public class ServiceFlowTest extends TestBase {
+  final String flowName = "demo";
 
   @Test
-  public void testBuild() {
-    ServiceFlow serviceFlow = ServiceFlow.getOrCreate("demo");
+  public void testBuildFlowSimple() throws Exception {
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
+    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
+    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
+    serviceFlow.buildFlow(ServiceC1.class, ServiceC2.class);
+    serviceFlow.build();
+  }
+
+
+  @Test
+  public void testBuildFlowAggregate() throws Exception {
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
     serviceFlow.buildFlow(ServiceB.class, Arrays.asList(ServiceC1.class, ServiceC2.class));
-    // serviceFlow.buildFlow("ServiceC1", Arrays.asList("ServiceD"));
-    // serviceFlow.buildFlow("ServiceC2", Arrays.asList("ServiceD"));
+    serviceFlow.buildFlow("ServiceC1", Arrays.asList("ServiceD"));
+    serviceFlow.buildFlow("ServiceC2", Arrays.asList("ServiceD"));
     serviceFlow.buildFlow(Arrays.asList("ServiceC1", "ServiceC2"), "ServiceD");
     serviceFlow.build();
   }
 
   @Test
-  public void testBuildAggregate() {
-    ServiceFlow serviceFlow = ServiceFlow.getOrCreate("demo");
+  public void testBuildFlowManyToOne() {
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceD.class);
+    serviceFlow.buildFlow(ServiceA.class, ServiceC1.class);
+    serviceFlow.buildFlow(ServiceA.class, ServiceC2.class);
+    serviceFlow.buildFlow(Arrays.asList(ServiceB.class, ServiceC1.class, ServiceC2.class), ServiceD.class);
+    serviceFlow.build();
+  }
+  @Test
+  public void testBuildFlowManyToOneString() {
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
+    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
+    serviceFlow.buildFlow(ServiceA.class, ServiceC1.class);
+    serviceFlow.buildFlow(ServiceA.class, ServiceC2.class);
+    serviceFlow.buildFlow(Arrays.asList("ServiceB", "ServiceC1", "ServiceC2"), "ServiceD");
     serviceFlow.build();
   }
 
+  @Test
+  public void testBuildFlowOneToMany() {
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
+    serviceFlow.buildFlow(ServiceA.class, Arrays.asList(ServiceB.class, ServiceC1.class, ServiceC2.class));
+    serviceFlow.build();
+  }
+
+  @Test
+  public void testBuildFlowOneToManyString() {
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
+    serviceFlow.buildFlow("ServiceA", Arrays.asList("ServiceB", "ServiceC1", "ServiceC2"));
+    serviceFlow.build();
+  }
+
+  @Test
+  public void testBuildFlowList() {
+    List<Pair<String, String>> list = new ArrayList<>();
+    list.add(new Pair<String, String>("ServiceA", "ServiceB"));
+    list.add(new Pair<String, String>("ServiceA", "ServiceC1"));
+    list.add(new Pair<String, String>("ServiceA", "ServiceC2"));
+    
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
+    serviceFlow.buildFlow(list);
+    serviceFlow.build();
+  }
 }

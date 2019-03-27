@@ -20,52 +20,50 @@ package com.ly.train.flower.common.actor;
 
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
+import com.ly.train.flower.base.TestBase;
 import com.ly.train.flower.base.model.User;
 import com.ly.train.flower.base.service.ServiceA;
 import com.ly.train.flower.base.service.ServiceB;
 import com.ly.train.flower.base.service.ServiceC1;
 import com.ly.train.flower.base.service.ServiceC2;
-import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 
 /**
  * @author leeyazhou
  *
  */
-public class ServiceActorTest {
+public class ServiceFacadeTest extends TestBase {
 
   @Test
-  public void test() throws Exception {
-
-    ServiceFactory.registerService("ServiceA", ServiceA.class);
-    ServiceFactory.registerService("ServiceB", ServiceB.class);
-    ServiceFactory.registerService("ServiceC1", ServiceC1.class);
-    ServiceFactory.registerService("ServiceC2", ServiceC2.class);
-
-    ServiceFlow serviceFlow = ServiceFlow.getOrCreate("test").buildFlow(ServiceA.class, ServiceB.class);
+  public void testSyncCallService() throws Exception {
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
+    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
-    final ServiceRouter router = ServiceFacade.buildServiceRouter("test", ServiceA.class.getSimpleName(), 2 << 4);
 
-    final int threadNum = 10;
-    final int numPerThread = 1;
-    for (int i = 0; i < threadNum; i++) {
-      new Thread(() -> {
-        for (int j = 0; j < numPerThread; j++) {
+    User user = new User();
+    user.setName("响应式编程");
+    user.setAge(2);
 
-          User user = new User();
-          user.setName("响应式编程 - " + j);
-          user.setAge(2);
-          try {
-            Object o = router.syncCallService(user);
-            System.out.println(o);
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-        }
-      }).start();
-    }
-    Thread.sleep(TimeUnit.SECONDS.toMillis(50));
+    Object o = ServiceFacade.syncCallService(flowName, user);
+    System.out.println(o);
+    Thread.sleep(TimeUnit.SECONDS.toMillis(2));
+
+  }
+
+  @Test
+  public void testAsyncCallService() throws Exception {
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
+    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
+    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
+    serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
+
+    User user = new User();
+    user.setName("响应式编程");
+    user.setAge(2);
+
+    ServiceFacade.asyncCallService(flowName, user);
+    Thread.sleep(TimeUnit.SECONDS.toMillis(2));
 
   }
 }
