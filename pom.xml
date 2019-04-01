@@ -218,7 +218,7 @@
 		<module>flower.sample</module>
 		<module>flower.web</module>
 		<module>flower.assembly</module>
-		<module>flower-bom</module>
+		<module>flower.bom</module>
 	</modules>
 
 	<build>
