@@ -24,7 +24,7 @@ public class Sample {
   public static void main(String[] args) throws Exception {
     buildServiceEnv();
 
-    ServiceFacade.asyncCallService("sample", "serviceA", "c");
+    ServiceFacade.asyncCallService("sample", "c");
   }
 
   public static void buildServiceEnv() {
@@ -35,7 +35,7 @@ public class Sample {
     ServiceFactory.registerService("serviceD", ServiceD.class);
     ServiceFactory.registerService("serviceF", ServiceF.class);
     ServiceFactory.registerService("serviceG", ServiceG.class);
-    ServiceFactory.registerService("serviceCondition", "com.ly.train.flower.common.service.ConditionService;serviceF,serviceG");
+    ServiceFactory.registerService("serviceCondition", "com.ly.train.flower.common.service.impl.ConditionService;serviceF,serviceG");
 
     ServiceFlow serviceFlow = ServiceFlow.getOrCreate("sample");
 

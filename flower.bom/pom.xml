@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ly.train</groupId>
 	<version>${revision}</version>
-	<artifactId>flower-bom</artifactId>
+	<artifactId>flower.bom</artifactId>
 	<packaging>pom</packaging>
 	<properties>
 		<revision>0.1.2</revision>
