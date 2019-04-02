@@ -96,6 +96,7 @@ public class CloneUtil {
     }
     level--;
     if (value instanceof Collection) {// 复制新的集合
+      @SuppressWarnings({"unchecked", "rawtypes"})
       Collection<Object> tmp = (Collection) c.newInstance();
       for (Object v : (Collection<?>) value) {
         tmp.add(clone(v, level));// 深度复制
@@ -136,6 +137,7 @@ public class CloneUtil {
         value = tmp;
       }
     } else if (value instanceof Map) {// 复制新的MAP
+      @SuppressWarnings("unchecked")
       Map<Object, Object> tmp = (Map<Object, Object>) c.newInstance();
       Map<?, ?> org = (Map<?, ?>) value;
       for (Object key : org.keySet()) {

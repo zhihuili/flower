@@ -19,8 +19,12 @@
 package com.ly.train.flower.registry;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
@@ -31,6 +35,18 @@ import com.ly.train.flower.logging.LoggerFactory;
 public abstract class AbstractRegistry implements Registry {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
   protected ConcurrentMap<String, ServiceInfo> serviceInfoCache = new ConcurrentHashMap<>();
+  private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+
+  public AbstractRegistry() {
+    executorService.scheduleAtFixedRate(new Runnable() {
+
+      @Override
+      public void run() {
+        doRegisterServiceInfos();
+      }
+    }, 5L, 1L, TimeUnit.SECONDS);
+  }
+
 
   @Override
   public boolean register(ServiceInfo serviceInfo) {
@@ -41,6 +57,12 @@ public abstract class AbstractRegistry implements Registry {
   @Override
   public List<ServiceInfo> getProvider(ServiceInfo serviceInfo) {
     return doGetProvider(serviceInfo);
+  }
+
+  private void doRegisterServiceInfos() {
+    for (Map.Entry<String, ServiceInfo> entry : serviceInfoCache.entrySet()) {
+      doRegister(entry.getValue());
+    }
   }
 
   public abstract boolean doRegister(ServiceInfo serviceInfo);
