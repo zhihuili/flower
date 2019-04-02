@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 import org.ehcache.Cache;
 import org.ehcache.Cache.Entry;
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSONObject;
-import com.ly.flower.center.model.ServiceInfo;
+import com.ly.train.flower.registry.ServiceInfo;
 
 /**
  * @author leeyazhou
@@ -43,7 +44,7 @@ public class ServiceManager {
   @Autowired
   protected Cache<String, String> cache;
 
-  private Timer timer = new Timer();
+  private Timer timer = new Timer("flower-service-scanner");
 
   /**
    * 
@@ -54,14 +55,14 @@ public class ServiceManager {
       @Override
       public void run() {
         Iterator<Entry<String, String>> it = cache.iterator();
-        logger.info("-------------------------------------------------------------------------------------");
+        logger.info("---------------------scan service list start--------------------------------------------------------------");
         while (it.hasNext()) {
           Entry<String, String> entry = it.next();
           logger.info("缓存中的数据 {} : {}", entry.getKey(), entry.getValue());
         }
-        logger.info("-------------------------------------------------------------------------------------");
+        logger.info("----------------------scan service list end---------------------------------------------------------------");
       }
-    }, 3000, 3000);
+    }, 3000, TimeUnit.SECONDS.toMillis(4));
   }
 
 

@@ -20,15 +20,14 @@ package com.ly.flower.center.controller.service;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ly.flower.center.controller.BaseController;
-import com.ly.flower.center.model.ServiceInfo;
 import com.ly.flower.center.service.RegisterService;
 import com.ly.flower.center.service.ReturnService;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.service.container.ServiceFlow;
+import com.ly.train.flower.registry.ServiceInfo;
 
 /**
  * @author leeyazhou
@@ -39,9 +38,9 @@ import com.ly.train.flower.common.service.container.ServiceFlow;
 @Flower(serviceName = "ServiceListService", value = "registerFlow")
 public class RegisterController extends BaseController {
 
-  @GetMapping("register")
+  @RequestMapping("register")
   protected void process(ServiceInfo param, HttpServletRequest req) throws IOException {
-    logger.info("请求");
+    logger.info("请求信息：{}", param);
     doProcess(param, req);
   }
 

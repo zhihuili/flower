@@ -20,10 +20,10 @@ package com.ly.flower.center.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import com.ly.flower.center.common.ServiceManager;
-import com.ly.flower.center.model.ServiceInfo;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.registry.ServiceInfo;
 
 /**
  * @author leeyazhou

@@ -20,7 +20,6 @@ package com.ly.flower.center.controller.service;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ly.flower.center.controller.BaseController;
@@ -38,7 +37,7 @@ import com.ly.train.flower.common.service.container.ServiceFlow;
 @Flower(serviceName = "ServiceListService", value = "listservice")
 public class ListController extends BaseController {
 
-  @GetMapping("list")
+  @RequestMapping("list")
   protected void process(Object param, HttpServletRequest req) throws IOException {
     logger.info("请求");
     doProcess(param, req);

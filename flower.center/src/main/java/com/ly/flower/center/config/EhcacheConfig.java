@@ -34,7 +34,7 @@ public class EhcacheConfig {
   @Bean
   public Cache<String, String> flowerCache(CacheManager cacheManager) {
     Cache<String, String> flowerCache = cacheManager.createCache("flowerCache",
-        CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class, String.class, ResourcePoolsBuilder.heap(10))
+        CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class, String.class, ResourcePoolsBuilder.heap(2 << 10))
             .withExpiry(ExpiryPolicyBuilder.timeToIdleExpiration(Duration.ofSeconds(5)))
             .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(5))));
     return flowerCache;
