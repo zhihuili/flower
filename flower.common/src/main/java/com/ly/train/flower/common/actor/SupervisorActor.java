@@ -16,6 +16,9 @@
 package com.ly.train.flower.common.actor;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.OneForOneStrategy;
@@ -25,22 +28,25 @@ import akka.japi.pf.DeciderBuilder;
 import scala.concurrent.duration.Duration;
 
 public class SupervisorActor extends AbstractActor {
-  private SupervisorStrategy strategy =
-      new OneForOneStrategy(10, Duration.create(1, TimeUnit.MINUTES),
-          DeciderBuilder.matchAny(o -> SupervisorStrategy.resume()).build());
+  protected static final Logger logger = LoggerFactory.getLogger(SupervisorActor.class);
+  private static SupervisorStrategy DEFAULT_STRATEGY = new OneForOneStrategy(10, Duration.create(1, TimeUnit.MINUTES),
+      DeciderBuilder.match(ArithmeticException.class, e -> SupervisorStrategy.resume())
+          .match(NullPointerException.class, e -> SupervisorStrategy.restart())
+          .match(IllegalArgumentException.class, e -> SupervisorStrategy.stop()).matchAny(o -> SupervisorStrategy.resume()).build());
 
+  private AtomicInteger counter = new AtomicInteger(0);
 
   @Override
   public Receive createReceive() {
-    return receiveBuilder().match(Props.class, message -> {
-      ActorRef child = getContext().actorOf((Props) message);
-      getSender().tell(child, getSelf());
-
-    }).match(ActorRef.class, message -> {
-      getContext().watch((ActorRef) message);
-    }).match(String.class, message -> {
-      if ("getContext".equals(message)) {
-        getSender().tell(getContext(), getSelf());
+    return receiveBuilder().match(Props.class, propses -> {
+      try {
+        ActorRef child = getContext().actorOf(propses, "serviceactor_" + counter.incrementAndGet());
+        getSender().tell(child, getSelf());
+        if (logger.isDebugEnabled()) {
+          logger.debug("create child actor : {}", child);
+        }
+      } catch (Exception e) {
+        logger.error("fail to create child actor", e);
       }
     }).matchAny(message -> {
       unhandled(message);
@@ -50,6 +56,10 @@ public class SupervisorActor extends AbstractActor {
 
   @Override
   public SupervisorStrategy supervisorStrategy() {
-    return strategy;
+    return DEFAULT_STRATEGY;
+  }
+
+  public static Props props() {
+    return Props.create(SupervisorActor.class);
   }
 }

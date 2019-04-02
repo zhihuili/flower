@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.servlet.AsyncContext;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.util.Constant;
 import akka.actor.ActorRef;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
@@ -68,7 +69,8 @@ public class ServiceRouter {
   public Object syncCallService(Object message) throws Exception {
     ServiceContext serviceContext = ServiceContext.context(message);
     serviceContext.setSync(true);
-    return Await.result(Patterns.ask(ar[randomIndex()], serviceContext, new Timeout(ServiceFacade.duration)), ServiceFacade.duration);
+    return Await.result(Patterns.ask(ar[randomIndex()], serviceContext, new Timeout(Constant.defaultTimeout_3S)),
+        Constant.defaultTimeout_3S);
   }
 
   private int randomIndex() {
@@ -94,7 +96,7 @@ public class ServiceRouter {
   /**
    * 当actor个数为2^n个数时才可以使用
    * 
-   * @return int 
+   * @return int
    */
   protected int bitRandomIndex() {
     if (number == 1) {

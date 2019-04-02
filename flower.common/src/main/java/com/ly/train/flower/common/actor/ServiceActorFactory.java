@@ -17,18 +17,26 @@ package com.ly.train.flower.common.actor;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.pattern.Patterns;
+import scala.concurrent.Await;
+import scala.concurrent.duration.Duration;
 
 public class ServiceActorFactory {
   private static final Logger logger = LoggerFactory.getLogger(ServiceActorFactory.class);
+  private static final Long DEFAULT_TIMEOUT = 5000L;
+  private static final Duration timeout = Duration.create(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
+  private static final Map<String, ActorRef> serviceActorCache = new ConcurrentHashMap<String, ActorRef>();
+  private static final int defaultFlowIndex = -1;
+
   private static ActorSystem actorSystem;
-  private final static int defaultFlowIndex = -1;
-  private static Map<String, ActorRef> actorRefCache = new ConcurrentHashMap<String, ActorRef>();
+  private static ActorRef supervierActor;
 
   public static synchronized ActorRef buildServiceActor(String flowName, String serviceName) {
     return buildServiceActor(flowName, serviceName, defaultFlowIndex);
@@ -36,13 +44,30 @@ public class ServiceActorFactory {
 
   public static synchronized ActorRef buildServiceActor(String flowName, String serviceName, int index) {
     final String cacheKey = flowName + "_" + serviceName + "_" + index;
-    ActorRef actorRef = actorRefCache.get(cacheKey);
+    ActorRef actorRef = serviceActorCache.get(cacheKey);
     if (actorRef != null) {
       return actorRef;
     }
-    actorRef = getActorSystem().actorOf(ServiceActor.props(flowName, serviceName, index, getActorSystem()));
-    actorRefCache.put(cacheKey, actorRef);
+    try {
+      actorRef = (ActorRef) Await.result(
+          Patterns.ask(getSupervisorActor(), ServiceActor.props(flowName, serviceName, index, getActorSystem()), DEFAULT_TIMEOUT - 1),
+          timeout);
+    } catch (Exception e) {
+      logger.error("fail to create child actor", e);
+    }
+    serviceActorCache.put(cacheKey, actorRef);
     return actorRef;
+  }
+
+  protected static ActorRef getSupervisorActor() {
+    if (supervierActor == null) {
+      synchronized (ServiceActorFactory.class) {
+        if (supervierActor == null) {
+          supervierActor = getActorSystem().actorOf(SupervisorActor.props(), "flower");
+        }
+      }
+    }
+    return supervierActor;
   }
 
   private static ActorSystem getActorSystem() {
