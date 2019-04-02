@@ -16,11 +16,9 @@
 package com.ly.train.flower.common.actor;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 import akka.actor.AbstractActor;
-import akka.actor.ActorRef;
 import akka.actor.OneForOneStrategy;
 import akka.actor.Props;
 import akka.actor.SupervisorStrategy;
@@ -34,25 +32,24 @@ public class SupervisorActor extends AbstractActor {
           .match(NullPointerException.class, e -> SupervisorStrategy.restart())
           .match(IllegalArgumentException.class, e -> SupervisorStrategy.stop()).matchAny(o -> SupervisorStrategy.resume()).build());
 
-  private AtomicInteger counter = new AtomicInteger(0);
-
   @Override
   public Receive createReceive() {
-    return receiveBuilder().match(Props.class, propses -> {
-      try {
-        ActorRef child = getContext().actorOf(propses, "serviceactor_" + counter.incrementAndGet());
-        getSender().tell(child, getSelf());
-        if (logger.isDebugEnabled()) {
-          logger.debug("create child actor : {}", child);
-        }
-      } catch (Exception e) {
-        logger.error("fail to create child actor", e);
-      }
+    return receiveBuilder().match(GetActorContext.class, msg -> {
+      getSender().tell(getContext(), getSelf());
     }).matchAny(message -> {
       unhandled(message);
     }).build();
   }
 
+
+
+  @Override
+  public void unhandled(Object message) {
+    super.unhandled(message);
+    if (logger.isWarnEnabled()) {
+      logger.warn("unhandled message : {}", message);
+    }
+  }
 
   @Override
   public SupervisorStrategy supervisorStrategy() {
@@ -61,5 +58,8 @@ public class SupervisorActor extends AbstractActor {
 
   public static Props props() {
     return Props.create(SupervisorActor.class);
+  }
+
+  static class GetActorContext {
   }
 }

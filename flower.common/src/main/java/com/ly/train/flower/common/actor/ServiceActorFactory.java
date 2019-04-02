@@ -18,10 +18,12 @@ package com.ly.train.flower.common.actor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import akka.actor.ActorContext;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.pattern.Patterns;
@@ -34,9 +36,11 @@ public class ServiceActorFactory {
   private static final Duration timeout = Duration.create(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
   private static final Map<String, ActorRef> serviceActorCache = new ConcurrentHashMap<String, ActorRef>();
   private static final int defaultFlowIndex = -1;
+  private static final AtomicInteger counter = new AtomicInteger(0);
 
   private static ActorSystem actorSystem;
   private static ActorRef supervierActor;
+  private static ActorContext actorContext;
 
   public static synchronized ActorRef buildServiceActor(String flowName, String serviceName) {
     return buildServiceActor(flowName, serviceName, defaultFlowIndex);
@@ -49,9 +53,8 @@ public class ServiceActorFactory {
       return actorRef;
     }
     try {
-      actorRef = (ActorRef) Await.result(
-          Patterns.ask(getSupervisorActor(), ServiceActor.props(flowName, serviceName, index, getActorSystem()), DEFAULT_TIMEOUT - 1),
-          timeout);
+      actorRef = getActorContext().actorOf(ServiceActor.props(flowName, serviceName, index, getActorSystem()),
+          "serviceactor_" + counter.incrementAndGet());
     } catch (Exception e) {
       logger.error("fail to create child actor", e);
     }
@@ -59,15 +62,24 @@ public class ServiceActorFactory {
     return actorRef;
   }
 
-  protected static ActorRef getSupervisorActor() {
-    if (supervierActor == null) {
+
+  protected static ActorContext getActorContext() {
+    if (actorContext == null) {
       synchronized (ServiceActorFactory.class) {
         if (supervierActor == null) {
           supervierActor = getActorSystem().actorOf(SupervisorActor.props(), "flower");
         }
+        if (actorContext == null) {
+          try {
+            actorContext = (ActorContext) Await
+                .result(Patterns.ask(supervierActor, new SupervisorActor.GetActorContext(), DEFAULT_TIMEOUT - 1), timeout);
+          } catch (Exception e) {
+            logger.error("", e);
+          }
+        }
       }
     }
-    return supervierActor;
+    return actorContext;
   }
 
   private static ActorSystem getActorSystem() {
