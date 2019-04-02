@@ -55,7 +55,7 @@ public abstract class FlowerController implements InitializingBean {
   /**
    * 初始化路由
    * 
-   * @see com.ly.train.flower.common.actor.ServiceFacade.buildServiceRouter
+   * @see com.ly.train.flower.common.actor.ServiceFacade#buildServiceRouter
    * @return {@code ServiceRouter}
    */
   private ServiceRouter initServiceRouter() {

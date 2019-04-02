@@ -63,7 +63,7 @@ public class ServiceFacade {
 
   /**
    * 
-   * @see asyncCallService
+   * @see ServiceFacade#asyncCallService(String,Object,AsyncContext)
    */
   @Deprecated
   public static void asyncCallService(String flowName, String serviceName, Object message) throws IOException {
@@ -71,7 +71,7 @@ public class ServiceFacade {
   }
 
   /**
-   * @see asyncCallService
+   * @see ServiceFacade#asyncCallService(String,Object,AsyncContext)
    */
   public static void asyncCallService(String flowName, Object message) throws IOException {
     asyncCallService(flowName, message, null);
@@ -82,7 +82,6 @@ public class ServiceFacade {
    * 同步调用会引起阻塞，因此需要在外面try catch异常TimeoutException
    * 
    * @param flowName flowName
-   * @param serviceName serviceName
    * @param message message
    * @return object
    * @throws Exception
