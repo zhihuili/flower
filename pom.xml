@@ -64,7 +64,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>com.ly.train</groupId>
-				<artifactId>flower-bom</artifactId>
+				<artifactId>flower.bom</artifactId>
 				<version>${project.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
