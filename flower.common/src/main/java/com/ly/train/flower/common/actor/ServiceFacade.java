@@ -18,25 +18,25 @@ package com.ly.train.flower.common.actor;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import javax.servlet.AsyncContext;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFlow;
+import com.ly.train.flower.common.service.container.ServiceLoader;
+import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 import akka.actor.ActorRef;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import scala.concurrent.Await;
-import scala.concurrent.duration.Duration;
-import scala.concurrent.duration.FiniteDuration;
 
 public class ServiceFacade {
   private static final Logger logger = LoggerFactory.getLogger(ServiceFacade.class);
   private static final Map<String, ServiceRouter> mapRouter = new ConcurrentHashMap<String, ServiceRouter>();
 
-  // TODO user define duration
-  static FiniteDuration duration = Duration.create(3, TimeUnit.SECONDS);
+  static {
+    ServiceLoader.getInstance();
+  }
 
   /**
    * @deprecated serviceName 不必须，因为可以从流程中获取到首个服务
@@ -90,8 +90,9 @@ public class ServiceFacade {
     ServiceContext context = ServiceContext.context(message);
     context.setSync(true);
     String serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceConfig().getServiceName();
-    return Await.result(Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName), context, new Timeout(duration)),
-        duration);
+    return Await.result(
+        Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName), context, new Timeout(Constant.defaultTimeout_3S)),
+        Constant.defaultTimeout_3S);
   }
 
   /**

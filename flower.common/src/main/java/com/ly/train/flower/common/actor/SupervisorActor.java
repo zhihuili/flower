@@ -16,8 +16,9 @@
 package com.ly.train.flower.common.actor;
 
 import java.util.concurrent.TimeUnit;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 import akka.actor.AbstractActor;
-import akka.actor.ActorRef;
 import akka.actor.OneForOneStrategy;
 import akka.actor.Props;
 import akka.actor.SupervisorStrategy;
@@ -25,31 +26,40 @@ import akka.japi.pf.DeciderBuilder;
 import scala.concurrent.duration.Duration;
 
 public class SupervisorActor extends AbstractActor {
-  private SupervisorStrategy strategy =
-      new OneForOneStrategy(10, Duration.create(1, TimeUnit.MINUTES),
-          DeciderBuilder.matchAny(o -> SupervisorStrategy.resume()).build());
-
+  protected static final Logger logger = LoggerFactory.getLogger(SupervisorActor.class);
+  private static SupervisorStrategy DEFAULT_STRATEGY = new OneForOneStrategy(10, Duration.create(1, TimeUnit.MINUTES),
+      DeciderBuilder.match(ArithmeticException.class, e -> SupervisorStrategy.resume())
+          .match(NullPointerException.class, e -> SupervisorStrategy.restart())
+          .match(IllegalArgumentException.class, e -> SupervisorStrategy.stop()).matchAny(o -> SupervisorStrategy.resume()).build());
 
   @Override
   public Receive createReceive() {
-    return receiveBuilder().match(Props.class, message -> {
-      ActorRef child = getContext().actorOf((Props) message);
-      getSender().tell(child, getSelf());
-
-    }).match(ActorRef.class, message -> {
-      getContext().watch((ActorRef) message);
-    }).match(String.class, message -> {
-      if ("getContext".equals(message)) {
-        getSender().tell(getContext(), getSelf());
-      }
+    return receiveBuilder().match(GetActorContext.class, msg -> {
+      getSender().tell(getContext(), getSelf());
     }).matchAny(message -> {
       unhandled(message);
     }).build();
   }
 
 
+
+  @Override
+  public void unhandled(Object message) {
+    super.unhandled(message);
+    if (logger.isWarnEnabled()) {
+      logger.warn("unhandled message : {}", message);
+    }
+  }
+
   @Override
   public SupervisorStrategy supervisorStrategy() {
-    return strategy;
+    return DEFAULT_STRATEGY;
+  }
+
+  public static Props props() {
+    return Props.create(SupervisorActor.class);
+  }
+
+  static class GetActorContext {
   }
 }

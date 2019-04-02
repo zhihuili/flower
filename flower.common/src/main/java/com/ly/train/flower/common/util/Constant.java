@@ -18,6 +18,10 @@
  */
 package com.ly.train.flower.common.util;
 
+import java.util.concurrent.TimeUnit;
+import scala.concurrent.duration.Duration;
+import scala.concurrent.duration.FiniteDuration;
+
 /**
  * @author leeyazhou
  *
@@ -25,10 +29,16 @@ package com.ly.train.flower.common.util;
 public class Constant {
 
   public static final String ENCODING_UTF_8 = "UTF-8";
-  
+
   public static final String DEFAULT_CONTENT_TEXT = "text/html;charset=" + ENCODING_UTF_8;
-  
+
   public static final String DEFAULT_CONTENT_JSON = "application/json;charset=" + ENCODING_UTF_8;
-  
+
   public static final String AGGREGATE_SERVICE_NAME = "com.ly.train.flower.common.service.impl.AggregateService";
+
+
+  /**
+   * 默认超时时间3秒
+   */
+  public static final FiniteDuration defaultTimeout_3S = Duration.create(3, TimeUnit.SECONDS);
 }
