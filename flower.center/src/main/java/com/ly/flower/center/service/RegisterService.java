@@ -18,33 +18,27 @@
  */
 package com.ly.flower.center.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.ly.flower.center.common.ServiceManager;
 import com.ly.flower.center.model.ServiceInfo;
+import com.ly.train.flower.common.annotation.FlowerService;
+import com.ly.train.flower.common.service.Service;
+import com.ly.train.flower.common.service.container.ServiceContext;
 
 /**
  * @author leeyazhou
  *
  */
-public class ServiceFactory {
-  private static final ConcurrentMap<String, List<ServiceInfo>> caches = new ConcurrentHashMap<>();
+@FlowerService
+public class RegisterService implements Service<ServiceInfo, Boolean> {
 
-  public static boolean register(ServiceInfo serviceInfo) {
-    List<ServiceInfo> infos = caches.get(serviceInfo.getClassName());
-    if (infos == null) {
-      infos = new ArrayList<>();
-      caches.putIfAbsent(serviceInfo.getClassName(), infos);
-      infos = caches.get(serviceInfo.getClassName());
-    }
+  @Autowired
+  protected ServiceManager serviceManager;
 
-    infos.add(serviceInfo);
-    return true;
+  @Override
+  public Boolean process(ServiceInfo message, ServiceContext context) throws Throwable {
+    serviceManager.addServiceInfo(message);
+    return Boolean.TRUE;
   }
 
-  public static Map<String, List<ServiceInfo>> getAll() {
-    return caches;
-  }
 }

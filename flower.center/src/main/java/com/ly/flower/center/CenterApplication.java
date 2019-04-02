@@ -27,6 +27,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import com.ly.flower.web.spring.context.FlowerComponentScan;
 
 /**
  * @author leeyazhou
@@ -34,6 +36,8 @@ import org.springframework.context.annotation.Bean;
  */
 @SpringBootApplication
 @EnableAutoConfiguration
+@ComponentScan("com.ly.flower.center")
+@FlowerComponentScan("com.ly.flower.center.service")
 public class CenterApplication {
   static final Logger logger = LoggerFactory.getLogger(CenterApplication.class);
 

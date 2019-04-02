@@ -18,6 +18,10 @@
  */
 package com.ly.flower.center.service;
 
+import java.util.List;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.ly.flower.center.common.ServiceManager;
 import com.ly.flower.center.model.ServiceInfo;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.service.Service;
@@ -28,13 +32,15 @@ import com.ly.train.flower.common.service.container.ServiceContext;
  *
  */
 @FlowerService
-public class ServiceListService implements Service<ServiceInfo, Boolean> {
+public class ServiceListService implements Service<Object, Map<String, List<ServiceInfo>>> {
+
+  @Autowired
+  protected ServiceManager serviceManager;
 
   @Override
-  public Boolean process(ServiceInfo message, ServiceContext context) throws Throwable {
-    
-    
-    return Boolean.TRUE;
+  public Map<String, List<ServiceInfo>> process(Object message, ServiceContext context) throws Throwable {
+
+    return serviceManager.getAll();
   }
 
 }

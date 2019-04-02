@@ -22,7 +22,7 @@ public class NothingService implements Service<Object, Object> {
 
   @Override
   public Object process(Object message, ServiceContext context) {
-    return null;
+    return message;
   }
 
 }

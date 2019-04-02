@@ -24,8 +24,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ly.flower.center.controller.BaseController;
+import com.ly.flower.center.model.ServiceInfo;
+import com.ly.flower.center.service.RegisterService;
 import com.ly.flower.center.service.ReturnService;
-import com.ly.flower.center.service.ServiceListService;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 
@@ -35,11 +36,11 @@ import com.ly.train.flower.common.service.container.ServiceFlow;
  */
 @RestController
 @RequestMapping("/service/")
-@Flower(serviceName = "ServiceListService", value = "listservice")
-public class ListController extends BaseController {
+@Flower(serviceName = "ServiceListService", value = "registerFlow")
+public class RegisterController extends BaseController {
 
-  @GetMapping("list")
-  protected void process(Object param, HttpServletRequest req) throws IOException {
+  @GetMapping("register")
+  protected void process(ServiceInfo param, HttpServletRequest req) throws IOException {
     logger.info("请求");
     doProcess(param, req);
   }
@@ -48,6 +49,6 @@ public class ListController extends BaseController {
 
   @Override
   public void buildFlower() {
-    ServiceFlow.getOrCreate(getFlowName()).buildFlow(ServiceListService.class, ReturnService.class);
+    ServiceFlow.getOrCreate(getFlowName()).buildFlow(RegisterService.class, ReturnService.class);
   }
 }

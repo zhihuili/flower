@@ -60,6 +60,11 @@
 			<artifactId>akka-testkit_2.12</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>3.7.0</version>
+		</dependency>
 
 	</dependencies>
 </project>
