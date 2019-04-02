@@ -31,26 +31,62 @@ import ch.qos.logback.classic.Level;
 public class WebServer {
 
   public static class NoLogging implements Logger {
-    @Override public String getName() { return "no"; }
-    @Override public void warn(String msg, Object... args) { }
-    @Override public void warn(Throwable thrown) { }
-    @Override public void warn(String msg, Throwable thrown) { }
-    @Override public void info(String msg, Object... args) { }
-    @Override public void info(Throwable thrown) { }
-    @Override public void info(String msg, Throwable thrown) { }
-    @Override public boolean isDebugEnabled() { return false; }
-    @Override public void setDebugEnabled(boolean enabled) { }
-    @Override public void debug(String msg, Object... args) { }
-    @Override public void debug(String s, long l) { }
-    @Override public void debug(Throwable thrown) { }
-    @Override public void debug(String msg, Throwable thrown) { }
-    @Override public Logger getLogger(String name) { return this; }
-    @Override public void ignore(Throwable ignored) { }
+    @Override
+    public String getName() {
+      return "no";
+    }
+
+    @Override
+    public void warn(String msg, Object... args) {}
+
+    @Override
+    public void warn(Throwable thrown) {}
+
+    @Override
+    public void warn(String msg, Throwable thrown) {}
+
+    @Override
+    public void info(String msg, Object... args) {}
+
+    @Override
+    public void info(Throwable thrown) {}
+
+    @Override
+    public void info(String msg, Throwable thrown) {}
+
+    @Override
+    public boolean isDebugEnabled() {
+      return false;
+    }
+
+    @Override
+    public void setDebugEnabled(boolean enabled) {}
+
+    @Override
+    public void debug(String msg, Object... args) {}
+
+    @Override
+    public void debug(String s, long l) {}
+
+    @Override
+    public void debug(Throwable thrown) {}
+
+    @Override
+    public void debug(String msg, Throwable thrown) {}
+
+    @Override
+    public Logger getLogger(String name) {
+      return this;
+    }
+
+    @Override
+    public void ignore(Throwable ignored) {}
   }
-  
+
   public static void main(String[] args) throws Exception {
     org.apache.ibatis.logging.LogFactory.useSlf4jLogging();
-    ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+    ch.qos.logback.classic.Logger root =
+        (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
     root.setLevel(Level.ERROR);
     org.eclipse.jetty.util.log.Log.setLog(new NoLogging());
 
@@ -61,8 +97,8 @@ public class WebServer {
     context.addServlet(new ServletHolder(new FlowServlet()), "/flow");
     context.addServlet(new ServletHolder(new SyncServlet()), "/sync");
     context.addServlet(new ServletHolder(new AsyncServlet()), "/async");
-    context.addServlet(new ServletHolder(new ForkServlet()),"/test/fork");
-    context.addServlet(new ServletHolder(new BlockServlet()),"/test/block");
+    context.addServlet(new ServletHolder(new ForkServlet()), "/test/fork");
+    context.addServlet(new ServletHolder(new BlockServlet()), "/test/block");
 
     server.start();
     server.join();

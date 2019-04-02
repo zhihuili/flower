@@ -16,7 +16,6 @@
 package com.ly.train.flower.common.sample.web.forktest.service;
 
 import java.util.Set;
-
 import com.alibaba.fastjson.JSONObject;
 import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.container.ServiceContext;
@@ -26,8 +25,7 @@ import com.ly.train.flower.common.service.web.Flush;
  * @author fengyu.zhang
  * @date 2019/2/24 13:23
  */
-public class ReturnService
-    implements com.ly.train.flower.common.service.Service<Set,Void>, Flush, Complete {
+public class ReturnService implements com.ly.train.flower.common.service.Service<Set, Void>, Flush, Complete {
 
   @Override
   public Void process(Set message, ServiceContext context) throws Exception {

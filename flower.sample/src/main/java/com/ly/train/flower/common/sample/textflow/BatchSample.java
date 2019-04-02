@@ -18,15 +18,19 @@ package com.ly.train.flower.common.sample.textflow;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Assert;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.actor.ServiceFacade;
+import com.ly.train.flower.common.sample.textflow.model.Message1;
+import com.ly.train.flower.common.sample.textflow.model.Message2;
 
 
 public class BatchSample {
   private static final Logger logger = LoggerFactory.getLogger(BatchSample.class);
 
-  public static void main(String[] args) throws Exception {
+  @Test
+  public void main() throws Exception {
 
     int count = 0;
     Map<String, Message1> message1Map = new HashMap<>();
@@ -41,7 +45,7 @@ public class BatchSample {
     int resultCount = 0;
     for (String key : message1Map.keySet()) {
       Message1 m1 = message1Map.get(key);
-      Object o = ServiceFacade.syncCallService("sample", "service1", m1);
+      Object o = ServiceFacade.syncCallService("sample", m1);
       logger.info("" + o);
       Assert.assertEquals(((Message1) o).getM2().getName(), m1.getM2().getName());
       Assert.assertEquals(Integer.parseInt(key), ((Message1) o).getM2().getAge() - 1);
@@ -50,7 +54,6 @@ public class BatchSample {
     Assert.assertEquals(count, resultCount);
     logger.info("count:" + count + " resultCount:" + resultCount);
     logger.info("test ok");
-    System.exit(0);
   }
 
 }

@@ -15,24 +15,18 @@
  */
 package com.ly.train.flower.common.sample.supervisor;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeoutException;
-import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
+import org.junit.Test;
 import com.ly.train.flower.common.actor.ServiceFacade;
-import com.ly.train.flower.common.util.EnvBuilder;
+import com.ly.train.flower.common.sample.supervisor.model.Message1;
+import com.ly.train.flower.common.sample.supervisor.model.Message2;
 
 public class BatchSample {
 
-  public static void main(String[] args) throws Exception {
-    EnvBuilder.buildEnv(null);
-    File file = new File("test.file");
-    if (file.exists()) {
-      System.out.println(file.getAbsolutePath());
-      FileUtils.deleteQuietly(file);
-    }
+  @Test
+  public void main() throws Exception {
     int count = 0;
     Map<String, Message1> message1Map = new HashMap<>();
     for (int i = 10; i < 20; ++i) {
@@ -44,24 +38,17 @@ public class BatchSample {
     }
 
     int resultCount = 0;
-    for (String key : message1Map.keySet()) {
-      Message1 m1 = message1Map.get(key);
-      try {
-        //
-        Object o = ServiceFacade.syncCallService("supervisor", "SupervisorService1", m1);
-        System.out.println(o);
-        Assert.assertEquals(((Message3)o).getM2().getName(), m1.getM2().getName());
-        Assert.assertEquals(Integer.parseInt(key), ((Message3) o).getM2().getAge() - 1) ;
-      } catch (TimeoutException e) {
-        e.printStackTrace();
-      }
+    for (Map.Entry<String, Message1> entry : message1Map.entrySet()) {
+      Object o = ServiceFacade.syncCallService("supervisor", entry.getValue());
+      System.out.println(o);
+      Assert.assertEquals(((Message1) o).getM2().getName(), entry.getValue().getM2().getName());
+      Assert.assertEquals(Integer.parseInt(entry.getKey()), ((Message1) o).getM2().getAge() - 1);
 
       resultCount++;
     }
     Assert.assertEquals(count, resultCount);
     System.out.println("count:" + count + " resultCount:" + resultCount);
     System.out.println("test ok");
-    ServiceFacade.shutdown();
   }
 
 }
