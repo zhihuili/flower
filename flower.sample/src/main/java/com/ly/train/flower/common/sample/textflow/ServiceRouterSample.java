@@ -15,17 +15,18 @@
  */
 package com.ly.train.flower.common.sample.textflow;
 
+import org.junit.Test;
 import com.ly.train.flower.common.actor.ServiceFacade;
 import com.ly.train.flower.common.actor.ServiceRouter;
-import com.ly.train.flower.common.util.EnvBuilder;
+import com.ly.train.flower.common.sample.textflow.model.Message1;
+import com.ly.train.flower.common.sample.textflow.model.Message2;
 
 public class ServiceRouterSample {
 
-  public static void main(String[] args) throws Exception {
+  @Test
+  public void main() throws Exception {
 
     int loopNumber = 500;
-
-    EnvBuilder.buildEnv(ServiceRouterSample.class);
 
     Message2 m2 = new Message2(10, "Zhihui");
     Message1 m1 = new Message1();

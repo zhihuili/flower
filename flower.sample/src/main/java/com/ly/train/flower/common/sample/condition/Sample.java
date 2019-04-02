@@ -15,19 +15,28 @@
  */
 package com.ly.train.flower.common.sample.condition;
 
+import org.junit.Test;
 import com.ly.train.flower.common.actor.ServiceFacade;
+import com.ly.train.flower.common.sample.condition.service.ServiceA;
+import com.ly.train.flower.common.sample.condition.service.ServiceB;
+import com.ly.train.flower.common.sample.condition.service.ServiceC;
+import com.ly.train.flower.common.sample.condition.service.ServiceD;
+import com.ly.train.flower.common.sample.condition.service.ServiceE;
+import com.ly.train.flower.common.sample.condition.service.ServiceF;
+import com.ly.train.flower.common.sample.condition.service.ServiceG;
 import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 
 public class Sample {
 
-  public static void main(String[] args) throws Exception {
+  @Test
+  public void main() throws Exception {
     buildServiceEnv();
 
     ServiceFacade.asyncCallService("sample", "c");
   }
 
-  public static void buildServiceEnv() {
+  public void buildServiceEnv() {
     ServiceFactory.registerService("serviceA", ServiceA.class);
     ServiceFactory.registerService("serviceB", ServiceB.class);
     ServiceFactory.registerService("serviceC", ServiceC.class);
