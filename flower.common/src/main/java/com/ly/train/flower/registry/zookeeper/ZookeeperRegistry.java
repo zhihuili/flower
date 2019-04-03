@@ -18,8 +18,8 @@
  */
 package com.ly.train.flower.registry.zookeeper;
 
-import java.net.URL;
 import java.util.List;
+import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.registry.Registry;
 import com.ly.train.flower.registry.ServiceInfo;
 

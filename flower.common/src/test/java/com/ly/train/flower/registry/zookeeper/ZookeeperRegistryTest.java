@@ -16,7 +16,7 @@
 /**
  * 
  */
-package com.ly.train.flower.registry.simple;
+package com.ly.train.flower.registry.zookeeper;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -33,18 +33,17 @@ import com.ly.train.flower.registry.ServiceInfo;
  * @author leeyazhou
  *
  */
-public class SimpleRegistryTest {
+public class ZookeeperRegistryTest {
 
   @Test
   public void testRegister() throws Exception {
 
     URL url = new URL("http", "127.0.0.1", 8080);
-    RegistryFactory factory = new SimpleRegistryFactory();
+    RegistryFactory factory = new ZookeeperRegistryFactory();
     Registry registry = factory.createRegistry(url);
 
 
     ServiceInfo serviceInfo = new ServiceInfo();
-    serviceInfo.setApplication("commonservice");
     serviceInfo.setClassName(ServiceA.class.getName());
     Set<String> host = new HashSet<>();
     host.add("127.0.0.1:12001");
@@ -52,13 +51,12 @@ public class SimpleRegistryTest {
     serviceInfo.setHost(host);
     serviceInfo.setCreateTime(new Date());
     registry.register(serviceInfo);
-
   }
 
   @Test
   public void testGetProviders() throws Exception {
     URL url = new URL("http", "127.0.0.1", 8080);
-    RegistryFactory factory = new SimpleRegistryFactory();
+    RegistryFactory factory = new ZookeeperRegistryFactory();
     Registry registry = factory.createRegistry(url);
 
 

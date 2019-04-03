@@ -13,45 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package com.ly.train.flower.config;
+package com.ly.train.flower.common.util;
 
 import java.io.Serializable;
-import java.util.Set;
-import com.ly.train.flower.registry.config.RegistryConfig;
 
 /**
  * @author leeyazhou
  *
  */
-public class FlowerConfig implements Serializable {
+public class URL implements Serializable {
+
   private static final long serialVersionUID = 1L;
 
-  private String name = "SET_YOUR_OWN_APPLICATON_NAME";
-  private String host = "127.0.0.1";
-  private int port = 25001;
-  private Set<RegistryConfig> registry;
+  private String protocol;
+  private String host;
+  private int port;
 
-  public Set<RegistryConfig> getRegistry() {
-    return registry;
+
+  public URL(String protocol, String host, int port) {
+    this.protocol = protocol;
+    this.host = host;
+    this.port = port;
   }
 
-  public void setRegistry(Set<RegistryConfig> registry) {
-    this.registry = registry;
+  public String getProtocol() {
+    return protocol;
   }
 
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public static long getSerialversionuid() {
-    return serialVersionUID;
+  public void setProtocol(String protocol) {
+    this.protocol = protocol;
   }
 
   public String getHost() {
@@ -70,13 +60,19 @@ public class FlowerConfig implements Serializable {
     this.port = port;
   }
 
+  public static long getSerialversionuid() {
+    return serialVersionUID;
+  }
+
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("FlowerConfig [name=");
-    builder.append(name);
-    builder.append(", registry=");
-    builder.append(registry);
+    builder.append("URL [protocol=");
+    builder.append(protocol);
+    builder.append(", host=");
+    builder.append(host);
+    builder.append(", port=");
+    builder.append(port);
     builder.append("]");
     return builder.toString();
   }

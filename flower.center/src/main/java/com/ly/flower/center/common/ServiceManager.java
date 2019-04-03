@@ -18,20 +18,16 @@
  */
 package com.ly.flower.center.common;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
-import org.ehcache.Cache;
-import org.ehcache.Cache.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.alibaba.fastjson.JSONObject;
+import com.ly.flower.center.common.cache.Cache;
+import com.ly.flower.center.common.cache.CacheManager;
 import com.ly.train.flower.registry.ServiceInfo;
 
 /**
@@ -41,8 +37,6 @@ import com.ly.train.flower.registry.ServiceInfo;
 @Component
 public class ServiceManager {
   private static final Logger logger = LoggerFactory.getLogger(ServiceManager.class);
-  @Autowired
-  protected Cache<String, String> cache;
 
   private Timer timer = new Timer("flower-service-scanner");
 
@@ -54,11 +48,11 @@ public class ServiceManager {
 
       @Override
       public void run() {
-        Iterator<Entry<String, String>> it = cache.iterator();
+        Set<String> keys = CacheManager.getAllKey();
         logger.info("---------------------scan service list start--------------------------------------------------------------");
-        while (it.hasNext()) {
-          Entry<String, String> entry = it.next();
-          logger.info("缓存中的数据 {} : {}", entry.getKey(), entry.getValue());
+        for (String key : keys) {
+          Cache<ServiceInfo> cache = CacheManager.getContent(key);
+          logger.info("缓存中的数据 {} : {}", key, cache);
         }
         logger.info("----------------------scan service list end---------------------------------------------------------------");
       }
@@ -67,23 +61,25 @@ public class ServiceManager {
 
 
   public boolean addServiceInfo(ServiceInfo serviceInfo) {
-    String value = cache.get(serviceInfo.getClassName());
-    List<ServiceInfo> v = new ArrayList<>();
-    if (value != null) {
-      v = JSONObject.parseArray(value, ServiceInfo.class);
+    Cache<ServiceInfo> cache = CacheManager.getContent(serviceInfo.getClassName());
+    if (cache == null) {
+      CacheManager.putContent(serviceInfo.getClassName(), serviceInfo, 6000);
+      cache = CacheManager.getContent(serviceInfo.getClassName());
+    } else {
+      cache.getValue().getHost().addAll(serviceInfo.getHost());
     }
-    v.add(serviceInfo);
-    cache.remove(serviceInfo.getClassName());
-    cache.put(serviceInfo.getClassName(), JSONObject.toJSONString(v));
     return true;
   }
 
-  public Map<String, List<ServiceInfo>> getAll() {
-    Map<String, List<ServiceInfo>> ret = new java.util.HashMap<>();
-    Iterator<Entry<String, String>> it = cache.iterator();
-    while (it.hasNext()) {
-      Entry<String, String> entry = it.next();
-      ret.put(entry.getKey(), JSONObject.parseArray(entry.getValue(), ServiceInfo.class));
+  public Map<String, ServiceInfo> getAll() {
+
+    Map<String, ServiceInfo> ret = new java.util.HashMap<>();
+    Set<String> keys = CacheManager.getAllKey();
+    for (String key : keys) {
+      Cache<ServiceInfo> cache = CacheManager.getContent(key);
+      if (cache != null) {
+        ret.put(key, cache.getValue());
+      }
     }
     return ret;
   }

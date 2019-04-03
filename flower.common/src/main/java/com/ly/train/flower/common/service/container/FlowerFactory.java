@@ -18,7 +18,9 @@
  */
 package com.ly.train.flower.common.service.container;
 
+import java.util.Set;
 import com.ly.train.flower.config.FlowerConfig;
+import com.ly.train.flower.registry.Registry;
 
 /**
  * @author leeyazhou
@@ -33,5 +35,14 @@ public interface FlowerFactory {
    * @return {@link FlowerConfig}
    */
   FlowerConfig getFlowerConfig();
+
+  Set<Registry> getRegistry();
+
+  /**
+   * 初始化
+   * 
+   * @return true / false
+   */
+  boolean init();
 
 }

@@ -13,25 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package com.ly.train.flower.registry.zookeeper;
+package com.ly.train.flower.container;
 
-import com.ly.train.flower.common.util.URL;
-import com.ly.train.flower.registry.Registry;
-import com.ly.train.flower.registry.RegistryFactory;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
  *
  */
-public class ZookeeperRegistryFactory implements RegistryFactory {
-
+public class SprintBootstrap extends Bootstrap {
+  protected static final Logger logger = LoggerFactory.getLogger(SprintBootstrap.class);
 
   @Override
-  public Registry createRegistry(URL url) {
-    return new ZookeeperRegistry(url);
+  public void doStartup() {
+
   }
 
 }

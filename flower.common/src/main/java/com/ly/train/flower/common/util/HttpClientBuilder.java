@@ -21,6 +21,7 @@ public class HttpClientBuilder {
 
   private int connectionTime = 15000;
   private int readTimeout = 6000;
+  private int retryTimes = 3;
 
   public HttpClientBuilder setUrl(String url) {
     this.url = url;
@@ -40,6 +41,15 @@ public class HttpClientBuilder {
   public HttpClientBuilder setConnectionTime(int connectionTime) {
     this.connectionTime = connectionTime;
     return this;
+  }
+
+  public HttpClientBuilder setRetryTimes(int retryTimes) {
+    this.retryTimes = retryTimes;
+    return this;
+  }
+
+  public int getRetryTimes() {
+    return retryTimes;
   }
 
   public int getReadTimeout() {

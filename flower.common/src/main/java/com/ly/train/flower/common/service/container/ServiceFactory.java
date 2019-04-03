@@ -15,26 +15,44 @@
  */
 package com.ly.train.flower.common.service.container;
 
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;
 import com.ly.train.flower.common.service.FlowerService;
+import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
+import com.ly.train.flower.registry.Registry;
+import com.ly.train.flower.registry.ServiceInfo;
 
 public class ServiceFactory {
   static final Logger logger = LoggerFactory.getLogger(ServiceFactory.class);
 
   public static void registerService(String serviceName, String serviceClass) {
     ServiceLoader.getInstance().registerServiceType(serviceName, serviceClass);
+
+    serviceClass = ServiceLoader.getInstance().loadServiceMeta(serviceName).getServiceClass().getName();
+    Set<Registry> registries = SimpleFlowerFactory.get().getRegistry();
+    ServiceInfo serviceInfo = new ServiceInfo();
+    serviceInfo.setApplication(SimpleFlowerFactory.get().getFlowerConfig().getName());
+    serviceInfo.setHost(new HashSet<>());
+    serviceInfo.getHost().add(SimpleFlowerFactory.get().getFlowerConfig().getHost());
+    serviceInfo.setCreateTime(new Date());
+    serviceInfo.setClassName(serviceClass);
+    for (Registry registry : registries) {
+      registry.register(serviceInfo);
+    }
   }
 
   public static void registerService(String serviceName, Class<?> serviceClass) {
-    ServiceLoader.getInstance().registerServiceType(serviceName, serviceClass);
+    registerService(serviceName, serviceClass.getName());
   }
 
   public static void registerService(Map<String, String> map) {
     for (Map.Entry<String, String> entry : map.entrySet()) {
-      ServiceLoader.getInstance().registerServiceType(entry.getKey().trim(), entry.getValue().trim());
+      registerService(entry.getKey().trim(), entry.getValue().trim());
     }
 
   }

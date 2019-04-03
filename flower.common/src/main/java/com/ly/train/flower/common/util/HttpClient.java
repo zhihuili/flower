@@ -29,6 +29,8 @@ public class HttpClient {
   public static final String GET = "GET";
   public static final String POST = "POST";
   public static final String PUT = "PUT";
+  private int postRetryTimes;
+  private int getRetryTimes;
 
   public static HttpClientBuilder builder() {
     return new HttpClientBuilder();
@@ -64,7 +66,10 @@ public class HttpClient {
         result = sbf.toString();
       }
     } catch (Exception e) {
-      logger.error("", e);
+      logger.error("请求异常，retryTimes : " + getRetryTimes + ", url : " + httpClientBuilder.getUrl(), e);
+      if (getRetryTimes++ < httpClientBuilder.getRetryTimes()) {
+        result = post();
+      }
     } finally {
       IOUtil.close(br);
       IOUtil.close(is);
@@ -109,7 +114,11 @@ public class HttpClient {
         result = sbf.toString();
       }
     } catch (Exception e) {
-      logger.error("", e);
+      logger.error(
+          "请求异常，retryTimes : " + postRetryTimes + "， url : " + httpClientBuilder.getUrl() + ", param : " + httpClientBuilder.getParam(), e);
+      if (postRetryTimes++ < httpClientBuilder.getRetryTimes()) {
+        result = post();
+      }
     } finally {
       IOUtil.close(br);
       IOUtil.close(is);

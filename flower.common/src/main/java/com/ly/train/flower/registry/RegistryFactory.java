@@ -18,7 +18,7 @@
  */
 package com.ly.train.flower.registry;
 
-import java.net.URL;
+import com.ly.train.flower.common.util.URL;
 
 /**
  * @author leeyazhou

@@ -29,18 +29,18 @@ public class RegistryConfig implements Serializable {
 
   private static final long serialVersionUID = 6969058141359967490L;
   private String url;
-  private String type;
+  private String protocol;
   private String host;
   private Integer port;
 
 
 
-  public String getType() {
-    return type;
+  public String getProtocol() {
+    return protocol;
   }
 
-  public void setType(String type) {
-    this.type = type;
+  public void setProtocol(String protocol) {
+    this.protocol = protocol;
   }
 
   public String getHost() {
@@ -68,7 +68,7 @@ public class RegistryConfig implements Serializable {
       String temp = url.replace("/", "");
       String[] t = temp.split(":");
       if (t.length == 3) {
-        this.type = t[0];
+        this.protocol = t[0];
         this.host = t[1];
         this.port = Integer.parseInt(t[2]);
       }
@@ -82,8 +82,8 @@ public class RegistryConfig implements Serializable {
     StringBuilder builder = new StringBuilder();
     builder.append("RegistryConfig [url=");
     builder.append(url);
-    builder.append(", type=");
-    builder.append(type);
+    builder.append(", protocol=");
+    builder.append(protocol);
     builder.append(", host=");
     builder.append(host);
     builder.append(", port=");

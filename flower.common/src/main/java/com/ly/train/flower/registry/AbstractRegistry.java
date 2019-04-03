@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import com.ly.train.flower.common.util.concurrent.NamedThreadFactory;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
@@ -34,8 +35,9 @@ import com.ly.train.flower.logging.LoggerFactory;
  */
 public abstract class AbstractRegistry implements Registry {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
-  protected ConcurrentMap<String, ServiceInfo> serviceInfoCache = new ConcurrentHashMap<>();
-  private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+  protected final ConcurrentMap<String, ServiceInfo> serviceInfoCache = new ConcurrentHashMap<>();
+  private static final ScheduledExecutorService executorService =
+      Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("registry"));
 
   public AbstractRegistry() {
     executorService.scheduleAtFixedRate(new Runnable() {

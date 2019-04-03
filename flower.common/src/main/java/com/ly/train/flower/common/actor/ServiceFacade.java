@@ -19,20 +19,14 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.AsyncContext;
-import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceLoader;
-import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
-import akka.actor.ActorRef;
-import akka.pattern.Patterns;
-import akka.util.Timeout;
-import scala.concurrent.Await;
 
 public class ServiceFacade {
   private static final Logger logger = LoggerFactory.getLogger(ServiceFacade.class);
-  private static final Map<String, ServiceRouter> mapRouter = new ConcurrentHashMap<String, ServiceRouter>();
+  private static final Map<String, ServiceRouter> routersCache = new ConcurrentHashMap<String, ServiceRouter>();
 
   static {
     ServiceLoader.getInstance();
@@ -55,10 +49,8 @@ public class ServiceFacade {
    * @throws IOException io exception
    */
   public static void asyncCallService(String flowName, Object message, AsyncContext asyncContext) throws IOException {
-    ServiceContext context = ServiceContext.context(message, asyncContext);
-    context.setFlowName(flowName);
-    String serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceConfig().getServiceName();
-    ServiceActorFactory.buildServiceActor(flowName, serviceName).tell(context, ActorRef.noSender());
+    ServiceRouter serviceRouter = buildServiceRouter(flowName, -1);
+    serviceRouter.asyncCallService(message, asyncContext);
   }
 
   /**
@@ -87,12 +79,8 @@ public class ServiceFacade {
    * @throws Exception
    */
   public static Object syncCallService(String flowName, Object message) throws Exception {
-    ServiceContext context = ServiceContext.context(message);
-    context.setSync(true);
-    String serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceConfig().getServiceName();
-    return Await.result(
-        Patterns.ask(ServiceActorFactory.buildServiceActor(flowName, serviceName), context, new Timeout(Constant.defaultTimeout_3S)),
-        Constant.defaultTimeout_3S);
+    ServiceRouter serviceRouter = buildServiceRouter(flowName, -1);
+    return serviceRouter.syncCallService(message);
   }
 
   /**
@@ -112,13 +100,17 @@ public class ServiceFacade {
    * @return {@link ServiceRouter}
    */
   public static ServiceRouter buildServiceRouter(String flowName, String serviceName, int flowNumbe) {
-    serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceConfig().getServiceName();
+    return buildServiceRouter(flowName, flowNumbe);
+  }
+
+  public static ServiceRouter buildServiceRouter(String flowName, int flowNumbe) {
+    final String serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceConfig().getServiceName();
     final String routerName = flowName + "_" + serviceName;
 
-    ServiceRouter serviceRouter = mapRouter.get(routerName);
+    ServiceRouter serviceRouter = routersCache.get(routerName);
     if (serviceRouter == null) {
       serviceRouter = new ServiceRouter(flowName, serviceName, flowNumbe);
-      mapRouter.put(routerName, serviceRouter);
+      routersCache.put(routerName, serviceRouter);
       logger.info("build service Router. flowName : {}, serviceName : {}, flowNumbe : {}", flowName, serviceName, flowNumbe);
     }
     return serviceRouter;

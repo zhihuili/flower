@@ -18,7 +18,7 @@
  */
 package com.ly.train.flower.registry.simple;
 
-import java.net.URL;
+import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.registry.Registry;
 import com.ly.train.flower.registry.RegistryFactory;
 

@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public class ServiceInfo {
 
-
+  private String application;
   private String className;
   private Set<String> host;
   private Date createTime;
@@ -58,6 +58,20 @@ public class ServiceInfo {
 
   public void setCreateTime(Date createTime) {
     this.createTime = createTime;
+  }
+
+  /**
+   * @param application the application to set
+   */
+  public void setApplication(String application) {
+    this.application = application;
+  }
+
+  /**
+   * @return the application
+   */
+  public String getApplication() {
+    return application;
   }
 
   @Override
