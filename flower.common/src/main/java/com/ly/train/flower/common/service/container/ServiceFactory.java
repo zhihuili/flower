@@ -25,7 +25,7 @@ import com.ly.train.flower.common.exception.ServiceNotFoundException;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
 import com.ly.train.flower.registry.Registry;
-import com.ly.train.flower.registry.ServiceInfo;
+import com.ly.train.flower.registry.config.ServiceInfo;
 
 public class ServiceFactory {
   static final Logger logger = LoggerFactory.getLogger(ServiceFactory.class);

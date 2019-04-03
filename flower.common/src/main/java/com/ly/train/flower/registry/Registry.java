@@ -19,6 +19,7 @@
 package com.ly.train.flower.registry;
 
 import java.util.List;
+import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou

@@ -16,7 +16,7 @@
 package com.ly.flower.center.http;
 
 import com.ly.flower.center.http.ServiceRegistryMessages.ShowServices;
-import com.ly.train.flower.registry.ServiceInfo;
+import com.ly.train.flower.registry.config.ServiceInfo;
 import akka.actor.AbstractActor;
 import akka.actor.Props;
 

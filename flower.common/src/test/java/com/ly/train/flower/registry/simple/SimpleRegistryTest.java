@@ -27,7 +27,7 @@ import com.ly.train.flower.base.service.ServiceA;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.registry.Registry;
 import com.ly.train.flower.registry.RegistryFactory;
-import com.ly.train.flower.registry.ServiceInfo;
+import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou

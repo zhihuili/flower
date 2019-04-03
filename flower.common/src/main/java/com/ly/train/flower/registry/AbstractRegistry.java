@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import com.ly.train.flower.common.util.concurrent.NamedThreadFactory;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
+import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou

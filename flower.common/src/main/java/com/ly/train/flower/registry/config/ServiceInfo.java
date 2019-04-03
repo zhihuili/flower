@@ -16,7 +16,7 @@
 /**
  * 
  */
-package com.ly.train.flower.registry;
+package com.ly.train.flower.registry.config;
 
 import java.util.Date;
 import java.util.Set;

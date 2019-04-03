@@ -17,7 +17,7 @@ package com.ly.flower.center.http;
 
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
-import com.ly.train.flower.registry.ServiceInfo;
+import com.ly.train.flower.registry.config.ServiceInfo;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.event.Logging;

@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import com.ly.flower.center.common.cache.Cache;
 import com.ly.flower.center.common.cache.CacheManager;
-import com.ly.train.flower.registry.ServiceInfo;
+import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou

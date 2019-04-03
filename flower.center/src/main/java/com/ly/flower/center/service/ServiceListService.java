@@ -24,7 +24,7 @@ import com.ly.flower.center.common.ServiceManager;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
-import com.ly.train.flower.registry.ServiceInfo;
+import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou
