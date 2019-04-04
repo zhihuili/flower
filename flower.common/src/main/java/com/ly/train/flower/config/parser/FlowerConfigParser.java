@@ -19,11 +19,9 @@ package com.ly.train.flower.config.parser;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
-
-import com.ly.train.flower.common.util.IOUtil;
 import org.yaml.snakeyaml.Yaml;
+import com.ly.train.flower.common.util.IOUtil;
 import com.ly.train.flower.config.FlowerConfig;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;

@@ -82,6 +82,7 @@ public class CloneUtil {
    * @throws InvocationTargetException
    * @throws NoSuchMethodException
    */
+  @SuppressWarnings("rawtypes")
   public static Object clone(Object value, int level)
       throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
     if (value == null) {
@@ -96,7 +97,7 @@ public class CloneUtil {
     }
     level--;
     if (value instanceof Collection) {// 复制新的集合
-      @SuppressWarnings({"unchecked", "rawtypes"})
+      @SuppressWarnings({"unchecked"})
       Collection<Object> tmp = (Collection) c.newInstance();
       for (Object v : (Collection<?>) value) {
         tmp.add(clone(v, level));// 深度复制
