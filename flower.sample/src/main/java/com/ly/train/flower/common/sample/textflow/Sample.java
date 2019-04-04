@@ -30,6 +30,9 @@ public class Sample {
     m1.setM2(m2);
 
     System.out.println("返回结果" + ServiceFacade.syncCallService("sample", m1));
+    System.out.println("返回结果" + ServiceFacade.syncCallService("sample", m1));
+    System.out.println("返回结果" + ServiceFacade.syncCallService("sample", m1));
+    System.out.println("返回结果" + ServiceFacade.syncCallService("sample", m1));
 
   }
 

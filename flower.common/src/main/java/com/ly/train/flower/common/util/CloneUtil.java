@@ -140,9 +140,10 @@ public class CloneUtil {
       @SuppressWarnings("unchecked")
       Map<Object, Object> tmp = (Map<Object, Object>) c.newInstance();
       Map<?, ?> org = (Map<?, ?>) value;
-      for (Object key : org.keySet()) {
-        tmp.put(key, clone(org.get(key), level));// 深度复制
+      for(Map.Entry t:org.entrySet()){
+        tmp.put(t.getKey(),clone(t.getValue(), level) );// 深度复制
       }
+
       value = tmp;
     } else {
       Object tmp = createObject(value);

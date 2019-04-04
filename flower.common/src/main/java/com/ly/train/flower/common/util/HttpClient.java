@@ -73,7 +73,7 @@ public class HttpClient {
     } finally {
       IOUtil.close(br);
       IOUtil.close(is);
-      connection.disconnect();
+      disconnect(connection);
     }
 
     return result;
@@ -99,14 +99,14 @@ public class HttpClient {
       // connection.setRequestProperty("Authorization", "Bearer da3efcbf-0845-4fe3-8aba-ee040be542c0");
       os = connection.getOutputStream();
       if (httpClientBuilder.getParam() != null) {
-        os.write(httpClientBuilder.getParam().getBytes());
+        os.write(httpClientBuilder.getParam().getBytes(Constant.ENCODING_UTF_8));
       }
       if (connection.getResponseCode() == 200) {
         is = connection.getInputStream();
         br = new BufferedReader(new InputStreamReader(is, Constant.ENCODING_UTF_8));
 
         StringBuffer sbf = new StringBuffer();
-        String temp = null;
+        String temp;
         while ((temp = br.readLine()) != null) {
           sbf.append(temp);
           sbf.append("\r\n");
@@ -123,10 +123,15 @@ public class HttpClient {
       IOUtil.close(br);
       IOUtil.close(is);
       IOUtil.close(os);
-      connection.disconnect();
+      disconnect(connection);
     }
     return result;
   }
 
+  private void disconnect(HttpURLConnection connection){
+    if(connection!=null){
+      connection.disconnect();
+    }
+  }
 
 }

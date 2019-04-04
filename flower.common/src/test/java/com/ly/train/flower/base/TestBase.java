@@ -31,7 +31,7 @@ import com.ly.train.flower.common.service.container.ServiceFactory;
  *
  */
 public class TestBase {
-  protected final String flowName = "sample";
+  protected static final String flowName = "sample";
 
   @Before
   public void before() {

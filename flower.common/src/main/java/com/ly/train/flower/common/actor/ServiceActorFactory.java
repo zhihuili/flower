@@ -60,11 +60,9 @@ public class ServiceActorFactory {
   protected static ActorContext getActorContext() {
     if (actorContext == null) {
       synchronized (ServiceActorFactory.class) {
-        if (supervierActor == null) {
-          supervierActor = getActorSystem().actorOf(SupervisorActor.props(), "flower");
-        }
         if (actorContext == null) {
           try {
+            supervierActor = getActorSystem().actorOf(SupervisorActor.props(), "flower");
             actorContext = (ActorContext) Await
                 .result(Patterns.ask(supervierActor, new SupervisorActor.GetActorContext(), DEFAULT_TIMEOUT - 1), timeout);
           } catch (Exception e) {

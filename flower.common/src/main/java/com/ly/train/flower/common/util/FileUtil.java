@@ -30,9 +30,9 @@ public class FileUtil {
   private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
   public static List<Pair<String, String>> readFlow(String path) throws IOException {
-    InputStreamReader fr = new InputStreamReader(FileUtil.class.getResourceAsStream(path));
+    InputStreamReader fr = new InputStreamReader(FileUtil.class.getResourceAsStream(path),Constant.ENCODING_UTF_8);
     BufferedReader br = new BufferedReader(fr);
-    String line = "";
+    String line;
     List<Pair<String, String>> flow = new ArrayList<>();
     while ((line = br.readLine()) != null) {
       String sl = line.trim();
@@ -52,9 +52,9 @@ public class FileUtil {
   }
 
   public static Map<String, String> readService(String path) throws IOException {
-    InputStreamReader fr = new InputStreamReader(FileUtil.class.getResourceAsStream(path));
+    InputStreamReader fr = new InputStreamReader(FileUtil.class.getResourceAsStream(path),Constant.ENCODING_UTF_8);
     BufferedReader br = new BufferedReader(fr);
-    String line = "";
+    String line;
     Map<String, String> result = new HashMap<String, String>();
     while ((line = br.readLine()) != null) {
       String sl = line.trim();
@@ -73,22 +73,8 @@ public class FileUtil {
   }
 
   static void close(Reader reader, InputStreamReader is) {
-    if (reader != null) {
-      try {
-        reader.close();
-      } catch (Exception e) {
-        logger.error("", e);
-      }
-    }
-
-    if (is != null) {
-      try {
-        is.close();
-      } catch (Exception e) {
-        logger.error("", e);
-      }
-    }
-
+    IOUtil.close(reader);
+    IOUtil.close(is);
   }
 
 }

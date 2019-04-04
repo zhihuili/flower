@@ -15,6 +15,7 @@
  */
 package com.ly.train.flower;
 
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
@@ -23,11 +24,6 @@ import org.junit.Test;
 
 public class RandomTest {
 
-  /**
-   * 测试random
-   * 
-   * @param args
-   */
   @Test
   public void main() {
     System.out.println("threadNum,Random,ThreadLocalRandom");
@@ -75,11 +71,12 @@ public class RandomTest {
 
   // from java.util
   private static class UtilRandom implements Runnable {
+    Random random = new Random();
     @Override
     public void run() {
       long index = 0;
       for (int i = 0; i < NUMBER; i++) {
-        index += (int) (Math.random() * 400);
+        index += random.nextInt(400);
       }
     }
   }
