@@ -16,17 +16,14 @@
 package com.ly.train.flower.common.akka.actor;
 
 import java.util.concurrent.TimeUnit;
-import com.ly.train.flower.logging.Logger;
-import com.ly.train.flower.logging.LoggerFactory;
-import akka.actor.AbstractActor;
+import com.ly.train.flower.common.service.container.ServiceContext;
 import akka.actor.OneForOneStrategy;
 import akka.actor.Props;
 import akka.actor.SupervisorStrategy;
 import akka.japi.pf.DeciderBuilder;
 import scala.concurrent.duration.Duration;
 
-public class SupervisorActor extends AbstractActor {
-  protected static final Logger logger = LoggerFactory.getLogger(SupervisorActor.class);
+public class SupervisorActor extends AbstractFlowerActor {
   private static SupervisorStrategy DEFAULT_STRATEGY = new OneForOneStrategy(10, Duration.create(1, TimeUnit.MINUTES),
       DeciderBuilder.match(ArithmeticException.class, e -> SupervisorStrategy.resume())
           .match(NullPointerException.class, e -> SupervisorStrategy.restart())
@@ -41,15 +38,12 @@ public class SupervisorActor extends AbstractActor {
     }).build();
   }
 
-
-
   @Override
-  public void unhandled(Object message) {
-    super.unhandled(message);
-    if (logger.isWarnEnabled()) {
-      logger.warn("unhandled message : {}", message);
-    }
+  public void onServiceContextReceived(ServiceContext context) throws Throwable {
+    // keep empty
   }
+
+
 
   @Override
   public SupervisorStrategy supervisorStrategy() {

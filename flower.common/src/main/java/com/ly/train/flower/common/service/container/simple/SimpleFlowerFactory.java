@@ -20,6 +20,7 @@ package com.ly.train.flower.common.service.container.simple;
 
 import java.util.HashSet;
 import java.util.Set;
+import com.ly.train.flower.common.exception.ExceptionHandler;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.config.FlowerConfig;
@@ -44,6 +45,7 @@ public class SimpleFlowerFactory implements FlowerFactory {
 
   private FlowerConfig flowerConfig;
   private Set<Registry> registries = new HashSet<>();
+  private ExceptionHandler exceptionHandler;
 
   public static FlowerFactory get() {
     if (instance == null) {
@@ -102,5 +104,13 @@ public class SimpleFlowerFactory implements FlowerFactory {
   @Override
   public Set<Registry> getRegistry() {
     return registries;
+  }
+
+  @Override
+  public ExceptionHandler getExceptionHandler() {
+    if (this.exceptionHandler == null) {
+      this.exceptionHandler = new ExceptionHandler();
+    }
+    return exceptionHandler;
   }
 }

@@ -23,8 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import com.ly.train.flower.common.akka.FlowRouter;
 import com.ly.train.flower.common.akka.ServiceFacade;
-import com.ly.train.flower.common.akka.ServiceRouter;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
@@ -35,14 +35,14 @@ import com.ly.train.flower.common.service.container.ServiceFlow;
  */
 public class ForkServlet extends HttpServlet {
   static final long serialVersionUID = 1L;
-  ServiceRouter sr;
+  FlowRouter sr;
   ApplicationContext context;
 
   @Override
   public void init() {
     context = new ClassPathXmlApplicationContext("spring-mybatis.xml");
     buildServiceEnv();
-    sr = ServiceFacade.buildServiceRouter("fork", "serviceBegin", 400);
+    sr = ServiceFacade.buildFlowRouter("fork", 400);
   }
 
   @Override

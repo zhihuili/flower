@@ -36,6 +36,7 @@ public class ServiceConfig implements Serializable {
   private Set<ServiceConfig> nextServiceConfigs;
   private Set<ServiceConfig> previousServiceConfigs;
   private final AtomicInteger jointSourceNumber = new AtomicInteger(0);
+  private int index;
 
   public ServiceConfig(String flowName) {
     this.flowName = flowName;
@@ -87,6 +88,26 @@ public class ServiceConfig implements Serializable {
     }
     previousServiceConfigs.add(previousServiceConfig);
     return this;
+  }
+
+  /**
+   * 服务在流程中的索引位置
+   * 
+   * @param index 索引
+   * @return {@link ServiceConfig}
+   */
+  public ServiceConfig setIndex(int index) {
+    this.index = index;
+    return this;
+  }
+
+  /**
+   * 服务在流程中的索引位置
+   * 
+   * @return int
+   */
+  public int getIndex() {
+    return index;
   }
 
   public String getFlowName() {

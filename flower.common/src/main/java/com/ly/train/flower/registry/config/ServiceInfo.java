@@ -18,6 +18,7 @@
  */
 package com.ly.train.flower.registry.config;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
@@ -25,12 +26,22 @@ import java.util.Set;
  * @author leeyazhou
  *
  */
-public class ServiceInfo {
+public class ServiceInfo implements Serializable {
 
+  private static final long serialVersionUID = 1L;
   private String application;
   private String className;
   private Set<String> host;
   private Date createTime;
+  private int number;
+
+  public int getNumber() {
+    return number;
+  }
+
+  public void setNumber(int number) {
+    this.number = number;
+  }
 
   public String toParam() {
     return String.format("className=%s&host=%s&createTime=%s", className, host, createTime);

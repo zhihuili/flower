@@ -16,8 +16,8 @@
 package com.ly.train.flower.common.sample.textflow;
 
 import org.junit.Test;
+import com.ly.train.flower.common.akka.FlowRouter;
 import com.ly.train.flower.common.akka.ServiceFacade;
-import com.ly.train.flower.common.akka.ServiceRouter;
 import com.ly.train.flower.common.sample.textflow.model.Message1;
 import com.ly.train.flower.common.sample.textflow.model.Message2;
 
@@ -34,7 +34,7 @@ public class ServiceRouterSample {
 
     // 200 flows
 
-    ServiceRouter sr = ServiceFacade.buildServiceRouter("sample", "service1", 200);
+    FlowRouter sr = ServiceFacade.buildFlowRouter("sample", 200);
     long begin = System.currentTimeMillis();
     for (int i = 0; i < loopNumber; i++) {
       sr.asyncCallService(m1);

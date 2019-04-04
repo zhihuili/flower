@@ -26,8 +26,8 @@ import com.ly.train.flower.base.service.ServiceA;
 import com.ly.train.flower.base.service.ServiceB;
 import com.ly.train.flower.base.service.ServiceC1;
 import com.ly.train.flower.base.service.ServiceC2;
+import com.ly.train.flower.common.akka.FlowRouter;
 import com.ly.train.flower.common.akka.ServiceFacade;
-import com.ly.train.flower.common.akka.ServiceRouter;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 
 /**
@@ -43,13 +43,14 @@ public class ServiceRouterTest extends TestBase {
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
-    final ServiceRouter router = ServiceFacade.buildServiceRouter(flowName, ServiceA.class.getSimpleName(), 2 << 4);
+    final FlowRouter router = ServiceFacade.buildFlowRouter(flowName, 2 << 3);
 
     User user = new User();
     user.setName("响应式编程 ");
     user.setAge(2);
     try {
       Object o = router.syncCallService(user);
+      router.syncCallService(user);
       System.out.println("响应结果： " + o);
     } catch (Exception e) {
       e.printStackTrace();
@@ -63,7 +64,7 @@ public class ServiceRouterTest extends TestBase {
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
-    final ServiceRouter router = ServiceFacade.buildServiceRouter(flowName, ServiceA.class.getSimpleName(), 2 << 4);
+    final FlowRouter router = ServiceFacade.buildFlowRouter(flowName, 2);
 
     User user = new User();
     user.setName("响应式编程 ");
@@ -79,7 +80,7 @@ public class ServiceRouterTest extends TestBase {
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
-    final ServiceRouter router = ServiceFacade.buildServiceRouter(flowName, ServiceA.class.getSimpleName(), 2 << 4);
+    final FlowRouter router = ServiceFacade.buildFlowRouter(flowName, 2 << 4);
 
     final int threadNum = 10;
     final int numPerThread = 10;
@@ -108,7 +109,7 @@ public class ServiceRouterTest extends TestBase {
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
-    final ServiceRouter router = ServiceFacade.buildServiceRouter(flowName, ServiceA.class.getSimpleName(), 2 << 4);
+    final FlowRouter router = ServiceFacade.buildFlowRouter(flowName, 2 << 4);
 
     final int threadNum = 10;
     final int numPerThread = 10;

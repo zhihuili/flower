@@ -15,127 +15,63 @@
  */
 package com.ly.train.flower.common.akka;
 
-import java.io.IOException;
-import java.util.concurrent.ThreadLocalRandom;
-import javax.servlet.AsyncContext;
+import com.ly.train.flower.common.akka.actor.ActorRefWrapper;
+import com.ly.train.flower.common.loadbalance.LoadBalance;
+import com.ly.train.flower.common.loadbalance.RoundLoadBalance;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.util.Constant;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 import akka.actor.ActorRef;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import scala.concurrent.Await;
 
 public class ServiceRouter {
-
+  protected static final Logger logger = LoggerFactory.getLogger(ServiceRouter.class);
+  private static final LoadBalance loadBalance = new RoundLoadBalance();
   private int number = 2 << 6;
-  private int currentIndex = 0;
-  private ActorRef[] ar;
-  private String flowName;
+  private ActorRefWrapper[] ar;
   private String serviceName;
 
-  public ServiceRouter(String flowName, String serviceName, int number) {
+  public ServiceRouter(String serviceName, int number) {
+    this.serviceName = serviceName;
     if (number > 0) {
       this.number = number;
     }
-    this.flowName = flowName;
-    this.serviceName = serviceName;
   }
 
-  public void asyncCallService(Object message) throws IOException {
-    asyncCallService(message, null);
-  }
-
-  /**
-   * 异步调用
-   * 
-   * @param message
-   * @param ctx
-   * @throws IOException
-   */
-  public <T> void asyncCallService(T message, AsyncContext ctx) throws IOException {
-    ServiceContext serviceContext = ServiceContext.context(message, ctx);
-    serviceContext.setFlowName(flowName);
-    chooseOne().tell(serviceContext, ActorRef.noSender());
-  }
 
   /**
    * 同步调用
    * 
-   * @param message message
+   * @param serviceContext {@link ServiceContext}
    * @return obj
    * @throws Exception
    */
-  public Object syncCallService(Object message) throws Exception {
-    ServiceContext serviceContext = ServiceContext.context(message);
-    serviceContext.setSync(true);
-    return Await.result(Patterns.ask(chooseOne(), serviceContext, new Timeout(Constant.defaultTimeout_3S)), Constant.defaultTimeout_3S);
+  public Object syncCallService(ServiceContext serviceContext) throws Exception {
+    ActorRef actorRef = chooseOne(serviceContext).getActorRef();
+    return Await.result(Patterns.ask(actorRef, serviceContext, new Timeout(Constant.defaultTimeout_3S)), Constant.defaultTimeout_3S);
   }
 
-  private int randomIndex() {
-    if (number == 1) {
-      return 0;
-    }
-    int index = ThreadLocalRandom.current().nextInt(number);
-    return index;
+  public void asyncCallService(ServiceContext serviceContext) {
+    ActorRefWrapper actorRef = chooseOne(serviceContext);
+    actorRef.tell(serviceContext, actorRef.getActorRef());
   }
 
-  protected synchronized int roundIndex() {
-    if (number == 1) {
-      return 0;
-    }
-    if (currentIndex < (number - 1)) {
-      return ++currentIndex;
-    }
-    currentIndex = 0;
-    return currentIndex;
-  }
-
-  private ActorRef chooseOne() {
-    int index = randomIndex();
-    if (ar == null || ar[index] == null) {
+  private ActorRefWrapper chooseOne(ServiceContext serviceContext) {
+    if (ar == null) {
       synchronized (this) {
         if (ar == null) {
-          this.ar = new ActorRef[number];
+          ActorRefWrapper[] t = new ActorRefWrapper[number];
           for (int i = 0; i < number; i++) {
-            this.ar[i] = ServiceActorFactory.buildServiceActor(flowName, serviceName, i);
+            t[i] = ServiceActorFactory.buildServiceActor(serviceName, i, number);
           }
+          ar = t;
         }
       }
     }
-    return ar[index];
-  }
-
-  /**
-   * 当actor个数为2^n个数时才可以使用
-   * 
-   * @return int
-   */
-  protected int bitRandomIndex() {
-    if (number == 1) {
-      return 0;
-    }
-    if (currentIndex > 1024) {
-      currentIndex = 0;
-    }
-    return (currentIndex++) & (number - 1);
-  }
-
-  protected int moduleRandomIndex() {
-    if (number == 1) {
-      return 0;
-    }
-    if (currentIndex > 1024) {
-      currentIndex = 0;
-    }
-    return (currentIndex++) % (number);
-  }
-
-  public String getFlowName() {
-    return flowName;
-  }
-
-  public void setFlowName(String flowName) {
-    this.flowName = flowName;
+    return loadBalance.choose(ar, serviceContext);
   }
 
   public String getServiceName() {

@@ -15,8 +15,8 @@
  */
 package com.ly.train.flower.common.loadbalance;
 
+import com.ly.train.flower.common.akka.actor.ActorRefWrapper;
 import com.ly.train.flower.common.service.container.ServiceContext;
-import akka.actor.ActorRef;
 
 /**
  * @author leeyazhou
@@ -24,5 +24,5 @@ import akka.actor.ActorRef;
  */
 public interface LoadBalance {
 
-  ActorRef choose(ActorRef[] actorRefs, ServiceContext serviceContext);
+  ActorRefWrapper choose(ActorRefWrapper[] actorRefs, ServiceContext serviceContext);
 }

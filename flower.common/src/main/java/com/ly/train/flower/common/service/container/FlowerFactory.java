@@ -19,6 +19,7 @@
 package com.ly.train.flower.common.service.container;
 
 import java.util.Set;
+import com.ly.train.flower.common.exception.ExceptionHandler;
 import com.ly.train.flower.config.FlowerConfig;
 import com.ly.train.flower.registry.Registry;
 
@@ -36,7 +37,14 @@ public interface FlowerFactory {
    */
   FlowerConfig getFlowerConfig();
 
+  /**
+   * 获取注册中心
+   * 
+   * @return {@link Registry}
+   */
   Set<Registry> getRegistry();
+
+  ExceptionHandler getExceptionHandler();
 
   /**
    * 初始化

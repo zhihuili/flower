@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.annotation.FlowerType;
 import com.ly.train.flower.common.exception.FlowerException;
@@ -68,6 +69,7 @@ public final class ServiceFlow {
 
   // Map<serviceName, ServiceConfig> 每个服务节点的配置信息
   private final ConcurrentMap<String, ServiceConfig> serviceConfigs = new ConcurrentHashMap<>();
+  private final AtomicInteger index = new AtomicInteger(0);
 
   private final String flowName;
 
@@ -109,8 +111,8 @@ public final class ServiceFlow {
     Assert.notNull(flowName, "flowName can't be null !");
     ServiceFlow serviceFlow = serviceFlows.get(flowName);
     if (serviceFlow == null) {
-          serviceFlow = new ServiceFlow(flowName);
-          serviceFlows.putIfAbsent(flowName, serviceFlow);
+      serviceFlow = new ServiceFlow(flowName);
+      serviceFlows.putIfAbsent(flowName, serviceFlow);
     }
     return serviceFlow;
   }
@@ -315,6 +317,7 @@ public final class ServiceFlow {
     if (serviceConfig == null) {
       serviceConfig = new ServiceConfig(flowName);
       serviceConfig.setServiceName(serviceName);
+      serviceConfig.setIndex(index.getAndIncrement());
       serviceConfigs.putIfAbsent(serviceName, serviceConfig);
     }
     return serviceConfig;
@@ -405,7 +408,7 @@ public final class ServiceFlow {
    * 内部聚合服务
    * 
    * @param clazz
-   * @return true /false 
+   * @return true /false
    */
   protected boolean isInnerAggregateService(Class<?> clazz) {
     return clazz != null && clazz.getName().equals(Constant.AGGREGATE_SERVICE_NAME);

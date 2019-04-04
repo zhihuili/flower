@@ -13,31 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.loadbalance;
+package com.ly.train.flower.common.akka.actor;
 
-import com.ly.train.flower.common.akka.actor.ActorRefWrapper;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
+import akka.actor.AbstractActor;
 
 /**
  * @author leeyazhou
  *
  */
-public abstract class AbstractLoadBalance implements LoadBalance {
+public abstract class AbstractFlowerActor extends AbstractActor {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   @Override
-  public ActorRefWrapper choose(ActorRefWrapper[] actorRefs, ServiceContext serviceContext) {
-    if (actorRefs == null || actorRefs.length == 0) {
-      return null;
-    }
-    if (actorRefs.length == 1) {
-      return actorRefs[0];
-    }
-    return doChooseOne(actorRefs, serviceContext);
+  public Receive createReceive() {
+    return receiveBuilder().match(ServiceContext.class, context -> {
+      try {
+        onServiceContextReceived(context);
+      } catch (Throwable e) {
+        onException(e);
+      }
+    }).matchAny(message -> {
+      unhandled(message);
+    }).build();
   }
 
-  public abstract ActorRefWrapper doChooseOne(ActorRefWrapper[] actorRefs, ServiceContext serviceContext);
+  public abstract void onServiceContextReceived(ServiceContext context) throws Throwable;
 
+  public void onException(Throwable throwable) {
+    logger.error("", throwable);
+  }
+
+  @Override
+  public void unhandled(Object message) {
+    super.unhandled(message);
+    logger.warn("received unhandled message : {}", message);
+  }
 }

@@ -22,8 +22,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.ly.train.flower.common.akka.FlowRouter;
 import com.ly.train.flower.common.akka.ServiceFacade;
-import com.ly.train.flower.common.akka.ServiceRouter;
 import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 import akka.actor.ActorRef;
@@ -31,13 +31,13 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 
 public class FlowServlet extends HttpServlet {
-  ServiceRouter sr;
+  FlowRouter sr;
   ActorRef actor;
 
   @Override
   public void init() {
     buildServiceEnv();
-    sr = ServiceFacade.buildServiceRouter("flow", "flowService", 400);
+    sr = ServiceFacade.buildFlowRouter("flow", 400);
     actor = ActorSystem.create("sample").actorOf(Props.create(RouterActor.class));
   }
 

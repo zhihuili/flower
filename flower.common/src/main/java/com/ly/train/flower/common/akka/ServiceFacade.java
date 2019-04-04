@@ -26,7 +26,8 @@ import com.ly.train.flower.logging.LoggerFactory;
 
 public class ServiceFacade {
   private static final Logger logger = LoggerFactory.getLogger(ServiceFacade.class);
-  private static final Map<String, ServiceRouter> routersCache = new ConcurrentHashMap<String, ServiceRouter>();
+  private static final Map<String, ServiceRouter> serviceRoutersCache = new ConcurrentHashMap<String, ServiceRouter>();
+  private static final Map<String, FlowRouter> flowRoutersCache = new ConcurrentHashMap<String, FlowRouter>();
 
   static {
     ServiceLoader.getInstance();
@@ -49,7 +50,7 @@ public class ServiceFacade {
    * @throws IOException io exception
    */
   public static void asyncCallService(String flowName, Object message, AsyncContext asyncContext) throws IOException {
-    ServiceRouter serviceRouter = buildServiceRouter(flowName, -1);
+    FlowRouter serviceRouter = buildFlowRouter(flowName, -1);
     serviceRouter.asyncCallService(message, asyncContext);
   }
 
@@ -79,7 +80,7 @@ public class ServiceFacade {
    * @throws Exception
    */
   public static Object syncCallService(String flowName, Object message) throws Exception {
-    ServiceRouter serviceRouter = buildServiceRouter(flowName, -1);
+    FlowRouter serviceRouter = buildFlowRouter(flowName, -1);
     return serviceRouter.syncCallService(message);
   }
 
@@ -91,27 +92,35 @@ public class ServiceFacade {
     return syncCallService(flowName, message);
   }
 
+
   /**
-   * will cache by flowName + "_" + serviceName
+   * will be cached by flowName + "_" + serviceName
    * 
    * @param flowName flowName
-   * @param serviceName serviceName
    * @param flowNumbe 数量
    * @return {@link ServiceRouter}
    */
-  public static ServiceRouter buildServiceRouter(String flowName, String serviceName, int flowNumbe) {
-    return buildServiceRouter(flowName, flowNumbe);
-  }
-
-  public static ServiceRouter buildServiceRouter(String flowName, int flowNumbe) {
+  public static FlowRouter buildFlowRouter(String flowName, int flowNumbe) {
     final String serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceConfig().getServiceName();
     final String routerName = flowName + "_" + serviceName;
 
-    ServiceRouter serviceRouter = routersCache.get(routerName);
+    FlowRouter serviceRouter = flowRoutersCache.get(routerName);
     if (serviceRouter == null) {
-      serviceRouter = new ServiceRouter(flowName, serviceName, flowNumbe);
-      routersCache.put(routerName, serviceRouter);
+      serviceRouter = new FlowRouter(flowName, serviceName, flowNumbe);
+      flowRoutersCache.put(routerName, serviceRouter);
       logger.info("build service Router. flowName : {}, serviceName : {}, flowNumbe : {}", flowName, serviceName, flowNumbe);
+    }
+    return serviceRouter;
+  }
+
+  public static ServiceRouter buildServiceRouter(String serviceName, int flowNumbe) {
+    final String routerName = serviceName + "_" + flowNumbe;
+
+    ServiceRouter serviceRouter = serviceRoutersCache.get(routerName);
+    if (serviceRouter == null) {
+      serviceRouter = new ServiceRouter(serviceName, flowNumbe);
+      serviceRoutersCache.put(routerName, serviceRouter);
+      logger.info("build service Router. serviceName : {}, flowNumbe : {}", serviceName, flowNumbe);
     }
     return serviceRouter;
   }

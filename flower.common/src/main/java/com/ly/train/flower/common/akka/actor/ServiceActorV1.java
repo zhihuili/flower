@@ -40,7 +40,6 @@ import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.common.service.web.HttpComplete;
 import com.ly.train.flower.common.service.web.Web;
 import com.ly.train.flower.common.util.CloneUtil;
-import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
@@ -55,7 +54,7 @@ import scala.concurrent.duration.FiniteDuration;
  * @author zhihui.li
  *
  */
-public class ServiceActorV1 extends AbstractActor {
+public class ServiceActorV1 extends AbstractFlowerActor {
   static final Logger logger = LoggerFactory.getLogger(ServiceActorV1.class);
   /**
    * 同步要求结果的actor
@@ -86,7 +85,7 @@ public class ServiceActorV1 extends AbstractActor {
         if (serviceConfig.isAggregateService()) {
           refType.setJoint(true);
         }
-        refType.setActorRef(ServiceActorFactory.buildServiceActor(flowName, serviceConfig.getServiceName(), index));
+        refType.setActorRef(ServiceActorFactory.buildServiceActor(serviceConfig.getServiceName(), index).getActorRef());
         refType.setMessageType(ServiceLoader.getInstance().loadServiceMeta(serviceConfig.getServiceName()).getParamType());
         refType.setServiceName(serviceConfig.getServiceName());
         nextServiceActors.add(refType);
@@ -95,20 +94,7 @@ public class ServiceActorV1 extends AbstractActor {
   }
 
   @Override
-  public Receive createReceive() {
-    return receiveBuilder().match(ServiceContext.class, fm -> {
-      try {
-        onReceive(fm);
-      } catch (Throwable e) {
-        logger.error("", e);
-      }
-    }).matchAny(no -> {
-      logger.warn("unhandled message, so discard it. {}", no);
-    }).build();
-  }
-
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  public void onReceive(ServiceContext serviceContext) throws Throwable {
+  public void onServiceContextReceived(ServiceContext serviceContext) throws Throwable {
     FlowMessage fm = serviceContext.getFlowMessage();
     if (needCacheActorRef(serviceContext)) {
       syncActors.putIfAbsent(serviceContext.getId(), getSender());

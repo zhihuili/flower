@@ -22,8 +22,8 @@ import java.io.IOException;
 import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.InitializingBean;
+import com.ly.train.flower.common.akka.FlowRouter;
 import com.ly.train.flower.common.akka.ServiceFacade;
-import com.ly.train.flower.common.akka.ServiceRouter;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.logging.Logger;
@@ -34,8 +34,8 @@ import com.ly.train.flower.logging.LoggerFactory;
  * @author leeyazhou
  */
 public abstract class FlowerController implements InitializingBean {
-  protected final Logger logger =LoggerFactory.getLogger(getClass());
-  private ServiceRouter serviceRouter;
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  private FlowRouter serviceRouter;
   private String flowerName;
   private String serviceName;
 
@@ -58,8 +58,8 @@ public abstract class FlowerController implements InitializingBean {
    * @see com.ly.train.flower.common.actor.ServiceFacade#buildServiceRouter
    * @return {@code ServiceRouter}
    */
-  private ServiceRouter initServiceRouter() {
-    return ServiceFacade.buildServiceRouter(getFlowName(), getServiceName(), 2 << 7);
+  private FlowRouter initServiceRouter() {
+    return ServiceFacade.buildFlowRouter(getFlowName(), 2 << 7);
   }
 
   /**

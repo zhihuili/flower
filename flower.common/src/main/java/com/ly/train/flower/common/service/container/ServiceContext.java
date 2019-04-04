@@ -23,7 +23,7 @@ import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.web.Web;
 import com.ly.train.flower.common.util.CloneUtil;
 
-public class ServiceContext  {
+public class ServiceContext {
 
   /**
    * 附属参数
@@ -35,6 +35,8 @@ public class ServiceContext  {
   private String flowName;
 
   private FlowMessage flowMessage;
+
+  private String currentServiceName;
 
   private ServiceContext() {}
 
@@ -73,23 +75,26 @@ public class ServiceContext  {
     return web;
   }
 
-  public void setWeb(Web web) {
+  public ServiceContext setWeb(Web web) {
     this.web = web;
+    return this;
   }
 
-  public void addAttachment(String key, Object value) {
+  public ServiceContext addAttachment(String key, Object value) {
     if (attachments == null) {
       attachments = new ConcurrentHashMap<String, Object>();
     }
     attachments.put(key, value);
+    return this;
   }
 
   public Object getAttachment(String key) {
     return attachments.get(key);
   }
 
-  public void removeAttachment(String key) {
+  public ServiceContext removeAttachment(String key) {
     attachments.remove(key);
+    return this;
   }
 
 
@@ -120,16 +125,27 @@ public class ServiceContext  {
    * 
    * @param sync
    */
-  public void setSync(boolean sync) {
+  public ServiceContext setSync(boolean sync) {
     this.sync = sync;
+    return this;
   }
 
   public String getFlowName() {
     return flowName;
   }
 
-  public void setFlowName(String flowName) {
+  public ServiceContext setFlowName(String flowName) {
     this.flowName = flowName;
+    return this;
+  }
+
+  public ServiceContext setCurrentServiceName(String currentServiceName) {
+    this.currentServiceName = currentServiceName;
+    return this;
+  }
+
+  public String getCurrentServiceName() {
+    return currentServiceName;
   }
 
   @Override
