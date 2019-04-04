@@ -18,12 +18,14 @@
  */
 package com.ly.train.flower.registry;
 
+import com.ly.train.flower.common.annotation.SPI;
 import com.ly.train.flower.common.util.URL;
 
 /**
  * @author leeyazhou
  *
  */
+@SPI(value = "simple")
 public interface RegistryFactory {
 
   Registry createRegistry(URL url);

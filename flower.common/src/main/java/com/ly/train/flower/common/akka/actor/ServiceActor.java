@@ -101,7 +101,6 @@ public class ServiceActor extends AbstractFlowerActor {
     Set<RefType> nextActorRef = getNextServiceActors(serviceContext);
     if (serviceContext.isSync() && nextActorRef.isEmpty()) {
       ActorRef actor = syncActors.get(serviceContext.getId());
-      logger.info("返回响应 {}, actor:{}", result, actor);
       if (actor != null) {
         actor.tell(result, getSelf());
         syncActors.remove(serviceContext.getId());

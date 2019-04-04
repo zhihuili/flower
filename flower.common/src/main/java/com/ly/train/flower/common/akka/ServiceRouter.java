@@ -17,9 +17,9 @@ package com.ly.train.flower.common.akka;
 
 import com.ly.train.flower.common.akka.actor.ActorRefWrapper;
 import com.ly.train.flower.common.loadbalance.LoadBalance;
-import com.ly.train.flower.common.loadbalance.RoundLoadBalance;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.util.Constant;
+import com.ly.train.flower.common.util.ExtensionLoader;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 import akka.actor.ActorRef;
@@ -29,7 +29,7 @@ import scala.concurrent.Await;
 
 public class ServiceRouter {
   protected static final Logger logger = LoggerFactory.getLogger(ServiceRouter.class);
-  private static final LoadBalance loadBalance = new RoundLoadBalance();
+  private static final LoadBalance loadBalance = ExtensionLoader.load(LoadBalance.class).load();
   private int number = 2 << 6;
   private ActorRefWrapper[] ar;
   private String serviceName;

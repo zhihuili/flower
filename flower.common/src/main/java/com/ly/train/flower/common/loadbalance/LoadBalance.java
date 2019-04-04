@@ -16,12 +16,14 @@
 package com.ly.train.flower.common.loadbalance;
 
 import com.ly.train.flower.common.akka.actor.ActorRefWrapper;
+import com.ly.train.flower.common.annotation.SPI;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
 /**
  * @author leeyazhou
  *
  */
+@SPI(value = "round", message = "轮训算法策略")
 public interface LoadBalance {
 
   ActorRefWrapper choose(ActorRefWrapper[] actorRefs, ServiceContext serviceContext);
