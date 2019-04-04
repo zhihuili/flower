@@ -24,15 +24,18 @@ import com.ly.train.flower.common.sample.condition.service.ServiceD;
 import com.ly.train.flower.common.sample.condition.service.ServiceE;
 import com.ly.train.flower.common.sample.condition.service.ServiceF;
 import com.ly.train.flower.common.sample.condition.service.ServiceG;
+import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
+import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
 
 public class Sample {
 
   @Test
   public void main() throws Exception {
     buildServiceEnv();
-
+    FlowerFactory factory = new SimpleFlowerFactory();
+    factory.getFlowerConfig();
     ServiceFacade.asyncCallService("sample", "c");
   }
 

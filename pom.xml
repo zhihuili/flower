@@ -208,7 +208,11 @@
 				<artifactId>javassist</artifactId>
 				<version>${javassist.version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>org.yaml</groupId>
+				<artifactId>snakeyaml</artifactId>
+				<version>1.24</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -255,22 +259,20 @@
 				<artifactId>findbugs-maven-plugin</artifactId>
 				<version>3.0.4</version>
 				<configuration>
-					<configuration>
-						<effort>Low</effort>
-						<threshold>Medium</threshold>
-						<failOnError>true</failOnError>
-						<includeTests>true</includeTests>
-					</configuration>
-					<executions>
-						<execution>
-							<id>run-findbugs</id>
-							<phase>package</phase>
-							<goals>
-								<goal>check</goal>
-							</goals>
-						</execution>
-					</executions>
+					<effort>Low</effort>
+					<threshold>Medium</threshold>
+					<failOnError>true</failOnError>
+					<includeTests>true</includeTests>
 				</configuration>
+				<!--<executions>
+					<execution>
+						<id>run-findbugs</id>
+						<phase>package</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>-->
 			</plugin>
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>

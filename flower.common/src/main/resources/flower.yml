@@ -1,0 +1,7 @@
+name: "LocalFlower"
+registry:
+  - url: 
+      - "flower://127.0.0.1:8080"
+  - url:
+     - "flower://127.0.0.1:8080"
+        

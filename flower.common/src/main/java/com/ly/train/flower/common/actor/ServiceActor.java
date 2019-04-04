@@ -95,9 +95,9 @@ public class ServiceActor extends AbstractActor {
 
   @Override
   public Receive createReceive() {
-    return receiveBuilder().match(ServiceContext.class, fm -> {
+    return receiveBuilder().match(ServiceContext.class, serviceContext -> {
       try {
-        onReceive(fm);
+        onReceive(serviceContext);
       } catch (Throwable e) {
         logger.error("", e);
       }
@@ -137,9 +137,6 @@ public class ServiceActor extends AbstractActor {
     }
 
     Web web = serviceContext.getWeb();
-    if (service instanceof Complete) {
-      // FlowContext.removeServiceContext(fm.getTransactionId());
-    }
     if (web != null) {
       if (service instanceof Flush) {
         web.flush();

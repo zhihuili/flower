@@ -30,10 +30,10 @@ import com.ly.train.flower.logging.LoggerFactory;
 
 public class AggregateService implements Service<Object, Object>, Aggregate {
   static final Logger logger = LoggerFactory.getLogger(AggregateService.class);
-  private static final long DefaultTimeOutMilliseconds = 60000;
+  private static final Long DefaultTimeOutMilliseconds = 60000L;
 
   private int sourceNumber = 0;
-  private long timeoutMillis = DefaultTimeOutMilliseconds;
+  private Long timeoutMillis = DefaultTimeOutMilliseconds;
 
   // <messageId,Set<message>>
   private Map<String, Set<Object>> resultMap = new ConcurrentHashMap<String, Set<Object>>();
@@ -45,12 +45,12 @@ public class AggregateService implements Service<Object, Object>, Aggregate {
   public AggregateService() {}
 
   public AggregateService(String config) {
-    this.timeoutMillis = Integer.valueOf(config);
+    this.timeoutMillis = Long.valueOf(config);
   }
 
   @Override
   public Object process(Object message, ServiceContext context) {
-    FlowMessage flowMessage = (FlowMessage) context.getFlowMessage();
+    FlowMessage flowMessage = context.getFlowMessage();
     if (flowMessage instanceof TimerMessage) {
       doClean();
       return null;
@@ -94,14 +94,12 @@ public class AggregateService implements Service<Object, Object>, Aggregate {
   }
 
   private void doClean() {
-    Set<String> transactionIds = resultDateMap.keySet();
     long currentTimeMillis = System.currentTimeMillis();
-    for (String transactionId : transactionIds) {
-      if (currentTimeMillis - resultDateMap.get(transactionId) > this.timeoutMillis) {
-        resultDateMap.remove(transactionId);
-        resultMap.remove(transactionId);
-        resultNumberMap.remove(transactionId);
+    for(Map.Entry<String,Long> entry:resultDateMap.entrySet())
+      if (currentTimeMillis - entry.getValue() > this.timeoutMillis) {
+        resultDateMap.remove(entry.getKey());
+        resultMap.remove(entry.getKey());
+        resultNumberMap.remove(entry.getKey());
       }
-    }
   }
 }

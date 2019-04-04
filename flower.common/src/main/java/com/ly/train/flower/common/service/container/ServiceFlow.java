@@ -109,12 +109,8 @@ public final class ServiceFlow {
     Assert.notNull(flowName, "flowName can't be null !");
     ServiceFlow serviceFlow = serviceFlows.get(flowName);
     if (serviceFlow == null) {
-      synchronized (logger) {
-        if (serviceFlow == null) {
           serviceFlow = new ServiceFlow(flowName);
           serviceFlows.putIfAbsent(flowName, serviceFlow);
-        }
-      }
     }
     return serviceFlow;
   }
@@ -196,10 +192,10 @@ public final class ServiceFlow {
     ServiceMeta preServiceMeta = ServiceLoader.getInstance().loadServiceMeta(preServiceName);
     ServiceMeta nextServiceMeta = ServiceLoader.getInstance().loadServiceMeta(nextServiceName);
     if (preServiceMeta == null) {
-      throw new ServiceNotFoundException("serviceName : " + preServiceMeta);
+      throw new ServiceNotFoundException("serviceName : " + preServiceName);
     }
     if (nextServiceMeta == null) {
-      throw new ServiceNotFoundException("serviceName : " + preServiceMeta);
+      throw new ServiceNotFoundException("serviceName : " + preServiceName);
     }
     if (!isInnerAggregateService(preServiceMeta.getServiceClass()) && isAggregateService(nextServiceMeta.getServiceClass())) {
       ServiceConfig serviceConfig = null;
