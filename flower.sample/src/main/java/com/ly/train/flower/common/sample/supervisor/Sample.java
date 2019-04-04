@@ -17,7 +17,7 @@ package com.ly.train.flower.common.sample.supervisor;
 
 import java.util.concurrent.TimeoutException;
 import org.junit.Test;
-import com.ly.train.flower.common.actor.ServiceFacade;
+import com.ly.train.flower.common.akka.ServiceFacade;
 import com.ly.train.flower.common.sample.supervisor.model.Message1;
 import com.ly.train.flower.common.sample.supervisor.model.Message2;
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.actor;
+package com.ly.train.flower.common.akka.actor;
 
 import java.util.concurrent.TimeUnit;
 import com.ly.train.flower.logging.Logger;
@@ -60,6 +60,6 @@ public class SupervisorActor extends AbstractActor {
     return Props.create(SupervisorActor.class);
   }
 
-  static class GetActorContext {
+  public static class GetActorContext {
   }
 }

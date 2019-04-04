@@ -16,7 +16,7 @@
 package com.ly.train.flower.common.sample.programflow;
 
 import org.junit.Test;
-import com.ly.train.flower.common.actor.ServiceFacade;
+import com.ly.train.flower.common.akka.ServiceFacade;
 import com.ly.train.flower.common.sample.programflow.service.ServiceA;
 import com.ly.train.flower.common.sample.programflow.service.ServiceB;
 import com.ly.train.flower.common.sample.programflow.service.ServiceC;

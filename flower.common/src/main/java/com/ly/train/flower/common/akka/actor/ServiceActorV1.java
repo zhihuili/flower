@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.actor;
+package com.ly.train.flower.common.akka.actor;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.ly.train.flower.common.akka.ServiceActorFactory;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Complete;
@@ -54,8 +55,8 @@ import scala.concurrent.duration.FiniteDuration;
  * @author zhihui.li
  *
  */
-public class ServiceActor extends AbstractActor {
-  static final Logger logger = LoggerFactory.getLogger(ServiceActor.class);
+public class ServiceActorV1 extends AbstractActor {
+  static final Logger logger = LoggerFactory.getLogger(ServiceActorV1.class);
   /**
    * 同步要求结果的actor
    */
@@ -70,10 +71,10 @@ public class ServiceActor extends AbstractActor {
   private final Set<RefType> nextServiceActors;
 
   static public Props props(String flowName, String serviceName, int index, ActorSystem system) {
-    return Props.create(ServiceActor.class, () -> new ServiceActor(flowName, serviceName, index, system));
+    return Props.create(ServiceActorV1.class, () -> new ServiceActorV1(flowName, serviceName, index, system));
   }
 
-  public ServiceActor(String flowName, String serviceName, int index, ActorSystem system) throws Exception {
+  public ServiceActorV1(String flowName, String serviceName, int index, ActorSystem system) throws Exception {
     this.flowName = flowName;
     this.serviceName = serviceName;
     this.nextServiceActors = new HashSet<RefType>();
@@ -95,9 +96,9 @@ public class ServiceActor extends AbstractActor {
 
   @Override
   public Receive createReceive() {
-    return receiveBuilder().match(ServiceContext.class, serviceContext -> {
+    return receiveBuilder().match(ServiceContext.class, fm -> {
       try {
-        onReceive(serviceContext);
+        onReceive(fm);
       } catch (Throwable e) {
         logger.error("", e);
       }
@@ -137,6 +138,9 @@ public class ServiceActor extends AbstractActor {
     }
 
     Web web = serviceContext.getWeb();
+    if (service instanceof Complete) {
+      // FlowContext.removeServiceContext(fm.getTransactionId());
+    }
     if (web != null) {
       if (service instanceof Flush) {
         web.flush();

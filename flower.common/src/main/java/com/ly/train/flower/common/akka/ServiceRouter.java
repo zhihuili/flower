@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.actor;
+package com.ly.train.flower.common.akka;
 
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;

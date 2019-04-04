@@ -16,7 +16,7 @@
 package com.ly.train.flower.common.sample.condition;
 
 import org.junit.Test;
-import com.ly.train.flower.common.actor.ServiceFacade;
+import com.ly.train.flower.common.akka.ServiceFacade;
 import com.ly.train.flower.common.sample.condition.service.ServiceA;
 import com.ly.train.flower.common.sample.condition.service.ServiceB;
 import com.ly.train.flower.common.sample.condition.service.ServiceC;

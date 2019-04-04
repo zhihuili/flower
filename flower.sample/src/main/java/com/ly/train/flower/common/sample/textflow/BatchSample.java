@@ -21,7 +21,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.ly.train.flower.common.actor.ServiceFacade;
+import com.ly.train.flower.common.akka.ServiceFacade;
 import com.ly.train.flower.common.sample.textflow.model.Message1;
 import com.ly.train.flower.common.sample.textflow.model.Message2;
 
