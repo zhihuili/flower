@@ -223,6 +223,7 @@
 		<module>flower.web</module>
 		<module>flower.assembly</module>
 		<module>flower.bom</module>
+		<module>flower.container</module>
 	</modules>
 
 	<build>

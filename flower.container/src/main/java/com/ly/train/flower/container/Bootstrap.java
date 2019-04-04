@@ -15,8 +15,8 @@
  */
 package com.ly.train.flower.container;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou

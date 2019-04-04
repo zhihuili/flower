@@ -22,8 +22,8 @@ import com.ly.train.flower.logging.LoggerFactory;
  * @author leeyazhou
  *
  */
-public class SprintBootstrap extends Bootstrap {
-  protected static final Logger logger = LoggerFactory.getLogger(SprintBootstrap.class);
+public class SpringBootstrap extends Bootstrap {
+  protected static final Logger logger = LoggerFactory.getLogger(SpringBootstrap.class);
 
   @Override
   public void doStartup() {
