@@ -25,7 +25,7 @@ import com.ly.train.flower.common.util.URL;
  * @author leeyazhou
  *
  */
-@SPI(value = "simple")
+@SPI(value = "flower")
 public interface RegistryFactory {
 
   Registry createRegistry(URL url);

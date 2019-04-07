@@ -16,38 +16,30 @@
 /**
  * 
  */
-package com.ly.train.flower.registry;
+package com.ly.flower.center.service;
 
-import java.util.List;
-import com.ly.train.flower.common.service.config.ServiceConfig;
-import com.ly.train.flower.common.util.URL;
+import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.ly.flower.center.common.ServiceManager;
+import com.ly.train.flower.common.annotation.FlowerService;
+import com.ly.train.flower.common.service.Service;
+import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou
  *
  */
-public interface Registry {
+@FlowerService
+public class ServiceInfoListService implements Service<Object, Set<ServiceInfo>> {
 
-  /**
-   * 注册服务
-   * 
-   * @param serviceInfo {@link ServiceInfo}
-   * @return true / false
-   */
-  boolean register(ServiceInfo serviceInfo);
+  @Autowired
+  protected ServiceManager serviceManager;
 
-  boolean registerServiceConfig(ServiceConfig serviceConfig);
+  @Override
+  public Set<ServiceInfo> process(Object message, ServiceContext context) throws Throwable {
 
-  /**
-   * 查询服务提供者
-   * 
-   * @param serviceInfo {@link ServiceInfo}
-   * @return {@link ServiceInfo}
-   */
-  List<ServiceInfo> getProvider(ServiceInfo serviceInfo);
-  
-  List<ServiceConfig> getServiceConfig(ServiceConfig serviceConfig);
+    return serviceManager.getAllServiceInfo();
+  }
 
-  URL getUrl();
 }

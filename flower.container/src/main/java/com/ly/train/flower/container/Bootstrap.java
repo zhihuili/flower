@@ -15,6 +15,8 @@
  */
 package com.ly.train.flower.container;
 
+import java.net.URL;
+import com.ly.train.flower.common.loader.FlowerClassLoader;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
@@ -30,8 +32,9 @@ public abstract class Bootstrap {
     final Logger logger = LoggerFactory.getLogger(Bootstrap.class);
     logger.info("flower start class : {}", mainClass);
     try {
+      ClassLoader classLoader = new FlowerClassLoader(new URL[0], Bootstrap.class.getClassLoader());
       @SuppressWarnings("unchecked")
-      Class<Bootstrap> bootstrapClass = (Class<Bootstrap>) Class.forName(mainClass);
+      Class<Bootstrap> bootstrapClass = (Class<Bootstrap>) Class.forName(mainClass, true, classLoader);
       Bootstrap bootstrap = bootstrapClass.newInstance();
       bootstrap.startup(args);
     } catch (Throwable e) {

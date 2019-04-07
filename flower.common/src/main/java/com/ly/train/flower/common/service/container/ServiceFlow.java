@@ -160,6 +160,11 @@ public final class ServiceFlow {
 
   public ServiceFlow build() {
     logger.info(" build {} success. \n {}", flowName, this);
+    logger.info("start register ServiceConfig : {}", headServiceConfig);
+    Set<Registry> registries = SimpleFlowerFactory.get().getRegistry();
+    for (Registry registry : registries) {
+      registry.registerServiceConfig(headServiceConfig);
+    }
     return this;
   }
 
@@ -339,7 +344,8 @@ public final class ServiceFlow {
   private ServiceConfig getOrCreateServiceConfig(String serviceName) {
     ServiceConfig serviceConfig = serviceConfigs.get(serviceName);
     if (serviceConfig == null) {
-      serviceConfig = new ServiceConfig(flowName);
+      serviceConfig = new ServiceConfig();
+      serviceConfig.setFlowName(flowName);
       serviceConfig.setServiceName(serviceName);
       serviceConfig.setIndex(index.getAndIncrement());
       serviceConfig.setServiceMeta(loadServiceMeta(serviceConfig));

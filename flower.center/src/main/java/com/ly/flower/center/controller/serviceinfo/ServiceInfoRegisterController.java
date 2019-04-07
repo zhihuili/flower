@@ -16,7 +16,7 @@
 /**
  * 
  */
-package com.ly.flower.center.controller.service;
+package com.ly.flower.center.controller.serviceinfo;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.ly.flower.center.controller.BaseController;
-import com.ly.flower.center.service.RegisterService;
 import com.ly.flower.center.service.ReturnService;
+import com.ly.flower.center.service.ServiceInfoRegisterService;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.registry.config.ServiceInfo;
@@ -36,8 +36,8 @@ import com.ly.train.flower.registry.config.ServiceInfo;
  */
 @RestController
 @RequestMapping("/service/")
-@Flower(serviceName = "RegisterService", value = "registerFlow")
-public class RegisterController extends BaseController {
+@Flower(serviceName = "ServiceInfoRegisterService", value = "registerFlow")
+public class ServiceInfoRegisterController extends BaseController {
 
   @RequestMapping("register")
   protected void process(String data, HttpServletRequest req) throws IOException {
@@ -50,6 +50,6 @@ public class RegisterController extends BaseController {
 
   @Override
   public void buildFlower() {
-    ServiceFlow.getOrCreate(getFlowName()).buildFlow(RegisterService.class, ReturnService.class);
+    ServiceFlow.getOrCreate(getFlowName()).buildFlow(ServiceInfoRegisterService.class, ReturnService.class);
   }
 }

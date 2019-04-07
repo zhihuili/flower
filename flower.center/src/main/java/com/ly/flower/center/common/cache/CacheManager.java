@@ -144,7 +144,7 @@ public class CacheManager {
     Cache<T> cache = new Cache<>();
     cache.setKey(key);
     cache.setValue(content);
-    cache.setTimeToLive(ttl + new Date().getTime());
+    cache.setTimeToLive(ttl);
     cache.setExpired(false);
     putCache(key, cache);
   }

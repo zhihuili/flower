@@ -29,17 +29,19 @@ public class ActorSelectionTest extends TestBase {
   @Test
   public void testActorSelection() throws Exception {
     final String flowName = "actorSelection";
-    ServiceFlow.getOrCreate(flowName).buildFlow("StringService", "UserService").build();
+    ServiceFlow.getOrCreate(flowName).buildFlow("StringService", "UserService")
+        .buildFlow("UserService", "StringService2").build();
     Object ret = ServiceFacade.syncCallService(flowName, "我是测试远程消息。");
     System.out.println("返回结果：" + ret);
     Thread.sleep(10000);
   }
+
   @Test
   public void testActorSelectionAsyncCall() throws Exception {
     final String flowName = "actorSelection";
     ServiceFlow.getOrCreate(flowName).buildFlow("StringService", "UserService").build();
-    int i=0;
-    while(i++<100) {
+    int i = 0;
+    while (i++ < 100) {
       ServiceFacade.asyncCallService(flowName, "我是测试远程消息。" + i);
       Thread.sleep(1000);
     }

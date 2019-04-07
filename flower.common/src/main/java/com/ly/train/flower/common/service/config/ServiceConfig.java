@@ -66,7 +66,8 @@ public class ServiceConfig implements Serializable {
 
   public void setLocal(boolean local) {
     this.local = local;
-    this.serviceMeta.setLocal(local);
+    if (serviceMeta != null)
+      this.serviceMeta.setLocal(local);
   }
 
   /**
@@ -152,6 +153,19 @@ public class ServiceConfig implements Serializable {
     }
     this.addresses.add(address);
     return this;
+  }
+
+  public ServiceConfig setFlowName(String flowName) {
+    this.flowName = flowName;
+    return this;
+  }
+
+  public void setNextServiceConfigs(Set<ServiceConfig> nextServiceConfigs) {
+    this.nextServiceConfigs = nextServiceConfigs;
+  }
+
+  public void setPreviousServiceConfigs(Set<ServiceConfig> previousServiceConfigs) {
+    this.previousServiceConfigs = previousServiceConfigs;
   }
 
   public ServiceMeta getServiceMeta() {

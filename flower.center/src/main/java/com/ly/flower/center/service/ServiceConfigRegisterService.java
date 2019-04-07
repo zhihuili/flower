@@ -22,22 +22,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.ly.flower.center.common.ServiceManager;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.service.Service;
+import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.ServiceContext;
-import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou
  *
  */
 @FlowerService
-public class RegisterService implements Service<ServiceInfo, Boolean> {
+public class ServiceConfigRegisterService implements Service<ServiceConfig, Boolean> {
 
   @Autowired
   protected ServiceManager serviceManager;
 
   @Override
-  public Boolean process(ServiceInfo message, ServiceContext context) throws Throwable {
-    serviceManager.addServiceInfo(message);
+  public Boolean process(ServiceConfig message, ServiceContext context) throws Throwable {
+    serviceManager.addServiceConfig(message);
     return Boolean.TRUE;
   }
 

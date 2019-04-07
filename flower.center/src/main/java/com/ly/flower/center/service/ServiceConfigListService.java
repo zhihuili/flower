@@ -16,43 +16,30 @@
 /**
  * 
  */
-package com.ly.train.flower.registry.zookeeper;
+package com.ly.flower.center.service;
 
-import java.util.List;
+import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.ly.flower.center.common.ServiceManager;
+import com.ly.train.flower.common.annotation.FlowerService;
+import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.config.ServiceConfig;
-import com.ly.train.flower.common.util.URL;
-import com.ly.train.flower.registry.AbstractRegistry;
-import com.ly.train.flower.registry.config.ServiceInfo;
+import com.ly.train.flower.common.service.container.ServiceContext;
 
 /**
  * @author leeyazhou
  *
  */
-public class ZookeeperRegistry extends AbstractRegistry {
+@FlowerService
+public class ServiceConfigListService implements Service<Object, Set<ServiceConfig>> {
 
-
-  public ZookeeperRegistry(URL url) {
-    super(url);
-  }
-
-  @Override
-  public boolean doRegister(ServiceInfo serviceInfo) {
-    return false;
-  }
+  @Autowired
+  protected ServiceManager serviceManager;
 
   @Override
-  public List<ServiceInfo> doGetProvider(ServiceInfo serviceInfo) {
-    return null;
-  }
+  public Set<ServiceConfig> process(Object message, ServiceContext context) throws Throwable {
 
-  @Override
-  public boolean doRegisterServiceConfig(ServiceConfig serviceConfig) {
-    return false;
-  }
-
-  @Override
-  public List<ServiceConfig> doGetServiceConfig(ServiceConfig serviceConfig) {
-    return null;
+    return serviceManager.getAllServiceConfig();
   }
 
 }

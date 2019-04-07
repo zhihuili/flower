@@ -16,7 +16,7 @@
 /**
  * 
  */
-package com.ly.flower.center.controller.service;
+package com.ly.flower.center.controller.serviceconfig;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,31 +25,31 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.ly.flower.center.controller.BaseController;
 import com.ly.flower.center.service.ReturnService;
-import com.ly.flower.center.service.ServiceListService;
+import com.ly.flower.center.service.ServiceConfigListService;
 import com.ly.train.flower.common.annotation.Flower;
+import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.ServiceFlow;
-import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou
  *
  */
 @RestController
-@RequestMapping("/service/")
-@Flower(serviceName = "ServiceListService", value = "listservice")
-public class ListController extends BaseController {
+@RequestMapping("/serviceconfig/")
+@Flower(serviceName = "ServiceConfigListService", value = "listServiceConfig")
+public class ServiceConfigListController extends BaseController {
 
   @RequestMapping("list")
   protected void process(String data, HttpServletRequest req) throws IOException {
-    ServiceInfo serviceInfo = JSONObject.parseObject(data, ServiceInfo.class);
-    logger.info("请求参数 : {}", serviceInfo);
-    doProcess(serviceInfo, req);
+    ServiceConfig serviceConfig = JSONObject.parseObject(data, ServiceConfig.class);
+    logger.info("请求参数 : {}", serviceConfig);
+    doProcess(serviceConfig, req);
   }
 
 
 
   @Override
   public void buildFlower() {
-    ServiceFlow.getOrCreate(getFlowName()).buildFlow(ServiceListService.class, ReturnService.class);
+    ServiceFlow.getOrCreate(getFlowName()).buildFlow(ServiceConfigListService.class, ReturnService.class);
   }
 }

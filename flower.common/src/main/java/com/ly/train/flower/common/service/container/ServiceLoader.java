@@ -73,8 +73,9 @@ public class ServiceLoader {
   public boolean registerFlowerService(String serviceName, FlowerService flowerService) {
     Object ret = servicesCache.putIfAbsent(serviceName, flowerService);
     if (ret != null) {
-      logger.warn("flowerservice is already exist, so discard it. serviceName : {}, flowerService : {}", serviceName,
-          flowerService);
+      if (!ret.equals(flowerService))
+        logger.warn("flowerservice is already exist, so discard it. serviceName : {}, flowerService : {}", serviceName,
+            flowerService);
     } else {
       logger.info("register flowerservice success , serviceName : {}, flowerService : {}", serviceName, flowerService);
     }

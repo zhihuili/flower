@@ -20,6 +20,7 @@ package com.ly.train.flower.registry.simple;
 
 import java.util.List;
 import com.alibaba.fastjson.JSONObject;
+import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.util.HttpClient;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.common.util.URL;
@@ -38,12 +39,23 @@ public class SimpleRegistry extends AbstractRegistry {
 
   @Override
   public boolean doRegister(ServiceInfo serviceInfo) {
-//    logger.info("register serviceInfo : {}", serviceInfo);
+    // logger.info("register serviceInfo : {}", serviceInfo);
     String u = String.format("http://%s:%s/service/register", url.getHost(), url.getPort());
 
     String ret = HttpClient.builder().setUrl(u).setParam("data=" + JSONObject.toJSONString(serviceInfo)).build().post();
-//    logger.info("register service result : {}, serviceInfo : {}", ret, serviceInfo);
+    // logger.info("register service result : {}, serviceInfo : {}", ret,
+    // serviceInfo);
     return Boolean.TRUE;
+  }
+
+  @Override
+  public boolean doRegisterServiceConfig(ServiceConfig serviceConfig) {
+    String u = String.format("http://%s:%s/serviceconfig/register", url.getHost(), url.getPort());
+
+    String ret =
+        HttpClient.builder().setUrl(u).setParam("data=" + JSONObject.toJSONString(serviceConfig)).build().post();
+
+    return false;
   }
 
   @Override
@@ -52,10 +64,11 @@ public class SimpleRegistry extends AbstractRegistry {
     if (serviceInfo != null) {
       param = JSONObject.toJSONString(serviceInfo);
     }
-//    logger.info("register serviceInfo : {}", serviceInfo);
+    // logger.info("register serviceInfo : {}", serviceInfo);
     String u = String.format("http://%s:%s/service/list", url.getHost(), url.getPort());
     String ret = HttpClient.builder().setUrl(u).setParam("data=" + param).build().post();
-//    logger.info("register service result : {}, serviceInfo : {}", ret, serviceInfo);
+    // logger.info("register service result : {}, serviceInfo : {}", ret,
+    // serviceInfo);
     if (StringUtil.isNotBlank(ret)) {
       ret = JSONObject.parseObject(ret).getString("data");
       return JSONObject.parseArray(ret, ServiceInfo.class);
@@ -64,9 +77,20 @@ public class SimpleRegistry extends AbstractRegistry {
   }
 
   @Override
-  public String toString() {
-    return "SimpleRegistry [url=" + url + "]";
+  public List<ServiceConfig> doGetServiceConfig(ServiceConfig serviceConfig) {
+    String param = "";
+    if (serviceConfig != null) {
+      param = JSONObject.toJSONString(serviceConfig);
+    }
+    // logger.info("register serviceInfo : {}", serviceInfo);
+    String u = String.format("http://%s:%s/serviceconfig/list", url.getHost(), url.getPort());
+    String ret = HttpClient.builder().setUrl(u).setParam("data=" + param).build().post();
+    // logger.info("register service result : {}, serviceInfo : {}", ret,
+    // serviceInfo);
+    if (StringUtil.isNotBlank(ret)) {
+      ret = JSONObject.parseObject(ret).getString("data");
+      return JSONObject.parseArray(ret, ServiceConfig.class);
+    }
+    return null;
   }
-
-
 }

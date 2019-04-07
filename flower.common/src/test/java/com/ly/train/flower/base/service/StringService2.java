@@ -13,33 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package com.ly.flower.center.service;
+package com.ly.train.flower.base.service;
 
-import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
-import com.ly.flower.center.common.ServiceManager;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
-import com.ly.train.flower.registry.config.ServiceInfo;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
  *
  */
 @FlowerService
-public class ServiceListService implements Service<Object, Set<ServiceInfo>> {
-
-  @Autowired
-  protected ServiceManager serviceManager;
+public class StringService2 implements Service<String, String> {
+  private static final Logger logger = LoggerFactory.getLogger(StringService2.class);
 
   @Override
-  public Set<ServiceInfo> process(Object message, ServiceContext context) throws Throwable {
-
-    return serviceManager.getAll();
+  public String process(String message, ServiceContext context) throws Throwable {
+    logger.info("收到消息：{}", message);
+    message += "-->处理后";
+    logger.info("处理消息：{}", message);
+    return message;
   }
 
 }

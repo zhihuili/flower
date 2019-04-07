@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import com.ly.flower.center.common.cache.Cache;
 import com.ly.flower.center.common.cache.CacheManager;
+import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
@@ -40,9 +41,6 @@ public class ServiceManager {
 
   private Timer timer = new Timer("flower-service-scanner");
 
-  /**
-   * 
-   */
   public ServiceManager() {
     timer.schedule(new TimerTask() {
 
@@ -69,18 +67,35 @@ public class ServiceManager {
       cache = CacheManager.getContent(serviceInfo.getClassName());
     } else {
       cache.getValue().getAddresses().addAll(serviceInfo.getAddresses());
+      cache.setTimeToLive(6000);
     }
     return true;
   }
 
-  public Set<ServiceInfo> getAll() {
-
+  public Set<ServiceInfo> getAllServiceInfo() {
     Set<ServiceInfo> ret = new HashSet<ServiceInfo>();
     Set<String> keys = CacheManager.getAllKey();
     for (String key : keys) {
-      Cache<ServiceInfo> cache = CacheManager.getContent(key);
-      if (cache != null) {
-        ret.add(cache.getValue());
+      Cache<Object> cache = CacheManager.getContent(key);
+      if (cache != null && cache.getValue() instanceof ServiceInfo) {
+        ret.add((ServiceInfo) cache.getValue());
+      }
+    }
+    return ret;
+  }
+
+  public boolean addServiceConfig(ServiceConfig serviceConfig) {
+    CacheManager.putContent(serviceConfig.getFlowName(), serviceConfig, 6000);
+    return true;
+  }
+
+  public Set<ServiceConfig> getAllServiceConfig() {
+    Set<ServiceConfig> ret = new HashSet<ServiceConfig>();
+    Set<String> keys = CacheManager.getAllKey();
+    for (String key : keys) {
+      Cache<Object> cache = CacheManager.getContent(key);
+      if (cache != null && cache.getValue() instanceof ServiceConfig) {
+        ret.add((ServiceConfig) cache.getValue());
       }
     }
     return ret;
