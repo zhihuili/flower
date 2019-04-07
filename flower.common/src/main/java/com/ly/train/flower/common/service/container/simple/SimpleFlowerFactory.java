@@ -20,8 +20,18 @@ package com.ly.train.flower.common.service.container.simple;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import org.reflections.Reflections;
+import com.ly.train.flower.common.akka.ServiceActorFactory;
+import com.ly.train.flower.common.annotation.FlowerServiceUtil;
 import com.ly.train.flower.common.exception.ExceptionHandler;
 import com.ly.train.flower.common.service.container.FlowerFactory;
+import com.ly.train.flower.common.service.container.ServiceFlow;
+import com.ly.train.flower.common.service.container.ServiceLoader;
+import com.ly.train.flower.common.util.Assert;
+import com.ly.train.flower.common.util.ExtensionLoader;
+import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.config.FlowerConfig;
 import com.ly.train.flower.config.parser.FlowerConfigParser;
@@ -30,8 +40,6 @@ import com.ly.train.flower.logging.LoggerFactory;
 import com.ly.train.flower.registry.Registry;
 import com.ly.train.flower.registry.RegistryFactory;
 import com.ly.train.flower.registry.config.RegistryConfig;
-import com.ly.train.flower.registry.simple.SimpleRegistryFactory;
-import com.ly.train.flower.registry.zookeeper.ZookeeperRegistryFactory;
 
 /**
  * @author leeyazhou
@@ -39,13 +47,19 @@ import com.ly.train.flower.registry.zookeeper.ZookeeperRegistryFactory;
  */
 public class SimpleFlowerFactory implements FlowerFactory {
   private static final Logger logger = LoggerFactory.getLogger(SimpleFlowerFactory.class);
+
+  // <flowName, ServiceFlow>
+  private static final ConcurrentMap<String, ServiceFlow> serviceFlows = new ConcurrentHashMap<>();
   private static FlowerFactory instance;
 
-  public SimpleFlowerFactory() {}
+
 
   private FlowerConfig flowerConfig;
   private Set<Registry> registries = new HashSet<>();
   private ExceptionHandler exceptionHandler;
+  private ServiceActorFactory serviceActorFactory;
+
+  public SimpleFlowerFactory() {}
 
   public static FlowerFactory get() {
     if (instance == null) {
@@ -63,37 +77,45 @@ public class SimpleFlowerFactory implements FlowerFactory {
   public boolean init() {
     initFlowerConfig();
     initRegistryFactories();
-    return false;
+    scanFlowerTypes();
+    this.serviceActorFactory = new ServiceActorFactory(this);
+    return true;
   }
 
   private void initRegistryFactories() {
     Set<RegistryConfig> registryConfigs = getFlowerConfig().getRegistry();
-    if (registryConfigs != null) {
-      for (RegistryConfig config : registryConfigs) {
-        RegistryFactory registryFactory = null;
-        if ("flower".equalsIgnoreCase(config.getProtocol())) {
-          registryFactory = new SimpleRegistryFactory();
-        } else if ("zookeeper".equalsIgnoreCase(config.getProtocol())) {
-          registryFactory = new ZookeeperRegistryFactory();
-        }
+    if (registryConfigs == null) {
+      return;
+    }
 
-        if (registryFactory != null) {
-          URL url = new URL(config.getProtocol(), config.getHost(), config.getPort());
-          this.registries.add(registryFactory.createRegistry(url));
-        }
+    for (RegistryConfig config : registryConfigs) {
+      RegistryFactory registryFactory = ExtensionLoader.load(RegistryFactory.class).load(config.getProtocol());
+      if (registryFactory != null) {
+        URL url = new URL(config.getProtocol(), config.getHost(), config.getPort());
+        this.registries.add(registryFactory.createRegistry(url));
       }
     }
+
   }
 
   private void initFlowerConfig() {
-    if (flowerConfig == null) {
-      synchronized (this) {
-        if (flowerConfig == null) {
-          flowerConfig = new FlowerConfigParser().parse();
-          logger.info("load flower config : {}", flowerConfig);
-        }
-      }
+    this.flowerConfig = new FlowerConfigParser().parse();
+    logger.info("load flower config : {}", flowerConfig);
+  }
+
+  protected void scanFlowerTypes() {
+    String basePackage = getFlowerConfig().getBasePackage();
+    if (StringUtil.isBlank(basePackage)) {
+      return;
     }
+    Reflections reflections = new Reflections(basePackage);
+    Set<Class<?>> flowers =
+        reflections.getTypesAnnotatedWith(com.ly.train.flower.common.annotation.FlowerService.class);
+    logger.info("scan flowerService, basePackage : {}, find flowerService : {}", basePackage, flowers.size());
+    for (Class<?> clazz : flowers) {
+      ServiceLoader.getInstance().registerServiceType(FlowerServiceUtil.getServiceName(clazz), clazz);
+    }
+
   }
 
   @Override
@@ -107,10 +129,27 @@ public class SimpleFlowerFactory implements FlowerFactory {
   }
 
   @Override
+  public ServiceFlow getOrCreateServiceFlow(String flowName) {
+    Assert.notNull(flowName, "flowName can't be null !");
+    ServiceFlow serviceFlow = serviceFlows.get(flowName);
+    if (serviceFlow == null) {
+      serviceFlow = new ServiceFlow(flowName);
+      serviceFlows.putIfAbsent(flowName, serviceFlow);
+    }
+    return serviceFlow;
+  }
+
+
+  @Override
   public ExceptionHandler getExceptionHandler() {
     if (this.exceptionHandler == null) {
       this.exceptionHandler = new ExceptionHandler();
     }
     return exceptionHandler;
+  }
+
+  @Override
+  public ServiceActorFactory getServiceActorFactory() {
+    return serviceActorFactory;
   }
 }

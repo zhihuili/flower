@@ -16,7 +16,6 @@
 package com.ly.train.flower.common.service.container;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -24,23 +23,32 @@ import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
+import com.ly.train.flower.common.util.URL;
+import com.ly.train.flower.config.FlowerConfig;
 import com.ly.train.flower.registry.Registry;
 import com.ly.train.flower.registry.config.ServiceInfo;
 
 public class ServiceFactory {
   static final Logger logger = LoggerFactory.getLogger(ServiceFactory.class);
 
-  public static void registerService(String serviceName, String serviceClass) {
-    ServiceLoader.getInstance().registerServiceType(serviceName, serviceClass);
+  public static void registerService(String serviceName, String serviceClassName) {
+    ServiceLoader.getInstance().registerServiceType(serviceName, serviceClassName);
 
-    serviceClass = ServiceLoader.getInstance().loadServiceMeta(serviceName).getServiceClass().getName();
     Set<Registry> registries = SimpleFlowerFactory.get().getRegistry();
+    if (registries.isEmpty()) {
+      return;
+    }
+    ServiceMeta serviceMeta = ServiceLoader.getInstance().loadServiceMeta(serviceName);
+    serviceClassName = serviceMeta.getServiceClassName();
+    FlowerConfig flowerConfig = SimpleFlowerFactory.get().getFlowerConfig();
+
     ServiceInfo serviceInfo = new ServiceInfo();
-    serviceInfo.setApplication(SimpleFlowerFactory.get().getFlowerConfig().getName());
-    serviceInfo.setHost(new HashSet<>());
-    serviceInfo.getHost().add(SimpleFlowerFactory.get().getFlowerConfig().getHost());
+    serviceInfo.setApplication(flowerConfig.getName());
+    serviceInfo.addAddress(new URL("flower", flowerConfig.getHost(), flowerConfig.getPort()));
     serviceInfo.setCreateTime(new Date());
-    serviceInfo.setClassName(serviceClass);
+    serviceInfo.setClassName(serviceClassName);
+    serviceInfo.setServiceMeta(serviceMeta);
+    serviceInfo.setServiceName(serviceName);
     for (Registry registry : registries) {
       registry.register(serviceInfo);
     }
@@ -70,7 +78,7 @@ public class ServiceFactory {
     if (serviceMeta == null) {
       throw new ServiceNotFoundException("serviceName : " + serviceName);
     }
-    return serviceMeta.getServiceClass().getName();
+    return serviceMeta.getServiceClassName();
   }
 
   public static String getServiceClassParameter(String serviceName) {

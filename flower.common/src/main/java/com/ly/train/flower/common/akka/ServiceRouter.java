@@ -15,14 +15,17 @@
  */
 package com.ly.train.flower.common.akka;
 
-import com.ly.train.flower.common.akka.actor.ActorRefWrapper;
+import com.ly.train.flower.common.akka.actor.wrapper.ActorRefWrapper;
+import com.ly.train.flower.common.akka.actor.wrapper.ActorSelectionWrapper;
+import com.ly.train.flower.common.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.common.loadbalance.LoadBalance;
+import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
 import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.ExtensionLoader;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
-import akka.actor.ActorRef;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import scala.concurrent.Await;
@@ -31,14 +34,17 @@ public class ServiceRouter {
   protected static final Logger logger = LoggerFactory.getLogger(ServiceRouter.class);
   private static final LoadBalance loadBalance = ExtensionLoader.load(LoadBalance.class).load();
   private int number = 2 << 6;
-  private ActorRefWrapper[] ar;
-  private String serviceName;
+  private ActorWrapper[] ar;
+  private final ServiceConfig serviceConfig;
+  private final ServiceActorFactory serviceActorFactory;
 
-  public ServiceRouter(String serviceName, int number) {
-    this.serviceName = serviceName;
+  public ServiceRouter(ServiceConfig serviceConfig, int number) {
+    this.serviceConfig = serviceConfig;
+    this.serviceActorFactory = SimpleFlowerFactory.get().getServiceActorFactory();
     if (number > 0) {
       this.number = number;
     }
+    initServiceActor();
   }
 
 
@@ -50,37 +56,34 @@ public class ServiceRouter {
    * @throws Exception
    */
   public Object syncCallService(ServiceContext serviceContext) throws Exception {
-    ActorRef actorRef = chooseOne(serviceContext).getActorRef();
-    return Await.result(Patterns.ask(actorRef, serviceContext, new Timeout(Constant.defaultTimeout_3S)), Constant.defaultTimeout_3S);
+    ActorWrapper actorRef = chooseOne(serviceContext);
+    if (actorRef instanceof ActorRefWrapper) {
+      return Await.result(Patterns.ask(((ActorRefWrapper) actorRef).getActorRef(), serviceContext,
+          new Timeout(Constant.defaultTimeout_10S)), Constant.defaultTimeout_10S);
+    } else {
+      return Await.result(Patterns.ask(((ActorSelectionWrapper) actorRef).getActorSelection(), serviceContext,
+          new Timeout(Constant.defaultTimeout_10S)), Constant.defaultTimeout_10S);
+    }
   }
 
   public void asyncCallService(ServiceContext serviceContext) {
-    ActorRefWrapper actorRef = chooseOne(serviceContext);
-    actorRef.tell(serviceContext, actorRef.getActorRef());
+    ActorWrapper actorRef = chooseOne(serviceContext);
+    actorRef.tell(serviceContext);
   }
 
-  private ActorRefWrapper chooseOne(ServiceContext serviceContext) {
-    if (ar == null) {
-      synchronized (this) {
-        if (ar == null) {
-          ActorRefWrapper[] t = new ActorRefWrapper[number];
-          for (int i = 0; i < number; i++) {
-            t[i] = ServiceActorFactory.buildServiceActor(serviceName, i, number);
-          }
-          ar = t;
-        }
-      }
+  private void initServiceActor() {
+    ar = new ActorWrapper[number];
+    for (int i = 0; i < number; i++) {
+      ar[i] = serviceActorFactory.buildServiceActor(serviceConfig, i, number);
     }
+  }
+
+  private ActorWrapper chooseOne(ServiceContext serviceContext) {
     return loadBalance.choose(ar, serviceContext);
   }
 
-  public String getServiceName() {
-    return serviceName;
+  public ServiceConfig getServiceConfig() {
+    return serviceConfig;
   }
-
-  public void setServiceName(String serviceName) {
-    this.serviceName = serviceName;
-  }
-
 
 }

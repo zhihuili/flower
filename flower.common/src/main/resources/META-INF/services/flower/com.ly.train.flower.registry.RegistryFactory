@@ -1,2 +1,2 @@
-simple = com.ly.train.flower.registry.simple.SimpleRegistryFactory
-zookeeper = com.ly.train.flower.registry.simple.ZookeeperRegistryFactory
+flower = com.ly.train.flower.registry.simple.SimpleRegistryFactory
+zookeeper = com.ly.train.flower.registry.zookeeper.ZookeeperRegistryFactory

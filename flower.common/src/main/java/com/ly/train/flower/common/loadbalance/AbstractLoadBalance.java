@@ -15,7 +15,7 @@
  */
 package com.ly.train.flower.common.loadbalance;
 
-import com.ly.train.flower.common.akka.actor.ActorRefWrapper;
+import com.ly.train.flower.common.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
@@ -28,7 +28,7 @@ public abstract class AbstractLoadBalance implements LoadBalance {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   @Override
-  public ActorRefWrapper choose(ActorRefWrapper[] actorRefs, ServiceContext serviceContext) {
+  public ActorWrapper choose(ActorWrapper[] actorRefs, ServiceContext serviceContext) {
     if (actorRefs == null || actorRefs.length == 0) {
       return null;
     }
@@ -38,6 +38,6 @@ public abstract class AbstractLoadBalance implements LoadBalance {
     return doChooseOne(actorRefs, serviceContext);
   }
 
-  public abstract ActorRefWrapper doChooseOne(ActorRefWrapper[] actorRefs, ServiceContext serviceContext);
+  public abstract ActorWrapper doChooseOne(ActorWrapper[] actorRefs, ServiceContext serviceContext);
 
 }

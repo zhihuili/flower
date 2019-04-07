@@ -19,6 +19,7 @@
 package com.ly.train.flower.common.service.container;
 
 import java.util.Set;
+import com.ly.train.flower.common.akka.ServiceActorFactory;
 import com.ly.train.flower.common.exception.ExceptionHandler;
 import com.ly.train.flower.config.FlowerConfig;
 import com.ly.train.flower.registry.Registry;
@@ -45,6 +46,17 @@ public interface FlowerFactory {
   Set<Registry> getRegistry();
 
   ExceptionHandler getExceptionHandler();
+
+  /**
+   * 1. 已经存在指定 flowName 的流程，则返回原有流程对象<br/>
+   * 2. 不存在指定 flowName 的流程，则新建一个流程对象并缓存
+   * 
+   * @param flowName 流程名称
+   * @return {@code ServiceFlow}
+   */
+  ServiceFlow getOrCreateServiceFlow(String flowName);
+
+  ServiceActorFactory getServiceActorFactory();
 
   /**
    * 初始化

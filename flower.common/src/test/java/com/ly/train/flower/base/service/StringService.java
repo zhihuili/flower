@@ -13,13 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
 package com.ly.train.flower.base.service;
 
-import java.util.Set;
-import com.ly.train.flower.base.model.User;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
@@ -31,12 +26,14 @@ import com.ly.train.flower.logging.LoggerFactory;
  *
  */
 @FlowerService
-public class ServiceD implements Service<Set<User>, Set<User>> {
-  static final Logger logger = LoggerFactory.getLogger(ServiceD.class);
+public class StringService implements Service<String, String> {
+  private static final Logger logger = LoggerFactory.getLogger(StringService.class);
 
   @Override
-  public Set<User> process(Set<User> message, ServiceContext context) throws Throwable {
-    logger.info("结束处理消息, message : {}", message);
+  public String process(String message, ServiceContext context) throws Throwable {
+    logger.info("收到消息：{}", message);
+    message += "-->处理后";
+    logger.info("处理消息：{}", message);
     return message;
   }
 

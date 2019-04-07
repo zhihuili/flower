@@ -30,7 +30,6 @@ import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.ServiceContext;
-import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceLoader;
 import com.ly.train.flower.common.service.impl.AggregateService;
@@ -79,6 +78,8 @@ public class ServiceActor extends AbstractFlowerActor {
     this.count = count;
   }
 
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  @Override
   public void onServiceContextReceived(ServiceContext serviceContext) throws Throwable {
     FlowMessage fm = serviceContext.getFlowMessage();
     if (needCacheActorRef(serviceContext)) {
@@ -147,7 +148,7 @@ public class ServiceActor extends AbstractFlowerActor {
    */
   public FlowerService getService(ServiceContext serviceContext) {
     if (this.service == null) {
-      this.service = ServiceFactory.getService(serviceName);
+      this.service = ServiceLoader.getInstance().loadService(serviceName);
       if (service instanceof Aggregate) {
         ((AggregateService) service)
             .setSourceNumber(ServiceFlow.getOrCreate(serviceContext.getFlowName()).getServiceConfig(serviceName).getJointSourceNumber());
@@ -170,8 +171,8 @@ public class ServiceActor extends AbstractFlowerActor {
           RefType refType = new RefType();
 
           refType.setAggregate(serviceConfig.isAggregateService());
-          refType.setServiceRouter(ServiceFacade.buildServiceRouter(serviceConfig.getServiceName(), count));
-          refType.setMessageType(ServiceLoader.getInstance().loadServiceMeta(serviceConfig.getServiceName()).getParamType());
+          refType.setServiceRouter(ServiceFacade.buildServiceRouter(serviceConfig, count));
+          refType.setMessageType(serviceConfig.getServiceMeta().getParamType());
           refType.setServiceName(serviceConfig.getServiceName());
           nextServiceActors.add(refType);
           nextServiceActorCache.put(cacheKey, nextServiceActors);

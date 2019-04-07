@@ -30,9 +30,10 @@ public class FlowerConfig implements Serializable {
   private static final long serialVersionUID = 1L;
 
   private String name = "SET_YOUR_OWN_APPLICATON_NAME";
-  private String host = "127.0.0.1";
+  private String host = "";
   private int port = 25001;
   private Set<RegistryConfig> registry;
+  private String basePackage;
 
   public Set<RegistryConfig> getRegistry() {
     return registry;
@@ -68,6 +69,14 @@ public class FlowerConfig implements Serializable {
 
   public void setPort(int port) {
     this.port = port;
+  }
+
+  public String getBasePackage() {
+    return basePackage;
+  }
+
+  public void setBasePackage(String basePackage) {
+    this.basePackage = basePackage;
   }
 
   @Override

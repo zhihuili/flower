@@ -18,7 +18,7 @@ package com.ly.train.flower.common.service.container;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -39,6 +39,7 @@ import com.ly.train.flower.common.service.impl.AggregateService;
 import com.ly.train.flower.common.service.impl.ConditionService;
 import com.ly.train.flower.common.service.impl.NothingService;
 import com.ly.train.flower.common.util.FileUtil;
+import com.ly.train.flower.common.util.Pair;
 import com.ly.train.flower.common.util.StringUtil;
 
 public class ServiceLoader {
@@ -55,13 +56,12 @@ public class ServiceLoader {
 
   private ServiceLoader() {
     this.classLoader = this.getClass().getClassLoader();
-
   }
 
   public static ServiceLoader getInstance() {
     if (serviceLoader.init.compareAndSet(false, true)) {
       try {
-        serviceLoader.loadInnerFlowService();
+        // serviceLoader.loadInnerFlowService();
         serviceLoader.loadServiceAndFlow();
       } catch (Exception e) {
         logger.error("", e);
@@ -73,7 +73,8 @@ public class ServiceLoader {
   public boolean registerFlowerService(String serviceName, FlowerService flowerService) {
     Object ret = servicesCache.putIfAbsent(serviceName, flowerService);
     if (ret != null) {
-      logger.warn("flowerservice is already exist, so discard it. serviceName : {}, flowerService : {}", serviceName, flowerService);
+      logger.warn("flowerservice is already exist, so discard it. serviceName : {}, flowerService : {}", serviceName,
+          flowerService);
     } else {
       logger.info("register flowerservice success , serviceName : {}, flowerService : {}", serviceName, flowerService);
     }
@@ -87,12 +88,12 @@ public class ServiceLoader {
         service = (FlowerService) servicesCache.get(serviceName);;
         if (service == null) {
           try {
-            final String serviceClassName = ServiceFactory.getServiceClassName(serviceName);
+            final String serviceClassName = loadServiceMeta(serviceName).getServiceClassName();
             if (StringUtil.isBlank(serviceClassName)) {
               throw new ServiceNotFoundException(serviceClassName);
             }
             Class<?> serviceClass = classLoader.loadClass(serviceClassName);
-            String param = ServiceFactory.getServiceClassParameter(serviceName);
+            String param = loadServiceMeta(serviceName).getConfig(1);
             if (param != null) {
               Constructor<?> constructor = serviceClass.getConstructor(String.class);
               service = (FlowerService) constructor.newInstance(param);
@@ -151,8 +152,9 @@ public class ServiceLoader {
   }
 
   private void initServiceMeta(String serviceName, Class<?> serviceClass, String config) {
-    ServiceMeta serviceMeta = new ServiceMeta(serviceClass);
+    ServiceMeta serviceMeta = new ServiceMeta();
     serviceMeta.setServiceName(serviceName);
+    serviceMeta.setServiceClassName(serviceClass.getName());
     try {
       Type[] paramTypes = null;
       Type[] types = serviceClass.getGenericInterfaces();
@@ -190,35 +192,33 @@ public class ServiceLoader {
     } catch (Exception e) {
       logger.error("init service meta, serviceName : " + serviceName + ", serviceClass : " + serviceClass, e);
     }
+    logger.info("init ServiceMeta. {} : {}", serviceName, serviceMeta);
     serviceMetaCache.put(serviceName, serviceMeta);
   }
 
-  private void loadInnerFlowService() {
+  protected void loadInnerFlowService() {
     registerServiceType(AggregateService.class.getSimpleName(), AggregateService.class);
     registerServiceType(ConditionService.class.getSimpleName(), ConditionService.class);
     registerServiceType(NothingService.class.getSimpleName(), NothingService.class);
-
   }
 
-  protected void loadServiceAndFlow() throws Exception {
-
+  protected void loadServiceAndFlow() {
     Predicate<String> filter = new FilterBuilder().include(".*\\.services").include(".*\\.flow");
-
-
     ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-    configurationBuilder.filterInputsBy(filter).setScanners(new ResourcesScanner());
     configurationBuilder.setUrls(ClasspathHelper.forClassLoader());
 
+    configurationBuilder.filterInputsBy(filter).setScanners(new ResourcesScanner());
     Reflections reflections = new Reflections(configurationBuilder);
 
     Set<String> servicesFiles = reflections.getResources(Pattern.compile(".*\\.services"));
     for (String path : servicesFiles) {
       logger.info("find service, path : {}", path);
-      Map<String, String> services = FileUtil.readService("/" + path);
-      for (Map.Entry<String, String> entry : services.entrySet()) {
-        registerServiceType(entry.getKey().trim(), entry.getValue().trim());
+      List<Pair<String, String>> services = FileUtil.readService("/" + path);
+      for (Pair<String, String> pair : services) {
+        registerServiceType(pair.getKey(), pair.getValue());
       }
     }
+
     Set<String> flowFiles = reflections.getResources(Pattern.compile(".*\\.flow"));
     for (String path : flowFiles) {
       logger.info("find flow file, path : {}", path);

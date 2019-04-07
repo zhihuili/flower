@@ -13,55 +13,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.akka.actor;
+package com.ly.train.flower.common.akka.actor.wrapper;
 
 import akka.actor.ActorRef;
+import akka.actor.ActorSelection;
 
 /**
  * @author leeyazhou
  *
  */
-public class ActorRefWrapper {
+public class ActorSelectionWrapper implements ActorWrapper {
+
+  private final ActorSelection actorSelection;
   private String serviceName;
-  private final ActorRef actorRef;
 
-  public ActorRefWrapper(ActorRef actorRef) {
-    this.actorRef = actorRef;
+  public ActorSelectionWrapper(ActorSelection actorSelection) {
+    this.actorSelection = actorSelection;
   }
 
+  public ActorSelection getActorSelection() {
+    return actorSelection;
+  }
+
+  @Override
   public void tell(Object message) {
-    actorRef.tell(message, actorRef);
+    actorSelection.tell(message, ActorRef.noSender());
   }
 
+  @Override
   public void tell(Object message, ActorRef sender) {
-    actorRef.tell(message, sender);
+    actorSelection.tell(message, sender);
   }
 
+  @Override
   public String getServiceName() {
     return serviceName;
   }
 
-  /**
-   * @return the actorRef
-   */
-  public ActorRef getActorRef() {
-    return actorRef;
-  }
-
-  public void setServiceName(String serviceName) {
+  public ActorSelectionWrapper setServiceName(String serviceName) {
     this.serviceName = serviceName;
+    return this;
   }
 
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("ActorRefWrapper [serviceName=");
+    builder.append("ActorSelectWrapper [actorSelection=");
+    builder.append(actorSelection);
+    builder.append(", serviceName=");
     builder.append(serviceName);
-    builder.append(", actorRef=");
-    builder.append(actorRef);
     builder.append("]");
     return builder.toString();
   }
+
 
 
 }

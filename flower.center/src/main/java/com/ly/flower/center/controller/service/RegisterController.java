@@ -22,6 +22,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.alibaba.fastjson.JSONObject;
 import com.ly.flower.center.controller.BaseController;
 import com.ly.flower.center.service.RegisterService;
 import com.ly.flower.center.service.ReturnService;
@@ -35,13 +36,14 @@ import com.ly.train.flower.registry.config.ServiceInfo;
  */
 @RestController
 @RequestMapping("/service/")
-@Flower(serviceName = "ServiceListService", value = "registerFlow")
+@Flower(serviceName = "RegisterService", value = "registerFlow")
 public class RegisterController extends BaseController {
 
   @RequestMapping("register")
-  protected void process(ServiceInfo param, HttpServletRequest req) throws IOException {
-    logger.info("请求信息：{}", param);
-    doProcess(param, req);
+  protected void process(String data, HttpServletRequest req) throws IOException {
+    ServiceInfo serviceInfo = JSONObject.parseObject(data, ServiceInfo.class);
+    logger.info("请求信息：{}", data);
+    doProcess(serviceInfo, req);
   }
 
 

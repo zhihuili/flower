@@ -25,19 +25,20 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import com.ly.train.flower.common.annotation.FlowerService;
-import com.ly.train.flower.common.annotation.FlowerType;
+import com.ly.train.flower.common.annotation.FlowerServiceUtil;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;
 import com.ly.train.flower.common.service.config.ServiceConfig;
+import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
 import com.ly.train.flower.common.service.impl.AggregateService;
 import com.ly.train.flower.common.util.AnnotationUtil;
 import com.ly.train.flower.common.util.Assert;
 import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.Pair;
-import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
+import com.ly.train.flower.registry.Registry;
+import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * 
@@ -62,13 +63,13 @@ import com.ly.train.flower.logging.LoggerFactory;
  */
 public final class ServiceFlow {
   private static final Logger logger = LoggerFactory.getLogger(ServiceFlow.class);
-  private static final ConcurrentMap<String, ServiceFlow> serviceFlows = new ConcurrentHashMap<>();
 
   // Map<sourceServiceName,Set<targetServiceName>> 流程
   private final ConcurrentMap<String, Set<ServiceConfig>> servicesOfFlow = new ConcurrentHashMap<>();
 
   // Map<serviceName, ServiceConfig> 每个服务节点的配置信息
   private final ConcurrentMap<String, ServiceConfig> serviceConfigs = new ConcurrentHashMap<>();
+
   private final AtomicInteger index = new AtomicInteger(0);
 
   private final String flowName;
@@ -78,7 +79,7 @@ public final class ServiceFlow {
    */
   private ServiceConfig headServiceConfig;
 
-  private ServiceFlow(String flowName) {
+  public ServiceFlow(String flowName) {
     this.flowName = flowName;
   }
 
@@ -106,15 +107,10 @@ public final class ServiceFlow {
    * 
    * @param flowName 流程名称
    * @return {@code ServiceFlow}
+   * @see FlowerFactory#getOrCreateServiceFlow(String)
    */
   public static ServiceFlow getOrCreate(String flowName) {
-    Assert.notNull(flowName, "flowName can't be null !");
-    ServiceFlow serviceFlow = serviceFlows.get(flowName);
-    if (serviceFlow == null) {
-      serviceFlow = new ServiceFlow(flowName);
-      serviceFlows.putIfAbsent(flowName, serviceFlow);
-    }
-    return serviceFlow;
+    return SimpleFlowerFactory.get().getOrCreateServiceFlow(flowName);
   }
 
   /**
@@ -125,17 +121,9 @@ public final class ServiceFlow {
    * @return {@link ServiceFlow}
    */
   public ServiceFlow buildFlow(Class<?> preServiceClass, Class<?> nextServiceClass) {
-    final FlowerService preServiceAnnotation = preServiceClass.getAnnotation(FlowerService.class);
-    final FlowerService nextServiceAnnotation = nextServiceClass.getAnnotation(FlowerService.class);
-    String preServiceName = preServiceClass.getSimpleName();
-    String nextServiceName = nextServiceClass.getSimpleName();
+    String preServiceName = FlowerServiceUtil.getServiceName(preServiceClass);
+    String nextServiceName = FlowerServiceUtil.getServiceName(nextServiceClass);
 
-    if (preServiceAnnotation != null && StringUtil.isNotBlank(preServiceAnnotation.value())) {
-      preServiceName = preServiceAnnotation.value();
-    }
-    if (nextServiceAnnotation != null && StringUtil.isNotBlank(nextServiceAnnotation.value())) {
-      nextServiceName = nextServiceAnnotation.value();
-    }
     return buildFlow(preServiceName, nextServiceName);
   }
 
@@ -191,27 +179,25 @@ public final class ServiceFlow {
       this.headServiceConfig = preConfig;
     }
 
-    ServiceMeta preServiceMeta = ServiceLoader.getInstance().loadServiceMeta(preServiceName);
-    ServiceMeta nextServiceMeta = ServiceLoader.getInstance().loadServiceMeta(nextServiceName);
-    if (preServiceMeta == null) {
-      throw new ServiceNotFoundException("serviceName : " + preServiceName);
-    }
-    if (nextServiceMeta == null) {
-      throw new ServiceNotFoundException("serviceName : " + preServiceName);
-    }
-    if (!isInnerAggregateService(preServiceMeta.getServiceClass()) && isAggregateService(nextServiceMeta.getServiceClass())) {
+    ServiceMeta preServiceMeta = loadServiceMeta(preConfig);
+    ServiceMeta nextServiceMeta = loadServiceMeta(nextConfig);
+
+    if (!isAggregateService(preServiceMeta.getServiceClassName())
+        && isAggregateService(nextServiceMeta.getServiceClassName())) {
       ServiceConfig serviceConfig = null;
       Set<ServiceConfig> previousServiceConfigs = nextConfig.getPreviousServiceConfigs();
       if (previousServiceConfigs != null) {
         for (ServiceConfig item : previousServiceConfigs) {
-          if (isInnerAggregateService(ServiceLoader.getInstance().loadServiceMeta(item.getServiceName()).getServiceClass())) {
+          if (isAggregateService(
+              ServiceLoader.getInstance().loadServiceMeta(item.getServiceName()).getServiceClassName())) {
             serviceConfig = item;
             break;
           }
         }
       }
 
-      String aggregateServiceName = flowName + "$" + preConfig.getServiceName() + "_" + nextConfig.getServiceName() + "_AggregateService";
+      String aggregateServiceName =
+          flowName + "$" + preConfig.getServiceName() + "_" + nextConfig.getServiceName() + "_AggregateService";
       if (serviceConfig != null) {
         aggregateServiceName = serviceConfig.getServiceName();
       } else {
@@ -219,6 +205,7 @@ public final class ServiceFlow {
       }
       buildFlow(preServiceName, aggregateServiceName);
       buildFlow(aggregateServiceName, nextServiceName);
+      logger.info(" buildFlow : {}, preService : {}, nextService : {}", flowName, preServiceName, nextServiceName);
     } else {
       boolean ret = nextServices.add(nextConfig);
       if (!ret) {
@@ -228,12 +215,49 @@ public final class ServiceFlow {
       validateFlow(preServiceName, nextServiceName);
       preConfig.addNextServiceConfig(nextConfig);
       nextConfig.addPreviousServiceConfig(preConfig);
-      if (Constant.AGGREGATE_SERVICE_NAME.equals(nextServiceMeta.getServiceClass().getName())) {
+
+      if (nextConfig.isAggregateService()) {
         nextConfig.jointSourceNumberPlus();
       }
       logger.info(" buildFlow : {}, preService : {}, nextService : {}", flowName, preServiceName, nextServiceName);
     }
     return this;
+  }
+
+  private ServiceMeta loadServiceMeta(ServiceConfig serviceConfig) {
+    ServiceMeta serviceMeta = ServiceLoader.getInstance().loadServiceMeta(serviceConfig.getServiceName());
+    if (serviceMeta == null) {
+      serviceMeta = getFromRegistrry(serviceConfig);
+      if (serviceMeta != null) {
+        serviceConfig.setServiceMeta(serviceMeta);
+        serviceConfig.setLocal(false);
+        return serviceMeta;
+      }
+      throw new ServiceNotFoundException("serviceConfig : " + serviceConfig);
+    }
+    return serviceMeta;
+  }
+
+  private ServiceMeta getFromRegistrry(ServiceConfig serviceConfig) {
+    Set<Registry> registries = SimpleFlowerFactory.get().getRegistry();
+    if (registries == null || registries.isEmpty()) {
+      return null;
+    }
+    ServiceMeta serviceMeta = null;
+    for (Registry registry : registries) {
+      List<ServiceInfo> serviceInfos = registry.getProvider(null);
+      if (serviceInfos != null) {
+        for (ServiceInfo serviceInfo : serviceInfos) {
+          if (serviceInfo.getServiceName().equals(serviceConfig.getServiceName())) {
+            // add service address
+            serviceConfig.setAddresses(serviceInfo.getAddresses());
+            serviceMeta = serviceInfo.getServiceMeta();
+          }
+        }
+      }
+    }
+
+    return serviceMeta;
   }
 
   /**
@@ -318,6 +342,7 @@ public final class ServiceFlow {
       serviceConfig = new ServiceConfig(flowName);
       serviceConfig.setServiceName(serviceName);
       serviceConfig.setIndex(index.getAndIncrement());
+      serviceConfig.setServiceMeta(loadServiceMeta(serviceConfig));
       serviceConfigs.putIfAbsent(serviceName, serviceConfig);
     }
     return serviceConfig;
@@ -368,8 +393,8 @@ public final class ServiceFlow {
       return;
     }
 
-    if (preServiceMata.getServiceClass().getName().equals(Constant.AGGREGATE_SERVICE_NAME)
-        || nextServiceMata.getServiceClass().getName().equals(Constant.AGGREGATE_SERVICE_NAME)) {
+    if (preServiceMata.getServiceClassName().equals(Constant.AGGREGATE_SERVICE_NAME)
+        || nextServiceMata.getServiceClassName().equals(Constant.AGGREGATE_SERVICE_NAME)) {
       return;
     }
 
@@ -377,31 +402,16 @@ public final class ServiceFlow {
     Class<?> nextParamType = nextServiceMata.getParamType();
 
     if (preReturnType == null || nextParamType == null) {
-      throw new FlowerException(preServiceMata.getServiceClass() + "->preReturnType : " + preReturnType + ", "
-          + nextServiceMata.getServiceClass() + "-> nextParamType : " + nextParamType);
+      throw new FlowerException(preServiceMata.getServiceClassName() + "->preReturnType : " + preReturnType + ", "
+          + nextServiceMata.getServiceClassName() + "-> nextParamType : " + nextParamType);
     }
 
     if (!nextParamType.isAssignableFrom(preReturnType)) {
-      throw new FlowerException("build flower error, because " + preServiceMata.getServiceClass() + " (" + preReturnType.getSimpleName()
-          + ") is not compatible for " + nextServiceMata.getServiceClass() + "(" + nextParamType.getSimpleName() + ")");
+      throw new FlowerException("build flower error, because " + preServiceMata.getServiceClassName() + " ("
+          + preReturnType.getSimpleName() + ") is not compatible for " + nextServiceMata.getServiceClassName() + "("
+          + nextParamType.getSimpleName() + ")");
     }
 
-  }
-
-  /**
-   * 是 聚合服务类型
-   * 
-   * @param clazz class
-   * @return true / false
-   */
-  protected boolean isAggregateService(Class<?> clazz) {
-    if (clazz != null) {
-      FlowerService flowerService = clazz.getAnnotation(FlowerService.class);
-      if (flowerService != null && flowerService.type().equals(FlowerType.AGGREGATE)) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**
@@ -410,8 +420,8 @@ public final class ServiceFlow {
    * @param clazz
    * @return true /false
    */
-  protected boolean isInnerAggregateService(Class<?> clazz) {
-    return clazz != null && clazz.getName().equals(Constant.AGGREGATE_SERVICE_NAME);
+  protected boolean isAggregateService(String clazzName) {
+    return clazzName != null && clazzName.equals(Constant.AGGREGATE_SERVICE_NAME);
   }
 
   @Override

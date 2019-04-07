@@ -13,25 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package com.ly.train.flower.common.service.config;
+package com.ly.train.flower.common.akka.actor.wrapper;
 
-import java.io.Serializable;
+import akka.actor.ActorRef;
 
 /**
  * @author leeyazhou
  *
  */
-public class FlowConfig implements Serializable {
-  private static final long serialVersionUID = 1L;
-  private boolean aggregate;
+public interface ActorWrapper {
 
-  /**
-   * @return the aggregate
-   */
-  public boolean isAggregate() {
-    return aggregate;
-  }
+  String getServiceName();
+  
+  void tell(Object message);
+
+  void tell(Object message, ActorRef sender);
 }

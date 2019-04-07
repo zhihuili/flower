@@ -13,26 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
 package com.ly.train.flower.common.annotation;
+
+import com.ly.train.flower.common.util.StringUtil;
 
 /**
  * @author leeyazhou
  *
  */
-public enum FlowerType {
+public class FlowerServiceUtil {
 
-  /**
-   * 普通类型
-   */
-  COMMON,
-
-  /**
-   * 聚合类型
-   */
-  //AGGREGATE
-
-
+  public static String getServiceName(Class<?> clazz) {
+    FlowerService flowerService = null;
+    if (clazz == null || (flowerService = clazz.getAnnotation(FlowerService.class)) == null) {
+      return null;
+    }
+    String serviceName = flowerService.value();
+    if (StringUtil.isBlank(serviceName)) {
+      serviceName = clazz.getSimpleName();
+    }
+    return serviceName;
+  }
 }

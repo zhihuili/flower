@@ -19,6 +19,7 @@
 package com.ly.train.flower.registry;
 
 import java.util.List;
+import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
@@ -43,4 +44,5 @@ public interface Registry {
    */
   List<ServiceInfo> getProvider(ServiceInfo serviceInfo);
 
+  URL getUrl();
 }

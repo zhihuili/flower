@@ -16,18 +16,15 @@
 package com.ly.train.flower.common.akka;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.AsyncContext;
-import com.ly.train.flower.common.service.container.ServiceFlow;
+import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.ServiceLoader;
+import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
 public class ServiceFacade {
   private static final Logger logger = LoggerFactory.getLogger(ServiceFacade.class);
-  private static final Map<String, ServiceRouter> serviceRoutersCache = new ConcurrentHashMap<String, ServiceRouter>();
-  private static final Map<String, FlowRouter> flowRoutersCache = new ConcurrentHashMap<String, FlowRouter>();
 
   static {
     ServiceLoader.getInstance();
@@ -37,7 +34,7 @@ public class ServiceFacade {
    * @deprecated serviceName 不必须，因为可以从流程中获取到首个服务
    */
   @Deprecated
-  public static void asyncCallService(String flowName, String serviceName, Object message, AsyncContext ctx) throws IOException {
+  public static void asyncCallService(String flowName, String serviceName, Object message, AsyncContext ctx) {
     asyncCallService(flowName, message, ctx);
   }
 
@@ -49,7 +46,7 @@ public class ServiceFacade {
    * @param asyncContext 异步处理上下文
    * @throws IOException io exception
    */
-  public static void asyncCallService(String flowName, Object message, AsyncContext asyncContext) throws IOException {
+  public static void asyncCallService(String flowName, Object message, AsyncContext asyncContext) {
     FlowRouter serviceRouter = buildFlowRouter(flowName, -1);
     serviceRouter.asyncCallService(message, asyncContext);
   }
@@ -59,7 +56,7 @@ public class ServiceFacade {
    * @see ServiceFacade#asyncCallService(String,Object,AsyncContext)
    */
   @Deprecated
-  public static void asyncCallService(String flowName, String serviceName, Object message) throws IOException {
+  public static void asyncCallService(String flowName, String serviceName, Object message) {
     asyncCallService(flowName, message, null);
   }
 
@@ -101,32 +98,15 @@ public class ServiceFacade {
    * @return {@link ServiceRouter}
    */
   public static FlowRouter buildFlowRouter(String flowName, int flowNumbe) {
-    final String serviceName = ServiceFlow.getOrCreate(flowName).getHeadServiceConfig().getServiceName();
-    final String routerName = flowName + "_" + serviceName;
-
-    FlowRouter serviceRouter = flowRoutersCache.get(routerName);
-    if (serviceRouter == null) {
-      serviceRouter = new FlowRouter(flowName, serviceName, flowNumbe);
-      flowRoutersCache.put(routerName, serviceRouter);
-      logger.info("build service Router. flowName : {}, serviceName : {}, flowNumbe : {}", flowName, serviceName, flowNumbe);
-    }
-    return serviceRouter;
+    return SimpleFlowerFactory.get().getServiceActorFactory().buildFlowRouter(flowName, flowNumbe);
   }
 
-  public static ServiceRouter buildServiceRouter(String serviceName, int flowNumbe) {
-    final String routerName = serviceName + "_" + flowNumbe;
-
-    ServiceRouter serviceRouter = serviceRoutersCache.get(routerName);
-    if (serviceRouter == null) {
-      serviceRouter = new ServiceRouter(serviceName, flowNumbe);
-      serviceRoutersCache.put(routerName, serviceRouter);
-      logger.info("build service Router. serviceName : {}, flowNumbe : {}", serviceName, flowNumbe);
-    }
-    return serviceRouter;
+  public static ServiceRouter buildServiceRouter(ServiceConfig serviceConfig, int flowNumbe) {
+    return SimpleFlowerFactory.get().getServiceActorFactory().buildServiceRouter(serviceConfig, flowNumbe);
   }
 
   public static void shutdown() {
-    ServiceActorFactory.shutdown();
+    SimpleFlowerFactory.get().getServiceActorFactory().shutdown();
     logger.info("shutdown.");
   }
 }

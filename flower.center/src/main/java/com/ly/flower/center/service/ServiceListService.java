@@ -18,7 +18,7 @@
  */
 package com.ly.flower.center.service;
 
-import java.util.Map;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.ly.flower.center.common.ServiceManager;
 import com.ly.train.flower.common.annotation.FlowerService;
@@ -31,13 +31,13 @@ import com.ly.train.flower.registry.config.ServiceInfo;
  *
  */
 @FlowerService
-public class ServiceListService implements Service<Object, Map<String, ServiceInfo>> {
+public class ServiceListService implements Service<Object, Set<ServiceInfo>> {
 
   @Autowired
   protected ServiceManager serviceManager;
 
   @Override
-  public Map<String, ServiceInfo> process(Object message, ServiceContext context) throws Throwable {
+  public Set<ServiceInfo> process(Object message, ServiceContext context) throws Throwable {
 
     return serviceManager.getAll();
   }

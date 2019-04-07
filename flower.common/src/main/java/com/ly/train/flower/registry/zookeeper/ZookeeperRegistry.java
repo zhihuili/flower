@@ -20,28 +20,27 @@ package com.ly.train.flower.registry.zookeeper;
 
 import java.util.List;
 import com.ly.train.flower.common.util.URL;
-import com.ly.train.flower.registry.Registry;
+import com.ly.train.flower.registry.AbstractRegistry;
 import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou
  *
  */
-public class ZookeeperRegistry implements Registry {
+public class ZookeeperRegistry extends AbstractRegistry {
 
-  protected final URL url;
 
   public ZookeeperRegistry(URL url) {
-    this.url = url;
+    super(url);
   }
 
   @Override
-  public boolean register(ServiceInfo serviceInfo) {
+  public boolean doRegister(ServiceInfo serviceInfo) {
     return false;
   }
 
   @Override
-  public List<ServiceInfo> getProvider(ServiceInfo serviceInfo) {
+  public List<ServiceInfo> doGetProvider(ServiceInfo serviceInfo) {
     return null;
   }
 

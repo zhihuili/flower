@@ -22,11 +22,13 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.alibaba.fastjson.JSONObject;
 import com.ly.flower.center.controller.BaseController;
 import com.ly.flower.center.service.ReturnService;
 import com.ly.flower.center.service.ServiceListService;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.service.container.ServiceFlow;
+import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou
@@ -38,9 +40,10 @@ import com.ly.train.flower.common.service.container.ServiceFlow;
 public class ListController extends BaseController {
 
   @RequestMapping("list")
-  protected void process(Object param, HttpServletRequest req) throws IOException {
-    logger.info("请求");
-    doProcess(param, req);
+  protected void process(String data, HttpServletRequest req) throws IOException {
+    ServiceInfo serviceInfo = JSONObject.parseObject(data, ServiceInfo.class);
+    logger.info("请求参数 : {}", serviceInfo);
+    doProcess(serviceInfo, req);
   }
 
 

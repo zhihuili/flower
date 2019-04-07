@@ -41,4 +41,9 @@ public class Constant {
    * 默认超时时间3秒
    */
   public static final FiniteDuration defaultTimeout_3S = Duration.create(3, TimeUnit.SECONDS);
+  public static final FiniteDuration defaultTimeout_5S = Duration.create(5, TimeUnit.SECONDS);
+  public static final FiniteDuration defaultTimeout_10S = Duration.create(10, TimeUnit.SECONDS);
+
+  public static final String SCOPE_SINGLETON = "singleton";
+  public static final String SCOPE_REQUEST = "request";
 }

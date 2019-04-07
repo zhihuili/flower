@@ -17,6 +17,7 @@ package com.ly.train.flower.common.akka;
 
 import java.io.IOException;
 import javax.servlet.AsyncContext;
+import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.logging.LoggerFactory;
@@ -29,12 +30,12 @@ public class FlowRouter {
   static final com.ly.train.flower.logging.Logger logger = LoggerFactory.getLogger(FlowRouter.class);
   private int number = 2 << 6;
   private ServiceRouter serviceRouter;
-  private String serviceName;
-  private String flowName;
+  private final ServiceConfig serviceConfig;
+  private final String flowName;
 
-  public FlowRouter(String flowName, String serviceName, int number) {
+  public FlowRouter(String flowName, ServiceConfig serviceConfig, int number) {
     this.flowName = flowName;
-    this.serviceName = serviceName;
+    this.serviceConfig = serviceConfig;
     if (number > 0) {
       this.number = number;
     }
@@ -55,7 +56,7 @@ public class FlowRouter {
     ServiceContext serviceContext = ServiceContext.context(message, ctx);
     serviceContext.setFlowName(flowName);
     if (StringUtil.isBlank(serviceContext.getCurrentServiceName())) {
-      serviceContext.setCurrentServiceName(serviceName);
+      serviceContext.setCurrentServiceName(serviceConfig.getServiceName());
     }
     getServiceRouter().asyncCallService(serviceContext);
   }
@@ -70,7 +71,7 @@ public class FlowRouter {
   public Object syncCallService(Object message) throws Exception {
     ServiceContext serviceContext = ServiceContext.context(message);
     serviceContext.setFlowName(flowName);
-    serviceContext.setCurrentServiceName(serviceName);
+    serviceContext.setCurrentServiceName(serviceConfig.getServiceName());
     serviceContext.setSync(true);
     return getServiceRouter().syncCallService(serviceContext);
   }
@@ -81,18 +82,14 @@ public class FlowRouter {
 
   private ServiceRouter getServiceRouter() {
     if (serviceRouter == null) {
-      this.serviceRouter = ServiceFacade.buildServiceRouter(serviceName, number);
+      this.serviceRouter = ServiceFacade.buildServiceRouter(serviceConfig, number);
     }
     return serviceRouter;
   }
 
 
-  public String getServiceName() {
-    return serviceName;
-  }
-
-  public void setServiceName(String serviceName) {
-    this.serviceName = serviceName;
+  public ServiceConfig getServiceName() {
+    return serviceConfig;
   }
 
 

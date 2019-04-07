@@ -59,7 +59,7 @@ public abstract class FlowerController implements InitializingBean {
    * @return {@code ServiceRouter}
    */
   private FlowRouter initServiceRouter() {
-    return ServiceFacade.buildFlowRouter(getFlowName(), 2 << 7);
+    return ServiceFacade.buildFlowRouter(getFlowName(), 2 << 2);
   }
 
   /**

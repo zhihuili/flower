@@ -18,14 +18,14 @@
  */
 package com.ly.flower.center.common;
 
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import com.ly.flower.center.common.cache.Cache;
 import com.ly.flower.center.common.cache.CacheManager;
 import com.ly.train.flower.registry.config.ServiceInfo;
@@ -34,7 +34,7 @@ import com.ly.train.flower.registry.config.ServiceInfo;
  * @author leeyazhou
  *
  */
-@Component
+@Service
 public class ServiceManager {
   private static final Logger logger = LoggerFactory.getLogger(ServiceManager.class);
 
@@ -49,12 +49,14 @@ public class ServiceManager {
       @Override
       public void run() {
         Set<String> keys = CacheManager.getAllKey();
-        logger.info("---------------------scan service list start--------------------------------------------------------------");
+        logger.info(
+            "---------------------scan service list start--------------------------------------------------------------");
         for (String key : keys) {
           Cache<ServiceInfo> cache = CacheManager.getContent(key);
           logger.info("缓存中的数据 {} : {}", key, cache);
         }
-        logger.info("----------------------scan service list end---------------------------------------------------------------");
+        logger.info(
+            "----------------------scan service list end---------------------------------------------------------------");
       }
     }, 3000, TimeUnit.SECONDS.toMillis(4));
   }
@@ -66,19 +68,19 @@ public class ServiceManager {
       CacheManager.putContent(serviceInfo.getClassName(), serviceInfo, 6000);
       cache = CacheManager.getContent(serviceInfo.getClassName());
     } else {
-      cache.getValue().getHost().addAll(serviceInfo.getHost());
+      cache.getValue().getAddresses().addAll(serviceInfo.getAddresses());
     }
     return true;
   }
 
-  public Map<String, ServiceInfo> getAll() {
+  public Set<ServiceInfo> getAll() {
 
-    Map<String, ServiceInfo> ret = new java.util.HashMap<>();
+    Set<ServiceInfo> ret = new HashSet<ServiceInfo>();
     Set<String> keys = CacheManager.getAllKey();
     for (String key : keys) {
       Cache<ServiceInfo> cache = CacheManager.getContent(key);
       if (cache != null) {
-        ret.put(key, cache.getValue());
+        ret.add(cache.getValue());
       }
     }
     return ret;

@@ -18,21 +18,31 @@
  */
 package com.ly.train.flower.common.annotation;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import com.ly.train.flower.common.util.Constant;
+
 /**
  * @author leeyazhou
  *
  */
-public enum FlowerType {
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Scope {
 
   /**
-   * 普通类型
+   * 单例或者多实例
+   * 
+   * @return str
+   * @see Constant#SCOPE_REQUEST
+   * @see Constant#SCOPE_SINGLETON
    */
-  COMMON,
+  String scopeName() default Constant.SCOPE_SINGLETON;
 
-  /**
-   * 聚合类型
-   */
-  //AGGREGATE
 
 
 }

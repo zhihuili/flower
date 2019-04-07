@@ -19,8 +19,9 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import com.ly.train.flower.common.service.container.ServiceFactory;
+import com.ly.train.flower.common.service.container.ServiceMeta;
 import com.ly.train.flower.common.util.Constant;
+import com.ly.train.flower.common.util.URL;
 
 /**
  * 流程服务节点配置
@@ -31,12 +32,17 @@ import com.ly.train.flower.common.util.Constant;
 public class ServiceConfig implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  private final String flowName;
+  private String flowName;
   private String serviceName;
+  private ServiceMeta serviceMeta;
   private Set<ServiceConfig> nextServiceConfigs;
   private Set<ServiceConfig> previousServiceConfigs;
   private final AtomicInteger jointSourceNumber = new AtomicInteger(0);
   private int index;
+  private boolean local = true;
+  private Set<URL> addresses;
+
+  public ServiceConfig() {}
 
   public ServiceConfig(String flowName) {
     this.flowName = flowName;
@@ -56,6 +62,21 @@ public class ServiceConfig implements Serializable {
 
   public void setServiceName(String serviceName) {
     this.serviceName = serviceName;
+  }
+
+  public void setLocal(boolean local) {
+    this.local = local;
+    this.serviceMeta.setLocal(local);
+  }
+
+  /**
+   * true: local Service <br/>
+   * false: remote Service
+   * 
+   * @return true/false
+   */
+  public boolean isLocal() {
+    return local;
   }
 
   /**
@@ -114,6 +135,34 @@ public class ServiceConfig implements Serializable {
     return flowName;
   }
 
+
+
+  public Set<URL> getAddresses() {
+    return addresses;
+  }
+
+  public ServiceConfig setAddresses(Set<URL> addresses) {
+    this.addresses = addresses;
+    return this;
+  }
+
+  public ServiceConfig addAddress(URL address) {
+    if (addresses == null) {
+      this.addresses = new HashSet<URL>();
+    }
+    this.addresses.add(address);
+    return this;
+  }
+
+  public ServiceMeta getServiceMeta() {
+    return serviceMeta;
+  }
+
+  public ServiceConfig setServiceMeta(ServiceMeta serviceMeta) {
+    this.serviceMeta = serviceMeta;
+    return this;
+  }
+
   public boolean hasNextServices() {
     return nextServiceConfigs != null && nextServiceConfigs.size() > 0;
   }
@@ -128,7 +177,7 @@ public class ServiceConfig implements Serializable {
    * @return true / false
    */
   public boolean isAggregateService() {
-    return ServiceFactory.getServiceClassName(getServiceName()).equals(Constant.AGGREGATE_SERVICE_NAME);
+    return getServiceMeta().getServiceClassName().equals(Constant.AGGREGATE_SERVICE_NAME);
   }
 
   public String getSimpleDesc() {

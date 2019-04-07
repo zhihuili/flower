@@ -21,8 +21,25 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
+import com.alibaba.fastjson.JSONObject;
+import com.ly.train.flower.base.service.ServiceA;
+import com.ly.train.flower.common.service.container.ServiceLoader;
+import com.ly.train.flower.common.service.container.ServiceMeta;
 
 public class RandomTest {
+
+  @Test
+  public void testJSON() {
+
+    ServiceLoader.getInstance().registerServiceType("aaa", ServiceA.class);
+    ServiceMeta meta = ServiceLoader.getInstance().loadServiceMeta("aaa");
+
+    String json = JSONObject.toJSONString(meta);
+    System.out.println("前对象：" + meta);
+    System.out.println("前JSON" + json);
+    System.out.println("后对象：" + JSONObject.parseObject(json, ServiceMeta.class));
+
+  }
 
   @Test
   public void main() {
@@ -72,6 +89,7 @@ public class RandomTest {
   // from java.util
   private static class UtilRandom implements Runnable {
     Random random = new Random();
+
     @Override
     public void run() {
       long index = 0;

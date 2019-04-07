@@ -46,8 +46,8 @@ public class ExtensionLoader<T> {
   private static final ConcurrentMap<Class<?>, Object> extensionLoaderCache = new ConcurrentHashMap<Class<?>, Object>();
 
   private final ClassLoader classLoader;
-  private final Map<String, Class<T>> classesMap = new HashMap<String, Class<T>>();
-  private final Map<String, T> servicesMap = new HashMap<String, T>();
+  private final Map<String, Class<T>> extensionClassCache = new HashMap<String, Class<T>>();
+  private final Map<String, T> extensionInstanceCache = new HashMap<String, T>();
 
   /*
    * 默认实现
@@ -100,7 +100,7 @@ public class ExtensionLoader<T> {
    * @return t
    */
   public List<T> loads() {
-    return new ArrayList<T>(servicesMap.values());
+    return new ArrayList<T>(extensionInstanceCache.values());
   }
 
   /**
@@ -110,19 +110,19 @@ public class ExtensionLoader<T> {
    * @return t
    */
   public T load(String name) {
-    T ret = servicesMap.get(name);
+    T ret = extensionInstanceCache.get(name);
     try {
       if (ret != null) {
         return ret;
       }
-      Class<T> serviceClass = classesMap.get(name);
+      Class<T> serviceClass = extensionClassCache.get(name);
       if (serviceClass == null) {
         throw new ClassNotFoundException(name + " for " + extensionType);
       }
 
       ret = serviceClass.newInstance();
       logger.info("load extend(" + name + ") : " + serviceClass);
-      servicesMap.put(name, ret);
+      extensionInstanceCache.put(name, ret);
       return ret;
     } catch (Exception e) {
       logger.error("", e);
@@ -137,7 +137,7 @@ public class ExtensionLoader<T> {
    * @return class
    */
   public Class<T> loadType(String name) {
-    Class<T> serviceClass = classesMap.get(name);
+    Class<T> serviceClass = extensionClassCache.get(name);
     if (serviceClass == null) {
       logger.error("", new ClassNotFoundException(name + " forType " + extensionType));
     }
@@ -166,7 +166,6 @@ public class ExtensionLoader<T> {
       }
     } catch (IOException ex) {
       // skip
-      ex.printStackTrace();
     }
   }
 
@@ -175,7 +174,7 @@ public class ExtensionLoader<T> {
     BufferedReader reader = null;
     try {
       is = url.openStream();
-      reader = new BufferedReader(new InputStreamReader(is, "utf-8"));
+      reader = new BufferedReader(new InputStreamReader(is, Constant.ENCODING_UTF_8));
       for (;;) {
         String line = reader.readLine();
         if (line == null) {
@@ -198,7 +197,7 @@ public class ExtensionLoader<T> {
         }
         @SuppressWarnings("unchecked")
         Class<T> cl = (Class<T>) Class.forName(kv[1].trim());
-        classesMap.put(kv[0].trim(), cl);
+        extensionClassCache.put(kv[0].trim(), cl);
         // logger.info("load class : " + kv[0] + ", vlaue : " + cl);
       }
     } catch (ClassNotFoundException e) {
@@ -212,9 +211,9 @@ public class ExtensionLoader<T> {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("ServiceLoader@").append(extensionType);
+    builder.append("ExtensionLoader@").append(extensionType);
     builder.append("[");
-    for (Map.Entry<String, Class<T>> entry : classesMap.entrySet()) {
+    for (Map.Entry<String, Class<T>> entry : extensionClassCache.entrySet()) {
       builder.append("\n\t ").append(entry.getKey()).append("=").append(entry.getValue());
     }
     builder.append("\n]");

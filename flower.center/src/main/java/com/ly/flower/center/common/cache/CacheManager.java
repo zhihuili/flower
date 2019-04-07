@@ -19,19 +19,20 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.ly.train.flower.common.util.LRUCache;
 import com.ly.train.flower.common.util.concurrent.NamedThreadFactory;
 
 public class CacheManager {
   private static ScheduledExecutorService executorService =
       Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("CacheScanner"));
   private static final Logger log = LoggerFactory.getLogger(CacheManager.class);
-  private static LRUCache<String, Cache<?>> cacheMap = new LRUCache<>(2 << 10);
+  private static ConcurrentMap<String, Cache<?>> cacheMap = new ConcurrentHashMap<String, Cache<?>>();
   static {
     try {
       executorService.scheduleAtFixedRate(new Runnable() {

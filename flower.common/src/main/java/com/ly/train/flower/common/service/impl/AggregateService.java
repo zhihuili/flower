@@ -20,14 +20,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import com.ly.train.flower.common.annotation.Scope;
 import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.message.TimerMessage;
+import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
+@Scope(scopeName = Constant.SCOPE_REQUEST)
 public class AggregateService implements Service<Object, Object>, Aggregate {
   static final Logger logger = LoggerFactory.getLogger(AggregateService.class);
   private static final Long DefaultTimeOutMilliseconds = 60000L;

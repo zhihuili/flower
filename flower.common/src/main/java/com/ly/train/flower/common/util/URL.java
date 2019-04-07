@@ -29,6 +29,24 @@ public class URL implements Serializable {
   private String host;
   private int port;
 
+  /**
+   * http://www.baidu.com:8080
+   * 
+   * @param address address
+   * @return {@link URL}
+   */
+  public static URL valueOf(String address) {
+    if (StringUtil.isNotBlank(address)) {
+      String[] t = address.replaceAll("/", "").split(":");
+      if (t.length == 3) {
+        return new URL(t[0], t[1], Integer.parseInt(t[2]));
+      }
+    }
+    return null;
+  }
+
+  public URL() {
+  }
 
   public URL(String protocol, String host, int port) {
     this.protocol = protocol;

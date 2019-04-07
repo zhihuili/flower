@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.ly.train.flower.common.akka.ServiceActorFactory;
+import com.ly.train.flower.common.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Complete;
@@ -30,9 +30,9 @@ import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.ServiceContext;
-import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.common.service.container.ServiceLoader;
+import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
 import com.ly.train.flower.common.service.impl.AggregateService;
 import com.ly.train.flower.common.service.message.Condition;
 import com.ly.train.flower.common.service.message.FlowMessage;
@@ -85,14 +85,16 @@ public class ServiceActorV1 extends AbstractFlowerActor {
         if (serviceConfig.isAggregateService()) {
           refType.setJoint(true);
         }
-        refType.setActorRef(ServiceActorFactory.buildServiceActor(serviceConfig.getServiceName(), index).getActorRef());
-        refType.setMessageType(ServiceLoader.getInstance().loadServiceMeta(serviceConfig.getServiceName()).getParamType());
+        refType.setActorRef(SimpleFlowerFactory.get().getServiceActorFactory().buildServiceActor(serviceConfig, index));
+        refType
+            .setMessageType(ServiceLoader.getInstance().loadServiceMeta(serviceConfig.getServiceName()).getParamType());
         refType.setServiceName(serviceConfig.getServiceName());
         nextServiceActors.add(refType);
       }
     }
   }
 
+  @SuppressWarnings({"unchecked", "rawtypes"})
   @Override
   public void onServiceContextReceived(ServiceContext serviceContext) throws Throwable {
     FlowMessage fm = serviceContext.getFlowMessage();
@@ -100,8 +102,7 @@ public class ServiceActorV1 extends AbstractFlowerActor {
       syncActors.putIfAbsent(serviceContext.getId(), getSender());
     }
 
-    // TODO 没有必要设置默认值,下面执行异常就会抛出异常
-    Object result = null;// DefaultMessage.getMessage();// set default
+    Object result = null;
     try {
       result = ((Service) getService()).process(fm.getMessage(), serviceContext);
     } catch (Throwable e) {
@@ -109,10 +110,12 @@ public class ServiceActorV1 extends AbstractFlowerActor {
       if (web != null) {
         web.complete();
       }
-      throw new FlowerException("fail to invoke service " + serviceName + " : " + service + ", param : " + fm.getMessage(), e);
+      throw new FlowerException(
+          "fail to invoke service " + serviceName + " : " + service + ", param : " + fm.getMessage(), e);
     }
 
-    // logger.info("同步处理 ： {}, hasChild : {}", serviceContext.isSync(), hasChildActor());
+    // logger.info("同步处理 ： {}, hasChild : {}", serviceContext.isSync(),
+    // hasChildActor());
     if (serviceContext.isSync() && hasNoChildActor()) {
       // logger.info("返回响应 {}", result);
       ActorRef actor = syncActors.get(serviceContext.getId());
@@ -163,7 +166,7 @@ public class ServiceActorV1 extends AbstractFlowerActor {
    */
   public FlowerService getService() {
     if (this.service == null) {
-      this.service = ServiceFactory.getService(serviceName);
+      this.service = ServiceLoader.getInstance().loadService(serviceName);
       if (service instanceof Aggregate) {
         ((AggregateService) service)
             .setSourceNumber(ServiceFlow.getOrCreate(flowName).getServiceConfig(serviceName).getJointSourceNumber());
@@ -214,16 +217,16 @@ public class ServiceActorV1 extends AbstractFlowerActor {
   }
 
   static class RefType {
-    private ActorRef actorRef;
+    private ActorWrapper actorRef;
     private Class<?> messageType;
     private String serviceName;
     private boolean isJoint = false;
 
-    public ActorRef getActorRef() {
+    public ActorWrapper getActorRef() {
       return actorRef;
     }
 
-    public void setActorRef(ActorRef actorRef) {
+    public void setActorRef(ActorWrapper actorRef) {
       this.actorRef = actorRef;
     }
 

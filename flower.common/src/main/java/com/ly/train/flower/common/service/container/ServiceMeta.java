@@ -29,16 +29,20 @@ public class ServiceMeta implements Serializable {
   private String serviceName;
   private Class<?> paramType;
   private Class<?> resultType;
-  private Class<?> serviceClass;
+  private String serviceClassName;
+  private boolean local = true;
   private List<String> configs = new ArrayList<>();
 
-  public ServiceMeta(Class<?> serviceClass) {
-    this.serviceClass = serviceClass;
+  public ServiceMeta(String serviceClassName) {
+    this.serviceClassName = serviceClassName;
   }
+
+  public ServiceMeta() {}
 
   public String getServiceName() {
     return serviceName;
   }
+
 
   public void setServiceName(String serviceName) {
     this.serviceName = serviceName;
@@ -70,13 +74,33 @@ public class ServiceMeta implements Serializable {
     this.resultType = resultType;
   }
 
-  public Class<?> getServiceClass() {
-    return serviceClass;
+  /**
+   * true: local Service <br/>
+   * false : remote Service
+   * 
+   * @return true / false
+   */
+  public boolean isLocal() {
+    return local;
   }
 
-  public void setServiceClass(Class<?> serviceClass) {
-    this.serviceClass = serviceClass;
+  /**
+   * set local
+   * 
+   * @param local true: local Service, false : remote Service
+   */
+  public void setLocal(boolean local) {
+    this.local = local;
   }
+
+  public String getServiceClassName() {
+    return serviceClassName;
+  }
+
+  public void setServiceClassName(String serviceClassName) {
+    this.serviceClassName = serviceClassName;
+  }
+
 
   public List<String> getConfigs() {
     return configs;
@@ -107,8 +131,12 @@ public class ServiceMeta implements Serializable {
     builder.append(paramType);
     builder.append(", resultType=");
     builder.append(resultType);
-    builder.append(", serviceClass=");
-    builder.append(serviceClass);
+    builder.append(", serviceClassName=");
+    builder.append(serviceClassName);
+    builder.append(", local=");
+    builder.append(local);
+    builder.append(", configs=");
+    builder.append(configs);
     builder.append("]");
     return builder.toString();
   }
