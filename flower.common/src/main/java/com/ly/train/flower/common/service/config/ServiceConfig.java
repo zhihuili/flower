@@ -36,7 +36,6 @@ public class ServiceConfig implements Serializable {
   private String serviceName;
   private ServiceMeta serviceMeta;
   private Set<ServiceConfig> nextServiceConfigs;
-  private Set<ServiceConfig> previousServiceConfigs;
   private final AtomicInteger jointSourceNumber = new AtomicInteger(0);
   private int index;
   private boolean local = true;
@@ -87,30 +86,16 @@ public class ServiceConfig implements Serializable {
     return nextServiceConfigs;
   }
 
-  /**
-   * @return the previousServiceConfigs
-   */
-  public Set<ServiceConfig> getPreviousServiceConfigs() {
-    return previousServiceConfigs;
-  }
 
   public ServiceConfig addNextServiceConfig(ServiceConfig nextServiceConfig) {
     if (nextServiceConfigs == null) {
       this.nextServiceConfigs = new HashSet<>();
     }
-
     nextServiceConfigs.add(nextServiceConfig);
     return this;
   }
 
 
-  public ServiceConfig addPreviousServiceConfig(ServiceConfig previousServiceConfig) {
-    if (previousServiceConfigs == null) {
-      this.previousServiceConfigs = new HashSet<>();
-    }
-    previousServiceConfigs.add(previousServiceConfig);
-    return this;
-  }
 
   /**
    * 服务在流程中的索引位置
@@ -164,9 +149,6 @@ public class ServiceConfig implements Serializable {
     this.nextServiceConfigs = nextServiceConfigs;
   }
 
-  public void setPreviousServiceConfigs(Set<ServiceConfig> previousServiceConfigs) {
-    this.previousServiceConfigs = previousServiceConfigs;
-  }
 
   public ServiceMeta getServiceMeta() {
     return serviceMeta;
@@ -181,9 +163,6 @@ public class ServiceConfig implements Serializable {
     return nextServiceConfigs != null && nextServiceConfigs.size() > 0;
   }
 
-  public boolean hasPreviousServices() {
-    return previousServiceConfigs != null && previousServiceConfigs.size() > 0;
-  }
 
   /**
    * 聚合服务
@@ -198,7 +177,6 @@ public class ServiceConfig implements Serializable {
     StringBuilder sb = new StringBuilder();
     sb.append(getServiceName());
     sb.append("(");
-    sb.append(previousServiceConfigs == null ? 0 : previousServiceConfigs.size()).append(":");
     sb.append(nextServiceConfigs == null ? 0 : nextServiceConfigs.size());
     sb.append(")");
     return sb.toString();
