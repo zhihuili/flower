@@ -18,6 +18,8 @@ package com.ly.train.flower.common.service.container;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import com.ly.train.flower.common.annotation.FlowerType;
+import com.ly.train.flower.common.service.impl.AggregateService;
 
 /**
  * 
@@ -32,6 +34,10 @@ public class ServiceMeta implements Serializable {
   private String serviceClassName;
   private boolean local = true;
   private List<String> configs = new ArrayList<>();
+  private boolean aggregateService;
+  private boolean innerAggregateService;
+  private int timeout;
+
 
   public ServiceMeta(String serviceClassName) {
     this.serviceClassName = serviceClassName;
@@ -120,6 +126,46 @@ public class ServiceMeta implements Serializable {
       return null;
     }
     return configs.get(index);
+  }
+
+  /**
+   * 指服务的类型是否是聚合类型
+   * 
+   * @return
+   * @see FlowerType#AGGREGATE
+   * @see FlowerType#COMMON
+   */
+  public boolean isAggregateService() {
+    return aggregateService;
+  }
+
+  public void setAggregateService(boolean aggregateService) {
+    this.aggregateService = aggregateService;
+  }
+
+  /**
+   * 指服务是否是聚合类型{@link AggregateService}
+   * 
+   * @return true / false
+   */
+  public boolean isInnerAggregateService() {
+    return innerAggregateService;
+  }
+
+  public void setInnerAggregateService(boolean innerAggregateService) {
+    this.innerAggregateService = innerAggregateService;
+  }
+
+  public static long getSerialversionuid() {
+    return serialVersionUID;
+  }
+
+  public int getTimeout() {
+    return timeout;
+  }
+
+  public void setTimeout(int timeout) {
+    this.timeout = timeout;
   }
 
   @Override

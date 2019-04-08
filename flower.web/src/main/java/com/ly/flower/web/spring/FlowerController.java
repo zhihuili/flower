@@ -22,9 +22,10 @@ import java.io.IOException;
 import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.ly.train.flower.common.akka.FlowRouter;
-import com.ly.train.flower.common.akka.ServiceFacade;
 import com.ly.train.flower.common.annotation.Flower;
+import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
@@ -39,6 +40,9 @@ public abstract class FlowerController implements InitializingBean {
   private String flowerName;
   private String serviceName;
 
+
+  @Autowired
+  private FlowerFactory flowerFactory;
 
   protected void doProcess(Object param, HttpServletRequest req) throws IOException {
     AsyncContext context = req.startAsync();
@@ -59,7 +63,7 @@ public abstract class FlowerController implements InitializingBean {
    * @return {@code ServiceRouter}
    */
   private FlowRouter initServiceRouter() {
-    return ServiceFacade.buildFlowRouter(getFlowName(), 2 << 2);
+    return flowerFactory.getServiceFacade().buildFlowRouter(getFlowName(), 2 << 2);
   }
 
   /**
@@ -68,6 +72,10 @@ public abstract class FlowerController implements InitializingBean {
    * @see ServiceFlow
    */
   public abstract void buildFlower();
+
+  public ServiceFlow getServiceFlow() {
+    return flowerFactory.getServiceFactory().getOrCreateServiceFlow(getFlowName());
+  }
 
   /**
    * 获取流名称

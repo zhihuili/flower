@@ -16,11 +16,11 @@
 package com.ly.train.flower.common.sample.textflow;
 
 import org.junit.Test;
-import com.ly.train.flower.common.akka.ServiceFacade;
+import com.ly.train.flower.common.sample.TestBase;
 import com.ly.train.flower.common.sample.textflow.model.Message1;
 import com.ly.train.flower.common.sample.textflow.model.Message2;
 
-public class Sample {
+public class Sample  extends TestBase{
 
   @Test
   public void main() throws Exception {
@@ -29,10 +29,10 @@ public class Sample {
     Message1 m1 = new Message1();
     m1.setM2(m2);
 
-    System.out.println("返回结果" + ServiceFacade.syncCallService("sample", m1));
-    System.out.println("返回结果" + ServiceFacade.syncCallService("sample", m1));
-    System.out.println("返回结果" + ServiceFacade.syncCallService("sample", m1));
-    System.out.println("返回结果" + ServiceFacade.syncCallService("sample", m1));
+    System.out.println("返回结果" + serviceFacade.syncCallService("sample", m1));
+    System.out.println("返回结果" + serviceFacade.syncCallService("sample", m1));
+    System.out.println("返回结果" + serviceFacade.syncCallService("sample", m1));
+    System.out.println("返回结果" + serviceFacade.syncCallService("sample", m1));
 
   }
 

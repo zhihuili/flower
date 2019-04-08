@@ -21,6 +21,7 @@ package com.ly.train.flower.registry.simple;
 import java.util.Date;
 import java.util.List;
 import org.junit.Test;
+import com.ly.train.flower.base.TestBase;
 import com.ly.train.flower.base.service.ServiceA;
 import com.ly.train.flower.base.service.ServiceB;
 import com.ly.train.flower.base.service.ServiceC1;
@@ -36,7 +37,7 @@ import com.ly.train.flower.registry.config.ServiceInfo;
  * @author leeyazhou
  *
  */
-public class SimpleRegistryTest {
+public class SimpleRegistryTest extends TestBase {
 
   @Test
   public void testRegister() throws Exception {
@@ -79,8 +80,9 @@ public class SimpleRegistryTest {
     Registry registry = factory.createRegistry(url);
 
 
-    ServiceConfig serviceConfig = ServiceFlow.getOrCreate("registerFlow").buildFlow(ServiceA.class, ServiceB.class)
-        .buildFlow(ServiceB.class, ServiceC1.class).getServiceConfig("ServiceA");
+    ServiceConfig serviceConfig =
+        ServiceFlow.getOrCreate("registerFlow", serviceFactory).buildFlow(ServiceA.class, ServiceB.class)
+            .buildFlow(ServiceB.class, ServiceC1.class).getServiceConfig("ServiceA");
     serviceConfig.addAddress(new URL("flower", "127.0.0.1", 12001));
     serviceConfig.addAddress(new URL("flower", "127.0.0.1", 12002));
     registry.registerServiceConfig(serviceConfig);

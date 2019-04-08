@@ -26,7 +26,7 @@ public interface ConfigParser<T> {
 
   /**
    * 解析配置文件
-   * @return {@link T}
+   * @return T
    */
   T parse();
 }

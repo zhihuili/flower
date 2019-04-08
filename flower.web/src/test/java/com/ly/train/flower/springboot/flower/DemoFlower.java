@@ -24,10 +24,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ly.flower.web.spring.FlowerController;
 import com.ly.train.flower.common.annotation.Flower;
-import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.common.service.impl.AggregateService;
 import com.ly.train.flower.springboot.model.User;
+import com.ly.train.flower.springboot.service.EndService;
 import com.ly.train.flower.springboot.service.HeadService;
 import com.ly.train.flower.springboot.service.UserService;
 import com.ly.train.flower.springboot.service.UserService2;
@@ -50,14 +50,13 @@ public class DemoFlower extends FlowerController {
 
   @Override
   public void buildFlower() {
-    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(getFlowName());
-    ServiceFactory.registerService("aggressGateService1", AggregateService.class);
+    ServiceFlow serviceFlow = getServiceFlow();
 
     serviceFlow.buildFlow(HeadService.class, UserService.class);
     serviceFlow.buildFlow(HeadService.class, UserService2.class);
-    serviceFlow.buildFlow("UserService", "aggressGateService1");
-    serviceFlow.buildFlow("UserService2", "aggressGateService1");
-    serviceFlow.buildFlow("aggressGateService1", "EndService");
+    serviceFlow.buildFlow(UserService.class, AggregateService.class);
+    serviceFlow.buildFlow(UserService2.class, AggregateService.class);
+    serviceFlow.buildFlow(AggregateService.class, EndService.class);
   }
 
 }

@@ -24,10 +24,12 @@ import com.ly.train.flower.common.akka.actor.SupervisorActor;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorRefWrapper;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorSelectionWrapper;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorWrapper;
+import com.ly.train.flower.common.exception.FlowNotFoundException;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.FlowerFactory;
-import com.ly.train.flower.common.service.container.ServiceFlow;
+import com.ly.train.flower.common.service.container.ServiceFactory;
+import com.ly.train.flower.common.service.container.lifecyle.AbstractLifecycle;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.config.FlowerConfig;
@@ -43,30 +45,29 @@ import akka.pattern.Patterns;
 import scala.concurrent.Await;
 import scala.concurrent.duration.Duration;
 
-public class ServiceActorFactory {
+public class ServiceActorFactory extends AbstractLifecycle {
   private static final Logger logger = LoggerFactory.getLogger(ServiceActorFactory.class);
   private static final Long DEFAULT_TIMEOUT = 5000L;
   private static final Duration timeout = Duration.create(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
   private final ConcurrentMap<String, ActorWrapper> serviceActorCache = new ConcurrentHashMap<>();
 
-  private static final Map<String, ServiceRouter> serviceRoutersCache = new ConcurrentHashMap<>();
-  private static final Map<String, FlowRouter> flowRoutersCache = new ConcurrentHashMap<>();
+  private final Map<String, ServiceRouter> serviceRoutersCache = new ConcurrentHashMap<>();
+  private final Map<String, FlowRouter> flowRoutersCache = new ConcurrentHashMap<>();
   private static final String actorPathFormat = "akka.tcp://%s@%s:%s/user/flower/%s_0";
   private final int defaultFlowIndex = 0;
 
 
   private final FlowerFactory flowerFactory;
-  private final ActorSystem actorSystem;
-  protected final ActorRef supervierActor;
-  protected final ActorContext actorContext;
+  private final ServiceFactory serviceFactory;
+  private ActorSystem actorSystem;
+  private ActorRef supervierActor;
+  private ActorContext actorContext;
   private final FlowerConfig flowerConfig;
 
   public ServiceActorFactory(FlowerFactory flowerFactory) {
     this.flowerFactory = flowerFactory;
     this.flowerConfig = flowerFactory.getFlowerConfig();
-    this.actorSystem = getActorSystem();
-    this.supervierActor = this.actorSystem.actorOf(SupervisorActor.props(), "flower");
-    this.actorContext = getActorContext();
+    this.serviceFactory = flowerFactory.getServiceFactory();
   }
 
   public ActorWrapper buildServiceActor(ServiceConfig serviceConfig) {
@@ -77,7 +78,7 @@ public class ServiceActorFactory {
     return buildServiceActor(serviceConfig, index, 0);
   }
 
-  public ActorWrapper buildServiceActor(ServiceConfig serviceConfig, int index, int count) {
+  public synchronized ActorWrapper buildServiceActor(ServiceConfig serviceConfig, int index, int count) {
     final String serviceName = serviceConfig.getServiceName();
     final String cacheKey = serviceName + "_" + index;
     ActorWrapper actorRefWrapper = serviceActorCache.get(cacheKey);
@@ -85,53 +86,70 @@ public class ServiceActorFactory {
       return actorRefWrapper;
     }
 
-    if (serviceConfig.isLocal()) {
-      ActorRef actorRef = getActorContext().actorOf(ServiceActor.props(serviceName, count), cacheKey);
-      actorRefWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
-    } else {
-      // "akka.tcp://flower@127.0.0.1:2551/user/$a"
-      URL url = serviceConfig.getAddresses().iterator().next();
-      String actorPath =
-          String.format(actorPathFormat, flowerConfig.getName(), url.getHost(), url.getPort(), serviceName, index);
-      ActorSelection actorSelection = getActorContext().actorSelection(actorPath);
-      actorRefWrapper = new ActorSelectionWrapper(actorSelection).setServiceName(serviceName);
+    try {
+      if (serviceConfig.isLocal()) {
+        ActorRef actorRef = getActorContext().actorOf(ServiceActor.props(serviceName, flowerFactory, count), cacheKey);
+        actorRefWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
+      } else {
+        // "akka.tcp://flower@127.0.0.1:2551/user/$a"
+        URL url = serviceConfig.getAddresses().iterator().next();
+        String actorPath =
+            String.format(actorPathFormat, flowerConfig.getName(), url.getHost(), url.getPort(), serviceName, index);
+        ActorSelection actorSelection = getActorContext().actorSelection(actorPath);
+        actorRefWrapper = new ActorSelectionWrapper(actorSelection).setServiceName(serviceName);
+        logger.info("远程actor ： {}", actorPath);
+      }
+      serviceActorCache.put(cacheKey, actorRefWrapper);
+      // logger.info("创建服务{}:{}", cacheKey, actorRefWrapper);
+    } catch (Exception e) {
+      logger.error("fail to create flowerService,flowName : " + serviceConfig.getFlowName() + ", serviceName : "
+          + serviceName + ", serviceClassName : " + serviceConfig.getServiceMeta().getServiceClassName(), e);
     }
 
-    logger.info("创建服务{}:{}", cacheKey, actorRefWrapper);
-    serviceActorCache.put(cacheKey, actorRefWrapper);
+
     return actorRefWrapper;
   }
 
   protected ActorContext getActorContext() {
-    if (actorContext != null) {
-      return actorContext;
+    if (actorContext == null) {
+      synchronized (this) {
+        if (actorContext == null) {
+          try {
+            actorContext = (ActorContext) Await.result(
+                Patterns.ask(getSupervierActor(), new SupervisorActor.GetActorContext(), DEFAULT_TIMEOUT - 1), timeout);
+          } catch (Exception e) {
+            logger.error("", e);
+            throw new FlowerException("", e);
+          }
+        }
+      }
     }
-    try {
-      return (ActorContext) Await
-          .result(Patterns.ask(supervierActor, new SupervisorActor.GetActorContext(), DEFAULT_TIMEOUT - 1), timeout);
-    } catch (Exception e) {
-      logger.error("", e);
-      throw new FlowerException("", e);
-    }
+    return actorContext;
+
   }
 
   private ActorSystem getActorSystem() {
-    if (actorSystem != null) {
-      return actorSystem;
-    }
-    FlowerConfig flowerConfig = flowerFactory.getFlowerConfig();
-    StringBuffer configBuilder = new StringBuffer();
+    if (actorSystem == null) {
+      synchronized (this) {
+        if (actorSystem == null) {
+          FlowerConfig flowerConfig = flowerFactory.getFlowerConfig();
+          StringBuffer configBuilder = new StringBuffer();
 
-    if (StringUtil.isNotBlank(flowerConfig.getHost())) {
-      configBuilder.append("akka.actor.provider=\"remote\"").append("\r\n");
-      configBuilder.append("akka.remote.enabled-transports = [\"akka.remote.netty.tcp\"]").append("\r\n");
-      configBuilder.append("akka.remote.netty.tcp.hostname = ").append("\"").append(flowerConfig.getHost()).append("\"")
-          .append("\r\n");
-      configBuilder.append("akka.remote.netty.tcp.port = \"").append(flowerConfig.getPort()).append("\"");
+          if (StringUtil.isNotBlank(flowerConfig.getHost())) {
+            configBuilder.append("akka.actor.provider=\"remote\"").append("\r\n");
+            configBuilder.append("akka.remote.enabled-transports = [\"akka.remote.netty.tcp\"]").append("\r\n");
+            configBuilder.append("akka.remote.netty.tcp.hostname = ").append("\"").append(flowerConfig.getHost())
+                .append("\"").append("\r\n");
+            configBuilder.append("akka.remote.netty.tcp.port = \"").append(flowerConfig.getPort()).append("\"");
+          }
+          logger.info("akka config ：{}", configBuilder.toString());
+          Config config = ConfigFactory.parseString(configBuilder.toString()).withFallback(ConfigFactory.load());
+          actorSystem = ActorSystem.create(flowerConfig.getName(), config);
+        }
+      }
     }
-    logger.info("akka config ：{}", configBuilder.toString());
-    Config config = ConfigFactory.parseString(configBuilder.toString()).withFallback(ConfigFactory.load());
-    return ActorSystem.create(flowerConfig.getName(), config);
+
+    return actorSystem;
   }
 
 
@@ -143,14 +161,19 @@ public class ServiceActorFactory {
    * @return {@link ServiceRouter}
    */
   public FlowRouter buildFlowRouter(String flowName, int flowNumbe) {
-    final ServiceConfig serviceConfig = ServiceFlow.getOrCreate(flowName).getHeadServiceConfig();
+    // logger.info("谁是null呢: {}", serviceFactory);
+    final ServiceConfig serviceConfig = serviceFactory.getOrCreateServiceFlow(flowName).getHeadServiceConfig();
+    if (serviceConfig == null) {
+      throw new FlowNotFoundException("flowName : " + flowName + ", flowNumbe : " + flowNumbe);
+    }
     final String serviceName = serviceConfig.getServiceName();
     final String routerName = flowName + "_" + serviceName;
 
     FlowRouter serviceRouter = flowRoutersCache.get(routerName);
     if (serviceRouter == null) {
-      serviceRouter = new FlowRouter(flowName, serviceConfig, flowNumbe);
+      serviceRouter = new FlowRouter(flowName, serviceConfig, flowNumbe, flowerFactory);
       flowRoutersCache.put(routerName, serviceRouter);
+      serviceRouter.init();
       logger.info("build service Router. flowName : {}, serviceName : {}, flowNumbe : {}", flowName, serviceName,
           flowNumbe);
     }
@@ -163,14 +186,33 @@ public class ServiceActorFactory {
 
     ServiceRouter serviceRouter = serviceRoutersCache.get(routerName);
     if (serviceRouter == null) {
-      serviceRouter = new ServiceRouter(serviceConfig, flowNumbe);
+      serviceRouter = new ServiceRouter(serviceConfig, flowerFactory.getServiceActorFactory(), flowNumbe);
       serviceRoutersCache.put(routerName, serviceRouter);
       logger.info("build service Router. serviceName : {}, flowNumbe : {}", serviceName, flowNumbe);
     }
     return serviceRouter;
   }
 
-  public void shutdown() {
+  public ActorRef getSupervierActor() {
+    if (supervierActor == null) {
+      synchronized (this) {
+        if (supervierActor == null) {
+          this.supervierActor = getActorSystem().actorOf(SupervisorActor.props(), "flower");
+        }
+      }
+    }
+    return supervierActor;
+  }
+
+  @Override
+  protected void doStart() {
+    this.actorSystem = getActorSystem();
+    this.supervierActor = getSupervierActor();
+    this.actorContext = getActorContext();
+  }
+
+  @Override
+  protected void doStop() {
     logger.info("akka system terminate, system : {}", actorSystem);
     actorSystem.terminate();
   }

@@ -18,23 +18,25 @@ package com.ly.train.flower.common.akka;
 import java.io.IOException;
 import javax.servlet.AsyncContext;
 import com.ly.train.flower.common.service.config.ServiceConfig;
-import com.ly.train.flower.common.service.container.ServiceLoader;
-import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
+import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
 public class ServiceFacade {
   private static final Logger logger = LoggerFactory.getLogger(ServiceFacade.class);
 
-  static {
-    ServiceLoader.getInstance();
+  private final FlowerFactory flowerFactory;
+
+  public ServiceFacade(FlowerFactory flowerFactory) {
+    this.flowerFactory = flowerFactory;
   }
+
 
   /**
    * @deprecated serviceName 不必须，因为可以从流程中获取到首个服务
    */
   @Deprecated
-  public static void asyncCallService(String flowName, String serviceName, Object message, AsyncContext ctx) {
+  public void asyncCallService(String flowName, String serviceName, Object message, AsyncContext ctx) {
     asyncCallService(flowName, message, ctx);
   }
 
@@ -46,7 +48,7 @@ public class ServiceFacade {
    * @param asyncContext 异步处理上下文
    * @throws IOException io exception
    */
-  public static void asyncCallService(String flowName, Object message, AsyncContext asyncContext) {
+  public void asyncCallService(String flowName, Object message, AsyncContext asyncContext) {
     FlowRouter serviceRouter = buildFlowRouter(flowName, -1);
     serviceRouter.asyncCallService(message, asyncContext);
   }
@@ -56,14 +58,14 @@ public class ServiceFacade {
    * @see ServiceFacade#asyncCallService(String,Object,AsyncContext)
    */
   @Deprecated
-  public static void asyncCallService(String flowName, String serviceName, Object message) {
+  public void asyncCallService(String flowName, String serviceName, Object message) {
     asyncCallService(flowName, message, null);
   }
 
   /**
    * @see ServiceFacade#asyncCallService(String,Object,AsyncContext)
    */
-  public static void asyncCallService(String flowName, Object message) throws IOException {
+  public void asyncCallService(String flowName, Object message) throws IOException {
     asyncCallService(flowName, message, null);
   }
 
@@ -76,8 +78,8 @@ public class ServiceFacade {
    * @return object
    * @throws Exception
    */
-  public static Object syncCallService(String flowName, Object message) throws Exception {
-    FlowRouter serviceRouter = buildFlowRouter(flowName, -1);
+  public Object syncCallService(String flowName, Object message) throws Exception {
+    FlowRouter serviceRouter = buildFlowRouter(flowName, 2);
     return serviceRouter.syncCallService(message);
   }
 
@@ -85,7 +87,7 @@ public class ServiceFacade {
    * @deprecated serviceName 不必须，因为可以从流程中获取到首个服务
    */
   @Deprecated
-  public static Object syncCallService(String flowName, String serviceName, Object message) throws Exception {
+  public Object syncCallService(String flowName, String serviceName, Object message) throws Exception {
     return syncCallService(flowName, message);
   }
 
@@ -97,16 +99,16 @@ public class ServiceFacade {
    * @param flowNumbe 数量
    * @return {@link ServiceRouter}
    */
-  public static FlowRouter buildFlowRouter(String flowName, int flowNumbe) {
-    return SimpleFlowerFactory.get().getServiceActorFactory().buildFlowRouter(flowName, flowNumbe);
+  public FlowRouter buildFlowRouter(String flowName, int flowNumbe) {
+    return flowerFactory.getServiceActorFactory().buildFlowRouter(flowName, flowNumbe);
   }
 
-  public static ServiceRouter buildServiceRouter(ServiceConfig serviceConfig, int flowNumbe) {
-    return SimpleFlowerFactory.get().getServiceActorFactory().buildServiceRouter(serviceConfig, flowNumbe);
+  public ServiceRouter buildServiceRouter(ServiceConfig serviceConfig, int flowNumbe) {
+    return flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, flowNumbe);
   }
 
-  public static void shutdown() {
-    SimpleFlowerFactory.get().getServiceActorFactory().shutdown();
+  public void shutdown() {
+    flowerFactory.stop();
     logger.info("shutdown.");
   }
 }

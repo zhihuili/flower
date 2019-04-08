@@ -18,27 +18,37 @@ package com.ly.train.flower.common.akka;
 import java.io.IOException;
 import javax.servlet.AsyncContext;
 import com.ly.train.flower.common.service.config.ServiceConfig;
+import com.ly.train.flower.common.service.container.AbstractInit;
+import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.logging.LoggerFactory;
+import akka.actor.ActorRef;
 
 /**
  * @author leeyazhou
  *
  */
-public class FlowRouter {
+public class FlowRouter extends AbstractInit {
   static final com.ly.train.flower.logging.Logger logger = LoggerFactory.getLogger(FlowRouter.class);
   private int number = 2 << 6;
   private ServiceRouter serviceRouter;
   private final ServiceConfig serviceConfig;
   private final String flowName;
+  private final ServiceFacade serviceFacade;
 
-  public FlowRouter(String flowName, ServiceConfig serviceConfig, int number) {
+  public FlowRouter(String flowName, ServiceConfig serviceConfig, int number, FlowerFactory flowerFactory) {
     this.flowName = flowName;
     this.serviceConfig = serviceConfig;
+    this.serviceFacade = flowerFactory.getServiceFacade();
     if (number > 0) {
       this.number = number;
     }
+  }
+
+  @Override
+  protected void doInit() {
+    getServiceRouter();
   }
 
   public void asyncCallService(Object message) throws IOException {
@@ -58,7 +68,7 @@ public class FlowRouter {
     if (StringUtil.isBlank(serviceContext.getCurrentServiceName())) {
       serviceContext.setCurrentServiceName(serviceConfig.getServiceName());
     }
-    getServiceRouter().asyncCallService(serviceContext);
+    getServiceRouter().asyncCallService(serviceContext, ActorRef.noSender());
   }
 
   /**
@@ -77,12 +87,17 @@ public class FlowRouter {
   }
 
   public void asyncCallService(ServiceContext serviceContext) {
-    getServiceRouter().asyncCallService(serviceContext);
+    getServiceRouter().asyncCallService(serviceContext, ActorRef.noSender());
   }
 
   private ServiceRouter getServiceRouter() {
     if (serviceRouter == null) {
-      this.serviceRouter = ServiceFacade.buildServiceRouter(serviceConfig, number);
+      synchronized (this) {
+        if (serviceRouter == null) {
+          this.serviceRouter = serviceFacade.buildServiceRouter(serviceConfig, number);
+          this.serviceRouter.init();
+        }
+      }
     }
     return serviceRouter;
   }

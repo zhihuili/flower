@@ -32,7 +32,7 @@ public enum FlowerType {
   /**
    * 聚合类型
    */
-  //AGGREGATE
+  AGGREGATE
 
 
 }

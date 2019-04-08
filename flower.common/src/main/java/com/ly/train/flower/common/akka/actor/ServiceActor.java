@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
-import com.ly.train.flower.common.akka.ServiceFacade;
 import com.ly.train.flower.common.akka.ServiceRouter;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.service.Aggregate;
@@ -29,9 +28,8 @@ import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.config.ServiceConfig;
+import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceContext;
-import com.ly.train.flower.common.service.container.ServiceFlow;
-import com.ly.train.flower.common.service.container.ServiceLoader;
 import com.ly.train.flower.common.service.impl.AggregateService;
 import com.ly.train.flower.common.service.message.Condition;
 import com.ly.train.flower.common.service.message.FlowMessage;
@@ -63,9 +61,14 @@ public class ServiceActor extends AbstractFlowerActor {
 
   private FlowerService service;
   private int count;
+  private final FlowerFactory flowerFactory;
 
   static public Props props(String serviceName, int count) {
     return Props.create(ServiceActor.class, serviceName, count);
+  }
+
+  static public Props props(String serviceName, FlowerFactory flowerFactory, int count) {
+    return Props.create(ServiceActor.class, serviceName, flowerFactory, count);
   }
 
   /**
@@ -73,9 +76,14 @@ public class ServiceActor extends AbstractFlowerActor {
    */
   private String serviceName;
 
-  public ServiceActor(String serviceName, int count) {
+//  public ServiceActor(String serviceName, int count) {
+//    this(serviceName, SimpleFlowerFactory.get(), count);
+//  }
+
+  public ServiceActor(String serviceName, FlowerFactory flowerFactory, int count) {
     this.serviceName = serviceName;
     this.count = count;
+    this.flowerFactory = flowerFactory;
   }
 
   @SuppressWarnings({"unchecked", "rawtypes"})
@@ -94,11 +102,12 @@ public class ServiceActor extends AbstractFlowerActor {
       if (web != null) {
         web.complete();
       }
-      throw new FlowerException(
-          "fail to invoke service " + serviceContext.getCurrentServiceName() + " : " + service + ", param : " + fm.getMessage(), e);
+      throw new FlowerException("fail to invoke service " + serviceContext.getCurrentServiceName() + " : " + service
+          + ", param : " + fm.getMessage(), e);
     }
 
-    // logger.info("同步处理 ： {}, hasChild : {}", serviceContext.isSync(), hasChildActor());
+    // logger.info("同步处理 ： {}, hasChild : {}", serviceContext.isSync(),
+    // hasChildActor());
     Set<RefType> nextActorRef = getNextServiceActors(serviceContext);
     if (serviceContext.isSync() && nextActorRef.isEmpty()) {
       ActorRef actor = syncActors.get(serviceContext.getId());
@@ -134,7 +143,7 @@ public class ServiceActor extends AbstractFlowerActor {
             || stringInStrings(refType.getServiceName(), ((Condition) result).getCondition().toString())) {
           // refType.getActor().tell(context, getSelf());
           context.setCurrentServiceName(refType.getServiceName());
-          refType.getServiceRouter().asyncCallService(context);
+          refType.getServiceRouter().asyncCallService(context, getSelf());
         }
       }
     }
@@ -148,10 +157,10 @@ public class ServiceActor extends AbstractFlowerActor {
    */
   public FlowerService getService(ServiceContext serviceContext) {
     if (this.service == null) {
-      this.service = ServiceLoader.getInstance().loadService(serviceName);
+      this.service = flowerFactory.getServiceFactory().getServiceLoader().loadService(serviceName);
       if (service instanceof Aggregate) {
-        ((AggregateService) service)
-            .setSourceNumber(ServiceFlow.getOrCreate(serviceContext.getFlowName()).getServiceConfig(serviceName).getJointSourceNumber());
+        ((AggregateService) service).setSourceNumber(flowerFactory.getServiceFactory()
+            .getOrCreateServiceFlow(serviceContext.getFlowName()).getServiceConfig(serviceName).getJointSourceNumber());
       }
     }
     return service;
@@ -164,14 +173,14 @@ public class ServiceActor extends AbstractFlowerActor {
     Set<RefType> nextServiceActors = nextServiceActorCache.get(cacheKey);
     if (nextServiceActors == null) {
       nextServiceActors = new HashSet<>();
-      Set<ServiceConfig> serviceConfigs =
-          ServiceFlow.getOrCreate(serviceContext.getFlowName()).getNextFlow(serviceContext.getCurrentServiceName());
+      Set<ServiceConfig> serviceConfigs = flowerFactory.getServiceFactory()
+          .getOrCreateServiceFlow(serviceContext.getFlowName()).getNextFlow(serviceContext.getCurrentServiceName());
       if (serviceConfigs != null) {
         for (ServiceConfig serviceConfig : serviceConfigs) {
           RefType refType = new RefType();
 
           refType.setAggregate(serviceConfig.isAggregateService());
-          refType.setServiceRouter(ServiceFacade.buildServiceRouter(serviceConfig, count));
+          refType.setServiceRouter(flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, count));
           refType.setMessageType(serviceConfig.getServiceMeta().getParamType());
           refType.setServiceName(serviceConfig.getServiceName());
           nextServiceActors.add(refType);

@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -32,17 +31,19 @@ import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
+import com.ly.train.flower.common.annotation.FlowerServiceUtil;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.impl.AggregateService;
 import com.ly.train.flower.common.service.impl.ConditionService;
 import com.ly.train.flower.common.service.impl.NothingService;
+import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.FileUtil;
 import com.ly.train.flower.common.util.Pair;
 import com.ly.train.flower.common.util.StringUtil;
 
-public class ServiceLoader {
+public class ServiceLoader extends AbstractInit {
   private static final Logger logger = LoggerFactory.getLogger(ServiceLoader.class);
   private final ClassLoader classLoader;
 
@@ -51,23 +52,31 @@ public class ServiceLoader {
 
   private volatile ConcurrentMap<String, ServiceMeta> serviceMetaCache = new ConcurrentHashMap<>();
 
-  private volatile static ServiceLoader serviceLoader = new ServiceLoader();
-  private volatile AtomicBoolean init = new AtomicBoolean(false);
+  // private volatile static ServiceLoader serviceLoader = null;
+  private ServiceFactory serviceFactory;
 
-  private ServiceLoader() {
+  ServiceLoader(ServiceFactory serviceFactory) {
+    this.serviceFactory = serviceFactory;
     this.classLoader = this.getClass().getClassLoader();
   }
 
-  public static ServiceLoader getInstance() {
-    if (serviceLoader.init.compareAndSet(false, true)) {
-      try {
-        // serviceLoader.loadInnerFlowService();
-        serviceLoader.loadServiceAndFlow();
-      } catch (Exception e) {
-        logger.error("", e);
-      }
-    }
-    return serviceLoader;
+  // @SuppressWarnings("unused")
+  // private static ServiceLoader getInstance() {
+  // if (serviceLoader == null) {
+  // synchronized (logger) {
+  // if (serviceLoader == null) {
+  // serviceLoader = new ServiceLoader();
+  // serviceLoader.init();
+  // }
+  // }
+  // }
+  // return serviceLoader;
+  // }
+
+  @Override
+  protected void doInit() {
+    // this.loadInnerFlowService();
+    this.loadServiceAndFlow();
   }
 
   public boolean registerFlowerService(String serviceName, FlowerService flowerService) {
@@ -156,6 +165,9 @@ public class ServiceLoader {
     ServiceMeta serviceMeta = new ServiceMeta();
     serviceMeta.setServiceName(serviceName);
     serviceMeta.setServiceClassName(serviceClass.getName());
+    serviceMeta.setAggregateService(FlowerServiceUtil.isAggregateType(serviceClass));
+    serviceMeta.setInnerAggregateService(Constant.AGGREGATE_SERVICE_NAME.equals(serviceClass.getName()));
+    serviceMeta.setTimeout(FlowerServiceUtil.getTimeout(serviceClass));
     try {
       Type[] paramTypes = null;
       Type[] types = serviceClass.getGenericInterfaces();
@@ -224,7 +236,7 @@ public class ServiceLoader {
     for (String path : flowFiles) {
       logger.info("find flow file, path : {}", path);
       String flowName = path.substring(0, path.lastIndexOf("."));
-      ServiceFlow.getOrCreate(flowName).buildFlow(FileUtil.readFlow("/" + path));
+      ServiceFlow.getOrCreate(flowName, serviceFactory).buildFlow(FileUtil.readFlow("/" + path));
     }
 
   }

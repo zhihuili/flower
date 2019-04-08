@@ -15,7 +15,6 @@
  */
 package com.ly.train.flower.base.service;
 
-import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.logging.Logger;
@@ -25,7 +24,6 @@ import com.ly.train.flower.logging.LoggerFactory;
  * @author leeyazhou
  *
  */
-@FlowerService
 public class StringService2 implements Service<String, String> {
   private static final Logger logger = LoggerFactory.getLogger(StringService2.class);
 

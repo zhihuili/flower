@@ -22,17 +22,17 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import com.alibaba.fastjson.JSONObject;
+import com.ly.train.flower.base.TestBase;
 import com.ly.train.flower.base.service.ServiceA;
-import com.ly.train.flower.common.service.container.ServiceLoader;
 import com.ly.train.flower.common.service.container.ServiceMeta;
 
-public class RandomTest {
+public class RandomTest extends TestBase {
 
   @Test
   public void testJSON() {
 
-    ServiceLoader.getInstance().registerServiceType("aaa", ServiceA.class);
-    ServiceMeta meta = ServiceLoader.getInstance().loadServiceMeta("aaa");
+    serviceFactory.getServiceLoader().registerServiceType("aaa", ServiceA.class);
+    ServiceMeta meta = serviceLoader.loadServiceMeta("aaa");
 
     String json = JSONObject.toJSONString(meta);
     System.out.println("前对象：" + meta);

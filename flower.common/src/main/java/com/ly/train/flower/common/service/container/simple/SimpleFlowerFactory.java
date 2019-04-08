@@ -20,18 +20,14 @@ package com.ly.train.flower.common.service.container.simple;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import org.reflections.Reflections;
+import java.util.concurrent.atomic.AtomicBoolean;
 import com.ly.train.flower.common.akka.ServiceActorFactory;
-import com.ly.train.flower.common.annotation.FlowerServiceUtil;
+import com.ly.train.flower.common.akka.ServiceFacade;
 import com.ly.train.flower.common.exception.ExceptionHandler;
 import com.ly.train.flower.common.service.container.FlowerFactory;
-import com.ly.train.flower.common.service.container.ServiceFlow;
-import com.ly.train.flower.common.service.container.ServiceLoader;
-import com.ly.train.flower.common.util.Assert;
+import com.ly.train.flower.common.service.container.ServiceFactory;
+import com.ly.train.flower.common.service.container.lifecyle.AbstractLifecycle;
 import com.ly.train.flower.common.util.ExtensionLoader;
-import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.config.FlowerConfig;
 import com.ly.train.flower.config.parser.FlowerConfigParser;
@@ -45,21 +41,24 @@ import com.ly.train.flower.registry.config.RegistryConfig;
  * @author leeyazhou
  *
  */
-public class SimpleFlowerFactory implements FlowerFactory {
+public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFactory {
   private static final Logger logger = LoggerFactory.getLogger(SimpleFlowerFactory.class);
 
-  // <flowName, ServiceFlow>
-  private static final ConcurrentMap<String, ServiceFlow> serviceFlows = new ConcurrentHashMap<>();
   private static FlowerFactory instance;
-
-
-
   private FlowerConfig flowerConfig;
-  private Set<Registry> registries = new HashSet<>();
+  private Set<Registry> registries;
   private ExceptionHandler exceptionHandler;
-  private ServiceActorFactory serviceActorFactory;
+  private volatile ServiceActorFactory serviceActorFactory;
+  private volatile ServiceFactory serviceFactory;
+  private volatile ServiceFacade serviceFacade;
+  private volatile AtomicBoolean init = new AtomicBoolean();
+  private String configLocation;
 
   public SimpleFlowerFactory() {}
+
+  public SimpleFlowerFactory(String configLocation) {
+    this.configLocation = configLocation;
+  }
 
   public static FlowerFactory get() {
     if (instance == null) {
@@ -74,71 +73,56 @@ public class SimpleFlowerFactory implements FlowerFactory {
   }
 
   @Override
-  public boolean init() {
-    initFlowerConfig();
-    initRegistryFactories();
-    scanFlowerTypes();
-    this.serviceActorFactory = new ServiceActorFactory(this);
-    return true;
+  public void init() {
+    if (init.compareAndSet(false, true)) {
+      getServiceActorFactory();
+      getServiceFactory();
+      getFlowerConfig();
+    }
   }
 
-  private void initRegistryFactories() {
+  private Set<Registry> initRegistryFactories() {
+    Set<Registry> ret = new HashSet<Registry>();
     Set<RegistryConfig> registryConfigs = getFlowerConfig().getRegistry();
     if (registryConfigs == null) {
-      return;
+      return ret;
     }
-
     for (RegistryConfig config : registryConfigs) {
       RegistryFactory registryFactory = ExtensionLoader.load(RegistryFactory.class).load(config.getProtocol());
       if (registryFactory != null) {
         URL url = new URL(config.getProtocol(), config.getHost(), config.getPort());
-        this.registries.add(registryFactory.createRegistry(url));
+        ret.add(registryFactory.createRegistry(url));
+        logger.info("find registry : {}", url);
       }
     }
-
+    return ret;
   }
 
-  private void initFlowerConfig() {
-    this.flowerConfig = new FlowerConfigParser().parse();
-    logger.info("load flower config : {}", flowerConfig);
-  }
 
-  protected void scanFlowerTypes() {
-    String basePackage = getFlowerConfig().getBasePackage();
-    if (StringUtil.isBlank(basePackage)) {
-      return;
-    }
-    Reflections reflections = new Reflections(basePackage);
-    Set<Class<?>> flowers =
-        reflections.getTypesAnnotatedWith(com.ly.train.flower.common.annotation.FlowerService.class);
-    logger.info("scan flowerService, basePackage : {}, find flowerService : {}", basePackage, flowers.size());
-    for (Class<?> clazz : flowers) {
-      ServiceLoader.getInstance().registerServiceType(FlowerServiceUtil.getServiceName(clazz), clazz);
-    }
-
-  }
 
   @Override
   public FlowerConfig getFlowerConfig() {
+    if (flowerConfig == null) {
+      synchronized (this) {
+        if (flowerConfig == null) {
+          this.flowerConfig = new FlowerConfigParser(configLocation).parse();
+        }
+      }
+    }
     return flowerConfig;
   }
 
   @Override
   public Set<Registry> getRegistry() {
+    if (registries == null) {
+      synchronized (this) {
+        if (registries == null) {
+          this.registries = initRegistryFactories();
+        }
+      }
+    }
     return registries;
   }
-
-  @Override
-  public ServiceFlow getOrCreateServiceFlow(String flowName) {
-    Assert.notNull(flowName, "flowName can't be null !");
-    ServiceFlow serviceFlow = serviceFlows.get(flowName);
-    if (serviceFlow == null) {
-      serviceFlow = new ServiceFlow(flowName);
-      serviceFlows.putIfAbsent(flowName, serviceFlow);
-    }
-    return serviceFlow;
-  }
-
 
   @Override
   public ExceptionHandler getExceptionHandler() {
@@ -150,6 +134,45 @@ public class SimpleFlowerFactory implements FlowerFactory {
 
   @Override
   public ServiceActorFactory getServiceActorFactory() {
+    if (serviceActorFactory == null) {
+      synchronized (this) {
+        this.serviceActorFactory = new ServiceActorFactory(this);
+        this.serviceActorFactory.start();
+      }
+    }
     return serviceActorFactory;
+  }
+
+  @Override
+  public void doStart() {
+    logger.info("start flower factory");
+  }
+
+  @Override
+  public void doStop() {
+    logger.info("stop flower factory");
+  }
+
+  @Override
+  public ServiceFactory getServiceFactory() {
+    if (serviceFactory == null) {
+      synchronized (this) {
+        if (serviceFactory == null) {
+          this.serviceFactory = new ServiceFactory(this);
+          this.serviceFactory.init();
+        }
+      }
+    }
+    return serviceFactory;
+  }
+
+  @Override
+  public ServiceFacade getServiceFacade() {
+    if (serviceFacade == null) {
+      synchronized (this) {
+        this.serviceFacade = new ServiceFacade(this);
+      }
+    }
+    return serviceFacade;
   }
 }

@@ -21,6 +21,7 @@ package com.ly.train.flower.base.service;
 import java.util.Set;
 import com.ly.train.flower.base.model.User;
 import com.ly.train.flower.common.annotation.FlowerService;
+import com.ly.train.flower.common.annotation.FlowerType;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.logging.Logger;
@@ -30,7 +31,7 @@ import com.ly.train.flower.logging.LoggerFactory;
  * @author leeyazhou
  *
  */
-@FlowerService
+@FlowerService(type = FlowerType.AGGREGATE)
 public class ServiceD implements Service<Set<User>, Set<User>> {
   static final Logger logger = LoggerFactory.getLogger(ServiceD.class);
 

@@ -29,7 +29,6 @@ import com.ly.train.flower.common.annotation.FlowerServiceUtil;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;
 import com.ly.train.flower.common.service.config.ServiceConfig;
-import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
 import com.ly.train.flower.common.service.impl.AggregateService;
 import com.ly.train.flower.common.util.AnnotationUtil;
 import com.ly.train.flower.common.util.Assert;
@@ -73,14 +72,23 @@ public final class ServiceFlow {
   private final AtomicInteger index = new AtomicInteger(0);
 
   private final String flowName;
-
+  private final FlowerFactory flowerFactory;
+  private final ServiceFactory serviceFactory;
+  private final ServiceLoader serviceLoader;
   /**
    * 流程的第一个服务
    */
   private ServiceConfig headServiceConfig;
 
-  public ServiceFlow(String flowName) {
+  // public ServiceFlow(String flowName) {
+  // this(flowName, SimpleFlowerFactory.get());
+  // }
+
+  public ServiceFlow(String flowName, FlowerFactory flowerFactory) {
     this.flowName = flowName;
+    this.flowerFactory = flowerFactory;
+    this.serviceFactory = flowerFactory.getServiceFactory();
+    this.serviceLoader = serviceFactory.getServiceLoader();
   }
 
   /**
@@ -109,8 +117,22 @@ public final class ServiceFlow {
    * @return {@code ServiceFlow}
    * @see FlowerFactory#getOrCreateServiceFlow(String)
    */
-  public static ServiceFlow getOrCreate(String flowName) {
-    return SimpleFlowerFactory.get().getOrCreateServiceFlow(flowName);
+  // private static ServiceFlow getOrCreate(String flowName) {
+  // return
+  // SimpleFlowerFactory.get().getServiceFactory().getOrCreateServiceFlow(flowName);
+  // }
+
+  /**
+   * 1. 已经存在指定 flowName 的流程，则返回原有流程对象<br/>
+   * 2. 不存在指定 flowName 的流程，则新建一个流程对象并缓存
+   * 
+   * @param flowName 流程名称
+   * @param serviceFactory {@code ServiceFactory}
+   * @return {@code ServiceFlow}
+   * @see ServiceFactory#getOrCreateServiceFlow(String)
+   */
+  public static ServiceFlow getOrCreate(String flowName, ServiceFactory serviceFactory) {
+    return serviceFactory.getOrCreateServiceFlow(flowName);
   }
 
   /**
@@ -161,7 +183,7 @@ public final class ServiceFlow {
   public ServiceFlow build() {
     logger.info(" build {} success. \n {}", flowName, this);
     logger.info("start register ServiceConfig : {}", headServiceConfig);
-    Set<Registry> registries = SimpleFlowerFactory.get().getRegistry();
+    Set<Registry> registries = flowerFactory.getRegistry();
     for (Registry registry : registries) {
       registry.registerServiceConfig(headServiceConfig);
     }
@@ -187,14 +209,12 @@ public final class ServiceFlow {
     ServiceMeta preServiceMeta = loadServiceMeta(preConfig);
     ServiceMeta nextServiceMeta = loadServiceMeta(nextConfig);
 
-    if (!isAggregateService(preServiceMeta.getServiceClassName())
-        && isAggregateService(nextServiceMeta.getServiceClassName())) {
+    if (!preServiceMeta.isInnerAggregateService() && nextServiceMeta.isAggregateService()) {
       ServiceConfig serviceConfig = null;
       Set<ServiceConfig> previousServiceConfigs = nextConfig.getPreviousServiceConfigs();
       if (previousServiceConfigs != null) {
         for (ServiceConfig item : previousServiceConfigs) {
-          if (isAggregateService(
-              ServiceLoader.getInstance().loadServiceMeta(item.getServiceName()).getServiceClassName())) {
+          if (serviceLoader.loadServiceMeta(item.getServiceName()).isInnerAggregateService()) {
             serviceConfig = item;
             break;
           }
@@ -206,7 +226,7 @@ public final class ServiceFlow {
       if (serviceConfig != null) {
         aggregateServiceName = serviceConfig.getServiceName();
       } else {
-        ServiceFactory.registerService(aggregateServiceName, AggregateService.class);
+        serviceFactory.registerService(aggregateServiceName, AggregateService.class);
       }
       buildFlow(preServiceName, aggregateServiceName);
       buildFlow(aggregateServiceName, nextServiceName);
@@ -230,7 +250,7 @@ public final class ServiceFlow {
   }
 
   private ServiceMeta loadServiceMeta(ServiceConfig serviceConfig) {
-    ServiceMeta serviceMeta = ServiceLoader.getInstance().loadServiceMeta(serviceConfig.getServiceName());
+    ServiceMeta serviceMeta = serviceLoader.loadServiceMeta(serviceConfig.getServiceName());
     if (serviceMeta == null) {
       serviceMeta = getFromRegistrry(serviceConfig);
       if (serviceMeta != null) {
@@ -238,13 +258,14 @@ public final class ServiceFlow {
         serviceConfig.setLocal(false);
         return serviceMeta;
       }
-      throw new ServiceNotFoundException("serviceConfig : " + serviceConfig);
+      throw new ServiceNotFoundException(
+          "serviceName : " + serviceConfig.getServiceName() + ", serviceConfig : " + serviceConfig);
     }
     return serviceMeta;
   }
 
   private ServiceMeta getFromRegistrry(ServiceConfig serviceConfig) {
-    Set<Registry> registries = SimpleFlowerFactory.get().getRegistry();
+    Set<Registry> registries = flowerFactory.getRegistry();
     if (registries == null || registries.isEmpty()) {
       return null;
     }
@@ -392,9 +413,8 @@ public final class ServiceFlow {
   private void validateFlow(String preServiceName, String nextServiceName) {
     Assert.notNull(preServiceName, "preServiceName can't be null !");
     Assert.notNull(nextServiceName, "nextServiceName can't be null !");
-
-    ServiceMeta preServiceMata = ServiceLoader.getInstance().loadServiceMeta(preServiceName);
-    ServiceMeta nextServiceMata = ServiceLoader.getInstance().loadServiceMeta(nextServiceName);
+    ServiceMeta preServiceMata = serviceLoader.loadServiceMeta(preServiceName);
+    ServiceMeta nextServiceMata = serviceLoader.loadServiceMeta(nextServiceName);
     if (preServiceMata == null || nextServiceMata == null) {
       return;
     }
@@ -420,15 +440,6 @@ public final class ServiceFlow {
 
   }
 
-  /**
-   * 内部聚合服务
-   * 
-   * @param clazz
-   * @return true /false
-   */
-  protected boolean isAggregateService(String clazzName) {
-    return clazzName != null && clazzName.equals(Constant.AGGREGATE_SERVICE_NAME);
-  }
 
   @Override
   public String toString() {

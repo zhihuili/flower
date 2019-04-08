@@ -37,7 +37,7 @@ public class ActorSelectionWrapper implements ActorWrapper {
 
   @Override
   public void tell(Object message) {
-    actorSelection.tell(message, ActorRef.noSender());
+    tell(message, ActorRef.noSender());
   }
 
   @Override

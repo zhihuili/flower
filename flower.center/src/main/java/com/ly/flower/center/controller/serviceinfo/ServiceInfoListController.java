@@ -27,7 +27,6 @@ import com.ly.flower.center.controller.BaseController;
 import com.ly.flower.center.service.ReturnService;
 import com.ly.flower.center.service.ServiceInfoListService;
 import com.ly.train.flower.common.annotation.Flower;
-import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
@@ -50,6 +49,6 @@ public class ServiceInfoListController extends BaseController {
 
   @Override
   public void buildFlower() {
-    ServiceFlow.getOrCreate(getFlowName()).buildFlow(ServiceInfoListService.class, ReturnService.class);
+    getServiceFlow().buildFlow(ServiceInfoListService.class, ReturnService.class);
   }
 }

@@ -26,7 +26,6 @@ import com.ly.train.flower.base.service.ServiceA;
 import com.ly.train.flower.base.service.ServiceB;
 import com.ly.train.flower.base.service.ServiceC1;
 import com.ly.train.flower.base.service.ServiceC2;
-import com.ly.train.flower.common.akka.ServiceFacade;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 
 /**
@@ -37,7 +36,7 @@ public class ServiceFacadeTest extends TestBase {
 
   @Test
   public void testSyncCallService() throws Exception {
-    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
+    ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
@@ -46,15 +45,15 @@ public class ServiceFacadeTest extends TestBase {
     user.setName("响应式编程");
     user.setAge(2);
 
-    Object o = ServiceFacade.syncCallService(flowName, user);
+    Object o = serviceFacade.syncCallService(flowName, user);
     System.out.println(o);
-    Thread.sleep(TimeUnit.SECONDS.toMillis(2));
+    Thread.sleep(TimeUnit.SECONDS.toMillis(5));
 
   }
 
   @Test
   public void testAsyncCallService() throws Exception {
-    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
+    ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
@@ -63,7 +62,7 @@ public class ServiceFacadeTest extends TestBase {
     user.setName("响应式编程");
     user.setAge(2);
 
-    ServiceFacade.asyncCallService(flowName, user);
+    serviceFacade.asyncCallService(flowName, user);
     Thread.sleep(TimeUnit.SECONDS.toMillis(2));
 
   }

@@ -25,7 +25,7 @@ import com.ly.train.flower.logging.LoggerFactory;
  * @author leeyazhou
  *
  */
-@FlowerService
+@FlowerService(timeout = 10000)
 public class StringService implements Service<String, String> {
   private static final Logger logger = LoggerFactory.getLogger(StringService.class);
 

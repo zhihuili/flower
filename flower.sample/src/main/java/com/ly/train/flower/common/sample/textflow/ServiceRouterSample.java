@@ -17,11 +17,13 @@ package com.ly.train.flower.common.sample.textflow;
 
 import org.junit.Test;
 import com.ly.train.flower.common.akka.FlowRouter;
-import com.ly.train.flower.common.akka.ServiceFacade;
+import com.ly.train.flower.common.sample.TestBase;
 import com.ly.train.flower.common.sample.textflow.model.Message1;
 import com.ly.train.flower.common.sample.textflow.model.Message2;
 
-public class ServiceRouterSample {
+public class ServiceRouterSample extends TestBase {
+
+  String flowName = "sample";
 
   @Test
   public void main() throws Exception {
@@ -34,7 +36,7 @@ public class ServiceRouterSample {
 
     // 200 flows
 
-    FlowRouter sr = ServiceFacade.buildFlowRouter("sample", 200);
+    FlowRouter sr = serviceFacade.buildFlowRouter(flowName, 2 << 5);
     long begin = System.currentTimeMillis();
     for (int i = 0; i < loopNumber; i++) {
       sr.asyncCallService(m1);
@@ -45,10 +47,9 @@ public class ServiceRouterSample {
     // single flow
     begin = System.currentTimeMillis();
     for (int i = 0; i < loopNumber; i++) {
-      // ServiceFacade.asyncCallService("sample", "service1", m1);
+      serviceFacade.asyncCallService(flowName, m1);
     }
-    end = System.currentTimeMillis();
-    System.out.println("single flow cost time: " + (end - begin));
+    System.out.println("single flow cost time (ms): " + (System.currentTimeMillis() - begin) );
   }
 
 }

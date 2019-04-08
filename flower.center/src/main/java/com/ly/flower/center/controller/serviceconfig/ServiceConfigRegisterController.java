@@ -28,7 +28,6 @@ import com.ly.flower.center.service.ReturnService;
 import com.ly.flower.center.service.ServiceConfigRegisterService;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.service.config.ServiceConfig;
-import com.ly.train.flower.common.service.container.ServiceFlow;
 
 /**
  * @author leeyazhou
@@ -51,6 +50,6 @@ public class ServiceConfigRegisterController extends BaseController {
 
   @Override
   public void buildFlower() {
-    ServiceFlow.getOrCreate(getFlowName()).buildFlow(ServiceConfigRegisterService.class, ReturnService.class);
+    getServiceFlow().buildFlow(ServiceConfigRegisterService.class, ReturnService.class);
   }
 }

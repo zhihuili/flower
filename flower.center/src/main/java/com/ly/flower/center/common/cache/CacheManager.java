@@ -119,7 +119,7 @@ public class CacheManager {
    * Reads a cache item's content
    * 
    * @param key
-   * @return
+   * @return {@code Cache}
    */
   public static <T> Cache<T> getContent(String key) {
     if (hasCache(key)) {

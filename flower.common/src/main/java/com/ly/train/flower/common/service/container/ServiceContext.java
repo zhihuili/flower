@@ -151,8 +151,18 @@ public class ServiceContext {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("ServiceContext [attachments=");
+    builder.append("ServiceContext [id=");
+    builder.append(id);
+    builder.append(", flowName=");
+    builder.append(flowName);
+    builder.append(", currentServiceName=");
+    builder.append(currentServiceName);
+    builder.append(", sync=");
+    builder.append(sync);
+    builder.append(", attachments=");
     builder.append(attachments);
+    builder.append(", flowMessage=");
+    builder.append(flowMessage);
     builder.append(", web=");
     builder.append(web);
     builder.append("]");

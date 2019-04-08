@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.ly.train.flower.common.akka.ServiceActorFactory;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.service.Aggregate;
@@ -29,10 +30,10 @@ import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.config.ServiceConfig;
+import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
-import com.ly.train.flower.common.service.container.ServiceLoader;
-import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
 import com.ly.train.flower.common.service.impl.AggregateService;
 import com.ly.train.flower.common.service.message.Condition;
 import com.ly.train.flower.common.service.message.FlowMessage;
@@ -41,7 +42,6 @@ import com.ly.train.flower.common.service.web.HttpComplete;
 import com.ly.train.flower.common.service.web.Web;
 import com.ly.train.flower.common.util.CloneUtil;
 import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.dispatch.Futures;
 import scala.concurrent.Future;
@@ -68,16 +68,20 @@ public class ServiceActorV1 extends AbstractFlowerActor {
   private String serviceName;
   private String flowName;
   private final Set<RefType> nextServiceActors;
+  private ServiceActorFactory serviceActorFactory;
+  private ServiceFactory serviceFactory;
 
-  static public Props props(String flowName, String serviceName, int index, ActorSystem system) {
-    return Props.create(ServiceActorV1.class, () -> new ServiceActorV1(flowName, serviceName, index, system));
+  static public Props props(String flowName, String serviceName, int index, FlowerFactory flowerFactory) {
+    return Props.create(ServiceActorV1.class, () -> new ServiceActorV1(flowName, serviceName, index, flowerFactory));
   }
 
-  public ServiceActorV1(String flowName, String serviceName, int index, ActorSystem system) throws Exception {
+  public ServiceActorV1(String flowName, String serviceName, int index, FlowerFactory flowerFactory) throws Exception {
     this.flowName = flowName;
     this.serviceName = serviceName;
     this.nextServiceActors = new HashSet<RefType>();
-    Set<ServiceConfig> serviceConfigs = ServiceFlow.getOrCreate(flowName).getNextFlow(serviceName);
+    this.serviceActorFactory = flowerFactory.getServiceActorFactory();
+    this.serviceFactory = flowerFactory.getServiceFactory();
+    Set<ServiceConfig> serviceConfigs = ServiceFlow.getOrCreate(flowName, serviceFactory).getNextFlow(serviceName);
     if (serviceConfigs != null) {
       for (ServiceConfig serviceConfig : serviceConfigs) {
         RefType refType = new RefType();
@@ -85,9 +89,9 @@ public class ServiceActorV1 extends AbstractFlowerActor {
         if (serviceConfig.isAggregateService()) {
           refType.setJoint(true);
         }
-        refType.setActorRef(SimpleFlowerFactory.get().getServiceActorFactory().buildServiceActor(serviceConfig, index));
-        refType
-            .setMessageType(ServiceLoader.getInstance().loadServiceMeta(serviceConfig.getServiceName()).getParamType());
+        refType.setActorRef(serviceActorFactory.buildServiceActor(serviceConfig, index));
+        refType.setMessageType(
+            serviceFactory.getServiceLoader().loadServiceMeta(serviceConfig.getServiceName()).getParamType());
         refType.setServiceName(serviceConfig.getServiceName());
         nextServiceActors.add(refType);
       }
@@ -166,10 +170,10 @@ public class ServiceActorV1 extends AbstractFlowerActor {
    */
   public FlowerService getService() {
     if (this.service == null) {
-      this.service = ServiceLoader.getInstance().loadService(serviceName);
+      this.service = serviceFactory.getServiceLoader().loadService(serviceName);
       if (service instanceof Aggregate) {
-        ((AggregateService) service)
-            .setSourceNumber(ServiceFlow.getOrCreate(flowName).getServiceConfig(serviceName).getJointSourceNumber());
+        ((AggregateService) service).setSourceNumber(
+            ServiceFlow.getOrCreate(flowName, null).getServiceConfig(serviceName).getJointSourceNumber());
       }
     }
     return service;

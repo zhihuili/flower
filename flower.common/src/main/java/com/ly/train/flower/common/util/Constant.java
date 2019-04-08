@@ -36,6 +36,10 @@ public class Constant {
 
   public static final String AGGREGATE_SERVICE_NAME = "com.ly.train.flower.common.service.impl.AggregateService";
 
+  /**
+   * flower 配置文件参数名称
+   */
+  public static final String flowerConfigLocationKey = "flower.config.location";
 
   /**
    * 默认超时时间3秒

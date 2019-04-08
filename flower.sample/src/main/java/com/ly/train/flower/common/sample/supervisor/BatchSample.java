@@ -19,11 +19,11 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
-import com.ly.train.flower.common.akka.ServiceFacade;
+import com.ly.train.flower.common.sample.TestBase;
 import com.ly.train.flower.common.sample.supervisor.model.Message1;
 import com.ly.train.flower.common.sample.supervisor.model.Message2;
 
-public class BatchSample {
+public class BatchSample extends TestBase {
 
   @Test
   public void main() throws Exception {
@@ -39,7 +39,7 @@ public class BatchSample {
 
     int resultCount = 0;
     for (Map.Entry<String, Message1> entry : message1Map.entrySet()) {
-      Object o = ServiceFacade.syncCallService("supervisor", entry.getValue());
+      Object o = serviceFacade.syncCallService("supervisor", entry.getValue());
       System.out.println(o);
       Assert.assertEquals(((Message1) o).getM2().getName(), entry.getValue().getM2().getName());
       Assert.assertEquals(Integer.parseInt(entry.getKey()), ((Message1) o).getM2().getAge() - 1);

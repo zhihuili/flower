@@ -34,4 +34,28 @@ public class FlowerServiceUtil {
     }
     return serviceName;
   }
+
+  /**
+   * 注意： 不是内部聚合类,是指服务的类型标记为聚合<br/>
+   * 服务是否是聚合类型<br/>
+   * 
+   * @param clazz clazz
+   * @return true/false
+   */
+  public static boolean isAggregateType(Class<?> clazz) {
+    FlowerService flowerService = null;
+    if (clazz == null || (flowerService = clazz.getAnnotation(FlowerService.class)) == null) {
+      return false;
+    }
+    return FlowerType.AGGREGATE.equals(flowerService.type());
+  }
+
+  public static int getTimeout(Class<?> clazz) {
+    FlowerService flowerService = null;
+    if (clazz == null || (flowerService = clazz.getAnnotation(FlowerService.class)) == null) {
+      return 3000;
+    }
+    int timeout = flowerService.timeout();
+    return timeout;
+  }
 }

@@ -20,7 +20,10 @@ package com.ly.train.flower.common.service.container;
 
 import java.util.Set;
 import com.ly.train.flower.common.akka.ServiceActorFactory;
+import com.ly.train.flower.common.akka.ServiceFacade;
 import com.ly.train.flower.common.exception.ExceptionHandler;
+import com.ly.train.flower.common.service.Service;
+import com.ly.train.flower.common.service.container.lifecyle.Lifecycle;
 import com.ly.train.flower.config.FlowerConfig;
 import com.ly.train.flower.registry.Registry;
 
@@ -28,7 +31,7 @@ import com.ly.train.flower.registry.Registry;
  * @author leeyazhou
  *
  */
-public interface FlowerFactory {
+public interface FlowerFactory extends IInit, Lifecycle {
 
 
   /**
@@ -45,24 +48,27 @@ public interface FlowerFactory {
    */
   Set<Registry> getRegistry();
 
+  /**
+   * 异常处理器
+   * 
+   * @return {@link ExceptionHandler}
+   */
   ExceptionHandler getExceptionHandler();
 
   /**
-   * 1. 已经存在指定 flowName 的流程，则返回原有流程对象<br/>
-   * 2. 不存在指定 flowName 的流程，则新建一个流程对象并缓存
+   * akka Actor 工厂
    * 
-   * @param flowName 流程名称
-   * @return {@code ServiceFlow}
+   * @return {@link ServiceActorFactory}
    */
-  ServiceFlow getOrCreateServiceFlow(String flowName);
-
   ServiceActorFactory getServiceActorFactory();
 
   /**
-   * 初始化
+   * {@link Service}工厂
    * 
-   * @return true / false
+   * @return {@link ServiceFactory}
    */
-  boolean init();
+  ServiceFactory getServiceFactory();
+
+  ServiceFacade getServiceFacade();
 
 }

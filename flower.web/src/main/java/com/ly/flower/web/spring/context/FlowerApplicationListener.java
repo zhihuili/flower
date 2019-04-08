@@ -25,7 +25,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import com.ly.train.flower.common.annotation.FlowerService;
-import com.ly.train.flower.common.service.container.ServiceFactory;
+import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
@@ -42,6 +42,7 @@ public class FlowerApplicationListener implements ApplicationListener<ContextRef
   public void onApplicationEvent(ContextRefreshedEvent event) {
 
     String[] beanNames = applicationContext.getBeanDefinitionNames();
+    FlowerFactory flowerFactory = applicationContext.getBean(FlowerFactory.class);
     for (String beanName : beanNames) {
       Class<?> beanType = applicationContext.getType(beanName);
       if (isFlowerService(beanType)) {
@@ -52,7 +53,7 @@ public class FlowerApplicationListener implements ApplicationListener<ContextRef
         if (flowerService2 != null && StringUtil.isNotBlank(flowerService2.value())) {
           serviceName = flowerService2.value();
         }
-        ServiceFactory.registerFlowerService(serviceName, flowerService);
+        flowerFactory.getServiceFactory().registerFlowerService(serviceName, flowerService);
         // logger.info("注入实例 : " + flowerService);
       }
     }

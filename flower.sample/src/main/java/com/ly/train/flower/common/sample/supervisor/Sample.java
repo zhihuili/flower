@@ -17,11 +17,11 @@ package com.ly.train.flower.common.sample.supervisor;
 
 import java.util.concurrent.TimeoutException;
 import org.junit.Test;
-import com.ly.train.flower.common.akka.ServiceFacade;
+import com.ly.train.flower.common.sample.TestBase;
 import com.ly.train.flower.common.sample.supervisor.model.Message1;
 import com.ly.train.flower.common.sample.supervisor.model.Message2;
 
-public class Sample {
+public class Sample  extends TestBase{
 
   @Test
   public void main() throws Exception {
@@ -30,7 +30,7 @@ public class Sample {
       Message1 m1 = new Message1();
       m1.setM2(m2);
       try {
-        System.out.println(ServiceFacade.syncCallService("supervisor", m1));
+        System.out.println(serviceFacade.syncCallService("supervisor", m1));
       } catch (TimeoutException e) {
         e.printStackTrace();
       }
@@ -44,7 +44,7 @@ public class Sample {
       m1.setM2(m2);
 
       try {
-        System.out.println(ServiceFacade.syncCallService("supervisor", m1));
+        System.out.println(serviceFacade.syncCallService("supervisor", m1));
       } catch (TimeoutException e) {
         e.printStackTrace();
       }
