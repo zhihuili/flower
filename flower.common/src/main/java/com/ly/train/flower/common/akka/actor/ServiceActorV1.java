@@ -40,6 +40,7 @@ import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.common.service.web.HttpComplete;
 import com.ly.train.flower.common.service.web.Web;
+import com.ly.train.flower.common.util.ClassUtil;
 import com.ly.train.flower.common.util.CloneUtil;
 import akka.actor.ActorRef;
 import akka.actor.Props;
@@ -90,8 +91,8 @@ public class ServiceActorV1 extends AbstractFlowerActor {
           refType.setJoint(true);
         }
         refType.setActorRef(serviceActorFactory.buildServiceActor(serviceConfig, index));
-        refType.setMessageType(
-            serviceFactory.getServiceLoader().loadServiceMeta(serviceConfig.getServiceName()).getParamType());
+        refType.setMessageType(ClassUtil
+            .forName(serviceFactory.getServiceLoader().loadServiceMeta(serviceConfig.getServiceName()).getParamType()));
         refType.setServiceName(serviceConfig.getServiceName());
         nextServiceActors.add(refType);
       }
@@ -173,7 +174,7 @@ public class ServiceActorV1 extends AbstractFlowerActor {
       this.service = serviceFactory.getServiceLoader().loadService(serviceName);
       if (service instanceof Aggregate) {
         ((AggregateService) service).setSourceNumber(
-            ServiceFlow.getOrCreate(flowName, null).getServiceConfig(serviceName).getJointSourceNumber());
+            ServiceFlow.getOrCreate(flowName, serviceFactory).getServiceConfig(serviceName).getJointSourceNumber());
       }
     }
     return service;

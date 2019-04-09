@@ -274,8 +274,15 @@
 					<failOnError>true</failOnError>
 					<includeTests>true</includeTests>
 				</configuration>
-				<!--<executions> <execution> <id>run-findbugs</id> <phase>package</phase> 
-					<goals> <goal>check</goal> </goals> </execution> </executions> -->
+				<executions>
+					<!-- <execution>
+						<id>run-findbugs</id>
+						<phase>package</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution> -->
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
@@ -287,7 +294,7 @@
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>${maven-checkstyle-plugin.version}</version>
 				<configuration>
-					<configLocation>conf/flower_checkstyle.xml</configLocation>
+					<configLocation>/conf/flower_checkstyle.xml</configLocation>
 				</configuration>
 			</plugin>
 			<plugin>

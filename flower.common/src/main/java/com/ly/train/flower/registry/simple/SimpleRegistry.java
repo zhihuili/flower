@@ -54,7 +54,6 @@ public class SimpleRegistry extends AbstractRegistry {
 
     String ret =
         HttpClient.builder().setUrl(u).setParam("data=" + JSONObject.toJSONString(serviceConfig)).build().post();
-
     return false;
   }
 

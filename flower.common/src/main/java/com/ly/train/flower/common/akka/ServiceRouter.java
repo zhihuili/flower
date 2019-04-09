@@ -38,14 +38,9 @@ public class ServiceRouter extends AbstractInit {
   protected static final Logger logger = LoggerFactory.getLogger(ServiceRouter.class);
   private final LoadBalance loadBalance = ExtensionLoader.load(LoadBalance.class).load();
   private int number = 2 << 6;
-  private ActorWrapper[] ar;
+  private volatile ActorWrapper[] ar;
   private final ServiceConfig serviceConfig;
   private final ServiceActorFactory serviceActorFactory;
-
-  // public ServiceRouter(ServiceConfig serviceConfig, int number) {
-  // this(serviceConfig, SimpleFlowerFactory.get().getServiceActorFactory(),
-  // number);
-  // }
 
   public ServiceRouter(ServiceConfig serviceConfig, ServiceActorFactory serviceActorFactory, int number) {
     this.serviceConfig = serviceConfig;
@@ -113,6 +108,19 @@ public class ServiceRouter extends AbstractInit {
 
   public ServiceConfig getServiceConfig() {
     return serviceConfig;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("ServiceRouter [loadBalance=");
+    builder.append(loadBalance);
+    builder.append(", number=");
+    builder.append(number);
+    builder.append(", serviceConfig=");
+    builder.append(serviceConfig);
+    builder.append("]");
+    return builder.toString();
   }
 
 }

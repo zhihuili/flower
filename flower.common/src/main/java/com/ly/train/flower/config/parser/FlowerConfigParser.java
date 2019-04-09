@@ -17,11 +17,10 @@
 package com.ly.train.flower.config.parser;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.net.URL;
 import org.yaml.snakeyaml.Yaml;
 import com.ly.train.flower.common.util.IOUtil;
+import com.ly.train.flower.common.util.ResourceUtil;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.config.FlowerConfig;
 import com.ly.train.flower.logging.Logger;
@@ -36,11 +35,6 @@ public class FlowerConfigParser implements ConfigParser<FlowerConfig> {
   public FlowerConfigParser(String configLocation) {
     if (StringUtil.isNotBlank(configLocation)) {
       this.configLocation = configLocation;
-    } else {
-      URL url = getClass().getClassLoader().getResource(this.configLocation);
-      if (url != null) {
-        this.configLocation = url.getFile();
-      }
     }
   }
 
@@ -48,10 +42,18 @@ public class FlowerConfigParser implements ConfigParser<FlowerConfig> {
   public FlowerConfig parse() {
     InputStream is = null;
     try {
-      is = new FileInputStream(configLocation);
       logger.info("parse FlowerConfig, configLocation : {}", configLocation);
-      return new Yaml().loadAs(is, FlowerConfig.class);
-    } catch (FileNotFoundException e) {
+      is = getClass().getResourceAsStream(configLocation);
+      if (is == null) {
+        is = getClass().getResourceAsStream("/" + configLocation);
+      }
+      if (is == null) {
+        is = new FileInputStream(ResourceUtil.getFile(configLocation));
+      }
+      if (is != null) {
+        return new Yaml().loadAs(is, FlowerConfig.class);
+      }
+    } catch (Exception e) {
       logger.error("fail to parse : " + configLocation, e);
     } finally {
       IOUtil.close(is);

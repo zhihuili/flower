@@ -14,3 +14,4 @@ Flower是一个构建在Akka上的流式微服务框架，开发者只需要针�
 * [Flower应用指南](/docs/program_guide.md)
 
 * [Flower框架设计](/docs/design.md)
+* [Flower分布式开发](/docs/distribution_design.md)

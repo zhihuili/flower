@@ -44,9 +44,9 @@ import com.ly.train.flower.registry.config.RegistryConfig;
 public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFactory {
   private static final Logger logger = LoggerFactory.getLogger(SimpleFlowerFactory.class);
 
-  private static FlowerFactory instance;
+  private static volatile FlowerFactory instance;
   private FlowerConfig flowerConfig;
-  private Set<Registry> registries;
+  private volatile Set<Registry> registries;
   private ExceptionHandler exceptionHandler;
   private volatile ServiceActorFactory serviceActorFactory;
   private volatile ServiceFactory serviceFactory;

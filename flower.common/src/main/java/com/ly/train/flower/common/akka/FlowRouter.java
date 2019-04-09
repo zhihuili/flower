@@ -32,14 +32,14 @@ import akka.actor.ActorRef;
 public class FlowRouter extends AbstractInit {
   static final com.ly.train.flower.logging.Logger logger = LoggerFactory.getLogger(FlowRouter.class);
   private int number = 2 << 6;
-  private ServiceRouter serviceRouter;
-  private final ServiceConfig serviceConfig;
+  private volatile ServiceRouter serviceRouter;
+  private final ServiceConfig headerServiceConfig;
   private final String flowName;
-  private final ServiceFacade serviceFacade;
+  private ServiceFacade serviceFacade;
 
-  public FlowRouter(String flowName, ServiceConfig serviceConfig, int number, FlowerFactory flowerFactory) {
+  public FlowRouter(String flowName, ServiceConfig headerServiceConfig, int number, FlowerFactory flowerFactory) {
     this.flowName = flowName;
-    this.serviceConfig = serviceConfig;
+    this.headerServiceConfig = headerServiceConfig;
     this.serviceFacade = flowerFactory.getServiceFacade();
     if (number > 0) {
       this.number = number;
@@ -66,7 +66,7 @@ public class FlowRouter extends AbstractInit {
     ServiceContext serviceContext = ServiceContext.context(message, ctx);
     serviceContext.setFlowName(flowName);
     if (StringUtil.isBlank(serviceContext.getCurrentServiceName())) {
-      serviceContext.setCurrentServiceName(serviceConfig.getServiceName());
+      serviceContext.setCurrentServiceName(headerServiceConfig.getServiceName());
     }
     getServiceRouter().asyncCallService(serviceContext, ActorRef.noSender());
   }
@@ -81,7 +81,7 @@ public class FlowRouter extends AbstractInit {
   public Object syncCallService(Object message) throws Exception {
     ServiceContext serviceContext = ServiceContext.context(message);
     serviceContext.setFlowName(flowName);
-    serviceContext.setCurrentServiceName(serviceConfig.getServiceName());
+    serviceContext.setCurrentServiceName(headerServiceConfig.getServiceName());
     serviceContext.setSync(true);
     return getServiceRouter().syncCallService(serviceContext);
   }
@@ -94,8 +94,7 @@ public class FlowRouter extends AbstractInit {
     if (serviceRouter == null) {
       synchronized (this) {
         if (serviceRouter == null) {
-          this.serviceRouter = serviceFacade.buildServiceRouter(serviceConfig, number);
-          this.serviceRouter.init();
+          this.serviceRouter = serviceFacade.buildServiceRouter(headerServiceConfig, number);
         }
       }
     }
@@ -103,8 +102,8 @@ public class FlowRouter extends AbstractInit {
   }
 
 
-  public ServiceConfig getServiceName() {
-    return serviceConfig;
+  public ServiceConfig getServiceConfig() {
+    return headerServiceConfig;
   }
 
 

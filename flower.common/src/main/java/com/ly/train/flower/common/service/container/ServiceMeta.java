@@ -29,8 +29,8 @@ import com.ly.train.flower.common.service.impl.AggregateService;
 public class ServiceMeta implements Serializable {
   private static final long serialVersionUID = 1L;
   private String serviceName;
-  private Class<?> paramType;
-  private Class<?> resultType;
+  private String paramType;
+  private String resultType;
   private String serviceClassName;
   private boolean local = true;
   private List<String> configs = new ArrayList<>();
@@ -54,16 +54,11 @@ public class ServiceMeta implements Serializable {
     this.serviceName = serviceName;
   }
 
-  /**
-   * 请求参数类型
-   * 
-   * @return class
-   */
-  public Class<?> getParamType() {
+  public String getParamType() {
     return paramType;
   }
 
-  public void setParamType(Class<?> paramType) {
+  public void setParamType(String paramType) {
     this.paramType = paramType;
   }
 
@@ -72,11 +67,11 @@ public class ServiceMeta implements Serializable {
    * 
    * @return class
    */
-  public Class<?> getResultType() {
+  public String getResultType() {
     return resultType;
   }
 
-  public void setResultType(Class<?> resultType) {
+  public void setResultType(String resultType) {
     this.resultType = resultType;
   }
 
@@ -134,6 +129,7 @@ public class ServiceMeta implements Serializable {
    * @return
    * @see FlowerType#AGGREGATE
    * @see FlowerType#COMMON
+   * return true/false
    */
   public boolean isAggregateService() {
     return aggregateService;

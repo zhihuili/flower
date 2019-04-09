@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.base.service;
+package com.ly.train.flower.common.util;
 
-import com.ly.train.flower.common.annotation.FlowerService;
-import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
@@ -25,16 +22,29 @@ import com.ly.train.flower.logging.LoggerFactory;
  * @author leeyazhou
  *
  */
-@FlowerService(timeout = 10000)
-public class StringService implements Service<String, String> {
-  private static final Logger logger = LoggerFactory.getLogger(StringService.class);
+public class ClassUtil {
+  private static final Logger logger = LoggerFactory.getLogger(ClassUtil.class);
 
-  @Override
-  public String process(String message, ServiceContext context) throws Throwable {
-    logger.info("收到消息：{}", message);
-    message += "-->处理后";
-    logger.info("处理消息：{}", message);
-    return message;
+  public static Class<?> forName(String className) {
+    if (StringUtil.isNotBlank(className)) {
+      try {
+        return Class.forName(className);
+      } catch (ClassNotFoundException e) {
+        logger.error("", e);
+      }
+    }
+    return null;
+  }
+
+  public static Class<?> forName(String className, ClassLoader loader) {
+    if (StringUtil.isNotBlank(className)) {
+      try {
+        return Class.forName(className, true, loader);
+      } catch (ClassNotFoundException e) {
+        logger.error("", e);
+      }
+    }
+    return null;
   }
 
 }

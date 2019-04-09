@@ -20,6 +20,7 @@ package com.ly.train.flower.config;
 
 import java.io.Serializable;
 import java.util.Set;
+import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.registry.config.RegistryConfig;
 
 /**
@@ -45,6 +46,10 @@ public class FlowerConfig implements Serializable {
 
   public String getName() {
     return name;
+  }
+  
+  public URL toURL() {
+    return new URL("", host, port);
   }
 
   public void setName(String name) {

@@ -36,6 +36,7 @@ import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.common.service.web.HttpComplete;
 import com.ly.train.flower.common.service.web.Web;
+import com.ly.train.flower.common.util.ClassUtil;
 import com.ly.train.flower.common.util.CloneUtil;
 import akka.actor.ActorRef;
 import akka.actor.Props;
@@ -63,10 +64,6 @@ public class ServiceActor extends AbstractFlowerActor {
   private int count;
   private final FlowerFactory flowerFactory;
 
-  static public Props props(String serviceName, int count) {
-    return Props.create(ServiceActor.class, serviceName, count);
-  }
-
   static public Props props(String serviceName, FlowerFactory flowerFactory, int count) {
     return Props.create(ServiceActor.class, serviceName, flowerFactory, count);
   }
@@ -75,10 +72,6 @@ public class ServiceActor extends AbstractFlowerActor {
    * 当前Actor绑定的服务
    */
   private String serviceName;
-
-//  public ServiceActor(String serviceName, int count) {
-//    this(serviceName, SimpleFlowerFactory.get(), count);
-//  }
 
   public ServiceActor(String serviceName, FlowerFactory flowerFactory, int count) {
     this.serviceName = serviceName;
@@ -131,12 +124,11 @@ public class ServiceActor extends AbstractFlowerActor {
     if (result == null) {// for joint service
       return;
     }
-
+    logger.info("当前服务处理完毕{}，传递给下一个流程：{}", serviceContext.getCurrentServiceName(), getNextServiceActors(serviceContext));
     for (RefType refType : getNextServiceActors(serviceContext)) {
       Object resultClone = CloneUtil.clone(result);
       ServiceContext context = serviceContext.newInstance();
       context.getFlowMessage().setMessage(resultClone);
-
       // condition fork for one-service to multi-service
       if (refType.getMessageType().isInstance(result)) {
         if (!(result instanceof Condition) || !(((Condition) result).getCondition() instanceof String)
@@ -181,11 +173,11 @@ public class ServiceActor extends AbstractFlowerActor {
 
           refType.setAggregate(serviceConfig.isAggregateService());
           refType.setServiceRouter(flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, count));
-          refType.setMessageType(serviceConfig.getServiceMeta().getParamType());
+          refType.setMessageType(ClassUtil.forName(serviceConfig.getServiceMeta().getParamType()));
           refType.setServiceName(serviceConfig.getServiceName());
           nextServiceActors.add(refType);
-          nextServiceActorCache.put(cacheKey, nextServiceActors);
         }
+        nextServiceActorCache.put(cacheKey, nextServiceActors);
       }
     }
 

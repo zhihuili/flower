@@ -16,24 +16,22 @@
 package com.ly.train.flower.common.service.container;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
  *
  */
 public abstract class AbstractInit implements IInit {
-
-  private volatile AtomicBoolean init;
+  private static final Logger logger = LoggerFactory.getLogger(AbstractInit.class);
+  private AtomicBoolean init = new AtomicBoolean();
 
   @Override
   public void init() {
-    if (init == null) {
-      synchronized (this) {
-        if (init == null) {
-          this.init = new AtomicBoolean();
-          doInit();
-        }
-      }
+    if (init.compareAndSet(false, true)) {
+      logger.debug("init class : {}", this);
+      doInit();
     }
   }
 

@@ -24,13 +24,15 @@ import com.ly.train.flower.common.util.StringUtil;
 public class FlowerServiceUtil {
 
   public static String getServiceName(Class<?> clazz) {
-    FlowerService flowerService = null;
-    if (clazz == null || (flowerService = clazz.getAnnotation(FlowerService.class)) == null) {
+    if (clazz == null) {
       return null;
     }
-    String serviceName = flowerService.value();
-    if (StringUtil.isBlank(serviceName)) {
-      serviceName = clazz.getSimpleName();
+    String serviceName = clazz.getSimpleName();
+    FlowerService flowerService = clazz.getAnnotation(FlowerService.class);
+    if (flowerService != null) {
+      if (StringUtil.isNotBlank(flowerService.value())) {
+        serviceName = flowerService.value();
+      }
     }
     return serviceName;
   }

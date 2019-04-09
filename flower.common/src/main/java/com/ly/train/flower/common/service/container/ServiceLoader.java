@@ -98,10 +98,11 @@ public class ServiceLoader extends AbstractInit {
         service = (FlowerService) servicesCache.get(serviceName);;
         if (service == null) {
           try {
-            final String serviceClassName = loadServiceMeta(serviceName).getServiceClassName();
-            if (StringUtil.isBlank(serviceClassName)) {
-              throw new ServiceNotFoundException(serviceClassName);
+            ServiceMeta serviceMeta = loadServiceMeta(serviceName);
+            if (serviceMeta == null) {
+              throw new ServiceNotFoundException(serviceName);
             }
+            final String serviceClassName = serviceMeta.getServiceClassName();
             Class<?> serviceClass = classLoader.loadClass(serviceClassName);
             String param = loadServiceMeta(serviceName).getConfig(1);
             if (param != null) {
@@ -113,8 +114,7 @@ public class ServiceLoader extends AbstractInit {
             logger.info("load flower service --> {} : {}", serviceName, service);
             servicesCache.put(serviceName, service);
           } catch (Exception e) {
-            logger.error("fail to load service : " + serviceName, e);
-            throw new FlowerException(e);
+            throw new FlowerException("fail to load service : " + serviceName, e);
           }
         }
       }
@@ -190,8 +190,8 @@ public class ServiceLoader extends AbstractInit {
         returnType = (Class<?>) paramTypes[1];
       }
 
-      serviceMeta.setParamType(paramType);
-      serviceMeta.setResultType(returnType);
+      serviceMeta.setParamType(paramType.getName());
+      serviceMeta.setResultType(returnType.getName());
 
       if (StringUtil.isNotBlank(config)) {
         String[] tt = config.split(";");

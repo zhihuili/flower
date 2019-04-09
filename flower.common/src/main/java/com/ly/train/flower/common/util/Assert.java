@@ -72,6 +72,12 @@ public class Assert {
     }
   }
 
+  public static void notEquals(Object o1, Object o2, String message) {
+    if (o1 != null && o1.equals(o2)) {
+      throw new IllegalArgumentException(message);
+    }
+  }
+
   public static void notNull(Object object, Supplier<String> messageSupplier) {
     if (object == null) {
       throw new IllegalArgumentException(nullSafeGet(messageSupplier));

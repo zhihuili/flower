@@ -15,6 +15,8 @@
  */
 package com.ly.train.flower.common.akka.actor.wrapper;
 
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 import akka.actor.ActorRef;
 
 /**
@@ -22,6 +24,7 @@ import akka.actor.ActorRef;
  *
  */
 public class ActorRefWrapper implements ActorWrapper {
+  private static final Logger logger = LoggerFactory.getLogger(ActorRefWrapper.class);
   private String serviceName;
   private final ActorRef actorRef;
 
@@ -30,10 +33,17 @@ public class ActorRefWrapper implements ActorWrapper {
   }
 
   public void tell(Object message) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("流转Local消息. serviceName : {}, actor : {}, message : {}", serviceName, actorRef, message);
+    }
     actorRef.tell(message, actorRef);
   }
 
   public void tell(Object message, ActorRef sender) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("流转Local消息. serviceName : {}, actor : {}, message : {}, sender : {}", serviceName, actorRef, message,
+          sender);
+    }
     actorRef.tell(message, sender);
   }
 

@@ -65,8 +65,6 @@ public class ServiceConfig implements Serializable {
 
   public void setLocal(boolean local) {
     this.local = local;
-    if (serviceMeta != null)
-      this.serviceMeta.setLocal(local);
   }
 
   /**
