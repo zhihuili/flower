@@ -13,16 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service.container.lifecyle;
+package com.ly.train.flower.common.service.container.simple;
 
-import com.ly.train.flower.common.service.container.IInit;
+import org.junit.Test;
+import com.ly.train.flower.common.service.container.FlowerFactory;
 
-public interface Lifecycle extends IInit {
+/**
+ * @author leeyazhou
+ *
+ */
+public class SimpleFlowerFactoryTest {
 
-  void start();
+  @Test
+  public void testFlowerFactory() {
+    FlowerFactory factory = new SimpleFlowerFactory();
+    factory.start();
+    factory.stop();
+  }
 
-  void stop();
-
-  boolean isRunning();
+  @Test
+  public void testFlowerFactoryWithConfig() {
+    FlowerFactory factory = new SimpleFlowerFactory("conf/flower_25003.yml");
+    factory.start();
+    factory.stop();
+  }
 
 }

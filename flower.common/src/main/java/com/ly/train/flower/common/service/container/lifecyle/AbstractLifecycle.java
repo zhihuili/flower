@@ -16,12 +16,13 @@
 package com.ly.train.flower.common.service.container.lifecyle;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import com.ly.train.flower.common.service.container.AbstractInit;
 
 /**
  * @author leeyazhou
  *
  */
-public abstract class AbstractLifecycle implements Lifecycle {
+public abstract class AbstractLifecycle extends AbstractInit implements Lifecycle {
 
   private AtomicBoolean running = new AtomicBoolean();
 
@@ -29,28 +30,28 @@ public abstract class AbstractLifecycle implements Lifecycle {
   public boolean isRunning() {
     return running.get();
   }
-  
+
   @Override
   public void start() {
     if (running.compareAndSet(false, true)) {
+      init();
       doStart();
     }
   }
-  
-  /**
-   * 
-   */
-  protected abstract void doStart();
+
 
   @Override
   public void stop() {
-    if(running.compareAndSet(true, false)) {
+    if (running.compareAndSet(true, false)) {
       doStop();
     }
   }
 
-  /**
-   * 
-   */
+  @Override
+  protected void doInit() {
+  }
+
+  protected abstract void doStart();
+
   protected abstract void doStop();
 }

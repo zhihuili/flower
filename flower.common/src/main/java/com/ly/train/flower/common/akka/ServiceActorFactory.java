@@ -71,6 +71,9 @@ public class ServiceActorFactory extends AbstractLifecycle {
     this.serviceFactory = flowerFactory.getServiceFactory();
   }
 
+  @Override
+  protected void doInit() {}
+
   public ActorWrapper buildServiceActor(ServiceConfig serviceConfig) {
     return buildServiceActor(serviceConfig, defaultFlowIndex);
   }
@@ -211,6 +214,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
 
   @Override
   protected void doStart() {
+    logger.info("start Akka Factory");
     this.actorSystem = getActorSystem();
     this.supervierActor = getSupervierActor();
     this.actorContext = getActorContext();
@@ -219,6 +223,8 @@ public class ServiceActorFactory extends AbstractLifecycle {
   @Override
   protected void doStop() {
     logger.info("akka system terminate, system : {}", actorSystem);
-    actorSystem.terminate();
+    if (actorSystem != null) {
+      actorSystem.terminate();
+    }
   }
 }

@@ -321,7 +321,6 @@
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
-				<version>3.0</version>
 				<configuration>
 					<header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
 					<properties>
@@ -346,11 +345,25 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-shade-plugin</artifactId>
+					<version>3.2.0</version>
+				</plugin>
+				<plugin>
+					<groupId>com.mycila</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>3.0</version>
+				</plugin>
+
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<name>flower</name>
-	<description>流式微服务框架Flower
-</description>
+	<description>流式微服务框架Flower</description>
 	<url>https://github.com/tongchengyilong/flower.git</url>
 	<organization>
 		<name>同程艺龙</name>

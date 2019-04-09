@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package com.ly.train.flower.common.actor;
+package com.ly.train.flower.common.akka.actor;
 
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
@@ -33,7 +30,8 @@ import com.ly.train.flower.common.service.container.ServiceFlow;
  * @author leeyazhou
  *
  */
-public class ServiceRouterTest extends TestBase {
+public class FlowerRouterTest extends TestBase{
+
 
 
   @Test
@@ -50,7 +48,7 @@ public class ServiceRouterTest extends TestBase {
 
     Object o = router.syncCallService(user);
     System.out.println("响应结果： " + o);
-    Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+    Thread.sleep(TimeUnit.SECONDS.toMillis(3));
   }
 
   @Test
@@ -125,4 +123,5 @@ public class ServiceRouterTest extends TestBase {
     }
     Thread.sleep(TimeUnit.SECONDS.toMillis(5));
   }
+
 }

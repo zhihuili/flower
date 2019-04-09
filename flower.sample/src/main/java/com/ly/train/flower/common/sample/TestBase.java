@@ -15,7 +15,7 @@
  */
 package com.ly.train.flower.common.sample;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import com.ly.train.flower.common.akka.ServiceFacade;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFactory;
@@ -28,17 +28,17 @@ import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
  */
 public class TestBase {
 
-  protected FlowerFactory flowerFactory;
-  protected ServiceFacade serviceFacade;
+  protected static FlowerFactory flowerFactory;
+  protected static ServiceFacade serviceFacade;
 
-  protected ServiceFactory serviceFactory;
-  protected ServiceLoader serviceLoader;
+  protected static ServiceFactory serviceFactory;
+  protected static ServiceLoader serviceLoader;
 
-  @Before
-  public void before() {
-    this.flowerFactory = new SimpleFlowerFactory();
-    this.serviceFacade = flowerFactory.getServiceFacade();
-    this.serviceFactory = flowerFactory.getServiceFactory();
-    this.serviceLoader = serviceFactory.getServiceLoader();
+  @BeforeClass
+  public static void before() {
+    flowerFactory = new SimpleFlowerFactory();
+    serviceFacade = flowerFactory.getServiceFacade();
+    serviceFactory = flowerFactory.getServiceFactory();
+    serviceLoader = serviceFactory.getServiceLoader();
   }
 }

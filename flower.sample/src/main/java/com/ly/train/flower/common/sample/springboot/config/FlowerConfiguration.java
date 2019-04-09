@@ -13,16 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service.container.lifecyle;
+package com.ly.train.flower.common.sample.springboot.config;
 
-import com.ly.train.flower.common.service.container.IInit;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import com.ly.train.flower.common.service.container.FlowerFactory;
+import com.ly.train.flower.common.service.container.SpringFlowerFactory;
 
-public interface Lifecycle extends IInit {
+/**
+ * @author leeyazhou
+ *
+ */
+@Configuration
+public class FlowerConfiguration {
 
-  void start();
-
-  void stop();
-
-  boolean isRunning();
-
+  @Bean
+  public FlowerFactory flowerFactory() {
+    return new SpringFlowerFactory();
+  }
 }

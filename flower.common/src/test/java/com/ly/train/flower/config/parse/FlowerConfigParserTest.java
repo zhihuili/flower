@@ -13,23 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.container;
+package com.ly.train.flower.config.parse;
 
-import com.ly.train.flower.common.service.container.FlowerFactory;
-import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
-import com.ly.train.flower.logging.Logger;
-import com.ly.train.flower.logging.LoggerFactory;
+import org.junit.Test;
+import com.ly.train.flower.config.FlowerConfig;
+import com.ly.train.flower.config.parser.FlowerConfigParser;
 
 /**
  * @author leeyazhou
  *
  */
-public class FlowerBootstrap extends Bootstrap {
-  protected static final Logger logger = LoggerFactory.getLogger(FlowerBootstrap.class);
-  @Override
-  public void doStartup() {
-    FlowerFactory flowerFactory = new SimpleFlowerFactory();
-    flowerFactory.init();
-  }
+public class FlowerConfigParserTest {
 
+  @Test
+  public void testParse() {
+
+    FlowerConfig flowerConfig = new FlowerConfigParser("flower.yml").parse();
+    System.out.println(flowerConfig);
+    flowerConfig = new FlowerConfigParser("conf/flower_25003.yml").parse();
+    System.out.println(flowerConfig);
+    flowerConfig = new FlowerConfigParser("conf/flower_25004.yml").parse();
+    System.out.println(flowerConfig);
+  }
 }

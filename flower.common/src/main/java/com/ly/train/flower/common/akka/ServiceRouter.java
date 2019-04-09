@@ -63,6 +63,7 @@ public class ServiceRouter extends AbstractInit {
    * @throws Exception
    */
   public Object syncCallService(ServiceContext serviceContext) {
+    serviceContext.setSync(true);
     ActorWrapper actorRef = chooseOne(serviceContext);
     try {
       Timeout timeout = new Timeout(serviceConfig.getServiceMeta().getTimeout() - 1, TimeUnit.MILLISECONDS);
@@ -79,6 +80,9 @@ public class ServiceRouter extends AbstractInit {
     }
   }
 
+  public void asyncCallService(ServiceContext serviceContext) {
+    asyncCallService(serviceContext, ActorRef.noSender());
+  }
   public void asyncCallService(ServiceContext serviceContext, ActorRef sender) {
     ActorWrapper actorRef = chooseOne(serviceContext);
     if (sender == null) {

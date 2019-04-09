@@ -1,6 +1,6 @@
 name: "LocalFlower"
 host: "127.0.0.1"
-port: 25002
+port: 25005
 registry:
   - url: 
       - "flower://127.0.0.1:8080"

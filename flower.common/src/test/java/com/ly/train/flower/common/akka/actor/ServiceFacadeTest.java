@@ -16,7 +16,7 @@
 /**
  * 
  */
-package com.ly.train.flower.common.actor;
+package com.ly.train.flower.common.akka.actor;
 
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;

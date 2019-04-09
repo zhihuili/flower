@@ -60,7 +60,7 @@ public class ServiceManager {
   }
 
 
-  public synchronized boolean addServiceInfo(ServiceInfo serviceInfo) {
+  public boolean addServiceInfo(ServiceInfo serviceInfo) {
     Cache<ServiceInfo> cache = CacheManager.getContent(serviceInfo.getClassName());
     if (cache == null) {
       CacheManager.putContent(serviceInfo.getClassName(), serviceInfo, 6000);
@@ -72,7 +72,7 @@ public class ServiceManager {
     return true;
   }
 
-  public synchronized Set<ServiceInfo> getAllServiceInfo() {
+  public Set<ServiceInfo> getAllServiceInfo() {
     Set<ServiceInfo> ret = new HashSet<ServiceInfo>();
     Set<String> keys = CacheManager.getAllKey();
     for (String key : keys) {
@@ -84,12 +84,12 @@ public class ServiceManager {
     return ret;
   }
 
-  public synchronized boolean addServiceConfig(ServiceConfig serviceConfig) {
+  public boolean addServiceConfig(ServiceConfig serviceConfig) {
     CacheManager.putContent(serviceConfig.getFlowName(), serviceConfig, 6000);
     return true;
   }
 
-  public synchronized Set<ServiceConfig> getAllServiceConfig() {
+  public Set<ServiceConfig> getAllServiceConfig() {
     Set<ServiceConfig> ret = new HashSet<ServiceConfig>();
     Set<String> keys = CacheManager.getAllKey();
     for (String key : keys) {
