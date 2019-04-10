@@ -40,6 +40,16 @@ public @interface Flower {
    */
   String value();
 
+  /**
+   * first service name
+   *
+   * @return serviceName
+   */
   String serviceName();
 
+  /**
+   * flow number
+   * @return flowNumber
+   */
+  int flowNumber() default 0;
 }

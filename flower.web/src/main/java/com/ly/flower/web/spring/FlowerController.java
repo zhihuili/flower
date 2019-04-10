@@ -18,17 +18,19 @@
  */
 package com.ly.flower.web.spring;
 
-import java.io.IOException;
-import javax.servlet.AsyncContext;
-import javax.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.ly.train.flower.common.akka.FlowRouter;
+import com.ly.train.flower.common.akka.ServiceFacade;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.AsyncContext;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * 
@@ -36,10 +38,11 @@ import com.ly.train.flower.logging.LoggerFactory;
  */
 public abstract class FlowerController implements InitializingBean {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
+  private static final int DEFAULT_FLOW_NUMBER = 2 << 2;
   private FlowRouter serviceRouter;
   private String flowerName;
   private String serviceName;
-
+  private Integer flowNumber;
 
   @Autowired
   private FlowerFactory flowerFactory;
@@ -52,6 +55,7 @@ public abstract class FlowerController implements InitializingBean {
   @Override
   public void afterPropertiesSet() throws Exception {
     getFlowName();
+    getFlowNumber();
     buildFlower();
     this.serviceRouter = initServiceRouter();
   }
@@ -59,11 +63,11 @@ public abstract class FlowerController implements InitializingBean {
   /**
    * 初始化路由
    * 
-   * @see com.ly.train.flower.common.actor.ServiceFacade#buildServiceRouter
+   * @see ServiceFacade#buildFlowRouter(java.lang.String, int)
    * @return {@code ServiceRouter}
    */
   private FlowRouter initServiceRouter() {
-    return flowerFactory.getServiceFacade().buildFlowRouter(getFlowName(), 2 << 2);
+    return flowerFactory.getServiceFacade().buildFlowRouter(getFlowName(), getFlowNumber());
   }
 
   /**
@@ -90,11 +94,34 @@ public abstract class FlowerController implements InitializingBean {
     return flowerName;
   }
 
+  /**
+   * 获取流程首个服务名称
+   *
+   * @return serviceName
+   */
   public String getServiceName() {
     if (serviceName == null) {
       Flower bindController = this.getClass().getAnnotation(Flower.class);
       this.serviceName = bindController.serviceName();
     }
     return serviceName;
+  }
+
+  /**
+   * 获取流程通道数
+   *
+   * @return serviceName
+   */
+  public int getFlowNumber() {
+    if (this.flowNumber == null) {
+      Flower bindController = this.getClass().getAnnotation(Flower.class);
+      this.flowNumber = bindController.flowNumber();
+      logger.info("set flowNumber : {}",this.flowNumber);
+    }
+    if(this.flowNumber == 0){
+      this.flowNumber = FlowerController.DEFAULT_FLOW_NUMBER;
+      logger.warn("find zero flowNumber, using default values: {}",this.flowNumber);
+    }
+    return flowNumber;
   }
 }
