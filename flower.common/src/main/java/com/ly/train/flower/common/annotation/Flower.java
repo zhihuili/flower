@@ -42,4 +42,6 @@ public @interface Flower {
 
   String serviceName();
 
+  int flowNumber() default 128;
+
 }

@@ -1,2 +1,4 @@
-name: "FlowerCenter"
+name: "LocalFlower"
 basePackage: com.ly.train.flower
+host: 127.0.0.1
+port: 8096

@@ -38,6 +38,8 @@ import com.ly.train.flower.common.service.web.HttpComplete;
 import com.ly.train.flower.common.service.web.Web;
 import com.ly.train.flower.common.util.ClassUtil;
 import com.ly.train.flower.common.util.CloneUtil;
+import com.ly.train.flower.common.util.CollectionUtil;
+import com.ly.train.flower.common.util.StringUtil;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.dispatch.Futures;
@@ -102,7 +104,7 @@ public class ServiceActor extends AbstractFlowerActor {
     // logger.info("同步处理 ： {}, hasChild : {}", serviceContext.isSync(),
     // hasChildActor());
     Set<RefType> nextActorRef = getNextServiceActors(serviceContext);
-    if (serviceContext.isSync() && nextActorRef.isEmpty()) {
+    if (serviceContext.isSync() && CollectionUtil.isEmpty(nextActorRef)) {
       ActorRef actor = syncActors.get(serviceContext.getId());
       if (actor != null) {
         actor.tell(result, getSelf());
@@ -124,7 +126,11 @@ public class ServiceActor extends AbstractFlowerActor {
     if (result == null) {// for joint service
       return;
     }
-    for (RefType refType : getNextServiceActors(serviceContext)) {
+    Set<RefType> refTypes = getNextServiceActors(serviceContext);
+    if (refTypes == null) {
+      return;
+    }
+    for (RefType refType : refTypes) {
       Object resultClone = CloneUtil.clone(result);
       ServiceContext context = serviceContext.newInstance();
       context.getFlowMessage().setMessage(resultClone);
@@ -161,12 +167,13 @@ public class ServiceActor extends AbstractFlowerActor {
   private Set<RefType> getNextServiceActors(ServiceContext serviceContext) {
     final String cacheKey = serviceContext.getFlowName() + "_" + serviceContext.getCurrentServiceName();
     Set<RefType> nextServiceActors = nextServiceActorCache.get(cacheKey);
-    if (nextServiceActors == null) {
+    if (nextServiceActors == null && StringUtil.isNotBlank(serviceContext.getFlowName())) {
       nextServiceActors = new HashSet<>();
       Set<ServiceConfig> serviceConfigs = flowerFactory.getServiceFactory()
           .getOrCreateServiceFlow(serviceContext.getFlowName()).getNextFlow(serviceContext.getCurrentServiceName());
       if (serviceConfigs != null) {
         for (ServiceConfig serviceConfig : serviceConfigs) {
+          flowerFactory.getServiceFactory().loadServiceMeta(serviceConfig);// 内部对serviceConfig的数据进行填充
           RefType refType = new RefType();
           refType.setAggregate(serviceConfig.isAggregateService());
           refType.setServiceRouter(flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, count));

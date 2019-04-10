@@ -53,7 +53,7 @@ public class ActorSelectionTest {
     flowerFactory2.getServiceFactory().registerService(ServiceC1.class.getSimpleName(), ServiceC1.class);
     flowerFactory2.getServiceFactory().registerService(ServiceC2.class.getSimpleName(), ServiceC2.class);
     flowerFactory2.getServiceFactory().registerService(ServiceD.class.getSimpleName(), ServiceD.class);
-    
+
 
 
     System.out.println("初始化服务2完成，开始初始化服务1");
@@ -82,10 +82,10 @@ public class ActorSelectionTest {
     serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
     serviceFlow.buildFlow(Arrays.asList(ServiceC1.class, ServiceC2.class), ServiceD.class);
     serviceFlow.build();
-    
+
     Object ret = flowerFactory1.getServiceFacade().syncCallService(flowName, message);
     System.out.println("返回结果：" + ret);
-    Thread.sleep(1000);
+    Thread.sleep(3000);
   }
 
   @Test

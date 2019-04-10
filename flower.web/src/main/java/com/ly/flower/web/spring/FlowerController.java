@@ -39,6 +39,7 @@ public abstract class FlowerController implements InitializingBean {
   private FlowRouter serviceRouter;
   private String flowerName;
   private String serviceName;
+  private int flowerNumber;
 
 
   @Autowired
@@ -63,7 +64,7 @@ public abstract class FlowerController implements InitializingBean {
    * @return {@code ServiceRouter}
    */
   private FlowRouter initServiceRouter() {
-    return flowerFactory.getServiceFacade().buildFlowRouter(getFlowName(), 2 << 2);
+    return flowerFactory.getServiceFacade().buildFlowRouter(getFlowName(), getFlowerNumber());
   }
 
   /**
@@ -88,6 +89,17 @@ public abstract class FlowerController implements InitializingBean {
       this.flowerName = bindController.value();
     }
     return flowerName;
+  }
+
+  public int getFlowerNumber() {
+    if (flowerNumber == 0) {
+      Flower bindController = this.getClass().getAnnotation(Flower.class);
+      this.flowerNumber = bindController.flowNumber();
+      if (this.flowerNumber <= 0) {
+        this.flowerNumber = 2 << 6;
+      }
+    }
+    return flowerNumber;
   }
 
   public String getServiceName() {

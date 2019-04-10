@@ -25,16 +25,11 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
 
 /**
  * flower {@link FlowerComponentScan} Bean Registrar
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see Service
- * @see ImportBeanDefinitionRegistrar
- * @since 2.5.7
  */
 public class FlowerComponentScanRegistrar implements ImportBeanDefinitionRegistrar {
 
