@@ -16,15 +16,13 @@
 package com.ly.train.flower.common.sample.programflow;
 
 import org.junit.Test;
-import com.ly.train.flower.common.actor.ServiceFacade;
+import com.ly.train.flower.common.sample.TestBase;
 import com.ly.train.flower.common.sample.programflow.service.ServiceA;
 import com.ly.train.flower.common.sample.programflow.service.ServiceB;
 import com.ly.train.flower.common.sample.programflow.service.ServiceC;
-import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
-import com.ly.train.flower.common.service.container.ServiceLoader;
 
-public class Sample {
+public class Sample extends TestBase {
   private static final String flowName = "programFlow";
 
   @Test
@@ -32,19 +30,20 @@ public class Sample {
     buildServiceEnv();
 
     for (int i = 0; i < 5; i++) {
-      ServiceFacade.asyncCallService(flowName, " Hello World! ");
+      flowerFactory.getServiceFacade().asyncCallService(flowName, " Hello World! ");
     }
     Thread.sleep(1000);
-    System.out.println((ServiceLoader.getInstance().loadServiceMeta("serviceB").getParamType()));
+    System.out.println((serviceLoader.loadServiceMeta("programServiceB").getParamType()));
   }
 
-  public static void buildServiceEnv() {
-    ServiceFactory.registerService("programServiceA", ServiceA.class);
-    ServiceFactory.registerService("programServiceB", ServiceB.class);
-    ServiceFactory.registerService("programServiceC", ServiceC.class);
+  public void buildServiceEnv() {
+    serviceFactory.registerService("programServiceA", ServiceA.class);
+    serviceFactory.registerService("programServiceB", ServiceB.class);
+    serviceFactory.registerService("programServiceC", ServiceC.class);
 
     // serviceA -> serviceB -> serviceC
-    ServiceFlow.getOrCreate(flowName).buildFlow("programServiceA", "programServiceB").buildFlow("programServiceB", "programServiceC");
+    ServiceFlow.getOrCreate(flowName, serviceFactory).buildFlow("programServiceA", "programServiceB")
+        .buildFlow("programServiceB", "programServiceC");
 
   }
 

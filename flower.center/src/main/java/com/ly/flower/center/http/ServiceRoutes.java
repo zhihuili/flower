@@ -15,33 +15,30 @@
  */
 package com.ly.flower.center.http;
 
+import java.time.Duration;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.TimeUnit;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 import com.ly.train.flower.registry.config.ServiceInfo;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import akka.event.Logging;
-import akka.event.LoggingAdapter;
 import akka.http.javadsl.marshallers.jackson.Jackson;
 import akka.http.javadsl.model.StatusCodes;
 import akka.http.javadsl.server.AllDirectives;
 import akka.http.javadsl.server.Route;
-import akka.pattern.PatternsCS;
-import akka.util.Timeout;
-import scala.concurrent.duration.Duration;
+import akka.pattern.Patterns;
 
 public class ServiceRoutes extends AllDirectives {
-  final private ActorSystem system;
-  final private ActorRef serviceRegistryActor;
-  final private LoggingAdapter log;
+  static final Logger logger = LoggerFactory.getLogger(ServiceRoutes.class);
+  final ActorSystem system;
+  final ActorRef serviceRegistryActor;
 
   public ServiceRoutes(ActorSystem system, ActorRef serviceRegistryActor) {
     this.system = system;
     this.serviceRegistryActor = serviceRegistryActor;
-    log = Logging.getLogger(system, this);
   }
 
-  Timeout timeout = new Timeout(Duration.create(5, TimeUnit.SECONDS));
+  private static Duration duration = Duration.ofSeconds(5);
 
   public Route routes() {
     return route(pathPrefix("services", () -> route(getServices())));
@@ -50,8 +47,8 @@ public class ServiceRoutes extends AllDirectives {
   private Route getServices() {
     return pathEnd(() -> route(get(() -> {
       CompletionStage<ServiceInfo> futureServices =
-          PatternsCS.ask(serviceRegistryActor, new ServiceRegistryMessages.ShowServices(), timeout).thenApply(obj -> (ServiceInfo) obj);
-
+          Patterns.ask(serviceRegistryActor, new ServiceRegistryMessages.ShowServices(), duration)
+              .thenApply(obj -> (ServiceInfo) obj);
       return onSuccess(() -> futureServices, services -> complete(StatusCodes.OK, services, Jackson.marshaller()));
     })));
   }

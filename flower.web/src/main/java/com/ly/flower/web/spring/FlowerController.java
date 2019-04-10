@@ -22,9 +22,10 @@ import java.io.IOException;
 import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.InitializingBean;
-import com.ly.train.flower.common.actor.ServiceFacade;
-import com.ly.train.flower.common.actor.ServiceRouter;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.ly.train.flower.common.akka.FlowRouter;
 import com.ly.train.flower.common.annotation.Flower;
+import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
@@ -34,11 +35,14 @@ import com.ly.train.flower.logging.LoggerFactory;
  * @author leeyazhou
  */
 public abstract class FlowerController implements InitializingBean {
-  protected final Logger logger =LoggerFactory.getLogger(getClass());
-  private ServiceRouter serviceRouter;
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  private FlowRouter serviceRouter;
   private String flowerName;
   private String serviceName;
 
+
+  @Autowired
+  private FlowerFactory flowerFactory;
 
   protected void doProcess(Object param, HttpServletRequest req) throws IOException {
     AsyncContext context = req.startAsync();
@@ -58,8 +62,8 @@ public abstract class FlowerController implements InitializingBean {
    * @see com.ly.train.flower.common.actor.ServiceFacade#buildServiceRouter
    * @return {@code ServiceRouter}
    */
-  private ServiceRouter initServiceRouter() {
-    return ServiceFacade.buildServiceRouter(getFlowName(), getServiceName(), 2 << 7);
+  private FlowRouter initServiceRouter() {
+    return flowerFactory.getServiceFacade().buildFlowRouter(getFlowName(), 2 << 2);
   }
 
   /**
@@ -68,6 +72,10 @@ public abstract class FlowerController implements InitializingBean {
    * @see ServiceFlow
    */
   public abstract void buildFlower();
+
+  public ServiceFlow getServiceFlow() {
+    return flowerFactory.getServiceFactory().getOrCreateServiceFlow(getFlowName());
+  }
 
   /**
    * 获取流名称

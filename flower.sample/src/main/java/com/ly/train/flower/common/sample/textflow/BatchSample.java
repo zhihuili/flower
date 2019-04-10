@@ -21,32 +21,33 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.ly.train.flower.common.actor.ServiceFacade;
+import com.ly.train.flower.common.sample.TestBase;
 import com.ly.train.flower.common.sample.textflow.model.Message1;
 import com.ly.train.flower.common.sample.textflow.model.Message2;
 
 
-public class BatchSample {
+public class BatchSample extends TestBase {
   private static final Logger logger = LoggerFactory.getLogger(BatchSample.class);
+
+  final String flowName = "sample";
 
   @Test
   public void main() throws Exception {
 
-    int count = 0;
+    int count = 30;
     Map<String, Message1> message1Map = new HashMap<>();
-    for (int i = 20; i < 1111; ++i) {
+    for (int i = 0; i < count; ++i) {
       Message2 m2 = new Message2(i, String.valueOf(i));
       Message1 m1 = new Message1();
       m1.setM2(m2);
       message1Map.put(String.valueOf(i), m1);
-      count++;
     }
 
     int resultCount = 0;
     for (String key : message1Map.keySet()) {
       Message1 m1 = message1Map.get(key);
-      Object o = ServiceFacade.syncCallService("sample", m1);
-      logger.info("" + o);
+      Object o = serviceFacade.syncCallService(flowName, m1);
+      logger.info("结果：" + o);
       Assert.assertEquals(((Message1) o).getM2().getName(), m1.getM2().getName());
       Assert.assertEquals(Integer.parseInt(key), ((Message1) o).getM2().getAge() - 1);
       resultCount++;

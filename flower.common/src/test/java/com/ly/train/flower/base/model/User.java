@@ -25,7 +25,7 @@ package com.ly.train.flower.base.model;
 public class User {
 
   private String name;
-  private String desc;
+  private String desc = "";
   private int age;
 
   public String getName() {

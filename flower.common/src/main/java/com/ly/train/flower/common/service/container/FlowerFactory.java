@@ -19,6 +19,11 @@
 package com.ly.train.flower.common.service.container;
 
 import java.util.Set;
+import com.ly.train.flower.common.akka.ServiceActorFactory;
+import com.ly.train.flower.common.akka.ServiceFacade;
+import com.ly.train.flower.common.exception.ExceptionHandler;
+import com.ly.train.flower.common.service.Service;
+import com.ly.train.flower.common.service.container.lifecyle.Lifecycle;
 import com.ly.train.flower.config.FlowerConfig;
 import com.ly.train.flower.registry.Registry;
 
@@ -26,7 +31,7 @@ import com.ly.train.flower.registry.Registry;
  * @author leeyazhou
  *
  */
-public interface FlowerFactory {
+public interface FlowerFactory extends Lifecycle {
 
 
   /**
@@ -36,13 +41,34 @@ public interface FlowerFactory {
    */
   FlowerConfig getFlowerConfig();
 
+  /**
+   * 获取注册中心
+   * 
+   * @return {@link Registry}
+   */
   Set<Registry> getRegistry();
 
   /**
-   * 初始化
+   * 异常处理器
    * 
-   * @return true / false
+   * @return {@link ExceptionHandler}
    */
-  boolean init();
+  ExceptionHandler getExceptionHandler();
+
+  /**
+   * akka Actor 工厂
+   * 
+   * @return {@link ServiceActorFactory}
+   */
+  ServiceActorFactory getServiceActorFactory();
+
+  /**
+   * {@link Service}工厂
+   * 
+   * @return {@link ServiceFactory}
+   */
+  ServiceFactory getServiceFactory();
+
+  ServiceFacade getServiceFacade();
 
 }

@@ -41,6 +41,8 @@ public @interface FlowerService {
   String value() default "";
 
 
+  int timeout() default 3000;
+
   /**
    * 类型，默认是普通类型
    * 

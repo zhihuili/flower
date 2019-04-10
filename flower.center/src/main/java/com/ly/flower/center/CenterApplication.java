@@ -37,7 +37,7 @@ import com.ly.flower.web.spring.context.FlowerComponentScan;
 @SpringBootApplication
 @EnableAutoConfiguration
 @ComponentScan("com.ly.flower.center")
-@FlowerComponentScan("com.ly.flower.center.service")
+@FlowerComponentScan("com.ly.flower.center")
 public class CenterApplication {
   static final Logger logger = LoggerFactory.getLogger(CenterApplication.class);
 

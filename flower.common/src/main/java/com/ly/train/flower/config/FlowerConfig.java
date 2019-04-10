@@ -20,6 +20,7 @@ package com.ly.train.flower.config;
 
 import java.io.Serializable;
 import java.util.Set;
+import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.registry.config.RegistryConfig;
 
 /**
@@ -30,9 +31,10 @@ public class FlowerConfig implements Serializable {
   private static final long serialVersionUID = 1L;
 
   private String name = "SET_YOUR_OWN_APPLICATON_NAME";
-  private String host = "127.0.0.1";
+  private String host = "";
   private int port = 25001;
   private Set<RegistryConfig> registry;
+  private String basePackage;
 
   public Set<RegistryConfig> getRegistry() {
     return registry;
@@ -44,6 +46,10 @@ public class FlowerConfig implements Serializable {
 
   public String getName() {
     return name;
+  }
+  
+  public URL toURL() {
+    return new URL("", host, port);
   }
 
   public void setName(String name) {
@@ -68,6 +74,14 @@ public class FlowerConfig implements Serializable {
 
   public void setPort(int port) {
     this.port = port;
+  }
+
+  public String getBasePackage() {
+    return basePackage;
+  }
+
+  public void setBasePackage(String basePackage) {
+    this.basePackage = basePackage;
   }
 
   @Override

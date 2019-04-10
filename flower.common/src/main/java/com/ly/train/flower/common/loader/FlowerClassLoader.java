@@ -30,6 +30,10 @@ import com.ly.train.flower.logging.LoggerFactory;
 public class FlowerClassLoader extends URLClassLoader {
   static final Logger logger = LoggerFactory.getLogger(FlowerClassLoader.class);
 
+  public FlowerClassLoader(URL[] urls) {
+    super(urls);
+  }
+
   public FlowerClassLoader(URL[] urls, ClassLoader parent) {
     super(urls, parent);
   }

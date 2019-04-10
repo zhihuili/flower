@@ -9,7 +9,7 @@
 	<properties>
 		<revision>0.1.2</revision>
 	</properties>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -30,6 +30,11 @@
 			<dependency>
 				<groupId>com.ly.train</groupId>
 				<artifactId>flower.web</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ly.train</groupId>
+				<artifactId>flower.container</artifactId>
 				<version>${revision}</version>
 			</dependency>
 		</dependencies>

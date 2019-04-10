@@ -15,34 +15,32 @@
  */
 package com.ly.train.flower.common.sample.web.forktest;
 
-import com.ly.train.flower.common.actor.ServiceFacade;
-import com.ly.train.flower.common.actor.ServiceRouter;
-import com.ly.train.flower.common.service.FlowerService;
-import com.ly.train.flower.common.service.container.ServiceFactory;
-import com.ly.train.flower.common.service.container.ServiceFlow;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import java.io.IOException;
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import com.ly.train.flower.common.akka.FlowRouter;
+import com.ly.train.flower.common.sample.web.FlowerHttpServlet;
+import com.ly.train.flower.common.service.FlowerService;
+import com.ly.train.flower.common.service.container.ServiceFlow;
 
 /**
  * @author fengyu.zhang
  * @date 2019/2/24 13:13
  */
-public class ForkServlet extends HttpServlet {
+public class ForkServlet extends FlowerHttpServlet {
   static final long serialVersionUID = 1L;
-  ServiceRouter sr;
+  FlowRouter sr;
   ApplicationContext context;
 
   @Override
   public void init() {
     context = new ClassPathXmlApplicationContext("spring-mybatis.xml");
     buildServiceEnv();
-    sr = ServiceFacade.buildServiceRouter("fork", "serviceBegin", 400);
+    sr = flowerFactory.getServiceActorFactory().buildFlowRouter("fork", 400);
   }
 
   @Override
@@ -63,19 +61,19 @@ public class ForkServlet extends HttpServlet {
   }
 
   private void buildServiceEnv() {
-    ServiceFactory.registerService("serviceBegin", "com.ly.train.flower.common.sample.web.forktest.service.BeginService");
-    ServiceFactory.registerService("GoodsService", "com.ly.train.flower.common.sample.web.forktest.service.GoodsService");
-    ServiceFactory.registerService("OrderService", "com.ly.train.flower.common.sample.web.forktest.service.OrderService");
-    ServiceFactory.registerService("UserService", "com.ly.train.flower.common.sample.web.forktest.service.UserService");
-    ServiceFactory.registerService("AggregateService", "com.ly.train.flower.common.service.AggregateService");
-    ServiceFactory.registerService("serviceReturn", "com.ly.train.flower.common.sample.web.forktest.service.ReturnService");
+    serviceFactory.registerService("serviceBegin", "com.ly.train.flower.common.sample.web.forktest.service.BeginService");
+    serviceFactory.registerService("GoodsService", "com.ly.train.flower.common.sample.web.forktest.service.GoodsService");
+    serviceFactory.registerService("OrderService", "com.ly.train.flower.common.sample.web.forktest.service.OrderService");
+    serviceFactory.registerService("UserService", "com.ly.train.flower.common.sample.web.forktest.service.UserService");
+    serviceFactory.registerService("AggregateService", "com.ly.train.flower.common.service.AggregateService");
+    serviceFactory.registerService("serviceReturn", "com.ly.train.flower.common.sample.web.forktest.service.ReturnService");
 
     // 缺少该语句，会导致spring注入失败
-    ServiceFactory.registerFlowerService("GoodsService", (FlowerService) context.getBean("GoodsService"));
-    ServiceFactory.registerFlowerService("OrderService", (FlowerService) context.getBean("OrderService"));
-    ServiceFactory.registerFlowerService("UserService", (FlowerService) context.getBean("UserService"));
+    serviceFactory.registerFlowerService("GoodsService", (FlowerService) context.getBean("GoodsService"));
+    serviceFactory.registerFlowerService("OrderService", (FlowerService) context.getBean("OrderService"));
+    serviceFactory.registerFlowerService("UserService", (FlowerService) context.getBean("UserService"));
 
-    ServiceFlow serviceFlow = ServiceFlow.getOrCreate("fork").buildFlow("serviceBegin", "GoodsService");
+    ServiceFlow serviceFlow = getServiceFlow("fork").buildFlow("serviceBegin", "GoodsService");
     serviceFlow.buildFlow("serviceBegin", "OrderService");
     serviceFlow.buildFlow("serviceBegin", "UserService");
     serviceFlow.buildFlow("GoodsService", "AggregateService");

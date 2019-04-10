@@ -20,55 +20,66 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.ly.train.flower.common.exception.FlowerException;
 
 public class FileUtil {
   static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
-  public static List<Pair<String, String>> readFlow(String path) throws IOException {
-    InputStreamReader fr = new InputStreamReader(FileUtil.class.getResourceAsStream(path), Constant.ENCODING_UTF_8);
-    BufferedReader br = new BufferedReader(fr);
+  public static List<Pair<String, String>> readFlow(String path) {
+    InputStreamReader fr = null;
+    BufferedReader br = null;
     String line;
     List<Pair<String, String>> flow = new ArrayList<>();
-    while ((line = br.readLine()) != null) {
-      String sl = line.trim();
-      if ((sl.startsWith("//")) || sl.startsWith("#") || sl.equals("")) {
-        continue;
+    try {
+      fr = new InputStreamReader(FileUtil.class.getResourceAsStream(path), Constant.ENCODING_UTF_8);
+      br = new BufferedReader(fr);
+      while ((line = br.readLine()) != null) {
+        String sl = line.trim();
+        if ((sl.startsWith("//")) || sl.startsWith("#") || sl.equals("")) {
+          continue;
+        }
+        String[] connection = sl.split("->");
+        if (connection == null || connection.length != 2) {
+          throw new RuntimeException("Illegal flow config:" + path);
+        } else {
+          flow.add(new Pair<String, String>(connection[0].trim(), connection[1].trim()));
+        }
       }
-      String[] connection = sl.split("->");
-      if (connection == null || connection.length != 2) {
-        close(br, fr);
-        throw new RuntimeException("Illegal flow config:" + path);
-      } else {
-        flow.add(new Pair<String, String>(connection[0].trim(), connection[1].trim()));
-      }
+    } catch (IOException e) {
+      logger.error("filePath : " + path, e);
+    } finally {
+      close(br, fr);
     }
-    close(br, fr);
     return flow;
   }
 
-  public static Map<String, String> readService(String path) throws IOException {
-    InputStreamReader fr = new InputStreamReader(FileUtil.class.getResourceAsStream(path), Constant.ENCODING_UTF_8);
-    BufferedReader br = new BufferedReader(fr);
-    String line;
-    Map<String, String> result = new HashMap<String, String>();
-    while ((line = br.readLine()) != null) {
-      String sl = line.trim();
-      if ((sl.startsWith("//")) || sl.startsWith("#") || sl.equals("")) {
-        continue;
+  public static List<Pair<String, String>> readService(String path) {
+    List<Pair<String, String>> result = new ArrayList<Pair<String, String>>();
+    InputStreamReader fr = null;
+    BufferedReader br = null;
+    try {
+      fr = new InputStreamReader(FileUtil.class.getResourceAsStream(path), Constant.ENCODING_UTF_8);
+      br = new BufferedReader(fr);
+      String line;
+      while ((line = br.readLine()) != null) {
+        String sl = line.trim();
+        if ((sl.startsWith("//")) || sl.startsWith("#") || sl.equals("")) {
+          continue;
+        }
+        String[] kv = sl.split("=");
+        if (kv == null || kv.length != 2) {
+          throw new FlowerException("Illegal flow config:" + path);
+        }
+        result.add(new Pair<String, String>(kv[0].trim(), kv[1].trim()));
       }
-      String[] kv = sl.split("=");
-      if (kv == null || kv.length != 2) {
-        close(br, fr);
-        throw new RuntimeException("Illegal flow config:" + path + ", sl");
-      }
-      result.put(kv[0].trim(), kv[1].trim());
+    } catch (Exception e) {
+      logger.error("filePath : " + path, e);
+    } finally {
+      close(br, fr);
     }
-    close(br, fr);
     return result;
   }
 

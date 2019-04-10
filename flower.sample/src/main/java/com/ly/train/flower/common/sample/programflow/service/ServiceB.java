@@ -23,10 +23,10 @@ public class ServiceB implements Service<String, MessageA> {
 
   int i = 0;
 
-  @Override
   /**
    * upper case service
    */
+  @Override
   public MessageA process(String message, ServiceContext context) {
     if (message != null && message instanceof String) {
       MessageA ma = new MessageA();

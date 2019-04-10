@@ -29,7 +29,7 @@ import akka.stream.javadsl.Flow;
 
 public class AxisHttpServer {
 
-  ActorSystem system;
+  private ActorSystem system;
 
 
   public AxisHttpServer(ActorSystem system) {
@@ -45,8 +45,9 @@ public class AxisHttpServer {
     ServiceRoutes serviceRoutes = new ServiceRoutes(system, userRegistryActor);
 
     final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = serviceRoutes.routes().flow(system, materializer);
-    final CompletionStage<ServerBinding> binding = http.bindAndHandle(routeFlow, ConnectHttp.toHost("localhost", 8096), materializer);
-
+    final CompletionStage<ServerBinding> binding =
+        http.bindAndHandle(routeFlow, ConnectHttp.toHost("localhost", 8096), materializer);
+    System.out.println(binding);
     System.out.println("Server online at http://localhost:8096/");
     System.in.read(); // let it run until user presses return
   }
