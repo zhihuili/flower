@@ -82,6 +82,7 @@ public class CloneUtil {
    * @throws InvocationTargetException
    * @throws NoSuchMethodException
    */
+  @SuppressWarnings("rawtypes")
   public static Object clone(Object value, int level)
       throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
     if (value == null) {
@@ -96,6 +97,7 @@ public class CloneUtil {
     }
     level--;
     if (value instanceof Collection) {// 复制新的集合
+      @SuppressWarnings({"unchecked"})
       Collection<Object> tmp = (Collection) c.newInstance();
       for (Object v : (Collection<?>) value) {
         tmp.add(clone(v, level));// 深度复制
@@ -136,11 +138,13 @@ public class CloneUtil {
         value = tmp;
       }
     } else if (value instanceof Map) {// 复制新的MAP
+      @SuppressWarnings("unchecked")
       Map<Object, Object> tmp = (Map<Object, Object>) c.newInstance();
       Map<?, ?> org = (Map<?, ?>) value;
-      for (Object key : org.keySet()) {
-        tmp.put(key, clone(org.get(key), level));// 深度复制
+      for(Map.Entry t:org.entrySet()){
+        tmp.put(t.getKey(),clone(t.getValue(), level) );// 深度复制
       }
+
       value = tmp;
     } else {
       Object tmp = createObject(value);

@@ -18,6 +18,8 @@ package com.ly.train.flower.common.service.container;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import com.ly.train.flower.common.annotation.FlowerType;
+import com.ly.train.flower.common.service.impl.AggregateService;
 
 /**
  * 
@@ -27,33 +29,36 @@ import java.util.List;
 public class ServiceMeta implements Serializable {
   private static final long serialVersionUID = 1L;
   private String serviceName;
-  private Class<?> paramType;
-  private Class<?> resultType;
-  private Class<?> serviceClass;
+  private String paramType;
+  private String resultType;
+  private String serviceClassName;
+  private boolean local = true;
   private List<String> configs = new ArrayList<>();
+  private boolean aggregateService;
+  private boolean innerAggregateService;
+  private int timeout;
 
-  public ServiceMeta(Class<?> serviceClass) {
-    this.serviceClass = serviceClass;
+
+  public ServiceMeta(String serviceClassName) {
+    this.serviceClassName = serviceClassName;
   }
+
+  public ServiceMeta() {}
 
   public String getServiceName() {
     return serviceName;
   }
 
+
   public void setServiceName(String serviceName) {
     this.serviceName = serviceName;
   }
 
-  /**
-   * 请求参数类型
-   * 
-   * @return class
-   */
-  public Class<?> getParamType() {
+  public String getParamType() {
     return paramType;
   }
 
-  public void setParamType(Class<?> paramType) {
+  public void setParamType(String paramType) {
     this.paramType = paramType;
   }
 
@@ -62,21 +67,41 @@ public class ServiceMeta implements Serializable {
    * 
    * @return class
    */
-  public Class<?> getResultType() {
+  public String getResultType() {
     return resultType;
   }
 
-  public void setResultType(Class<?> resultType) {
+  public void setResultType(String resultType) {
     this.resultType = resultType;
   }
 
-  public Class<?> getServiceClass() {
-    return serviceClass;
+  /**
+   * true: local Service <br/>
+   * false : remote Service
+   * 
+   * @return true / false
+   */
+  public boolean isLocal() {
+    return local;
   }
 
-  public void setServiceClass(Class<?> serviceClass) {
-    this.serviceClass = serviceClass;
+  /**
+   * set local
+   * 
+   * @param local true: local Service, false : remote Service
+   */
+  public void setLocal(boolean local) {
+    this.local = local;
   }
+
+  public String getServiceClassName() {
+    return serviceClassName;
+  }
+
+  public void setServiceClassName(String serviceClassName) {
+    this.serviceClassName = serviceClassName;
+  }
+
 
   public List<String> getConfigs() {
     return configs;
@@ -98,6 +123,47 @@ public class ServiceMeta implements Serializable {
     return configs.get(index);
   }
 
+  /**
+   * 指服务的类型是否是聚合类型
+   * 
+   * @return
+   * @see FlowerType#AGGREGATE
+   * @see FlowerType#COMMON
+   * return true/false
+   */
+  public boolean isAggregateService() {
+    return aggregateService;
+  }
+
+  public void setAggregateService(boolean aggregateService) {
+    this.aggregateService = aggregateService;
+  }
+
+  /**
+   * 指服务是否是聚合类型{@link AggregateService}
+   * 
+   * @return true / false
+   */
+  public boolean isInnerAggregateService() {
+    return innerAggregateService;
+  }
+
+  public void setInnerAggregateService(boolean innerAggregateService) {
+    this.innerAggregateService = innerAggregateService;
+  }
+
+  public static long getSerialversionuid() {
+    return serialVersionUID;
+  }
+
+  public int getTimeout() {
+    return timeout;
+  }
+
+  public void setTimeout(int timeout) {
+    this.timeout = timeout;
+  }
+
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
@@ -107,8 +173,12 @@ public class ServiceMeta implements Serializable {
     builder.append(paramType);
     builder.append(", resultType=");
     builder.append(resultType);
-    builder.append(", serviceClass=");
-    builder.append(serviceClass);
+    builder.append(", serviceClassName=");
+    builder.append(serviceClassName);
+    builder.append(", local=");
+    builder.append(local);
+    builder.append(", configs=");
+    builder.append(configs);
     builder.append("]");
     return builder.toString();
   }

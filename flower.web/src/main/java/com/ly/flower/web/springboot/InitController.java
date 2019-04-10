@@ -15,7 +15,7 @@
  */
 package com.ly.flower.web.springboot;
 
-import com.ly.train.flower.common.actor.ServiceRouter;
+import com.ly.train.flower.common.akka.ServiceRouter;
 
 public interface InitController {
   public ServiceRouter init();

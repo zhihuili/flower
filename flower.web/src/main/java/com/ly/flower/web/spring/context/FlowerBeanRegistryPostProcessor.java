@@ -48,16 +48,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ly.flower.web.springboot.annotation.BindController;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.annotation.FlowerService;
+import com.ly.train.flower.common.annotation.FlowerServiceUtil;
 import com.ly.train.flower.common.bytecode.ClassGenerator;
-import com.ly.train.flower.common.service.container.ServiceFactory;
-import com.ly.train.flower.common.util.StringUtil;
+import com.ly.train.flower.common.service.container.FlowerFactory;
 
 /**
  * @author leeyazhou
  *
  */
-public class FlowerBeanRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor, EnvironmentAware, ResourceLoaderAware,
-    BeanClassLoaderAware, ApplicationContextAware, InitializingBean {
+public class FlowerBeanRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor, EnvironmentAware,
+    ResourceLoaderAware, BeanClassLoaderAware, ApplicationContextAware, InitializingBean {
   static final Logger logger = LoggerFactory.getLogger(FlowerBeanRegistryPostProcessor.class);
   private Environment environment;
   protected ClassLoader classLoader;
@@ -100,13 +100,17 @@ public class FlowerBeanRegistryPostProcessor implements BeanDefinitionRegistryPo
 
   @Override
   public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-    RootBeanDefinition flowerAnnotationBeanPostProcessor = new RootBeanDefinition(FlowerAnnotationBeanPostProcessor.class);
+    RootBeanDefinition flowerAnnotationBeanPostProcessor =
+        new RootBeanDefinition(FlowerAnnotationBeanPostProcessor.class);
     BeanDefinitionReaderUtils.registerWithGeneratedName(flowerAnnotationBeanPostProcessor, registry);
-    BeanDefinitionReaderUtils.registerWithGeneratedName(new RootBeanDefinition(FlowerApplicationListener.class), registry);
+    BeanDefinitionReaderUtils.registerWithGeneratedName(new RootBeanDefinition(FlowerApplicationListener.class),
+        registry);
 
-    FlowerClassPathBeanDefinitionScanner scanner = new FlowerClassPathBeanDefinitionScanner(registry, environment, resourceLoader);
+    FlowerClassPathBeanDefinitionScanner scanner =
+        new FlowerClassPathBeanDefinitionScanner(registry, environment, resourceLoader);
 
     scanner.addIncludeFilter(new AnnotationTypeFilter(FlowerService.class));
+    Map<String, Class<?>> serviceTypes = new HashMap<String, Class<?>>();
     for (String basePackage : packagesToScan) {
       Set<BeanDefinitionHolder> beanDefinitionHolders = scanner.doScan(basePackage);
       logger.info("scan basepackage ：{}", basePackage);
@@ -117,24 +121,27 @@ public class FlowerBeanRegistryPostProcessor implements BeanDefinitionRegistryPo
           registry.registerBeanDefinition(beanName, beanHolder.getBeanDefinition());
           Class<?> beanType = applicationContext.getType(beanName);
           if (isFlowerService(beanType)) {
-            FlowerService flowerService2 = beanType.getAnnotation(FlowerService.class);
-            String serviceName = beanType.getSimpleName();
-            if (flowerService2 != null && StringUtil.isNotBlank(flowerService2.value())) {
-              serviceName = flowerService2.value();
-            }
-            ServiceFactory.registerService(serviceName, beanType);
+            String serviceName = FlowerServiceUtil.getServiceName(beanType);
+            serviceTypes.put(serviceName, beanType);
           }
         }
       }
     }
 
+    FlowerFactory flowerFactory = applicationContext.getBean(FlowerFactory.class);
+    for (Map.Entry<String, Class<?>> entry : serviceTypes.entrySet()) {
+      flowerFactory.getServiceFactory().registerService(entry.getKey(), entry.getValue());
+    }
+
     scanner.resetFilters(false);
     scanner.addIncludeFilter(new AnnotationTypeFilter(Flower.class));
     // for (String basePackage : packagesToScan) {
-    // Set<BeanDefinitionHolder> beanDefinitionHolders = scanner.doScan(basePackage);
+    // Set<BeanDefinitionHolder> beanDefinitionHolders =
+    // scanner.doScan(basePackage);
     // logger.info("scan basepackage ：{}", basePackage);
     // for (BeanDefinitionHolder beanHolder : beanDefinitionHolders) {
-    // AbstractBeanDefinition beanDefinition = (AbstractBeanDefinition) beanHolder.getBeanDefinition();
+    // AbstractBeanDefinition beanDefinition = (AbstractBeanDefinition)
+    // beanHolder.getBeanDefinition();
     // BeanDefinitionReaderUtils.registerWithGeneratedName((AbstractBeanDefinition)
     // beanHolder.getBeanDefinition(),
     // registry);
@@ -142,7 +149,8 @@ public class FlowerBeanRegistryPostProcessor implements BeanDefinitionRegistryPo
     // beanDefinition = new RootBeanDefinition(clazz);
     // beanDefinition.getPropertyValues().add("target", new
     // RuntimeBeanReference(beanHolder.getBeanName()));
-    // BeanDefinitionReaderUtils.registerWithGeneratedName(beanDefinition, registry);
+    // BeanDefinitionReaderUtils.registerWithGeneratedName(beanDefinition,
+    // registry);
     // logger.info("registry flower controller : {}", clazz);
     // }
     // }

@@ -23,8 +23,7 @@ import com.ly.train.flower.common.service.web.HttpComplete;
 
 public class FlowService implements Service, HttpComplete, Flush, Complete {
 
-  public FlowService() {
-  }
+  public FlowService() {}
 
   @Override
   /**

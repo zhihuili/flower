@@ -15,14 +15,17 @@
  */
 package com.ly.train.flower.common.service.impl;
 
+import com.ly.train.flower.common.annotation.Scope;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.util.Constant;
 
+@Scope(scopeName = Constant.SCOPE_REQUEST)
 public class NothingService implements Service<Object, Object> {
 
   @Override
   public Object process(Object message, ServiceContext context) {
-    return null;
+    return message;
   }
 
 }

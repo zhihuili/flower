@@ -17,7 +17,6 @@ package com.ly.train.flower.common.sample.web.async;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONObject;
 import com.ly.train.flower.common.sample.web.dao.UserDao;
 import com.ly.train.flower.common.sample.web.mode.User;
@@ -26,8 +25,7 @@ import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.web.Flush;
 
 @Service("serviceB")
-public class ServiceB
-    implements com.ly.train.flower.common.service.Service<Integer,Void>, Flush, Complete {
+public class ServiceB implements com.ly.train.flower.common.service.Service<Integer, Void>, Flush, Complete {
 
   @Autowired
   private UserDao userDao;
