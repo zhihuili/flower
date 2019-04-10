@@ -13,15 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.flower.center.http;
+package com.ly.train.flower.registry.simple.service;
 
-import java.io.Serializable;
+import com.ly.train.flower.common.service.Service;
+import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.registry.config.ServiceInfo;
 
-public interface ServiceRegistryMessages {
+/**
+ * @author leeyazhou
+ *
+ */
+public class ServiceInfoRegisterService implements Service<ServiceInfo, Boolean> {
 
-  class ShowServices implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+  @Override
+  public Boolean process(ServiceInfo message, ServiceContext context) throws Throwable {
+    return null;
   }
+
 }

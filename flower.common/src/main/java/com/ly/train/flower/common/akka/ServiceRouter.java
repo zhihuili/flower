@@ -81,13 +81,12 @@ public class ServiceRouter extends AbstractInit {
   }
 
   public void asyncCallService(ServiceContext serviceContext) {
-    asyncCallService(serviceContext, ActorRef.noSender());
+    ActorWrapper actorRef = chooseOne(serviceContext);
+    actorRef.tell(serviceContext);
   }
+
   public void asyncCallService(ServiceContext serviceContext, ActorRef sender) {
     ActorWrapper actorRef = chooseOne(serviceContext);
-    if (sender == null) {
-      sender = ActorRef.noSender();
-    }
     actorRef.tell(serviceContext, sender);
   }
 

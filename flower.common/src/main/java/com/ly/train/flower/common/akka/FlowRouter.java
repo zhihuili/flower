@@ -37,8 +37,8 @@ public class FlowRouter extends AbstractInit {
   private final String flowName;
   private ServiceFacade serviceFacade;
 
-  public FlowRouter(String flowName, ServiceConfig headerServiceConfig, int number, FlowerFactory flowerFactory) {
-    this.flowName = flowName;
+  public FlowRouter(ServiceConfig headerServiceConfig, int number, FlowerFactory flowerFactory) {
+    this.flowName = headerServiceConfig.getFlowName();
     this.headerServiceConfig = headerServiceConfig;
     this.serviceFacade = flowerFactory.getServiceFacade();
     if (number > 0) {
@@ -51,7 +51,7 @@ public class FlowRouter extends AbstractInit {
     getServiceRouter();
   }
 
-  public void asyncCallService(Object message) throws IOException {
+  public void asyncCallService(Object message) {
     asyncCallService(message, null);
   }
 
@@ -84,10 +84,6 @@ public class FlowRouter extends AbstractInit {
     serviceContext.setCurrentServiceName(headerServiceConfig.getServiceName());
     serviceContext.setSync(true);
     return getServiceRouter().syncCallService(serviceContext);
-  }
-
-  public void asyncCallService(ServiceContext serviceContext) {
-    getServiceRouter().asyncCallService(serviceContext, ActorRef.noSender());
   }
 
   private ServiceRouter getServiceRouter() {

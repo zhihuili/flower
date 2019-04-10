@@ -21,6 +21,7 @@ package com.ly.train.flower.registry.simple;
 import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.ly.train.flower.common.service.config.ServiceConfig;
+import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.util.HttpClient;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.common.util.URL;
@@ -32,9 +33,16 @@ import com.ly.train.flower.registry.config.ServiceInfo;
  *
  */
 public class SimpleRegistry extends AbstractRegistry {
+  protected FlowerFactory flowerFactory;
 
   public SimpleRegistry(URL url) {
     super(url);
+  }
+
+  public void setFlowerFactory(FlowerFactory flowerFactory) {
+    this.flowerFactory = flowerFactory;
+    
+
   }
 
   @Override

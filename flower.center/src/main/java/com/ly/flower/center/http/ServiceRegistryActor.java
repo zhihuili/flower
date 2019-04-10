@@ -29,6 +29,8 @@ public class ServiceRegistryActor extends AbstractActor {
 
   @Override
   public Receive createReceive() {
-    return receiveBuilder().match(ShowServices.class, ss -> getSender().tell(new ServiceInfo(), getSelf())).build();
+    return receiveBuilder().match(ShowServices.class, ss -> {
+      getSender().tell(new ServiceInfo(), getSelf());
+    }).build();
   }
 }

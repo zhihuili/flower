@@ -86,10 +86,7 @@ public class ServiceActorV1 extends AbstractFlowerActor {
     if (serviceConfigs != null) {
       for (ServiceConfig serviceConfig : serviceConfigs) {
         RefType refType = new RefType();
-
-        if (serviceConfig.isAggregateService()) {
-          refType.setJoint(true);
-        }
+        refType.setJoint(serviceConfig.isAggregateService());
         refType.setActorRef(serviceActorFactory.buildServiceActor(serviceConfig, index));
         refType.setMessageType(ClassUtil
             .forName(serviceFactory.getServiceLoader().loadServiceMeta(serviceConfig.getServiceName()).getParamType()));

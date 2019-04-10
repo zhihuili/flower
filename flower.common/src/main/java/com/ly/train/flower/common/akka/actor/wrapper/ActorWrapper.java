@@ -24,8 +24,19 @@ import akka.actor.ActorRef;
 public interface ActorWrapper {
 
   String getServiceName();
-  
+
+  /**
+   * 发送消息
+   * 
+   * @param message 消息
+   */
   void tell(Object message);
 
+  /**
+   * 发送消息
+   * 
+   * @param message 消息
+   * @param sender 发送方
+   */
   void tell(Object message, ActorRef sender);
 }

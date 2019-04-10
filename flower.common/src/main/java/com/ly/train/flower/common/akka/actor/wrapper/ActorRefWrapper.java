@@ -44,6 +44,9 @@ public class ActorRefWrapper implements ActorWrapper {
       logger.debug("流转Local消息. serviceName : {}, actor : {}, message : {}, sender : {}", serviceName, actorRef, message,
           sender);
     }
+    if (sender == null) {
+      sender = ActorRef.noSender();
+    }
     actorRef.tell(message, sender);
   }
 

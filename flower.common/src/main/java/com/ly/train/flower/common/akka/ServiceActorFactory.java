@@ -178,7 +178,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
 
     FlowRouter flowRouter = flowRoutersCache.get(routerCacheKey);
     if (flowRouter == null) {
-      flowRouter = new FlowRouter(flowName, serviceConfig, flowNumbe, flowerFactory);
+      flowRouter = new FlowRouter(serviceConfig, flowNumbe, flowerFactory);
       flowRoutersCache.put(routerCacheKey, flowRouter);
       flowRouter.init();
       logger.info("build service Router. flowName : {}, serviceName : {}, flowNumbe : {}", flowName, serviceName,

@@ -124,7 +124,6 @@ public class ServiceActor extends AbstractFlowerActor {
     if (result == null) {// for joint service
       return;
     }
-    logger.info("当前服务处理完毕{}，传递给下一个流程：{}", serviceContext.getCurrentServiceName(), getNextServiceActors(serviceContext));
     for (RefType refType : getNextServiceActors(serviceContext)) {
       Object resultClone = CloneUtil.clone(result);
       ServiceContext context = serviceContext.newInstance();
@@ -133,7 +132,6 @@ public class ServiceActor extends AbstractFlowerActor {
       if (refType.getMessageType().isInstance(result)) {
         if (!(result instanceof Condition) || !(((Condition) result).getCondition() instanceof String)
             || stringInStrings(refType.getServiceName(), ((Condition) result).getCondition().toString())) {
-          // refType.getActor().tell(context, getSelf());
           context.setCurrentServiceName(refType.getServiceName());
           refType.getServiceRouter().asyncCallService(context, getSelf());
         }
@@ -170,7 +168,6 @@ public class ServiceActor extends AbstractFlowerActor {
       if (serviceConfigs != null) {
         for (ServiceConfig serviceConfig : serviceConfigs) {
           RefType refType = new RefType();
-
           refType.setAggregate(serviceConfig.isAggregateService());
           refType.setServiceRouter(flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, count));
           refType.setMessageType(ClassUtil.forName(serviceConfig.getServiceMeta().getParamType()));

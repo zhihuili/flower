@@ -51,6 +51,9 @@ public class ActorSelectionWrapper implements ActorWrapper {
       logger.debug("流转Remote消息. serviceName : {}, actor : {}, message : {}, sender : {}", serviceName, actorSelection,
           message, sender);
     }
+    if (sender == null) {
+      sender = ActorRef.noSender();
+    }
     actorSelection.tell(message, sender);
   }
 

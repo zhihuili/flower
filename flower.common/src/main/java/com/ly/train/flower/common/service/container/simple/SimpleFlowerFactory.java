@@ -35,6 +35,7 @@ import com.ly.train.flower.logging.LoggerFactory;
 import com.ly.train.flower.registry.Registry;
 import com.ly.train.flower.registry.RegistryFactory;
 import com.ly.train.flower.registry.config.RegistryConfig;
+import com.ly.train.flower.registry.simple.SimpleRegistry;
 
 /**
  * @author leeyazhou
@@ -91,7 +92,11 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
       RegistryFactory registryFactory = ExtensionLoader.load(RegistryFactory.class).load(config.getProtocol());
       if (registryFactory != null) {
         URL url = new URL(config.getProtocol(), config.getHost(), config.getPort());
-        ret.add(registryFactory.createRegistry(url));
+        Registry registry = registryFactory.createRegistry(url);
+        if (registry instanceof SimpleRegistry) {
+          ((SimpleRegistry) registry).setFlowerFactory(this);
+        }
+        ret.add(registry);
         logger.info("find registry : {}", url);
       }
     }

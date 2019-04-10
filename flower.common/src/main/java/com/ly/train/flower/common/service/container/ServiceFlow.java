@@ -96,7 +96,6 @@ public final class ServiceFlow {
     if (header == null) {
       return;
     }
-    logger.info("初始化本地索引 {}:{}", header.getServiceName(), header);
     serviceConfigsCache.putIfAbsent(header.getServiceName(), header);
 
     if (header.getNextServiceConfigs() == null) {
