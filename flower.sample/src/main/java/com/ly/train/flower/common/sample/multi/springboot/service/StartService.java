@@ -13,31 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.akka.actor.wrapper;
+package com.ly.train.flower.common.sample.multi.springboot.service;
 
+import com.ly.train.flower.common.sample.multi.springboot.model.OrderExt;
+import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
-import akka.actor.ActorRef;
 
 /**
  * @author leeyazhou
  *
  */
-public interface ActorWrapper {
+public class StartService implements Service<OrderExt, OrderExt> {
 
-  String getServiceName();
-
-  /**
-   * 发送消息
-   * 
-   * @param message 消息
-   */
-  void tell(ServiceContext message);
-
-  /**
-   * 发送消息
-   * 
-   * @param message 消息
-   * @param sender 发送方
-   */
-  void tell(ServiceContext message, ActorRef sender);
+  @Override
+  public OrderExt process(OrderExt message, ServiceContext context) throws Throwable {
+    return message;
+  }
 }

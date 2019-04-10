@@ -13,31 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.akka.actor.wrapper;
+package com.ly.train.flower.common.sample.multi.springboot;
 
-import com.ly.train.flower.common.service.container.ServiceContext;
-import akka.actor.ActorRef;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.ly.flower.web.spring.context.FlowerComponentScan;
 
-/**
- * @author leeyazhou
- *
- */
-public interface ActorWrapper {
-
-  String getServiceName();
-
-  /**
-   * 发送消息
-   * 
-   * @param message 消息
-   */
-  void tell(ServiceContext message);
-
-  /**
-   * 发送消息
-   * 
-   * @param message 消息
-   * @param sender 发送方
-   */
-  void tell(ServiceContext message, ActorRef sender);
+@SpringBootApplication
+@FlowerComponentScan("com.ly.train.flower.common.sample.multi.springboot")
+public class MultiApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(MultiApplication.class, args);
+  }
 }

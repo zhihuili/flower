@@ -13,31 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.akka.actor.wrapper;
-
-import com.ly.train.flower.common.service.container.ServiceContext;
-import akka.actor.ActorRef;
+/**
+ * 
+ */
+package com.ly.train.flower.common.sample.multi.springboot.util;
 
 /**
  * @author leeyazhou
  *
  */
-public interface ActorWrapper {
+public class R {
 
-  String getServiceName();
+  public static <T> Response<T> ok(T data) {
 
-  /**
-   * 发送消息
-   * 
-   * @param message 消息
-   */
-  void tell(ServiceContext message);
+    return new Response<>(data);
+  }
 
-  /**
-   * 发送消息
-   * 
-   * @param message 消息
-   * @param sender 发送方
-   */
-  void tell(ServiceContext message, ActorRef sender);
+  public static <T> Response<T> ok() {
+    return new Response<T>();
+  }
+
+  public static <T> Response<T> error(int code, String msg) {
+    return new Response<>(code, msg);
+  }
 }

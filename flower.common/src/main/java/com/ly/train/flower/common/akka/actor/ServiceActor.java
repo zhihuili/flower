@@ -30,6 +30,7 @@ import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.service.container.util.ServiceContextUtil;
 import com.ly.train.flower.common.service.impl.AggregateService;
 import com.ly.train.flower.common.service.message.Condition;
 import com.ly.train.flower.common.service.message.FlowMessage;
@@ -91,6 +92,8 @@ public class ServiceActor extends AbstractFlowerActor {
 
     Object result = null;
     try {
+      ServiceContextUtil.fillServiceContext(serviceContext);
+
       result = ((Service) getService(serviceContext)).process(fm.getMessage(), serviceContext);
     } catch (Throwable e) {
       Web web = serviceContext.getWeb();
@@ -130,6 +133,7 @@ public class ServiceActor extends AbstractFlowerActor {
     if (refTypes == null) {
       return;
     }
+    ServiceContextUtil.cleanServiceContext(serviceContext);
     for (RefType refType : refTypes) {
       Object resultClone = CloneUtil.clone(result);
       ServiceContext context = serviceContext.newInstance();
@@ -155,8 +159,9 @@ public class ServiceActor extends AbstractFlowerActor {
     if (this.service == null) {
       this.service = flowerFactory.getServiceFactory().getServiceLoader().loadService(serviceName);
       if (service instanceof Aggregate) {
-        ((AggregateService) service).setSourceNumber(flowerFactory.getServiceFactory()
-            .getOrCreateServiceFlow(serviceContext.getFlowName()).getServiceConfig(serviceName).getJointSourceNumber());
+        int num = flowerFactory.getServiceFactory()
+            .getOrCreateServiceFlow(serviceContext.getFlowName()).getServiceConfig(serviceName).getJointSourceNumber();
+        ((AggregateService) service).setSourceNumber(num);
       }
     }
     return service;

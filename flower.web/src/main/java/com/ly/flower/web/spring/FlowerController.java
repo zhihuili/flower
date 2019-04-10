@@ -46,7 +46,10 @@ public abstract class FlowerController implements InitializingBean {
   private FlowerFactory flowerFactory;
 
   protected void doProcess(Object param, HttpServletRequest req) throws IOException {
-    AsyncContext context = req.startAsync();
+    AsyncContext context = null;
+    if (req != null) {
+      context = req.startAsync();
+    }
     serviceRouter.asyncCallService(param, context);
   }
 

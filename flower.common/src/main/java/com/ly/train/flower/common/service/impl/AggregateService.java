@@ -70,7 +70,7 @@ public class AggregateService implements Service<Object, Object>, Aggregate {
     }
     resultMap.get(transactionId).add(flowMessage.getMessage());
 
-    AtomicInteger number = resultNumberMap.get(transactionId);;
+    AtomicInteger number = resultNumberMap.get(transactionId);
     if (number != null && number.decrementAndGet() <= 0) {
       Set<Object> returnObject = resultMap.get(transactionId);
       resultMap.remove(transactionId);

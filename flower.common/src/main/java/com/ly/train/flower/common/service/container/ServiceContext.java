@@ -15,16 +15,17 @@
  */
 package com.ly.train.flower.common.service.container;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.servlet.AsyncContext;
 import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.web.Web;
 import com.ly.train.flower.common.util.CloneUtil;
 
-public class ServiceContext {
+public class ServiceContext implements Serializable {
 
+  private static final long serialVersionUID = 1L;
   /**
    * 附属参数
    */
@@ -44,12 +45,10 @@ public class ServiceContext {
     return context(message, null);
   }
 
-  public static <T> ServiceContext context(T message, AsyncContext ctx) {
+  public static <T> ServiceContext context(T message, Web web) {
     ServiceContext context = new ServiceContext();
     context.setFlowMessage(new FlowMessage(message));
-    if (ctx != null) {
-      context.setWeb(new Web(ctx));
-    }
+    context.setWeb(web);
     return context;
   }
 

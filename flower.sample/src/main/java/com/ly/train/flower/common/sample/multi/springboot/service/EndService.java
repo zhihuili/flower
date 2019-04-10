@@ -13,33 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package com.ly.flower.center.service;
+package com.ly.train.flower.common.sample.multi.springboot.service;
 
 import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
-import com.ly.flower.center.common.ServiceManager;
 import com.ly.train.flower.common.annotation.FlowerService;
+import com.ly.train.flower.common.annotation.FlowerType;
+import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.service.web.Flush;
+import com.ly.train.flower.common.service.web.HttpComplete;
 
 /**
  * @author leeyazhou
  *
  */
-@FlowerService(timeout = 1000)
-public class ServiceConfigListService implements Service<Object, Set<ServiceConfig>> {
-
-  @Autowired
-  protected ServiceManager serviceManager;
-
+@FlowerService(type = FlowerType.AGGREGATE)
+public class EndService implements Service<Set<Object>, Object>, Flush, HttpComplete, Complete {
   @Override
-  public Set<ServiceConfig> process(Object message, ServiceContext context) throws Throwable {
-
-    return serviceManager.getAllServiceConfig();
+  public Object process(Set<Object> message, ServiceContext context) throws Throwable {
+    context.getWeb().print(message.toString());
+    System.out.println("聚合服务收到消息：" + message);
+    return message;
   }
-
 }

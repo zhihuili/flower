@@ -249,7 +249,6 @@ public final class ServiceFlow {
       }
       buildFlow(preServiceName, aggregateServiceName);
       buildFlow(aggregateServiceName, nextServiceName);
-      logger.info(" buildFlow : {}, preService : {}, nextService : {}", flowName, preServiceName, nextServiceName);
     } else {
       // 添加成功，更新配置信息
       validateFlow(preServiceName, nextServiceName);
