@@ -1,10 +1,10 @@
 package com.ly.train.flower.common.sample.aggregate;
 
-import com.ly.flower.web.spring.context.FlowerComponentScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
+import com.ly.train.flower.web.spring.context.FlowerComponentScan;
 
 /**
  * 本示例兼容2019-4-10日master提交

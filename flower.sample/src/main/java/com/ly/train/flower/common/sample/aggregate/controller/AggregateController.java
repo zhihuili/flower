@@ -1,14 +1,20 @@
 package com.ly.train.flower.common.sample.aggregate.controller;
 
-import com.ly.flower.web.spring.FlowerController;
-import com.ly.train.flower.common.annotation.Flower;
-import com.ly.train.flower.common.sample.aggregate.service.*;
+import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+import com.ly.train.flower.common.annotation.Flower;
+import com.ly.train.flower.common.sample.aggregate.service.ServiceBegin;
+import com.ly.train.flower.common.sample.aggregate.service.ServiceForkA1;
+import com.ly.train.flower.common.sample.aggregate.service.ServiceForkA2;
+import com.ly.train.flower.common.sample.aggregate.service.ServiceForkA3;
+import com.ly.train.flower.common.sample.aggregate.service.ServiceForkB1;
+import com.ly.train.flower.common.sample.aggregate.service.ServiceForkB2;
+import com.ly.train.flower.common.sample.aggregate.service.ServiceReceiveA;
+import com.ly.train.flower.common.sample.aggregate.service.ServiceReceiveAB;
+import com.ly.train.flower.web.spring.FlowerController;
 
 /**
  * @author: fengyu.zhang
