@@ -79,7 +79,7 @@ public class SimpleRegistryTest extends TestBase {
     URL url = new URL("http", "127.0.0.1", 8080);
     RegistryFactory factory = ExtensionLoader.load(RegistryFactory.class).load();
     Registry registry = factory.createRegistry(url);
-
+    ((SimpleRegistry) registry).setFlowerFactory(flowerFactory);
 
     ServiceConfig serviceConfig =
         ServiceFlow.getOrCreate("registerFlow", serviceFactory).buildFlow(ServiceA.class, ServiceB.class)
@@ -94,6 +94,7 @@ public class SimpleRegistryTest extends TestBase {
     URL url = new URL("http", "127.0.0.1", 8080);
     RegistryFactory factory = ExtensionLoader.load(RegistryFactory.class).load();
     Registry registry = factory.createRegistry(url);
+    ((SimpleRegistry) registry).setFlowerFactory(flowerFactory);
     List<ServiceConfig> serviceInfos = registry.getServiceConfig(null);
     System.out.println("请求结果:" + serviceInfos);
   }
