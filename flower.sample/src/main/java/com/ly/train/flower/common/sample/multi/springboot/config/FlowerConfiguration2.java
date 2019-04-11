@@ -13,28 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service.container;
+package com.ly.train.flower.common.sample.multi.springboot.config;
 
 import org.springframework.beans.factory.InitializingBean;
-import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
+import org.springframework.stereotype.Service;
+import com.ly.train.flower.common.sample.multi.springboot.service.CreateOrderService;
+import com.ly.train.flower.common.service.container.FlowerFactory;
+import com.ly.train.flower.common.service.container.SpringFlowerFactory;
 
 /**
  * @author leeyazhou
  *
  */
-public class SpringFlowerFactory extends SimpleFlowerFactory implements InitializingBean {
-
-  public SpringFlowerFactory() {
-    super();
-  }
-
-  public SpringFlowerFactory(String configLocation) {
-    super(configLocation);
-  }
+@Service(value = "FlowerConfiguration2")
+public class FlowerConfiguration2 implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    init();
+    FlowerFactory flowerFactory = new SpringFlowerFactory("conf/flower_multi_2.yml");
+    flowerFactory.start();
+    flowerFactory.getServiceFactory().registerService(CreateOrderService.class.getSimpleName(),
+        CreateOrderService.class);
   }
 
 }

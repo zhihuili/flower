@@ -163,6 +163,13 @@ public class ServiceFactory extends AbstractInit {
     return serviceFlow;
   }
 
+  /**
+   * 1. 首先从本地加载<br/>
+   * 2. 本地加载不到，如果有配置注册中心，就从配置中心获取
+   * 
+   * @param serviceConfig serviceConfig
+   * @return {@link ServiceMeta}
+   */
   public ServiceMeta loadServiceMeta(ServiceConfig serviceConfig) {
     ServiceMeta serviceMeta = serviceLoader.loadServiceMeta(serviceConfig.getServiceName());
     if (serviceMeta == null) {

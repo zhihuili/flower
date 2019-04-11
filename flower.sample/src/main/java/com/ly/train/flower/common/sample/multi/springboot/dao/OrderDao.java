@@ -13,31 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.akka.actor.wrapper;
+package com.ly.train.flower.common.sample.multi.springboot.dao;
 
-import com.ly.train.flower.common.service.container.ServiceContext;
-import akka.actor.ActorRef;
+import com.ly.train.flower.common.sample.multi.springboot.model.OrderExt;
 
 /**
  * @author leeyazhou
  *
  */
-public interface ActorWrapper {
+public class OrderDao {
 
-  String getServiceName();
-
-  /**
-   * 发送消息
-   * 
-   * @param message 消息
-   */
-  void tell(ServiceContext message);
-
-  /**
-   * 发送消息
-   * 
-   * @param message 消息
-   * @param sender 发送方
-   */
-  void tell(ServiceContext message, ActorRef sender);
+  public String createOrder(OrderExt orderExt) {
+    System.out.println("创建订单：" + orderExt);
+    return "id : cread by OrderDao";
+  }
 }

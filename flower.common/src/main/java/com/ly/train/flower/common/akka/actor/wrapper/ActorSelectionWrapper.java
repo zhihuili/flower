@@ -15,6 +15,7 @@
  */
 package com.ly.train.flower.common.akka.actor.wrapper;
 
+import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 import akka.actor.ActorRef;
@@ -38,7 +39,7 @@ public class ActorSelectionWrapper implements ActorWrapper {
   }
 
   @Override
-  public void tell(Object message) {
+  public void tell(ServiceContext message) {
     if (logger.isDebugEnabled()) {
       logger.debug("流转Remote消息. serviceName : {}, actor : {}, message : {}", serviceName, actorSelection, message);
     }
@@ -46,7 +47,7 @@ public class ActorSelectionWrapper implements ActorWrapper {
   }
 
   @Override
-  public void tell(Object message, ActorRef sender) {
+  public void tell(ServiceContext message, ActorRef sender) {
     if (logger.isDebugEnabled()) {
       logger.debug("流转Remote消息. serviceName : {}, actor : {}, message : {}, sender : {}", serviceName, actorSelection,
           message, sender);
@@ -56,6 +57,7 @@ public class ActorSelectionWrapper implements ActorWrapper {
     }
     actorSelection.tell(message, sender);
   }
+
 
   @Override
   public String getServiceName() {

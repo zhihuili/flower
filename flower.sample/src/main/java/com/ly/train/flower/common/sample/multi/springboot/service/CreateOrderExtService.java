@@ -13,21 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.registry.simple.service;
+package com.ly.train.flower.common.sample.multi.springboot.service;
 
+import com.ly.train.flower.common.sample.multi.springboot.dao.OrderExtDao;
+import com.ly.train.flower.common.sample.multi.springboot.model.OrderExt;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
-import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou
  *
  */
-public class ServiceInfoListService implements Service<ServiceInfo, Boolean> {
+public class CreateOrderExtService implements Service<OrderExt, String> {
+
+  OrderExtDao orderExtDao = new OrderExtDao();
 
   @Override
-  public Boolean process(ServiceInfo message, ServiceContext context) throws Throwable {
-    return null;
+  public String process(OrderExt message, ServiceContext context) throws Throwable {
+    return orderExtDao.createOrderExt(message);
   }
+
 
 }

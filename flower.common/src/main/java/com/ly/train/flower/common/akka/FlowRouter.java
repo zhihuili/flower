@@ -21,6 +21,8 @@ import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.AbstractInit;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.service.container.util.ServiceContextUtil;
+import com.ly.train.flower.common.service.web.Web;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.logging.LoggerFactory;
 import akka.actor.ActorRef;
@@ -63,7 +65,14 @@ public class FlowRouter extends AbstractInit {
    * @throws IOException
    */
   public <T> void asyncCallService(T message, AsyncContext ctx) {
-    ServiceContext serviceContext = ServiceContext.context(message, ctx);
+    ServiceContext serviceContext = null;
+    if (ctx != null) {
+      Web web = new Web(ctx);
+      serviceContext = ServiceContext.context(message, web);
+      ServiceContextUtil.record(serviceContext);
+    } else {
+      serviceContext = ServiceContext.context(message);
+    }
     serviceContext.setFlowName(flowName);
     if (StringUtil.isBlank(serviceContext.getCurrentServiceName())) {
       serviceContext.setCurrentServiceName(headerServiceConfig.getServiceName());
@@ -76,9 +85,8 @@ public class FlowRouter extends AbstractInit {
    * 
    * @param message message
    * @return obj
-   * @throws Exception
    */
-  public Object syncCallService(Object message) throws Exception {
+  public Object syncCallService(Object message) {
     ServiceContext serviceContext = ServiceContext.context(message);
     serviceContext.setFlowName(flowName);
     serviceContext.setCurrentServiceName(headerServiceConfig.getServiceName());

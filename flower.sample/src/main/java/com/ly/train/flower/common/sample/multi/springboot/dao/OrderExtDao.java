@@ -13,22 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.registry.simple.service;
+package com.ly.train.flower.common.sample.multi.springboot.dao;
 
-import java.util.Set;
-import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.config.ServiceConfig;
-import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.sample.multi.springboot.model.OrderExt;
 
 /**
  * @author leeyazhou
  *
  */
-public class ServiceConfigRegisterService implements Service<ServiceConfig, Set<ServiceConfig>> {
+public class OrderExtDao {
 
-  @Override
-  public Set<ServiceConfig> process(ServiceConfig message, ServiceContext context) throws Throwable {
-    return null;
+  public String createOrderExt(OrderExt orderExt) {
+    System.out.println("创建订单扩展:" + orderExt);
+    return "id : cread by OrderExtDao";
   }
-
 }

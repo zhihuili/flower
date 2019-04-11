@@ -35,7 +35,7 @@ import com.ly.train.flower.common.service.config.ServiceConfig;
  */
 @RestController
 @RequestMapping("/serviceconfig/")
-@Flower(serviceName = "ServiceConfigListService", value = "listServiceConfig")
+@Flower(serviceName = "ServiceA", value = "ServiceA", flowNumber = 32)
 public class ServiceConfigListController extends BaseController {
 
   @RequestMapping("list")

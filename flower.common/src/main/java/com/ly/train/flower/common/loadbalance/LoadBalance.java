@@ -15,6 +15,7 @@
  */
 package com.ly.train.flower.common.loadbalance;
 
+import java.util.List;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.common.annotation.SPI;
 import com.ly.train.flower.common.service.container.ServiceContext;
@@ -26,5 +27,5 @@ import com.ly.train.flower.common.service.container.ServiceContext;
 @SPI(value = "round", message = "轮训算法策略")
 public interface LoadBalance {
 
-  ActorWrapper choose(ActorWrapper[] actorRefs, ServiceContext serviceContext);
+  ActorWrapper choose(List<ActorWrapper> actorRefs, ServiceContext serviceContext);
 }

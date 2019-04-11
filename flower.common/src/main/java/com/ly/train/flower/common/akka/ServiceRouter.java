@@ -15,6 +15,8 @@
  */
 package com.ly.train.flower.common.akka;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorRefWrapper;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorSelectionWrapper;
@@ -23,6 +25,7 @@ import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.loadbalance.LoadBalance;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.AbstractInit;
+import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.util.ExtensionLoader;
 import com.ly.train.flower.logging.Logger;
@@ -38,13 +41,13 @@ public class ServiceRouter extends AbstractInit {
   protected static final Logger logger = LoggerFactory.getLogger(ServiceRouter.class);
   private final LoadBalance loadBalance = ExtensionLoader.load(LoadBalance.class).load();
   private int number = 2 << 6;
-  private volatile ActorWrapper[] ar;
+  private volatile List<ActorWrapper> actors = new ArrayList<>();
   private final ServiceConfig serviceConfig;
-  private final ServiceActorFactory serviceActorFactory;
+  private final FlowerFactory flowerFactory;
 
-  public ServiceRouter(ServiceConfig serviceConfig, ServiceActorFactory serviceActorFactory, int number) {
+  public ServiceRouter(ServiceConfig serviceConfig, FlowerFactory flowerFactory, int number) {
     this.serviceConfig = serviceConfig;
-    this.serviceActorFactory = serviceActorFactory;
+    this.flowerFactory = flowerFactory;
     if (number > 0) {
       this.number = number;
     }
@@ -66,8 +69,8 @@ public class ServiceRouter extends AbstractInit {
     serviceContext.setSync(true);
     ActorWrapper actorRef = chooseOne(serviceContext);
     try {
-      Timeout timeout = new Timeout(serviceConfig.getServiceMeta().getTimeout() - 1, TimeUnit.MILLISECONDS);
-      Duration duration = Duration.create(serviceConfig.getServiceMeta().getTimeout(), TimeUnit.MILLISECONDS);
+      Timeout timeout = new Timeout(serviceConfig.getTimeout() - 1, TimeUnit.MILLISECONDS);
+      Duration duration = Duration.create(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
       Future<Object> future = null;
       if (actorRef instanceof ActorRefWrapper) {
         future = Patterns.ask(((ActorRefWrapper) actorRef).getActorRef(), serviceContext, timeout);
@@ -90,19 +93,18 @@ public class ServiceRouter extends AbstractInit {
     actorRef.tell(serviceContext, sender);
   }
 
-  private ActorWrapper[] getServiceActor() {
-    if (ar == null) {
+  private List<ActorWrapper> getServiceActor() {
+    if (actors.isEmpty()) {
       synchronized (this) {
-        if (ar == null) {
-          ActorWrapper[] t = new ActorWrapper[number];
+        if (actors.isEmpty()) {
           for (int i = 0; i < number; i++) {
-            t[i] = serviceActorFactory.buildServiceActor(serviceConfig, i, number);
+            ActorWrapper actor = flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig, i, number);
+            actors.add(actor);
           }
-          ar = t;
         }
       }
     }
-    return ar;
+    return actors;
   }
 
   private ActorWrapper chooseOne(ServiceContext serviceContext) {

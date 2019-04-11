@@ -13,31 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.akka.actor.wrapper;
+package com.ly.train.flower.common.sample.multi.springboot.model;
 
-import com.ly.train.flower.common.service.container.ServiceContext;
-import akka.actor.ActorRef;
+import java.io.Serializable;
 
 /**
  * @author leeyazhou
  *
  */
-public interface ActorWrapper {
-
-  String getServiceName();
+public class Order implements Serializable {
 
   /**
-   * 发送消息
    * 
-   * @param message 消息
    */
-  void tell(ServiceContext message);
+  private static final long serialVersionUID = 1L;
 
-  /**
-   * 发送消息
-   * 
-   * @param message 消息
-   * @param sender 发送方
-   */
-  void tell(ServiceContext message, ActorRef sender);
+  private String id;
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public static long getSerialversionuid() {
+    return serialVersionUID;
+  }
+
+
+
 }

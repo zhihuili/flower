@@ -15,6 +15,7 @@
  */
 package com.ly.train.flower.common.loadbalance;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.common.service.container.ServiceContext;
@@ -28,9 +29,9 @@ public class RandomLoadBalance extends AbstractLoadBalance {
   private ThreadLocalRandom random = ThreadLocalRandom.current();
 
   @Override
-  public ActorWrapper doChooseOne(ActorWrapper[] actorRefs, ServiceContext serviceContext) {
-    int index = random.nextInt(actorRefs.length);
-    return actorRefs[index];
+  public ActorWrapper doChooseOne(List<ActorWrapper> actorRefs, ServiceContext serviceContext) {
+    int index = random.nextInt(actorRefs.size());
+    return actorRefs.get(index);
   }
 
   @Override

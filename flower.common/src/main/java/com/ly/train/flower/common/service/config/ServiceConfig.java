@@ -161,6 +161,13 @@ public class ServiceConfig implements Serializable {
     return nextServiceConfigs != null && nextServiceConfigs.size() > 0;
   }
 
+  public int getTimeout() {
+    int timeout = 3000;
+    if (serviceMeta != null) {
+      timeout = serviceMeta.getTimeout();
+    }
+    return timeout;
+  }
 
   /**
    * 聚合服务
