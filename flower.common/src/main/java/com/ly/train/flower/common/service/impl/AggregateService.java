@@ -40,11 +40,11 @@ public class AggregateService implements Service<Object, Object>, Aggregate {
   private Long timeoutMillis = DefaultTimeOutMilliseconds;
 
   // <messageId,Set<message>>
-  private ConcurrentMap<String, Set<Object>> resultMap = new ConcurrentHashMap<String, Set<Object>>();
+  private static final ConcurrentMap<String, Set<Object>> resultMap = new ConcurrentHashMap<String, Set<Object>>();
   // <messageId,sourceNumber>
-  private ConcurrentMap<String, AtomicInteger> resultNumberMap = new ConcurrentHashMap<>();
+  private static final  ConcurrentMap<String, AtomicInteger> resultNumberMap = new ConcurrentHashMap<>();
   // <messageId,addedTime>
-  private ConcurrentMap<String, Long> resultDateMap = new ConcurrentHashMap<String, Long>();
+  private static final  ConcurrentMap<String, Long> resultDateMap = new ConcurrentHashMap<String, Long>();
 
   public AggregateService() {}
 
