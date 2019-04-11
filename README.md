@@ -1,4 +1,8 @@
 # 流式微服务框架Flower
+
+![Build Status](https://travis-ci.org/yaolinxue/flower.svg?branch=master)
+[![license](https://img.shields.io/github/license/alibaba/dubbo.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+
 Flower是一个构建在Akka上的流式微服务框架，开发者只需要针对每一个细粒度的业务功能开发一个Service服务，并将这些Service按照业务流程进行可视化编排，即可得到一个反应式系统
 * 即时响应：服务流程的调用者可以得到即时响应，无需等待整个Service流程执行完毕（Flower也支持调用者阻塞，等待整个Service流程执行完毕，得到返回结果）；Service之间无调用阻塞，即时响应。
 * 回弹性：当Service失效、服务器失效，系统能够进行自修复，依然保持响应，不会出现系统崩溃。
