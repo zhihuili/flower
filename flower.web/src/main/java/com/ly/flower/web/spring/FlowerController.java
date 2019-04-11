@@ -55,7 +55,6 @@ public abstract class FlowerController implements InitializingBean {
   @Override
   public void afterPropertiesSet() throws Exception {
     getFlowName();
-    getFlowNumber();
     buildFlower();
     this.serviceRouter = initServiceRouter();
   }
