@@ -7,9 +7,8 @@ import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 
 /**
- * 本示例创建基于Flower 0.1.2创建
+ * 本示例兼容2019-4-10日master提交
  * @author: fengyu.zhang
- * @since flower.version 0.1.2
  */
 @SpringBootApplication
 @FlowerComponentScan("com.ly.train.flower.common.sample.aggregate")
@@ -23,7 +22,7 @@ public class AggregateApplication {
      */
     @Bean
     public JettyServletWebServerFactory servletContainer(){
-        int port = 8080;
+        int port = 8081;
         return new JettyServletWebServerFactory(port) ;
     }
 }
