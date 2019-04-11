@@ -80,16 +80,19 @@ public class ServiceFactory extends AbstractInit {
   public void registerService(String serviceName, String serviceClassName) {
     serviceLoader.registerServiceType(serviceName, serviceClassName);
 
-    Set<Registry> registries = flowerFactory.getRegistry();
-    if (registries.isEmpty()) {
-      return;
-    }
     ServiceMeta serviceMeta = serviceLoader.loadServiceMeta(serviceName);
 
     ServiceConfig serviceConfig = new ServiceConfig();
     serviceConfig.setServiceName(serviceName);
     serviceConfig.setServiceMeta(serviceMeta);
     flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig);
+
+
+    Set<Registry> registries = flowerFactory.getRegistry();
+    if (registries.isEmpty()) {
+      return;
+    }
+
 
     serviceClassName = serviceMeta.getServiceClassName();
 

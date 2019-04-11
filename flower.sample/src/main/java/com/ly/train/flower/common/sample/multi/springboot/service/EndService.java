@@ -15,12 +15,12 @@
  */
 package com.ly.train.flower.common.sample.multi.springboot.service;
 
-import java.util.Set;
+import java.util.List;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.annotation.FlowerType;
 import com.ly.train.flower.common.service.Complete;
-import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.service.impl.AbstractService;
 import com.ly.train.flower.common.service.web.Flush;
 import com.ly.train.flower.common.service.web.HttpComplete;
 
@@ -29,11 +29,17 @@ import com.ly.train.flower.common.service.web.HttpComplete;
  *
  */
 @FlowerService(type = FlowerType.AGGREGATE)
-public class EndService implements Service<Set<Object>, Object>, Flush, HttpComplete, Complete {
+public class EndService extends AbstractService<List<Object>, Object> implements Flush, HttpComplete, Complete {
   @Override
-  public Object process(Set<Object> message, ServiceContext context) throws Throwable {
+  public Object doProcess(List<Object> message, ServiceContext context) throws Throwable {
     context.getWeb().print(message.toString());
     System.out.println("聚合服务收到消息：" + message);
     return message;
   }
+
+  @Override
+  public void onError(Throwable throwable, List<Object> param) {
+    super.onError(throwable, param);
+  }
+
 }

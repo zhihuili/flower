@@ -91,7 +91,11 @@ public class SimpleRegistry extends AbstractRegistry {
     ServiceContext serviceContext = makeServiceContext(null);
     serviceContext.setCurrentServiceName("ServiceInfoListService");
     serviceContext.setSync(false);
-    Set<ServiceInfo> ret = (Set<ServiceInfo>) serviceInfoListRouter.syncCallService(serviceContext);
+    Object o = serviceInfoListRouter.syncCallService(serviceContext);
+    Set<ServiceInfo> ret = null;
+    if (o != null) {
+      ret = (Set<ServiceInfo>) o;
+    }
     List<ServiceInfo> ret2 = new ArrayList<ServiceInfo>(ret);
     return ret2;
   }

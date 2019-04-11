@@ -16,17 +16,23 @@
 package com.ly.train.flower.common.sample.multi.springboot.service;
 
 import com.ly.train.flower.common.sample.multi.springboot.model.OrderExt;
-import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.service.impl.AbstractService;
 
 /**
  * @author leeyazhou
  *
  */
-public class StartService implements Service<OrderExt, OrderExt> {
+public class StartService extends AbstractService<OrderExt, OrderExt> {
 
   @Override
-  public OrderExt process(OrderExt message, ServiceContext context) throws Throwable {
+  public OrderExt doProcess(OrderExt message, ServiceContext context) {
     return message;
   }
+
+  @Override
+  public void onError(Throwable throwable, OrderExt orderExt) {
+    super.onError(throwable, orderExt);
+  }
+
 }
