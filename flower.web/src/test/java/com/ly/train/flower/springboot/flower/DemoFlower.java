@@ -22,7 +22,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.ly.flower.web.spring.FlowerController;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.common.service.impl.AggregateService;
@@ -31,6 +30,7 @@ import com.ly.train.flower.springboot.service.EndService;
 import com.ly.train.flower.springboot.service.HeadService;
 import com.ly.train.flower.springboot.service.UserService;
 import com.ly.train.flower.springboot.service.UserService2;
+import com.ly.train.flower.web.spring.FlowerController;
 
 /**
  * @author leeyazhou

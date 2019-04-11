@@ -13,25 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.springboot;
+/**
+ * 
+ */
+package com.ly.train.flower.center;
 
 import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import com.ly.train.flower.web.spring.context.FlowerComponentScan;
 
+/**
+ * @author leeyazhou
+ *
+ */
 @SpringBootApplication
-@FlowerComponentScan("com.ly.train.flower.springboot")
-public class Application {
-  private static final Logger logger = LoggerFactory.getLogger(Application.class);
+@EnableAutoConfiguration
+@ComponentScan("com.ly.train.flower.center")
+@FlowerComponentScan("com.ly.train.flower.center")
+public class CenterApplication {
+  static final Logger logger = LoggerFactory.getLogger(CenterApplication.class);
 
   public static void main(String[] args) {
-    SpringApplication.run(Application.class, args);
+    SpringApplication.run(CenterApplication.class, args);
   }
 
   @Bean
@@ -43,10 +54,9 @@ public class Application {
       String[] beanNames = ctx.getBeanDefinitionNames();
       Arrays.sort(beanNames);
       for (String beanName : beanNames) {
-        logger.debug("注入实例 : " + beanName);
+        logger.debug("注入实例 : {}", beanName);
       }
 
     };
   }
-
 }
