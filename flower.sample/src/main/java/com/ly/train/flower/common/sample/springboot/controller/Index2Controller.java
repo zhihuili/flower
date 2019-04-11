@@ -21,9 +21,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import com.ly.flower.web.spring.FlowerController;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.sample.springboot.model.User;
+import com.ly.train.flower.web.spring.FlowerController;
 
 @RestController
 @Flower(serviceName = "ServiceA", value = "async")

@@ -15,9 +15,9 @@
  */
 package com.ly.train.flower.common.service.impl;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,7 +32,7 @@ import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
 @Scope(scopeName = Constant.SCOPE_REQUEST)
-public class AggregateService implements Service<Object, Object>, Aggregate {
+public class AggregateService implements Service<Object, List<Object>>, Aggregate {
   static final Logger logger = LoggerFactory.getLogger(AggregateService.class);
   private static final Long DefaultTimeOutMilliseconds = 60000L;
 
@@ -40,7 +40,7 @@ public class AggregateService implements Service<Object, Object>, Aggregate {
   private Long timeoutMillis = DefaultTimeOutMilliseconds;
 
   // <messageId,Set<message>>
-  private static final ConcurrentMap<String, Set<Object>> resultMap = new ConcurrentHashMap<String, Set<Object>>();
+  private static final ConcurrentMap<String, List<Object>> resultMap = new ConcurrentHashMap<String, List<Object>>();
   // <messageId,sourceNumber>
   private static final  ConcurrentMap<String, AtomicInteger> resultNumberMap = new ConcurrentHashMap<>();
   // <messageId,addedTime>
@@ -53,7 +53,7 @@ public class AggregateService implements Service<Object, Object>, Aggregate {
   }
 
   @Override
-  public Object process(Object message, ServiceContext context) {
+  public List<Object> process(Object message, ServiceContext context) {
     FlowMessage flowMessage = context.getFlowMessage();
     if (flowMessage instanceof TimerMessage) {
       doClean();
@@ -63,7 +63,7 @@ public class AggregateService implements Service<Object, Object>, Aggregate {
     final String transactionId = flowMessage.getTransactionId();
     // first joint message
     if (!resultMap.containsKey(transactionId)) {
-      Set<Object> objectSet = new HashSet<Object>();
+      List<Object> objectSet = new ArrayList<Object>();
       resultMap.put(transactionId, objectSet);
       resultNumberMap.put(transactionId, new AtomicInteger(sourceNumber));
       resultDateMap.put(transactionId, System.currentTimeMillis());
@@ -72,7 +72,7 @@ public class AggregateService implements Service<Object, Object>, Aggregate {
 
     AtomicInteger number = resultNumberMap.get(transactionId);
     if (number != null && number.decrementAndGet() <= 0) {
-      Set<Object> returnObject = resultMap.get(transactionId);
+      List<Object> returnObject = resultMap.get(transactionId);
       resultMap.remove(transactionId);
       resultNumberMap.remove(transactionId);
       resultDateMap.remove(transactionId);
@@ -88,7 +88,7 @@ public class AggregateService implements Service<Object, Object>, Aggregate {
    * @param messages Set<Message>
    * @return Object
    */
-  public Object buildMessage(Set<Object> messages) {
+  public List<Object> buildMessage(List<Object> messages) {
     return messages;
   }
 

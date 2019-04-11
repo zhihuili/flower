@@ -69,7 +69,7 @@ public class ServiceRouter extends AbstractInit {
     serviceContext.setSync(true);
     ActorWrapper actorRef = chooseOne(serviceContext);
     try {
-      Timeout timeout = new Timeout(serviceConfig.getTimeout() - 1, TimeUnit.MILLISECONDS);
+      Timeout timeout = new Timeout(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
       Duration duration = Duration.create(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
       Future<Object> future = null;
       if (actorRef instanceof ActorRefWrapper) {

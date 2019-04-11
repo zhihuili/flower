@@ -18,7 +18,7 @@ package com.ly.train.flower.common.sample.springboot.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import com.ly.train.flower.common.service.container.FlowerFactory;
-import com.ly.train.flower.common.service.container.SpringFlowerFactory;
+import com.ly.train.flower.service.container.SpringFlowerFactory;
 
 /**
  * @author leeyazhou

@@ -23,7 +23,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import com.ly.flower.web.spring.context.FlowerComponentScan;
+import com.ly.train.flower.web.spring.context.FlowerComponentScan;
 
 @SpringBootApplication
 @FlowerComponentScan("com.ly.train.flower.springboot")
