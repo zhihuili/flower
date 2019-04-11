@@ -18,7 +18,7 @@ package com.ly.train.flower.common.sample.web.async;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
-public class ServiceA implements Service<String,Integer> {
+public class ServiceA implements Service<String, Integer> {
 
   @Override
   public Integer process(String message, ServiceContext context) throws Exception {

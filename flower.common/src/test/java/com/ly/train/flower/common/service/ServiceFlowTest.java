@@ -40,7 +40,7 @@ public class ServiceFlowTest extends TestBase {
 
   @Test
   public void testBuildFlowSimple() throws Exception {
-    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
     serviceFlow.buildFlow(ServiceC1.class, ServiceC2.class);
@@ -50,27 +50,27 @@ public class ServiceFlowTest extends TestBase {
 
   @Test
   public void testBuildFlowAggregate() throws Exception {
-    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
     serviceFlow.buildFlow(ServiceB.class, Arrays.asList(ServiceC1.class, ServiceC2.class));
-    serviceFlow.buildFlow("ServiceC1", Arrays.asList("ServiceD"));
-    serviceFlow.buildFlow("ServiceC2", Arrays.asList("ServiceD"));
+    serviceFlow.buildFlow(Arrays.asList(ServiceC1.class, ServiceC2.class), ServiceD.class);
     serviceFlow.buildFlow(Arrays.asList("ServiceC1", "ServiceC2"), "ServiceD");
     serviceFlow.build();
   }
 
   @Test
   public void testBuildFlowManyToOne() {
-    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
     serviceFlow.buildFlow(ServiceA.class, ServiceC1.class);
     serviceFlow.buildFlow(ServiceA.class, ServiceC2.class);
     serviceFlow.buildFlow(Arrays.asList(ServiceB.class, ServiceC1.class, ServiceC2.class), ServiceD.class);
     serviceFlow.build();
   }
+
   @Test
   public void testBuildFlowManyToOneString() {
-    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
     serviceFlow.buildFlow(ServiceA.class, ServiceC1.class);
     serviceFlow.buildFlow(ServiceA.class, ServiceC2.class);
@@ -80,14 +80,14 @@ public class ServiceFlowTest extends TestBase {
 
   @Test
   public void testBuildFlowOneToMany() {
-    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
     serviceFlow.buildFlow(ServiceA.class, Arrays.asList(ServiceB.class, ServiceC1.class, ServiceC2.class));
     serviceFlow.build();
   }
 
   @Test
   public void testBuildFlowOneToManyString() {
-    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
     serviceFlow.buildFlow("ServiceA", Arrays.asList("ServiceB", "ServiceC1", "ServiceC2"));
     serviceFlow.build();
   }
@@ -98,8 +98,8 @@ public class ServiceFlowTest extends TestBase {
     list.add(new Pair<String, String>("ServiceA", "ServiceB"));
     list.add(new Pair<String, String>("ServiceA", "ServiceC1"));
     list.add(new Pair<String, String>("ServiceA", "ServiceC2"));
-    
-    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName);
+
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
     serviceFlow.buildFlow(list);
     serviceFlow.build();
   }

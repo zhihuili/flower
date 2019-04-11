@@ -15,29 +15,40 @@
  */
 package com.ly.train.flower.common.sample.condition;
 
-import com.ly.train.flower.common.actor.ServiceFacade;
+import org.junit.Test;
+import com.ly.train.flower.common.sample.TestBase;
+import com.ly.train.flower.common.sample.condition.service.ServiceA;
+import com.ly.train.flower.common.sample.condition.service.ServiceB;
+import com.ly.train.flower.common.sample.condition.service.ServiceC;
+import com.ly.train.flower.common.sample.condition.service.ServiceD;
+import com.ly.train.flower.common.sample.condition.service.ServiceE;
+import com.ly.train.flower.common.sample.condition.service.ServiceF;
+import com.ly.train.flower.common.sample.condition.service.ServiceG;
+import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 
-public class Sample {
+public class Sample extends TestBase{
 
-  public static void main(String[] args) throws Exception {
-    buildServiceEnv();
-
-    ServiceFacade.asyncCallService("sample", "c");
+  @Test
+  public void main() throws Exception {
+    buildServiceEnv(flowerFactory);
+    flowerFactory.getServiceFacade().asyncCallService("sample", "c");
   }
 
-  public static void buildServiceEnv() {
-    ServiceFactory.registerService("serviceA", ServiceA.class);
-    ServiceFactory.registerService("serviceB", ServiceB.class);
-    ServiceFactory.registerService("serviceC", ServiceC.class);
-    ServiceFactory.registerService("serviceE", ServiceE.class);
-    ServiceFactory.registerService("serviceD", ServiceD.class);
-    ServiceFactory.registerService("serviceF", ServiceF.class);
-    ServiceFactory.registerService("serviceG", ServiceG.class);
-    ServiceFactory.registerService("serviceCondition", "com.ly.train.flower.common.service.impl.ConditionService;serviceF,serviceG");
+  public void buildServiceEnv(FlowerFactory flowerFactory) {
+    ServiceFactory serviceFactory = flowerFactory.getServiceFactory();
+    serviceFactory.registerService("serviceA", ServiceA.class);
+    serviceFactory.registerService("serviceB", ServiceB.class);
+    serviceFactory.registerService("serviceC", ServiceC.class);
+    serviceFactory.registerService("serviceE", ServiceE.class);
+    serviceFactory.registerService("serviceD", ServiceD.class);
+    serviceFactory.registerService("serviceF", ServiceF.class);
+    serviceFactory.registerService("serviceG", ServiceG.class);
+    serviceFactory.registerService("serviceCondition",
+        "com.ly.train.flower.common.service.impl.ConditionService;serviceF,serviceG");
 
-    ServiceFlow serviceFlow = ServiceFlow.getOrCreate("sample");
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate("sample", serviceFactory);
 
     serviceFlow.buildFlow("serviceA", "serviceB");
     serviceFlow.buildFlow("serviceA", "serviceC");

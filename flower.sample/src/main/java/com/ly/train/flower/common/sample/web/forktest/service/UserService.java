@@ -27,13 +27,13 @@ import com.ly.train.flower.common.service.container.ServiceContext;
  */
 
 @Service("UserService")
-public class UserService implements com.ly.train.flower.common.service.Service<Integer,User> {
-    @Autowired
-    private UserDao userDao;
+public class UserService implements com.ly.train.flower.common.service.Service<Integer, User> {
+  @Autowired
+  private UserDao userDao;
 
-    @Override
-    public User process(Integer message, ServiceContext context) throws Exception {
-        User user = userDao.findUser(message);
-        return user == null ? new User():user;
-    }
+  @Override
+  public User process(Integer message, ServiceContext context) throws Exception {
+    User user = userDao.findUser(message);
+    return user == null ? new User() : user;
+  }
 }

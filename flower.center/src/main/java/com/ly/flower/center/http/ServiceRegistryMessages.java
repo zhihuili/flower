@@ -19,7 +19,9 @@ import java.io.Serializable;
 
 public interface ServiceRegistryMessages {
 
-	class ShowServices implements Serializable {
+  class ShowServices implements Serializable {
 
-	}
+    private static final long serialVersionUID = 1L;
+
+  }
 }

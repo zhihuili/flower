@@ -18,27 +18,47 @@
  */
 package com.ly.train.flower.base;
 
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import com.ly.train.flower.base.service.ServiceA;
 import com.ly.train.flower.base.service.ServiceB;
 import com.ly.train.flower.base.service.ServiceC1;
 import com.ly.train.flower.base.service.ServiceC2;
 import com.ly.train.flower.base.service.ServiceD;
+import com.ly.train.flower.common.akka.ServiceFacade;
+import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFactory;
+import com.ly.train.flower.common.service.container.ServiceLoader;
+import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
 
 /**
  * @author leeyazhou
  *
  */
 public class TestBase {
-  protected final String flowName = "sample";
+  protected static final String flowName = "sample";
+  protected static FlowerFactory flowerFactory;
+  protected static ServiceFactory serviceFactory;
+  protected static ServiceLoader serviceLoader;
+  protected static ServiceFacade serviceFacade;
 
-  @Before
-  public void before() {
-    ServiceFactory.registerService(ServiceA.class.getSimpleName(), ServiceA.class);
-    ServiceFactory.registerService(ServiceB.class.getSimpleName(), ServiceB.class);
-    ServiceFactory.registerService(ServiceC1.class.getSimpleName(), ServiceC1.class);
-    ServiceFactory.registerService(ServiceC2.class.getSimpleName(), ServiceC2.class);
-    ServiceFactory.registerService(ServiceD.class.getSimpleName(), ServiceD.class);
+  @BeforeClass
+  public static void before() {
+    flowerFactory = new SimpleFlowerFactory();
+//    flowerFactory.start();
+    serviceFactory = flowerFactory.getServiceFactory();
+    serviceLoader = serviceFactory.getServiceLoader();
+    serviceFacade = flowerFactory.getServiceFacade();
+
+    serviceFactory.registerService(ServiceA.class.getSimpleName(), ServiceA.class);
+    serviceFactory.registerService(ServiceB.class.getSimpleName(), ServiceB.class);
+    serviceFactory.registerService(ServiceC1.class.getSimpleName(), ServiceC1.class);
+    serviceFactory.registerService(ServiceC2.class.getSimpleName(), ServiceC2.class);
+    serviceFactory.registerService(ServiceD.class.getSimpleName(), ServiceD.class);
+  }
+
+  @AfterClass
+  public static void stop() {
+    flowerFactory.stop();
   }
 }

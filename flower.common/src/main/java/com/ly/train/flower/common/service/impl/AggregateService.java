@@ -19,38 +19,42 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import com.ly.train.flower.common.annotation.Scope;
 import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.message.TimerMessage;
+import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
+@Scope(scopeName = Constant.SCOPE_REQUEST)
 public class AggregateService implements Service<Object, Object>, Aggregate {
   static final Logger logger = LoggerFactory.getLogger(AggregateService.class);
-  private static final long DefaultTimeOutMilliseconds = 60000;
+  private static final Long DefaultTimeOutMilliseconds = 60000L;
 
   private int sourceNumber = 0;
-  private long timeoutMillis = DefaultTimeOutMilliseconds;
+  private Long timeoutMillis = DefaultTimeOutMilliseconds;
 
   // <messageId,Set<message>>
-  private Map<String, Set<Object>> resultMap = new ConcurrentHashMap<String, Set<Object>>();
+  private ConcurrentMap<String, Set<Object>> resultMap = new ConcurrentHashMap<String, Set<Object>>();
   // <messageId,sourceNumber>
-  private Map<String, AtomicInteger> resultNumberMap = new ConcurrentHashMap<>();
+  private ConcurrentMap<String, AtomicInteger> resultNumberMap = new ConcurrentHashMap<>();
   // <messageId,addedTime>
-  private Map<String, Long> resultDateMap = new ConcurrentHashMap<String, Long>();
+  private ConcurrentMap<String, Long> resultDateMap = new ConcurrentHashMap<String, Long>();
 
   public AggregateService() {}
 
   public AggregateService(String config) {
-    this.timeoutMillis = Integer.valueOf(config);
+    this.timeoutMillis = Long.valueOf(config);
   }
 
   @Override
   public Object process(Object message, ServiceContext context) {
-    FlowMessage flowMessage = (FlowMessage) context.getFlowMessage();
+    FlowMessage flowMessage = context.getFlowMessage();
     if (flowMessage instanceof TimerMessage) {
       doClean();
       return null;
@@ -66,8 +70,8 @@ public class AggregateService implements Service<Object, Object>, Aggregate {
     }
     resultMap.get(transactionId).add(flowMessage.getMessage());
 
-    int number = resultNumberMap.get(transactionId).decrementAndGet();
-    if (number <= 0) {
+    AtomicInteger number = resultNumberMap.get(transactionId);;
+    if (number != null && number.decrementAndGet() <= 0) {
       Set<Object> returnObject = resultMap.get(transactionId);
       resultMap.remove(transactionId);
       resultNumberMap.remove(transactionId);
@@ -94,14 +98,12 @@ public class AggregateService implements Service<Object, Object>, Aggregate {
   }
 
   private void doClean() {
-    Set<String> transactionIds = resultDateMap.keySet();
     long currentTimeMillis = System.currentTimeMillis();
-    for (String transactionId : transactionIds) {
-      if (currentTimeMillis - resultDateMap.get(transactionId) > this.timeoutMillis) {
-        resultDateMap.remove(transactionId);
-        resultMap.remove(transactionId);
-        resultNumberMap.remove(transactionId);
+    for (Map.Entry<String, Long> entry : resultDateMap.entrySet())
+      if (currentTimeMillis - entry.getValue() > this.timeoutMillis) {
+        resultDateMap.remove(entry.getKey());
+        resultMap.remove(entry.getKey());
+        resultNumberMap.remove(entry.getKey());
       }
-    }
   }
 }

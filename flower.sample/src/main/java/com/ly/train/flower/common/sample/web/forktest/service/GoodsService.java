@@ -27,13 +27,13 @@ import com.ly.train.flower.common.service.container.ServiceContext;
  * @date 2019/2/24 17:16
  */
 @Service("GoodsService")
-public class GoodsService implements com.ly.train.flower.common.service.Service<Integer,List<Integer>> {
-    @Autowired
-    private GoodsDao goodsDao;
+public class GoodsService implements com.ly.train.flower.common.service.Service<Integer, List<Integer>> {
+  @Autowired
+  private GoodsDao goodsDao;
 
-    @Override
-    public List<Integer> process(Integer message, ServiceContext context) throws Exception {
-        List<Integer> list = goodsDao.findGoodsIdForRecommend(message);
-        return list == null? new ArrayList<Integer>():list;
-    }
+  @Override
+  public List<Integer> process(Integer message, ServiceContext context) throws Exception {
+    List<Integer> list = goodsDao.findGoodsIdForRecommend(message);
+    return list == null ? new ArrayList<Integer>() : list;
+  }
 }

@@ -21,6 +21,11 @@ import java.util.UUID;
 public class FlowMessage implements Serializable {
   private static final long serialVersionUID = 1L;
   private String transactionId;
+  private String serviceName;
+  /**
+   * 流程索引
+   */
+  private int index;
   private Object message;
 
   public FlowMessage() {
@@ -46,6 +51,26 @@ public class FlowMessage implements Serializable {
 
   public void setTransactionId(String transactionId) {
     this.transactionId = transactionId;
+  }
+
+  public String getServiceName() {
+    return serviceName;
+  }
+
+  public void setServiceName(String serviceName) {
+    this.serviceName = serviceName;
+  }
+
+  public int getIndex() {
+    return index;
+  }
+
+  public void setIndex(int index) {
+    this.index = index;
+  }
+
+  public static long getSerialversionuid() {
+    return serialVersionUID;
   }
 
   @Override
