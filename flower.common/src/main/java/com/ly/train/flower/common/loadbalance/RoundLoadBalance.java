@@ -15,6 +15,7 @@
  */
 package com.ly.train.flower.common.loadbalance;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorWrapper;
@@ -31,14 +32,14 @@ public class RoundLoadBalance extends AbstractLoadBalance {
   private final ConcurrentMap<String, AtomicPositiveInteger> cache = new ConcurrentHashMap<>();
 
   @Override
-  public ActorWrapper doChooseOne(ActorWrapper[] actorRefs, ServiceContext serviceContext) {
+  public ActorWrapper doChooseOne(List<ActorWrapper> actorRefs, ServiceContext serviceContext) {
     AtomicPositiveInteger counter = cache.get(serviceContext.getCurrentServiceName());
     if (counter == null) {
       counter = new AtomicPositiveInteger();
       cache.put(serviceContext.getCurrentServiceName(), counter);
     }
-    int index = counter.incrementAndGet() % actorRefs.length;
-    return actorRefs[index];
+    int index = counter.incrementAndGet() % actorRefs.size();
+    return actorRefs.get(index);
   }
 
   @Override

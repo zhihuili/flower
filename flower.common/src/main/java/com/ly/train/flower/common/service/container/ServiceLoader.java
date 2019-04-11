@@ -35,9 +35,11 @@ import com.ly.train.flower.common.annotation.FlowerServiceUtil;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;
 import com.ly.train.flower.common.service.FlowerService;
+import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.impl.AggregateService;
 import com.ly.train.flower.common.service.impl.ConditionService;
 import com.ly.train.flower.common.service.impl.NothingService;
+import com.ly.train.flower.common.util.ClassUtil;
 import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.FileUtil;
 import com.ly.train.flower.common.util.Pair;
@@ -81,11 +83,7 @@ public class ServiceLoader extends AbstractInit {
 
   public boolean registerFlowerService(String serviceName, FlowerService flowerService) {
     Object ret = servicesCache.putIfAbsent(serviceName, flowerService);
-    if (ret != null) {
-      if (!ret.equals(flowerService))
-        logger.warn("flowerservice is already exist, so discard it. serviceName : {}, flowerService : {}", serviceName,
-            flowerService);
-    } else {
+    if (ret == null) {
       logger.info("register flowerservice success , serviceName : {}, flowerService : {}", serviceName, flowerService);
     }
     return true;
@@ -169,29 +167,9 @@ public class ServiceLoader extends AbstractInit {
     serviceMeta.setInnerAggregateService(Constant.AGGREGATE_SERVICE_NAME.equals(serviceClass.getName()));
     serviceMeta.setTimeout(FlowerServiceUtil.getTimeout(serviceClass));
     try {
-      Type[] paramTypes = null;
-      Type[] types = serviceClass.getGenericInterfaces();
-      if (types != null && types.length > 0)
-        paramTypes = ((ParameterizedType) types[0]).getActualTypeArguments();
-      else
-        paramTypes = ((ParameterizedType) serviceClass.getGenericSuperclass()).getActualTypeArguments();
-
-      // logger.info("参数类型 {} : {} : {}", serviceClass, paramTypes[0], paramTypes[1]);
-      Class<?> paramType = null;
-      if (paramTypes[0] instanceof ParameterizedType) {
-        paramType = (Class<?>) ((ParameterizedType) paramTypes[0]).getRawType();
-      } else {
-        paramType = (Class<?>) paramTypes[0];
-      }
-      Class<?> returnType = null;
-      if (paramTypes[1] instanceof ParameterizedType) {
-        returnType = (Class<?>) ((ParameterizedType) paramTypes[1]).getRawType();
-      } else {
-        returnType = (Class<?>) paramTypes[1];
-      }
-
-      serviceMeta.setParamType(paramType.getName());
-      serviceMeta.setResultType(returnType.getName());
+      Pair<Class<?>, Class<?>> params = getServiceClassParam(serviceClass);
+      serviceMeta.setParamType(params.getKey().getName());
+      serviceMeta.setResultType(params.getValue().getName());
 
       if (StringUtil.isNotBlank(config)) {
         String[] tt = config.split(";");
@@ -207,6 +185,45 @@ public class ServiceLoader extends AbstractInit {
     }
     logger.info("init ServiceMeta. {} : {}", serviceName, serviceMeta);
     serviceMetaCache.put(serviceName, serviceMeta);
+  }
+
+  private Pair<Class<?>, Class<?>> getServiceClassParam(Class<?> serviceClass) {
+    Type[] paramTypes = null;
+    Type[] types = serviceClass.getGenericInterfaces();
+    if (types != null) {
+      for (Type type : types) {
+        if (type instanceof ParameterizedType) {
+          Class<?> a = ClassUtil.forName(((ParameterizedType) type).getRawType().getTypeName());
+          if (Service.class.isAssignableFrom(a)) {
+            paramTypes = ((ParameterizedType) type).getActualTypeArguments();
+            break;
+          }
+        }
+      }
+    }
+    if (paramTypes == null) {
+      Type type = serviceClass.getGenericSuperclass();
+      if (type instanceof ParameterizedType) {
+        paramTypes = ((ParameterizedType) type).getActualTypeArguments();
+      }
+    }
+
+    Class<?> paramType = Object.class;
+    Class<?> returnType = Object.class;
+    if (paramTypes != null) {
+      if (paramTypes[0] instanceof ParameterizedType) {
+        paramType = (Class<?>) ((ParameterizedType) paramTypes[0]).getRawType();
+      } else {
+        paramType = (Class<?>) paramTypes[0];
+      }
+
+      if (paramTypes[1] instanceof ParameterizedType) {
+        returnType = (Class<?>) ((ParameterizedType) paramTypes[1]).getRawType();
+      } else {
+        returnType = (Class<?>) paramTypes[1];
+      }
+    }
+    return new Pair<Class<?>, Class<?>>(paramType, returnType);
   }
 
   protected void loadInnerFlowService() {

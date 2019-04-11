@@ -19,8 +19,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.ly.flower.web.spring.FlowerController;
 import com.ly.train.flower.common.annotation.Flower;
+import com.ly.train.flower.web.spring.FlowerController;
 
 @RestController
 @Flower(serviceName = "ServiceA", value = "async")

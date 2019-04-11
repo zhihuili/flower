@@ -1,0 +1,6 @@
+name: "LocalFlower"
+host: 127.0.0.1
+port: 25003
+basePackage: com.ly.train.flower
+registry:
+   - url:  "flower://127.0.0.1:8096"

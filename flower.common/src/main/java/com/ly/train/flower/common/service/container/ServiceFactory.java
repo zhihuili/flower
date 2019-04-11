@@ -80,16 +80,19 @@ public class ServiceFactory extends AbstractInit {
   public void registerService(String serviceName, String serviceClassName) {
     serviceLoader.registerServiceType(serviceName, serviceClassName);
 
-    Set<Registry> registries = flowerFactory.getRegistry();
-    if (registries.isEmpty()) {
-      return;
-    }
     ServiceMeta serviceMeta = serviceLoader.loadServiceMeta(serviceName);
 
     ServiceConfig serviceConfig = new ServiceConfig();
     serviceConfig.setServiceName(serviceName);
     serviceConfig.setServiceMeta(serviceMeta);
     flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig);
+
+
+    Set<Registry> registries = flowerFactory.getRegistry();
+    if (registries.isEmpty()) {
+      return;
+    }
+
 
     serviceClassName = serviceMeta.getServiceClassName();
 
@@ -163,6 +166,13 @@ public class ServiceFactory extends AbstractInit {
     return serviceFlow;
   }
 
+  /**
+   * 1. 首先从本地加载<br/>
+   * 2. 本地加载不到，如果有配置注册中心，就从配置中心获取
+   * 
+   * @param serviceConfig serviceConfig
+   * @return {@link ServiceMeta}
+   */
   public ServiceMeta loadServiceMeta(ServiceConfig serviceConfig) {
     ServiceMeta serviceMeta = serviceLoader.loadServiceMeta(serviceConfig.getServiceName());
     if (serviceMeta == null) {

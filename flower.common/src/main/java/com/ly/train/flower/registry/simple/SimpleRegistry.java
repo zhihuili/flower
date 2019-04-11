@@ -18,12 +18,13 @@
  */
 package com.ly.train.flower.registry.simple;
 
+import java.util.ArrayList;
 import java.util.List;
-import com.alibaba.fastjson.JSONObject;
+import java.util.Set;
+import com.ly.train.flower.common.akka.ServiceRouter;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.FlowerFactory;
-import com.ly.train.flower.common.util.HttpClient;
-import com.ly.train.flower.common.util.StringUtil;
+import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.registry.AbstractRegistry;
 import com.ly.train.flower.registry.config.ServiceInfo;
@@ -35,69 +36,81 @@ import com.ly.train.flower.registry.config.ServiceInfo;
 public class SimpleRegistry extends AbstractRegistry {
   protected FlowerFactory flowerFactory;
 
+  private ServiceRouter serviceInfoRegisterRouter;
+  private ServiceRouter serviceInfoListRouter;
+  private ServiceRouter serviceConfigRegisterRouter;
+  private ServiceRouter serviceConfigListRouter;
+
   public SimpleRegistry(URL url) {
     super(url);
   }
 
   public void setFlowerFactory(FlowerFactory flowerFactory) {
     this.flowerFactory = flowerFactory;
-    
 
+    this.serviceInfoRegisterRouter = getServiceRouter("ServiceInfoRegisterService");
+    this.serviceInfoListRouter = getServiceRouter("ServiceInfoListService");
+    this.serviceConfigRegisterRouter = getServiceRouter("ServiceConfigRegisterService");
+    this.serviceConfigListRouter = getServiceRouter("ServiceConfigListService");
+  }
+
+  private ServiceRouter getServiceRouter(String serviceName) {
+    ServiceConfig serviceConfig = new ServiceConfig();
+    serviceConfig.setServiceName(serviceName);
+    serviceConfig.addAddress(getUrl());
+    serviceConfig.setLocal(false);
+    return flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, 2);
+  }
+
+  private ServiceContext makeServiceContext(Object message) {
+    ServiceContext context = ServiceContext.context(message);
+    return context;
   }
 
   @Override
   public boolean doRegister(ServiceInfo serviceInfo) {
     // logger.info("register serviceInfo : {}", serviceInfo);
-    String u = String.format("http://%s:%s/service/register", url.getHost(), url.getPort());
-
-    String ret = HttpClient.builder().setUrl(u).setParam("data=" + JSONObject.toJSONString(serviceInfo)).build().post();
-    // logger.info("register service result : {}, serviceInfo : {}", ret,
-    // serviceInfo);
+    ServiceContext serviceContext = makeServiceContext(serviceInfo);
+    serviceContext.setCurrentServiceName("ServiceInfoRegisterService");
+    serviceContext.setSync(false);
+    serviceInfoRegisterRouter.asyncCallService(serviceContext);
     return Boolean.TRUE;
   }
 
   @Override
   public boolean doRegisterServiceConfig(ServiceConfig serviceConfig) {
-    String u = String.format("http://%s:%s/serviceconfig/register", url.getHost(), url.getPort());
-
-    String ret =
-        HttpClient.builder().setUrl(u).setParam("data=" + JSONObject.toJSONString(serviceConfig)).build().post();
+    ServiceContext serviceContext = makeServiceContext(serviceConfig);
+    serviceContext.setCurrentServiceName("ServiceConfigRegisterService");
+    serviceContext.setSync(false);
+    serviceConfigRegisterRouter.asyncCallService(serviceContext);
     return false;
   }
 
   @Override
   public List<ServiceInfo> doGetProvider(ServiceInfo serviceInfo) {
-    String param = "";
-    if (serviceInfo != null) {
-      param = JSONObject.toJSONString(serviceInfo);
+    ServiceContext serviceContext = makeServiceContext(null);
+    serviceContext.setCurrentServiceName("ServiceInfoListService");
+    serviceContext.setSync(false);
+    Object o = serviceInfoListRouter.syncCallService(serviceContext);
+    Set<ServiceInfo> ret = null;
+    if (o != null) {
+      ret = (Set<ServiceInfo>) o;
     }
-    // logger.info("register serviceInfo : {}", serviceInfo);
-    String u = String.format("http://%s:%s/service/list", url.getHost(), url.getPort());
-    String ret = HttpClient.builder().setUrl(u).setParam("data=" + param).build().post();
-    // logger.info("register service result : {}, serviceInfo : {}", ret,
-    // serviceInfo);
-    if (StringUtil.isNotBlank(ret)) {
-      ret = JSONObject.parseObject(ret).getString("data");
-      return JSONObject.parseArray(ret, ServiceInfo.class);
-    }
-    return null;
+    List<ServiceInfo> ret2 = new ArrayList<ServiceInfo>(ret);
+    return ret2;
   }
 
   @Override
   public List<ServiceConfig> doGetServiceConfig(ServiceConfig serviceConfig) {
-    String param = "";
-    if (serviceConfig != null) {
-      param = JSONObject.toJSONString(serviceConfig);
+    ServiceContext serviceContext = makeServiceContext(null);
+    serviceContext.setCurrentServiceName("ServiceConfigListService");
+    serviceContext.setSync(false);
+    Object o = serviceConfigListRouter.syncCallService(serviceContext);
+    Set<ServiceConfig> ret = null;
+    if (o != null) {
+      ret = (Set<ServiceConfig>) o;
     }
-    // logger.info("register serviceInfo : {}", serviceInfo);
-    String u = String.format("http://%s:%s/serviceconfig/list", url.getHost(), url.getPort());
-    String ret = HttpClient.builder().setUrl(u).setParam("data=" + param).build().post();
-    // logger.info("register service result : {}, serviceInfo : {}", ret,
-    // serviceInfo);
-    if (StringUtil.isNotBlank(ret)) {
-      ret = JSONObject.parseObject(ret).getString("data");
-      return JSONObject.parseArray(ret, ServiceConfig.class);
-    }
-    return null;
+    List<ServiceConfig> ret2 = new ArrayList<ServiceConfig>(ret);
+    return ret2;
   }
 }

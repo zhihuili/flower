@@ -29,7 +29,6 @@ import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFactory;
-import com.ly.train.flower.common.service.container.ServiceMeta;
 import com.ly.train.flower.common.service.container.lifecyle.AbstractLifecycle;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.common.util.URL;
@@ -54,7 +53,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
 
   private final Map<String, ServiceRouter> serviceRoutersCache = new ConcurrentHashMap<>();
   private final Map<String, FlowRouter> flowRoutersCache = new ConcurrentHashMap<>();
-  private static final String actorPathFormat = "akka.tcp://%s@%s:%s/user/flower/%s_0";
+  public static final String actorPathFormat = "akka.tcp://%s@%s:%s/user/flower/%s_0";
   private final int defaultFlowIndex = 0;
 
 
@@ -91,13 +90,11 @@ public class ServiceActorFactory extends AbstractLifecycle {
     }
 
     try {
-      ServiceMeta serviceMeta = serviceFactory.loadServiceMeta(serviceConfig);
-      if (serviceMeta != null && serviceConfig.isLocal()) {
+      if (serviceConfig.isLocal()) {
         ActorRef actorRef = getActorContext().actorOf(ServiceActor.props(serviceName, flowerFactory, count), cacheKey);
         actorWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
       } else {
         // "akka.tcp://flower@127.0.0.1:2551/user/$a"
-        serviceMeta = serviceFactory.loadServiceMetaFromRegistrry(serviceConfig);
         URL url = serviceConfig.getAddresses().iterator().next();
         String actorPath =
             String.format(actorPathFormat, flowerConfig.getName(), url.getHost(), url.getPort(), serviceName);
@@ -193,7 +190,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
 
     ServiceRouter serviceRouter = serviceRoutersCache.get(routerName);
     if (serviceRouter == null) {
-      serviceRouter = new ServiceRouter(serviceConfig, flowerFactory.getServiceActorFactory(), flowNumbe);
+      serviceRouter = new ServiceRouter(serviceConfig, flowerFactory, flowNumbe);
       logger.info("build service Router. serviceName : {}, flowNumbe : {}", serviceName, flowNumbe);
       serviceRouter.init();
       serviceRoutersCache.put(routerName, serviceRouter);

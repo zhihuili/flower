@@ -18,7 +18,7 @@
  */
 package com.ly.train.flower.base.service;
 
-import java.util.Set;
+import java.util.List;
 import com.ly.train.flower.base.model.User;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.annotation.FlowerType;
@@ -32,11 +32,11 @@ import com.ly.train.flower.logging.LoggerFactory;
  *
  */
 @FlowerService(type = FlowerType.AGGREGATE)
-public class ServiceD implements Service<Set<User>, Set<User>> {
+public class ServiceD implements Service<List<User>, List<User>> {
   static final Logger logger = LoggerFactory.getLogger(ServiceD.class);
 
   @Override
-  public Set<User> process(Set<User> message, ServiceContext context) throws Throwable {
+  public List<User> process(List<User> message, ServiceContext context) throws Throwable {
     logger.info("结束处理消息, message : {}", message);
     return message;
   }

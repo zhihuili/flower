@@ -25,6 +25,13 @@ import com.ly.train.flower.common.service.container.FlowerFactory;
 public class SimpleFlowerFactoryTest {
 
   @Test
+  public void testDefaultFlowerFactory(){
+      FlowerFactory factory = SimpleFlowerFactory.get();
+      factory.start();
+      factory.stop();
+  }
+
+  @Test
   public void testFlowerFactory() {
     FlowerFactory factory = new SimpleFlowerFactory();
     factory.start();
