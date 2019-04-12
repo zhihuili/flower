@@ -16,17 +16,21 @@
 /**
  * 
  */
-package com.ly.train.flower.common.filter;
+package com.ly.train.flower.filter.impl;
 
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.filter.AbstractFilter;
 
 /**
  * @author leeyazhou
  *
  */
-public interface Filter {
+public class LoggingFilter extends AbstractFilter{
 
-  void filter(ServiceContext serviceContext);
+  @Override
+  public void doFilter(ServiceContext serviceContext) {
+    
+  }
 
-
+  
 }

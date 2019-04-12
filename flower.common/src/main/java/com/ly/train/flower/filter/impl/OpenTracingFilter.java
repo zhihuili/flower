@@ -16,34 +16,21 @@
 /**
  * 
  */
-package com.ly.train.flower.common.filter;
+package com.ly.train.flower.filter.impl;
 
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.filter.AbstractFilter;
 
 /**
  * @author leeyazhou
  *
  */
-public abstract class AbstractFilter implements Filter {
-
-  private AbstractFilter nextFilter;
+public class OpenTracingFilter extends AbstractFilter{
 
   @Override
-  public void filter(ServiceContext serviceContext) {
-    doFilter(serviceContext);
-    if (nextFilter != null) {
-      nextFilter.filter(serviceContext);
-    }
+  public void doFilter(ServiceContext serviceContext) {
+    
   }
 
- public abstract void doFilter(ServiceContext serviceContext);
-
-  public void addFilter(Filter filter) {
-    if (this.nextFilter == null) {
-      this.nextFilter = (AbstractFilter) filter;
-    } else {
-      this.nextFilter.addFilter(filter);
-    }
-  }
-
+  
 }
