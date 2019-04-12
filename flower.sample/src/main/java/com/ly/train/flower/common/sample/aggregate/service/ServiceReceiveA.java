@@ -5,7 +5,6 @@ import com.ly.train.flower.common.annotation.FlowerType;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -24,14 +23,19 @@ public class ServiceReceiveA implements Service<List<Object>,Integer> {
     @Override
     public Integer process(List<Object> message, ServiceContext context) throws Throwable {
         System.out.println("处理A分叉之后的聚合消息:");
-        Iterator it = message.iterator();
         Integer sum = 0;
-        while (it.hasNext()){
-            Integer item = (Integer) it.next();
-            sum += item;
-            System.out.println(item.toString());
+        if(null != message && message.size()>0) {
+            for (Object obj : message) {
+                if (obj instanceof Integer) {
+                    sum += (Integer) obj;
+                }
+            }
+            System.out.println("求和："+sum+"开始B分叉处理");
+            return sum;
+        }else {
+            System.out.println("空聚合消息");
+            return null;
         }
-        System.out.println("求和："+sum+"开始B分叉处理");
-        return sum;
+
     }
 }

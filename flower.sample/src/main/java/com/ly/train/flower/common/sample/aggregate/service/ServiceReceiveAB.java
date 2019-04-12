@@ -17,8 +17,8 @@ public class ServiceReceiveAB implements Service<Object,Void>, Flush, Complete {
     @Override
     public Void process(Object message, ServiceContext context) throws Throwable {
         System.out.println("处理B分叉之后的聚合消息:");
-        List<Integer> set = (List<Integer>)message;
-        for(Integer integer:set){
+        List<Integer> list = (List<Integer>)message;
+        for(Integer integer:list){
             System.out.println(integer);
         }
         return null;
