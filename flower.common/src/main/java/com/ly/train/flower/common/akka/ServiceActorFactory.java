@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import com.ly.train.flower.common.akka.actor.ServiceActor;
 import com.ly.train.flower.common.akka.actor.SupervisorActor;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorRefWrapper;
@@ -51,8 +53,8 @@ public class ServiceActorFactory extends AbstractLifecycle {
   private static final Duration timeout = Duration.create(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
   private final ConcurrentMap<String, ActorWrapper> serviceActorCache = new ConcurrentHashMap<>();
 
-  private final Map<String, ServiceRouter> serviceRoutersCache = new ConcurrentHashMap<>();
-  private final Map<String, FlowRouter> flowRoutersCache = new ConcurrentHashMap<>();
+  private volatile Map<String, ServiceRouter> serviceRoutersCache = new ConcurrentHashMap<>();
+  private volatile Map<String, FlowRouter> flowRoutersCache = new ConcurrentHashMap<>();
   public static final String actorPathFormat = "akka.tcp://%s@%s:%s/user/flower/%s_0";
   private final int defaultFlowIndex = 0;
 
@@ -70,6 +72,11 @@ public class ServiceActorFactory extends AbstractLifecycle {
     this.serviceFactory = flowerFactory.getServiceFactory();
   }
 
+  private volatile Lock actorLock = new ReentrantLock();
+  private volatile Lock flowRouterLock = new ReentrantLock();
+  private volatile Lock serviceRouterLock = new ReentrantLock();
+
+
   @Override
   protected void doInit() {}
 
@@ -81,7 +88,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
     return buildServiceActor(serviceConfig, index, -1);
   }
 
-  public synchronized ActorWrapper buildServiceActor(ServiceConfig serviceConfig, int index, int count) {
+  public ActorWrapper buildServiceActor(ServiceConfig serviceConfig, int index, int count) {
     final String serviceName = serviceConfig.getServiceName();
     final String cacheKey = serviceName + "_" + index;
     ActorWrapper actorWrapper = serviceActorCache.get(cacheKey);
@@ -90,28 +97,35 @@ public class ServiceActorFactory extends AbstractLifecycle {
     }
 
     try {
-      if (serviceConfig.isLocal()) {
-        ActorRef actorRef = getActorContext().actorOf(ServiceActor.props(serviceName, flowerFactory, count), cacheKey);
-        actorWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
-      } else {
-        // "akka.tcp://flower@127.0.0.1:2551/user/$a"
-        URL url = serviceConfig.getAddresses().iterator().next();
-        String actorPath =
-            String.format(actorPathFormat, flowerConfig.getName(), url.getHost(), url.getPort(), serviceName);
-        ActorSelection actorSelection = getActorContext().actorSelection(actorPath);
-        actorWrapper = new ActorSelectionWrapper(actorSelection).setServiceName(serviceName);
+      actorLock.lock();
+      actorWrapper = serviceActorCache.get(cacheKey);
+      if (actorWrapper == null) {
+        if (serviceConfig.isLocal()) {
+          ActorRef actorRef =
+              getActorContext().actorOf(ServiceActor.props(serviceName, flowerFactory, count), cacheKey);
+          actorWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
+        } else {
+          // "akka.tcp://flower@127.0.0.1:2551/user/$a"
+          URL url = serviceConfig.getAddresses().iterator().next();
+          String actorPath =
+              String.format(actorPathFormat, flowerConfig.getName(), url.getHost(), url.getPort(), serviceName);
+          ActorSelection actorSelection = getActorContext().actorSelection(actorPath);
+          actorWrapper = new ActorSelectionWrapper(actorSelection).setServiceName(serviceName);
+        }
+        if (logger.isTraceEnabled()) {
+          logger.trace("create actor {} ： {}", serviceName, actorWrapper);
+        }
+        serviceActorCache.put(cacheKey, actorWrapper);
       }
-      if (logger.isTraceEnabled()) {
-        logger.trace("create actor {} ： {}", serviceName, actorWrapper);
-      }
-      serviceActorCache.put(cacheKey, actorWrapper);
-      return actorWrapper;
     } catch (Exception e) {
       throw new FlowerException(
           "fail to create flowerService,flowName : " + serviceConfig.getFlowName() + ", serviceName : " + serviceName
               + ", serviceClassName : " + serviceConfig.getServiceMeta().getServiceClassName(),
           e);
+    } finally {
+      actorLock.unlock();
     }
+    return actorWrapper;
   }
 
 
@@ -175,11 +189,20 @@ public class ServiceActorFactory extends AbstractLifecycle {
 
     FlowRouter flowRouter = flowRoutersCache.get(routerCacheKey);
     if (flowRouter == null) {
-      flowRouter = new FlowRouter(serviceConfig, flowNumbe, flowerFactory);
-      flowRoutersCache.put(routerCacheKey, flowRouter);
-      flowRouter.init();
-      logger.info("build service Router. flowName : {}, serviceName : {}, flowNumbe : {}", flowName, serviceName,
-          flowNumbe);
+      flowRouterLock.lock();
+      try {
+        flowRouter = flowRoutersCache.get(routerCacheKey);
+        if (flowRouter == null) {
+          flowRouter = new FlowRouter(serviceConfig, flowNumbe, flowerFactory);
+          flowRouter.init();
+          flowRoutersCache.put(routerCacheKey, flowRouter);
+          logger.info("build service Router. flowName : {}, serviceName : {}, flowNumbe : {}", flowName, serviceName,
+              flowNumbe);
+        }
+
+      } finally {
+        flowRouterLock.unlock();
+      }
     }
     return flowRouter;
   }
@@ -190,10 +213,18 @@ public class ServiceActorFactory extends AbstractLifecycle {
 
     ServiceRouter serviceRouter = serviceRoutersCache.get(routerName);
     if (serviceRouter == null) {
-      serviceRouter = new ServiceRouter(serviceConfig, flowerFactory, flowNumbe);
-      logger.info("build service Router. serviceName : {}, flowNumbe : {}", serviceName, flowNumbe);
-      serviceRouter.init();
-      serviceRoutersCache.put(routerName, serviceRouter);
+      serviceRouterLock.lock();
+      try {
+        serviceRouter = serviceRoutersCache.get(routerName);
+        if (serviceRouter == null) {
+          serviceRouter = new ServiceRouter(serviceConfig, flowerFactory, flowNumbe);
+          serviceRouter.init();
+          serviceRoutersCache.put(routerName, serviceRouter);
+          logger.info("build service Router. serviceName : {}, flowNumbe : {}", serviceName, flowNumbe);
+        }
+      } finally {
+        serviceRouterLock.unlock();
+      }
     }
     return serviceRouter;
   }

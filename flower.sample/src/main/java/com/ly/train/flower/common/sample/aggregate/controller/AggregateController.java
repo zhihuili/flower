@@ -14,7 +14,7 @@ import java.io.IOException;
  * @author: fengyu.zhang
  */
 @RestController
-@Flower(value = "aggregate",serviceName = "ServiceBegin")
+@Flower(value = "aggregate",serviceName = "ServiceBegin", flowNumber = 1)
 public class AggregateController extends FlowerController {
 
     @RequestMapping(value = "/test/aggregate/{id}")
@@ -36,6 +36,6 @@ public class AggregateController extends FlowerController {
         getServiceFlow().buildFlow(ServiceReceiveA.class, ServiceReceiveAB.class);
         getServiceFlow().buildFlow(ServiceForkB1.class, ServiceReceiveAB.class);
         getServiceFlow().buildFlow(ServiceForkB2.class, ServiceReceiveAB.class);
-
+        getServiceFlow().build();
     }
 }
