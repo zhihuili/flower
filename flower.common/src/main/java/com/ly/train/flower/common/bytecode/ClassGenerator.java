@@ -256,7 +256,7 @@ public final class ClassGenerator {
           if ("equals".equals(mm.getName()) || "toString".equals(mm.getName()) || "hashCode".equals(mm.getName())) {
             continue;
           }
-          Object v = mm.invoke(an, null);
+          Object v = mm.invoke(an);
           value.put(mm.getName(), v);
         }
       } catch (Exception e) {

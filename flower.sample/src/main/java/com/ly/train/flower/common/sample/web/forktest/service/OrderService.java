@@ -24,17 +24,17 @@ import com.ly.train.flower.common.sample.web.mode.Order;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
 /**
- * @Author: fengyu.zhang
- * @Date: 2019/2/24 17:16
+ * @author fengyu.zhang
+ * @date 2019/2/24 17:16
  */
 @Service("OrderService")
-public class OrderService implements com.ly.train.flower.common.service.Service<Integer,List<Order>> {
-    @Autowired
-    private OrderDao orderDao;
+public class OrderService implements com.ly.train.flower.common.service.Service<Integer, List<Order>> {
+  @Autowired
+  private OrderDao orderDao;
 
-    @Override
-    public List<Order> process(Integer message, ServiceContext context) throws Exception {
-        List<Order> orders = orderDao.findByCustomerId(message);
-        return orders == null ? new ArrayList<Order>() : orders;
-    }
+  @Override
+  public List<Order> process(Integer message, ServiceContext context) throws Exception {
+    List<Order> orders = orderDao.findByCustomerId(message);
+    return orders == null ? new ArrayList<Order>() : orders;
+  }
 }

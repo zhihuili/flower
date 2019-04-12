@@ -16,20 +16,21 @@
 package com.ly.train.flower.common.sample.supervisor;
 
 import java.util.concurrent.TimeoutException;
-import com.ly.train.flower.common.actor.ServiceFacade;
-import com.ly.train.flower.common.sample.akka.FaultHandlingTest;
-import com.ly.train.flower.common.util.EnvBuilder;
+import org.junit.Test;
+import com.ly.train.flower.common.sample.TestBase;
+import com.ly.train.flower.common.sample.supervisor.model.Message1;
+import com.ly.train.flower.common.sample.supervisor.model.Message2;
 
-public class Sample {
+public class Sample  extends TestBase{
 
-  public static void main(String[] args) throws Exception {
-    EnvBuilder.buildEnv(null);
+  @Test
+  public void main() throws Exception {
     {
       Message2 m2 = new Message2(10000, "Zhihui");
       Message1 m1 = new Message1();
       m1.setM2(m2);
       try {
-        System.out.println(ServiceFacade.syncCallService("supervisor", "SupervisorService1", m1));
+        System.out.println(serviceFacade.syncCallService("supervisor", m1));
       } catch (TimeoutException e) {
         e.printStackTrace();
       }
@@ -43,13 +44,13 @@ public class Sample {
       m1.setM2(m2);
 
       try {
-        System.out.println(ServiceFacade.syncCallService("supervisor", "SupervisorService1", m1));
+        System.out.println(serviceFacade.syncCallService("supervisor", m1));
       } catch (TimeoutException e) {
         e.printStackTrace();
-      }    }
+      }
+    }
+    Thread.sleep(2000);
     System.out.println("30000");
-    FaultHandlingTest.main(new String[]{""});
-    ServiceFacade.shutdown();
   }
 
 }

@@ -42,20 +42,13 @@ public class RouterActor extends AbstractActor {
 
   @Override
   public Receive createReceive() {
-    return receiveBuilder()
-        .match(
-            String.class,
-            message -> {
-              router.route(message, getSender());
-            })
-        .match(
-            Terminated.class,
-            message -> {
-              router = router.removeRoutee(message.actor());
-              ActorRef r = getContext().actorOf(Props.create(MyActor.class));
-              getContext().watch(r);
-              router = router.addRoutee(new ActorRefRoutee(r));
-            })
-        .build();
+    return receiveBuilder().match(String.class, message -> {
+      router.route(message, getSender());
+    }).match(Terminated.class, message -> {
+      router = router.removeRoutee(message.actor());
+      ActorRef r = getContext().actorOf(Props.create(MyActor.class));
+      getContext().watch(r);
+      router = router.addRoutee(new ActorRefRoutee(r));
+    }).build();
   }
 }

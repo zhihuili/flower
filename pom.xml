@@ -16,18 +16,17 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.ly.train</groupId>
 	<artifactId>flower</artifactId>
 	<packaging>pom</packaging>
-	<version>${revision}</version>
+	<version>0.1.2</version>
 
 	<properties>
-		<revision>0.1.1</revision>
+		<revision>0.1.2</revision>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
@@ -45,7 +44,7 @@
 		<servlet.version>4.0.1</servlet.version>
 		<spring-boot.version>2.1.3.RELEASE</spring-boot.version>
 		<junit.version>4.12</junit.version>
-		<fastjson.version>1.2.55</fastjson.version>
+		<fastjson.version>1.2.54</fastjson.version>
 		<druid.version>1.0.12</druid.version>
 		<mybatis.version>3.5.0</mybatis.version>
 		<mybatis-spring.version>1.3.2</mybatis-spring.version>
@@ -64,7 +63,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>com.ly.train</groupId>
-				<artifactId>flower-bom</artifactId>
+				<artifactId>flower.bom</artifactId>
 				<version>${project.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
@@ -89,6 +88,11 @@
 			<dependency>
 				<groupId>com.typesafe.akka</groupId>
 				<artifactId>akka-actor_2.12</artifactId>
+				<version>${akka.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.typesafe.akka</groupId>
+				<artifactId>akka-remote_2.12</artifactId>
 				<version>${akka.version}</version>
 			</dependency>
 			<dependency>
@@ -208,7 +212,16 @@
 				<artifactId>javassist</artifactId>
 				<version>${javassist.version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>org.yaml</groupId>
+				<artifactId>snakeyaml</artifactId>
+				<version>1.24</version>
+			</dependency>
+			<dependency>
+				<groupId>com.github.romix.akka</groupId>
+				<artifactId>akka-kryo-serialization_2.12</artifactId>
+				<version>0.5.2</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -218,7 +231,8 @@
 		<module>flower.sample</module>
 		<module>flower.web</module>
 		<module>flower.assembly</module>
-		<module>flower-bom</module>
+		<module>flower.bom</module>
+		<module>flower.container</module>
 	</modules>
 
 	<build>
@@ -255,22 +269,20 @@
 				<artifactId>findbugs-maven-plugin</artifactId>
 				<version>3.0.4</version>
 				<configuration>
-					<configuration>
-						<effort>Low</effort>
-						<threshold>Medium</threshold>
-						<failOnError>true</failOnError>
-						<includeTests>true</includeTests>
-					</configuration>
-					<executions>
-						<execution>
-							<id>run-findbugs</id>
-							<phase>package</phase>
-							<goals>
-								<goal>check</goal>
-							</goals>
-						</execution>
-					</executions>
+					<effort>Low</effort>
+					<threshold>Medium</threshold>
+					<failOnError>true</failOnError>
+					<includeTests>true</includeTests>
 				</configuration>
+				<executions>
+					<!-- <execution>
+						<id>run-findbugs</id>
+						<phase>package</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution> -->
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
@@ -282,7 +294,7 @@
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>${maven-checkstyle-plugin.version}</version>
 				<configuration>
-					<configLocation>conf/flower_checkstyle.xml</configLocation>
+					<configLocation>/conf/flower_checkstyle.xml</configLocation>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -309,7 +321,6 @@
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
-				<version>3.0</version>
 				<configuration>
 					<header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
 					<properties>
@@ -333,12 +344,48 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <configuration>
+                    <formats>
+                        <format>html</format>
+                        <format>xml</format>
+                    </formats>
+                    <check/>
+                </configuration>
+            </plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-shade-plugin</artifactId>
+					<version>3.2.0</version>
+				</plugin>
+				<plugin>
+					<groupId>com.mycila</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>3.0</version>
+				</plugin>
+				<plugin>
+	                <groupId>org.codehaus.mojo</groupId>
+	                <artifactId>cobertura-maven-plugin</artifactId>
+	                <version>2.7</version>
+	                <configuration>
+	                    <formats>
+	                        <format>html</format>
+	                        <format>xml</format>
+	                    </formats>
+	                    <check/>
+	                </configuration>
+	            </plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<name>flower</name>
-	<description>流式微服务框架Flower
-</description>
+	<description>流式微服务框架Flower</description>
 	<url>https://github.com/tongchengyilong/flower.git</url>
 	<organization>
 		<name>同程艺龙</name>

@@ -19,25 +19,25 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.ly.train.flower.common.actor.ServiceFacade;
-import com.ly.train.flower.common.actor.ServiceRouter;
-import com.ly.train.flower.common.service.ServiceFlow;
-import com.ly.train.flower.common.service.container.ServiceFactory;
+import com.ly.train.flower.common.akka.FlowRouter;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 
-public class FlowServlet extends HttpServlet {
-  ServiceRouter sr;
+public class FlowServlet extends FlowerHttpServlet {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+  FlowRouter sr;
   ActorRef actor;
 
   @Override
   public void init() {
     buildServiceEnv();
-    sr = ServiceFacade.buildServiceRouter("flow", "flowService", 400);
+    sr = flowerFactory.getServiceFacade().buildFlowRouter("flow", 400);
     actor = ActorSystem.create("sample").actorOf(Props.create(RouterActor.class));
   }
 
@@ -80,11 +80,11 @@ public class FlowServlet extends HttpServlet {
   }
 
   private void buildServiceEnv() {
-    ServiceFactory.registerService("flowService", "com.ly.train.flower.common.sample.web.FlowService");
+    flowerFactory.getServiceFactory().registerService("flowService", "com.ly.train.flower.common.sample.web.FlowService");
     // ServiceFactory.registerService("endService",
     // "com.ly.train.flower.common.service.NothingService");
 
-    ServiceFlow.getOrCreate("flower").buildFlow("flowService", "null");
+    getServiceFlow("flower").buildFlow("flowService", "null");
 
   }
 }

@@ -24,7 +24,7 @@
     <parent>
         <groupId>com.ly.train</groupId>
         <artifactId>flower</artifactId>
-        <version>0.1.1</version>
+        <version>0.1.2</version>
         <relativePath>..</relativePath>
     </parent>
     <artifactId>flower.assembly</artifactId>
@@ -49,7 +49,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>

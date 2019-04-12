@@ -18,27 +18,24 @@ package com.ly.train.flower.common.sample.web.async;
 import java.io.IOException;
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import com.ly.train.flower.common.actor.ServiceFacade;
-import com.ly.train.flower.common.actor.ServiceRouter;
+import com.ly.train.flower.common.akka.FlowRouter;
+import com.ly.train.flower.common.sample.web.FlowerHttpServlet;
 import com.ly.train.flower.common.service.FlowerService;
-import com.ly.train.flower.common.service.ServiceFlow;
-import com.ly.train.flower.common.service.container.ServiceFactory;
 
-public class AsyncServlet extends HttpServlet {
+public class AsyncServlet extends FlowerHttpServlet {
   static final long serialVersionUID = 1L;
-  ServiceRouter sr;
+  FlowRouter sr;
   ApplicationContext context;
 
   @Override
   public void init() {
     context = new ClassPathXmlApplicationContext("spring-mybatis.xml");
     buildServiceEnv();
-    sr = ServiceFacade.buildServiceRouter("async", "serviceA", 400);
+    sr = serviceFacade.buildFlowRouter("async", 400);
   }
 
   @Override
@@ -59,12 +56,12 @@ public class AsyncServlet extends HttpServlet {
   }
 
   private void buildServiceEnv() {
-    ServiceFactory.registerService("serviceA", "com.ly.train.flower.common.sample.web.async.ServiceA");
-    ServiceFactory.registerService("serviceB", "com.ly.train.flower.common.sample.web.async.ServiceB");
+    serviceFactory.registerService("serviceA", "com.ly.train.flower.common.sample.web.async.ServiceA");
+    serviceFactory.registerService("serviceB", "com.ly.train.flower.common.sample.web.async.ServiceB");
 
-    ServiceFactory.registerFlowerService("serviceB", (FlowerService) context.getBean("serviceB"));
+    serviceFactory.registerFlowerService("serviceB", (FlowerService) context.getBean("serviceB"));
 
-    ServiceFlow.getOrCreate("async").buildFlow("serviceA", "serviceB");
+    getServiceFlow("async").buildFlow("serviceA", "serviceB");
 
   }
 }
