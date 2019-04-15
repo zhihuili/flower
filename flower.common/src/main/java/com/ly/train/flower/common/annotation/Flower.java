@@ -40,7 +40,7 @@ public @interface Flower {
    */
   String value();
 
-  String serviceName();
+  String serviceName() default "";
 
   int flowNumber() default 128;
 
