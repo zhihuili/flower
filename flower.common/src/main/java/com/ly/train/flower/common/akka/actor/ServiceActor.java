@@ -104,8 +104,6 @@ public class ServiceActor extends AbstractFlowerActor {
           + ", param : " + fm.getMessage(), e);
     }
 
-    // logger.info("同步处理 ： {}, hasChild : {}", serviceContext.isSync(),
-    // hasChildActor());
     Set<RefType> nextActorRef = getNextServiceActors(serviceContext);
     if (serviceContext.isSync() && CollectionUtil.isEmpty(nextActorRef)) {
       ActorRef actor = syncActors.get(serviceContext.getId());
@@ -134,6 +132,7 @@ public class ServiceActor extends AbstractFlowerActor {
       return;
     }
     ServiceContextUtil.cleanServiceContext(serviceContext);
+    logger.info("子节点 {}：{}", serviceName, refTypes);
     for (RefType refType : refTypes) {
       Object resultClone = CloneUtil.clone(result);
       ServiceContext context = serviceContext.newInstance();
@@ -159,8 +158,8 @@ public class ServiceActor extends AbstractFlowerActor {
     if (this.service == null) {
       this.service = flowerFactory.getServiceFactory().getServiceLoader().loadService(serviceName);
       if (service instanceof Aggregate) {
-        int num = flowerFactory.getServiceFactory()
-            .getOrCreateServiceFlow(serviceContext.getFlowName()).getServiceConfig(serviceName).getJointSourceNumber();
+        int num = flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
+            .getServiceConfig(serviceName).getJointSourceNumber();
         ((AggregateService) service).setSourceNumber(num);
       }
     }

@@ -15,10 +15,9 @@
  */
 package com.ly.train.flower.container;
 
-import com.ly.train.flower.common.service.container.FlowerFactory;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
-import com.ly.train.flower.service.container.SpringFlowerFactory;
 
 /**
  * @author leeyazhou
@@ -29,8 +28,17 @@ public class SpringBootstrap extends Bootstrap {
 
   @Override
   public void doStartup(String configLocation) {
-    FlowerFactory flowerFactory = new SpringFlowerFactory(configLocation);
-    flowerFactory.start();
-  }
 
+    ClassPathXmlApplicationContext applicationContext = null;
+    try {
+      applicationContext = new ClassPathXmlApplicationContext(configLocation);
+      applicationContext.start();
+    } catch (Exception e) {
+      if (applicationContext != null) {
+        applicationContext.close();
+      }
+      logger.error("", e);
+    }
+    logger.info("spring初始化完成");
+  }
 }

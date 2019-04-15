@@ -64,7 +64,10 @@ public class FlowerBeanRegistryPostProcessor implements BeanDefinitionRegistryPo
   private ResourceLoader resourceLoader;
   private ApplicationContext applicationContext;
 
-  private final Set<String> packagesToScan;
+  private Set<String> packagesToScan;
+
+
+  public FlowerBeanRegistryPostProcessor() {}
 
   public FlowerBeanRegistryPostProcessor(Set<String> packagesToScan) {
     this.packagesToScan = packagesToScan;
@@ -72,6 +75,10 @@ public class FlowerBeanRegistryPostProcessor implements BeanDefinitionRegistryPo
 
   public FlowerBeanRegistryPostProcessor(String... packagesToScan) {
     this(Arrays.asList(packagesToScan));
+  }
+
+  public void setPackagesToScan(Set<String> packagesToScan) {
+    this.packagesToScan = packagesToScan;
   }
 
   public FlowerBeanRegistryPostProcessor(Collection<String> packagesToScan) {
