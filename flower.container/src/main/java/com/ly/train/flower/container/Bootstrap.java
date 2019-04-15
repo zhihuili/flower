@@ -36,19 +36,19 @@ public abstract class Bootstrap {
       @SuppressWarnings("unchecked")
       Class<Bootstrap> bootstrapClass = (Class<Bootstrap>) Class.forName(mainClass, true, classLoader);
       Bootstrap bootstrap = bootstrapClass.newInstance();
-      bootstrap.startup(args);
+      bootstrap.startup(null);
     } catch (Throwable e) {
       logger.error("fail to start flower container.", e);
       e.printStackTrace();
     }
   }
 
-  private void startup(String[] args) throws Throwable {
-    doStartup();
+  private void startup(String configLocation) throws Throwable {
+    doStartup(configLocation);
   }
 
   /**
    * 启动flower container
    */
-  public abstract void doStartup() throws Throwable;
+  public abstract void doStartup(String configLocation) throws Throwable;
 }

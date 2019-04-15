@@ -85,6 +85,7 @@ public class ServiceFactory extends AbstractInit {
     ServiceConfig serviceConfig = new ServiceConfig();
     serviceConfig.setServiceName(serviceName);
     serviceConfig.setServiceMeta(serviceMeta);
+    serviceConfig.setApplication(flowerConfig.getName());
     flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig);
 
 
@@ -103,6 +104,7 @@ public class ServiceFactory extends AbstractInit {
     serviceInfo.setClassName(serviceClassName);
     serviceInfo.setServiceMeta(serviceMeta);
     serviceInfo.setServiceName(serviceName);
+    serviceInfo.setApplication(flowerConfig.getName());
     for (Registry registry : registries) {
       registry.register(serviceInfo);
     }
@@ -206,6 +208,8 @@ public class ServiceFactory extends AbstractInit {
             // add service address
             serviceConfig.setAddresses(serviceInfo.getAddresses());
             serviceMeta = serviceInfo.getServiceMeta();
+            serviceConfig.setApplication(serviceInfo.getApplication());
+            break;
           }
         }
       }

@@ -15,8 +15,10 @@
  */
 package com.ly.train.flower.container;
 
+import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
+import com.ly.train.flower.service.container.SpringFlowerFactory;
 
 /**
  * @author leeyazhou
@@ -26,8 +28,9 @@ public class SpringBootstrap extends Bootstrap {
   protected static final Logger logger = LoggerFactory.getLogger(SpringBootstrap.class);
 
   @Override
-  public void doStartup() {
-
+  public void doStartup(String configLocation) {
+    FlowerFactory flowerFactory = new SpringFlowerFactory(configLocation);
+    flowerFactory.start();
   }
 
 }

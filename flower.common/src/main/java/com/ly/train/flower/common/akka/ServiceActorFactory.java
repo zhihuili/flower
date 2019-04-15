@@ -97,7 +97,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
         // "akka.tcp://flower@127.0.0.1:2551/user/$a"
         URL url = serviceConfig.getAddresses().iterator().next();
         String actorPath =
-            String.format(actorPathFormat, flowerConfig.getName(), url.getHost(), url.getPort(), serviceName);
+            String.format(actorPathFormat, serviceConfig.getApplication(), url.getHost(), url.getPort(), serviceName);
         ActorSelection actorSelection = getActorContext().actorSelection(actorPath);
         actorWrapper = new ActorSelectionWrapper(actorSelection).setServiceName(serviceName);
       }

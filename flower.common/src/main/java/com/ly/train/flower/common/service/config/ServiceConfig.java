@@ -33,6 +33,7 @@ public class ServiceConfig implements Serializable {
 
   private static final long serialVersionUID = 1L;
   private String flowName;
+  private String application;
   private String serviceName;
   private ServiceMeta serviceMeta;
   private Set<ServiceConfig> nextServiceConfigs;
@@ -167,6 +168,14 @@ public class ServiceConfig implements Serializable {
       timeout = serviceMeta.getTimeout();
     }
     return timeout;
+  }
+
+  public void setApplication(String application) {
+    this.application = application;
+  }
+
+  public String getApplication() {
+    return application;
   }
 
   /**
