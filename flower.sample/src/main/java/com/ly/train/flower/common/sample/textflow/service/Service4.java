@@ -15,7 +15,6 @@
  */
 package com.ly.train.flower.common.sample.textflow.service;
 
-import java.util.Set;
 import com.ly.train.flower.common.sample.textflow.model.Message1;
 import com.ly.train.flower.common.sample.textflow.model.Message2;
 import com.ly.train.flower.common.service.Service;
@@ -24,11 +23,13 @@ import com.ly.train.flower.common.service.message.ReturnMessage;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
-public class Service4 implements Service<Set<Object>, Message1>, ReturnMessage {
+import java.util.List;
+
+public class Service4 implements Service<List<Object>, Message1>, ReturnMessage {
   static final Logger logger = LoggerFactory.getLogger(Service4.class);
 
   @Override
-  public Message1 process(Set<Object> message, ServiceContext context) {
+  public Message1 process(List<Object> message, ServiceContext context) {
     logger.info("处理任务 ： {}", context.getId());
     Message2 m = new Message2();
     for (Object o : message) {
