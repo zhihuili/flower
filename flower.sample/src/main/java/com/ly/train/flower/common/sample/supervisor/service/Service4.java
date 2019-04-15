@@ -15,16 +15,17 @@
  */
 package com.ly.train.flower.common.sample.supervisor.service;
 
-import java.util.Set;
 import com.ly.train.flower.common.sample.supervisor.model.Message1;
 import com.ly.train.flower.common.sample.supervisor.model.Message2;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
-public class Service4 implements Service<Set<Object>, Message1> {
+import java.util.List;
+
+public class Service4 implements Service<List<Object>, Message1> {
 
   @Override
-  public Message1 process(Set<Object> message, ServiceContext context) {
+  public Message1 process(List<Object> message, ServiceContext context) {
     Message2 m = new Message2();
     for (Object o : message) {
 
