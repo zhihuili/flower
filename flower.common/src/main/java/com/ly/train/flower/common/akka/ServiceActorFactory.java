@@ -150,6 +150,17 @@ public class ServiceActorFactory extends AbstractLifecycle {
           logger.info("akka config ：{}", configBuilder.toString());
           Config config = ConfigFactory.parseString(configBuilder.toString()).withFallback(ConfigFactory.load());
           actorSystem = ActorSystem.create(flowerConfig.getName(), config);
+          Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+              try {
+                flowerFactory.stop();
+              } catch (Exception e) {
+                // nothing
+              }
+            }
+          });
+
         }
       }
     }
@@ -224,4 +235,6 @@ public class ServiceActorFactory extends AbstractLifecycle {
       actorSystem.terminate();
     }
   }
+
+
 }
