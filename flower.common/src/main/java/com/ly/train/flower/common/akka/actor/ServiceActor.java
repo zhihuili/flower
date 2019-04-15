@@ -134,13 +134,13 @@ public class ServiceActor extends AbstractFlowerActor {
     ServiceContextUtil.cleanServiceContext(serviceContext);
     logger.info("子节点 {}：{}", serviceName, refTypes);
     for (RefType refType : refTypes) {
-      Object resultClone = CloneUtil.clone(result);
-      ServiceContext context = serviceContext.newInstance();
-      context.getFlowMessage().setMessage(resultClone);
       // condition fork for one-service to multi-service
       if (refType.getMessageType().isInstance(result)) {
         if (!(result instanceof Condition) || !(((Condition) result).getCondition() instanceof String)
             || stringInStrings(refType.getServiceName(), ((Condition) result).getCondition().toString())) {
+          Object resultClone = CloneUtil.clone(result);
+          ServiceContext context = serviceContext.newInstance();
+          context.getFlowMessage().setMessage(resultClone);
           context.setCurrentServiceName(refType.getServiceName());
           refType.getServiceRouter().asyncCallService(context, getSelf());
         }

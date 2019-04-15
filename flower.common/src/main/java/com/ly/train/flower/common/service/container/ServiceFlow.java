@@ -233,7 +233,7 @@ public final class ServiceFlow {
       Set<ServiceConfig> previousServiceConfigs = findPreviousServiceConfig(header, nextConfig, null);
       if (previousServiceConfigs != null) {
         for (ServiceConfig item : previousServiceConfigs) {
-          if (serviceLoader.loadServiceMeta(item.getServiceName()).isInnerAggregateService()) {
+          if (serviceFactory.loadServiceMeta(item).isInnerAggregateService()) {
             serviceConfig = item;
             break;
           }

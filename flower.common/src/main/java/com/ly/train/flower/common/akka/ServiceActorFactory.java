@@ -109,6 +109,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
           URL url = serviceConfig.getAddresses().iterator().next();
           String actorPath =
               String.format(actorPathFormat, serviceConfig.getApplication(), url.getHost(), url.getPort(), serviceName);
+//          logger.info("远程path: {}", actorPath);
           ActorSelection actorSelection = getActorContext().actorSelection(actorPath);
           actorWrapper = new ActorSelectionWrapper(actorSelection).setServiceName(serviceName);
         }

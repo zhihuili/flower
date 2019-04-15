@@ -2,8 +2,5 @@ name: "LocalFlower"
 host: "127.0.0.1"
 port: 25003
 registry:
-  - url: 
-      - "flower://127.0.0.1:8096"
-  - url:
-     - "flower://127.0.0.1:8096"
+  - url: "flower://127.0.0.1:8096?application=LocalFlower"
 basePackage: com.ly.train.flower

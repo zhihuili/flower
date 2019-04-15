@@ -25,6 +25,7 @@ import com.ly.train.flower.common.akka.ServiceRouter;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.registry.AbstractRegistry;
 import com.ly.train.flower.registry.config.ServiceInfo;
@@ -59,6 +60,7 @@ public class SimpleRegistry extends AbstractRegistry {
     serviceConfig.setServiceName(serviceName);
     serviceConfig.addAddress(getUrl());
     serviceConfig.setLocal(false);
+    serviceConfig.setApplication(url.getParam(Constant.applicationName));
     return flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, 2);
   }
 

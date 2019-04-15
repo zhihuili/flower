@@ -16,6 +16,8 @@
 package com.ly.train.flower.common.util;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author leeyazhou
@@ -28,6 +30,7 @@ public class URL implements Serializable {
   private String protocol;
   private String host;
   private int port;
+  private Map<String, String> params = new HashMap<String, String>();
 
   /**
    * http://www.baidu.com:8080
@@ -36,6 +39,7 @@ public class URL implements Serializable {
    * @return {@link URL}
    */
   public static URL valueOf(String address) {
+    // flower://127.0.0.1:8096?application=LocalFlower
     if (StringUtil.isNotBlank(address)) {
       String[] t = address.replaceAll("/", "").split(":");
       if (t.length == 3) {
@@ -51,6 +55,14 @@ public class URL implements Serializable {
     this.protocol = protocol;
     this.host = host;
     this.port = port;
+  }
+
+  public void addParam(String key, String value) {
+    this.params.put(key, value);
+  }
+
+  public String getParam(String key) {
+    return params.get(key);
   }
 
   public String getProtocol() {
@@ -79,6 +91,14 @@ public class URL implements Serializable {
 
   public static long getSerialversionuid() {
     return serialVersionUID;
+  }
+
+  public void setParams(Map<String, String> params) {
+    this.params = params;
+  }
+
+  public Map<String, String> getParams() {
+    return params;
   }
 
   @Override

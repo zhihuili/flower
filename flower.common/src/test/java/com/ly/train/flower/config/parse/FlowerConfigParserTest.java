@@ -27,12 +27,20 @@ public class FlowerConfigParserTest {
 
   @Test
   public void testParse() {
-
     FlowerConfig flowerConfig = new FlowerConfigParser("flower.yml").parse();
     System.out.println(flowerConfig);
-    flowerConfig = new FlowerConfigParser("conf/flower_25003.yml").parse();
+    System.out.println(flowerConfig.getRegistry());
+  }
+
+  @Test
+  public void testParse1() {
+    FlowerConfig flowerConfig = new FlowerConfigParser("conf/flower_25003.yml").parse();
     System.out.println(flowerConfig);
-    flowerConfig = new FlowerConfigParser("conf/flower_25004.yml").parse();
+  }
+
+  @Test
+  public void testParse2() {
+    FlowerConfig flowerConfig = new FlowerConfigParser("conf/flower_25004.yml").parse();
     System.out.println(flowerConfig);
   }
 }

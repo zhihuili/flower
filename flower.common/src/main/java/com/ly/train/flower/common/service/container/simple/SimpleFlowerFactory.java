@@ -91,7 +91,7 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
     for (RegistryConfig config : registryConfigs) {
       RegistryFactory registryFactory = ExtensionLoader.load(RegistryFactory.class).load(config.getProtocol());
       if (registryFactory != null) {
-        URL url = new URL(config.getProtocol(), config.getHost(), config.getPort());
+        URL url = config.toURL();
         Registry registry = registryFactory.createRegistry(url);
         if (registry instanceof SimpleRegistry) {
           ((SimpleRegistry) registry).setFlowerFactory(this);

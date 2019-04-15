@@ -46,7 +46,7 @@ public class ActorSelectionTest {
     String configLocation3 =
         Thread.currentThread().getContextClassLoader().getResource("conf/flower_25003.yml").getPath();
     flowerFactory2 = new SimpleFlowerFactory(configLocation4);
-    flowerFactory2.init();
+    flowerFactory2.start();
     // flowerFactory2.getServiceFactory().registerService(ServiceA.class.getSimpleName(),
     // ServiceA.class);
     flowerFactory2.getServiceFactory().registerService(ServiceB.class.getSimpleName(), ServiceB.class);
@@ -59,7 +59,7 @@ public class ActorSelectionTest {
     System.out.println("初始化服务2完成，开始初始化服务1");
     System.out.println("初始化服务2完成，开始初始化服务1");
     flowerFactory1 = new SimpleFlowerFactory(configLocation3);
-    flowerFactory1.init();
+    flowerFactory1.start();
     flowerFactory1.getServiceFactory().registerService(ServiceA.class.getSimpleName(), ServiceA.class);
   }
 
@@ -85,7 +85,6 @@ public class ActorSelectionTest {
 
     Object ret = flowerFactory1.getServiceFacade().syncCallService(flowName, message);
     System.out.println("返回结果：" + ret);
-    Thread.sleep(3000);
   }
 
   @Test
@@ -100,7 +99,7 @@ public class ActorSelectionTest {
     serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
     serviceFlow.buildFlow(Arrays.asList(ServiceC1.class, ServiceC2.class), ServiceD.class);
     serviceFlow.build();
-    FlowRouter flowRouter = flowerFactory1.getServiceActorFactory().buildFlowRouter(flowName, 1);
+    FlowRouter flowRouter = flowerFactory1.getServiceActorFactory().buildFlowRouter(flowName, 8);
     flowRouter.asyncCallService(message);
     Thread.sleep(3000);
   }
