@@ -45,6 +45,9 @@ option=$1
 shift
 command=$1
 shift
+config=$1
+shift
+
 
 export LOG_DIR=${FLOWER_HOME}/logs
 mkdir -p "$LOG_DIR"
@@ -73,7 +76,7 @@ case ${option} in
         fi
         rotate_log ${log}
         echo starting ${command}, logging to ${log}
-        nohup nice -n ${FLOWER_NICENESS} ${RUNNER} ${command} $@ >> "$log" 2>&1 < /dev/null &
+        nohup nice -n ${FLOWER_NICENESS} ${RUNNER} ${command} ${config} $@ >> "$log" 2>&1 < /dev/null &
         newpid=$!
         echo ${newpid} > $pid
         sleep 2
