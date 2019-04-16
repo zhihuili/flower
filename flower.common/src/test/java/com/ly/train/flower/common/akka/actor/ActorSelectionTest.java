@@ -43,8 +43,6 @@ public class ActorSelectionTest {
   public static void before() {
     String configLocation4 =
         Thread.currentThread().getContextClassLoader().getResource("conf/flower_25004.yml").getPath();
-    String configLocation3 =
-        Thread.currentThread().getContextClassLoader().getResource("conf/flower_25003.yml").getPath();
     flowerFactory2 = new SimpleFlowerFactory(configLocation4);
     flowerFactory2.start();
     // flowerFactory2.getServiceFactory().registerService(ServiceA.class.getSimpleName(),
@@ -58,6 +56,8 @@ public class ActorSelectionTest {
 
     System.out.println("初始化服务2完成，开始初始化服务1");
     System.out.println("初始化服务2完成，开始初始化服务1");
+    String configLocation3 =
+        Thread.currentThread().getContextClassLoader().getResource("conf/flower_25003.yml").getPath();
     flowerFactory1 = new SimpleFlowerFactory(configLocation3);
     flowerFactory1.start();
     flowerFactory1.getServiceFactory().registerService(ServiceA.class.getSimpleName(), ServiceA.class);
@@ -65,8 +65,8 @@ public class ActorSelectionTest {
 
   @AfterClass
   public static void after() {
-    flowerFactory1.stop();
     flowerFactory2.stop();
+    flowerFactory1.stop();
   }
 
   @Test

@@ -35,7 +35,6 @@ import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.util.Assert;
 import com.ly.train.flower.common.util.StringUtil;
-import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.config.FlowerConfig;
 import com.ly.train.flower.registry.Registry;
 import com.ly.train.flower.registry.config.ServiceInfo;
@@ -90,7 +89,7 @@ public class ServiceFactory extends AbstractInit {
 
 
     Set<Registry> registries = flowerFactory.getRegistry();
-    logger.info("注册中心 {} : {}", serviceName, registries.size());
+    // logger.info("注册中心 {} : {}", serviceName, registries.size());
     if (registries.isEmpty()) {
       return;
     }
@@ -205,7 +204,7 @@ public class ServiceFactory extends AbstractInit {
       List<ServiceInfo> serviceInfos = registry.getProvider(null);
       if (serviceInfos != null) {
         for (ServiceInfo serviceInfo : serviceInfos) {
-          logger.info("注册中心获取连接: {}" , serviceInfo);
+          // logger.info("注册中心获取连接: {}", serviceInfo);
           if (serviceInfo.getServiceName().equals(serviceConfig.getServiceName())) {
             // add service address
             serviceConfig.setAddresses(serviceInfo.getAddresses());
