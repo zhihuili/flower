@@ -19,7 +19,7 @@ Flower.center基于spring-boot开发，通过打包成fat-jar后通过命令行�
 
 ### 二. 启动业务Flower容器
 Flower部署支持Flower容器和Spring容器，下面的例子基于spring-boot演示
-#### 1. 创建配置文件flower.yml
+#### 2.1 创建配置文件flower.yml
 ``` 
 name: "LocalFlower"
 basePackage: com.ly.train.order.service
@@ -29,7 +29,7 @@ registry:
    - url:  "flower://127.0.0.1:8096?application=LocalFlower"
 ```
 
-#### 2. 配置FlowerFactory
+#### 2.2 配置FlowerFactory
 
 ``` 
 @Configuration
@@ -45,7 +45,7 @@ public class FlowerConfiguration {
 
 ```
 
-#### 3. 开发flower服务
+#### 2.3 开发flower服务
 ``` 
 @FlowerService
 public class CreateOrderService implements Service<Order, Boolean> {
@@ -66,7 +66,7 @@ public class CreateOrderService implements Service<Order, Boolean> {
 
 
 
-#### 4. 创建启动类
+#### 2.4 创建启动类
 ```
 @SpringBootApplication
 @ComponentScan("com.ly.train.order")
@@ -87,7 +87,7 @@ public class OrderPlatformApplication {
 
 > Flower网关服务器基于spring-mvc展示，跟flower服务一样，需要提供flower.yml配置信息，并配置FlowerFactory
 
-#### 创建flower.yml
+#### 3.1 创建flower.yml
 
 ``` 
 name: "LocalFlower"
@@ -98,7 +98,7 @@ port: 25006
 registry:
    - url: "flower://127.0.0.1:8096?application=LocalFlower"
 ```
-#### 配置FlowerFactory
+#### 3.2 配置FlowerFactory
 ``` 
 @Configuration
 public class FlowerConfiguration {
@@ -112,7 +112,7 @@ public class FlowerConfiguration {
 }
 ```
 
-#### 开发Flower服务
+#### 3.3 开发Flower服务
 ``` 
 @FlowerService(type = FlowerType.AGGREGATE)// 聚合服务类型
 public class EndService extends AbstractService<List<Object>, Object> implements Flush, HttpComplete, Complete {
@@ -136,7 +136,7 @@ public class EndService extends AbstractService<List<Object>, Object> implements
 
 ```
 
-#### Controller
+#### 3.4 开发网关Controller
 ``` 
 @RestController
 @RequestMapping("/order/")
@@ -165,7 +165,7 @@ public class CreateOrderController extends FlowerController {
 ```
 > 集成Flower提供的基类FlowerController，使用方可以使用SpringMVC提供的注解，最大程度上保留SpringMVC的功能，学习成本几乎为零，里面封装了一些细节，让使用更关注业务开发。如果熟悉Flower的使用方式，使用方也可以完全自行扩展。
 
-#### 启动类
+#### 3.5 启动类
 ``` 
 @SpringBootApplication
 @ComponentScan("com.ly.train.web")
