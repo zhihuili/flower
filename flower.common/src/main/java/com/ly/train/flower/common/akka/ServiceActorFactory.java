@@ -108,10 +108,16 @@ public class ServiceActorFactory extends AbstractLifecycle {
           // "akka.tcp://flower@127.0.0.1:2551/user/$a"
           URL url = serviceConfig.getAddresses().iterator().next();
           String actorPath =
-              String.format(actorPathFormat, flowerConfig.getName(), url.getHost(), url.getPort(), serviceName);
+              String.format(actorPathFormat, serviceConfig.getApplication(), url.getHost(), url.getPort(), serviceName);
+          // logger.info("远程path: {}", actorPath);
           ActorSelection actorSelection = getActorContext().actorSelection(actorPath);
+          // CompletionStage<ActorRef> st =
+          // actorSelection.resolveOne(java.time.Duration.ofSeconds(3));
+          // ActorRef actorRef = st.toCompletableFuture().get();
+          // actorWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
           actorWrapper = new ActorSelectionWrapper(actorSelection).setServiceName(serviceName);
         }
+        // logger.info("创建Actor {} : {}", serviceName, flowerConfig.getPort());
         if (logger.isTraceEnabled()) {
           logger.trace("create actor {} ： {}", serviceName, actorWrapper);
         }
@@ -164,6 +170,17 @@ public class ServiceActorFactory extends AbstractLifecycle {
           logger.info("akka config ：{}", configBuilder.toString());
           Config config = ConfigFactory.parseString(configBuilder.toString()).withFallback(ConfigFactory.load());
           actorSystem = ActorSystem.create(flowerConfig.getName(), config);
+          Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+              try {
+                flowerFactory.stop();
+              } catch (Exception e) {
+                // nothing
+              }
+            }
+          });
+
         }
       }
     }
@@ -255,4 +272,6 @@ public class ServiceActorFactory extends AbstractLifecycle {
       actorSystem.terminate();
     }
   }
+
+
 }

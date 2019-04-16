@@ -71,7 +71,7 @@ public abstract class FlowerController implements InitializingBean {
   }
 
   /**
-   * 定义数据处理流
+   * 定义数据处理流程
    * 
    * @see ServiceFlow
    */
@@ -82,7 +82,7 @@ public abstract class FlowerController implements InitializingBean {
   }
 
   /**
-   * 获取流名称
+   * 获取流程名称
    * 
    * @return flowName
    */

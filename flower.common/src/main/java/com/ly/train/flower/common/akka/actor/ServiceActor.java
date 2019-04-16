@@ -104,8 +104,6 @@ public class ServiceActor extends AbstractFlowerActor {
           + ", param : " + fm.getMessage(), e);
     }
 
-    // logger.info("同步处理 ： {}, hasChild : {}", serviceContext.isSync(),
-    // hasChildActor());
     Set<RefType> nextActorRef = getNextServiceActors(serviceContext);
     if (serviceContext.isSync() && CollectionUtil.isEmpty(nextActorRef)) {
       ActorRef actor = syncActors.get(serviceContext.getId());
@@ -135,13 +133,13 @@ public class ServiceActor extends AbstractFlowerActor {
     }
     ServiceContextUtil.cleanServiceContext(serviceContext);
     for (RefType refType : refTypes) {
-      Object resultClone = CloneUtil.clone(result);
-      ServiceContext context = serviceContext.newInstance();
-      context.getFlowMessage().setMessage(resultClone);
       // condition fork for one-service to multi-service
       if (refType.getMessageType().isInstance(result)) {
         if (!(result instanceof Condition) || !(((Condition) result).getCondition() instanceof String)
             || stringInStrings(refType.getServiceName(), ((Condition) result).getCondition().toString())) {
+          Object resultClone = CloneUtil.clone(result);
+          ServiceContext context = serviceContext.newInstance();
+          context.getFlowMessage().setMessage(resultClone);
           context.setCurrentServiceName(refType.getServiceName());
           refType.getServiceRouter().asyncCallService(context, getSelf());
         }
@@ -159,8 +157,8 @@ public class ServiceActor extends AbstractFlowerActor {
     if (this.service == null) {
       this.service = flowerFactory.getServiceFactory().getServiceLoader().loadService(serviceName);
       if (service instanceof Aggregate) {
-        int num = flowerFactory.getServiceFactory()
-            .getOrCreateServiceFlow(serviceContext.getFlowName()).getServiceConfig(serviceName).getJointSourceNumber();
+        int num = flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
+            .getServiceConfig(serviceName).getJointSourceNumber();
         ((AggregateService) service).setSourceNumber(num);
       }
     }

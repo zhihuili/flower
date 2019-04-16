@@ -43,21 +43,21 @@ public class ServiceManager {
   private Timer timer = new Timer("flower-service-scanner");
 
   public ServiceManager() {
-    timer.schedule(new TimerTask() {
-
-      @Override
-      public void run() {
-        Set<String> keys = CacheManager.getAllKey();
-        logger.info(
-            "---------------------scan service list start--------------------------------------------------------------");
-        for (String key : keys) {
-          Cache<?> cache = CacheManager.getContent(key);
-          logger.info("缓存中的数据 {} : {}", key, JSONObject.toJSONString(cache, true));
-        }
-        logger.info(
-            "----------------------scan service list end---------------------------------------------------------------");
-      }
-    }, 3000, TimeUnit.SECONDS.toMillis(4));
+//    timer.schedule(new TimerTask() {
+//
+//      @Override
+//      public void run() {
+//        Set<String> keys = CacheManager.getAllKey();
+//        logger.info(
+//            "---------------------scan service list start--------------------------------------------------------------");
+//        for (String key : keys) {
+//          Cache<?> cache = CacheManager.getContent(key);
+//          logger.info("缓存中的数据 {} : {}", key, JSONObject.toJSONString(cache, true));
+//        }
+//        logger.info(
+//            "----------------------scan service list end---------------------------------------------------------------");
+//      }
+//    }, 3000, TimeUnit.SECONDS.toMillis(4));
   }
 
 

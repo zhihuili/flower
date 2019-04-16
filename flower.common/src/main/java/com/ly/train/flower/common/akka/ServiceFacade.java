@@ -76,10 +76,9 @@ public class ServiceFacade {
    * @param flowName flowName
    * @param message message
    * @return object
-   * @throws Exception
    */
-  public Object syncCallService(String flowName, Object message) throws Exception {
-    FlowRouter serviceRouter = buildFlowRouter(flowName, 2);
+  public Object syncCallService(String flowName, Object message) {
+    FlowRouter serviceRouter = buildFlowRouter(flowName, -1);
     return serviceRouter.syncCallService(message);
   }
 
@@ -87,7 +86,7 @@ public class ServiceFacade {
    * @deprecated serviceName 不必须，因为可以从流程中获取到首个服务
    */
   @Deprecated
-  public Object syncCallService(String flowName, String serviceName, Object message) throws Exception {
+  public Object syncCallService(String flowName, String serviceName, Object message) {
     return syncCallService(flowName, message);
   }
 

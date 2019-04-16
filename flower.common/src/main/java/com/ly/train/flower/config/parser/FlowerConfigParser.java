@@ -40,6 +40,7 @@ public class FlowerConfigParser implements ConfigParser<FlowerConfig> {
 
   @Override
   public FlowerConfig parse() {
+    FlowerConfig config = null;
     InputStream is = null;
     try {
       logger.info("parse FlowerConfig, configLocation : {}", configLocation);
@@ -51,13 +52,16 @@ public class FlowerConfigParser implements ConfigParser<FlowerConfig> {
         is = new FileInputStream(ResourceUtil.getFile(configLocation));
       }
       if (is != null) {
-        return new Yaml().loadAs(is, FlowerConfig.class);
+        config = new Yaml().loadAs(is, FlowerConfig.class);
+        logger.info("flowerConfig : {}", config);
       }
+      return config;
     } catch (Exception e) {
       logger.error("fail to parse : " + configLocation, e);
     } finally {
       IOUtil.close(is);
     }
-    return new FlowerConfig();
+    config = new FlowerConfig();
+    return config;
   }
 }

@@ -78,16 +78,10 @@ public class ServiceInfo implements Serializable {
     this.createTime = createTime;
   }
 
-  /**
-   * @param application the application to set
-   */
   public void setApplication(String application) {
     this.application = application;
   }
 
-  /**
-   * @return the application
-   */
   public String getApplication() {
     return application;
   }

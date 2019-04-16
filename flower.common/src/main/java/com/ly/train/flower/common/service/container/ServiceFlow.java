@@ -233,7 +233,7 @@ public final class ServiceFlow {
       Set<ServiceConfig> previousServiceConfigs = findPreviousServiceConfig(header, nextConfig, null);
       if (previousServiceConfigs != null) {
         for (ServiceConfig item : previousServiceConfigs) {
-          if (serviceLoader.loadServiceMeta(item.getServiceName()).isInnerAggregateService()) {
+          if (serviceFactory.loadServiceMeta(item).isInnerAggregateService()) {
             serviceConfig = item;
             break;
           }
@@ -363,6 +363,7 @@ public final class ServiceFlow {
     ServiceConfig serviceConfig = serviceConfigsCache.get(serviceName);
     if (serviceConfig == null) {
       serviceConfig = new ServiceConfig();
+      serviceConfig.addAddress(flowerFactory.getFlowerConfig().toURL());
       serviceConfig.setFlowName(flowName);
       serviceConfig.setServiceName(serviceName);
       serviceConfig.setIndex(index.getAndIncrement());

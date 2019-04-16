@@ -31,5 +31,9 @@
 			<groupId>com.ly.train</groupId>
 			<artifactId>flower.common</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.ly.train</groupId>
+			<artifactId>flower.web</artifactId>
+		</dependency>
 	</dependencies>
 </project>

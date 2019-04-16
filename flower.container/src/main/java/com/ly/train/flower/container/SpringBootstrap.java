@@ -15,6 +15,7 @@
  */
 package com.ly.train.flower.container;
 
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
@@ -26,8 +27,18 @@ public class SpringBootstrap extends Bootstrap {
   protected static final Logger logger = LoggerFactory.getLogger(SpringBootstrap.class);
 
   @Override
-  public void doStartup() {
+  public void doStartup(String configLocation) {
 
+    ClassPathXmlApplicationContext applicationContext = null;
+    try {
+      applicationContext = new ClassPathXmlApplicationContext(configLocation);
+      applicationContext.start();
+    } catch (Exception e) {
+      if (applicationContext != null) {
+        applicationContext.close();
+      }
+      logger.error("", e);
+    }
+    logger.info("spring初始化完成");
   }
-
 }

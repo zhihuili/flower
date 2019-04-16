@@ -26,10 +26,11 @@ import com.ly.train.flower.logging.LoggerFactory;
  */
 public class FlowerBootstrap extends Bootstrap {
   protected static final Logger logger = LoggerFactory.getLogger(FlowerBootstrap.class);
+
   @Override
-  public void doStartup() {
-    FlowerFactory flowerFactory = new SimpleFlowerFactory();
-    flowerFactory.init();
+  public void doStartup(String configLocation) {
+    FlowerFactory flowerFactory = new SimpleFlowerFactory(configLocation);
+    flowerFactory.start();
   }
 
 }

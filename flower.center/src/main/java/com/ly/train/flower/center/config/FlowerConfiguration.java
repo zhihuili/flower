@@ -28,7 +28,7 @@ import com.ly.train.flower.service.container.SpringFlowerFactory;
 public class FlowerConfiguration {
 
   @Bean
-  public FlowerFactory flowerFactory() {
+  public static FlowerFactory flowerFactory() {
     FlowerFactory flowerFactory = new SpringFlowerFactory();
     flowerFactory.init();
     return flowerFactory;
