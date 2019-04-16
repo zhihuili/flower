@@ -183,7 +183,7 @@ public class WebApplication {
 
 
 ### 实例项目细节
-[flower实例](https://github.com/leeyazhou/flower.showcase.git)
+[flower分布式实例](https://github.com/leeyazhou/flower.showcase.git)
 `https://github.com/leeyazhou/flower.showcase.git`
 
 # More
