@@ -9,7 +9,9 @@
 
 ## 开发流程
 一. 启动Flower.center注册中心
+
 二. 开发Flower Service，启动业务服务Flower容器，自动向注册中心注册服务
+
 三. 开发Flower web网关，启动Flower网关服务，编排流程
 
 ### 一. 注册中心
