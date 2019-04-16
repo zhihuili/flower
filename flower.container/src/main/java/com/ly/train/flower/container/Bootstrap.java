@@ -15,7 +15,10 @@
  */
 package com.ly.train.flower.container;
 
+import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import com.ly.train.flower.common.loader.FlowerClassLoader;
 import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.logging.Logger;
@@ -27,19 +30,19 @@ import com.ly.train.flower.logging.LoggerFactory;
  */
 public abstract class Bootstrap {
 
+  private static final Logger logger = LoggerFactory.getLogger(Bootstrap.class);
 
   public static void main(String[] args) {
     String mainClass = "com.ly.train.flower.container.SpringBootstrap";
-    final Logger logger = LoggerFactory.getLogger(Bootstrap.class);
     logger.info("flower start class : {}", mainClass);
     try {
-      ClassLoader classLoader = createClassLoader();
+      String flowerHome = System.getProperty(Constant.flowerHome);
+      ClassLoader classLoader = createClassLoader(flowerHome);
       @SuppressWarnings("unchecked")
       Class<Bootstrap> bootstrapClass = (Class<Bootstrap>) Class.forName(mainClass, true, classLoader);
       Bootstrap bootstrap = bootstrapClass.newInstance();
 
       String configLocation = System.getProperty(Constant.springConfigLocationKey);
-      logger.info("配置信息目录：{}", configLocation);
       bootstrap.startup(configLocation);
     } catch (Throwable e) {
       logger.error("fail to start flower container.", e);
@@ -47,8 +50,23 @@ public abstract class Bootstrap {
     }
   }
 
-  private static ClassLoader createClassLoader() {
-    ClassLoader classLoader = new FlowerClassLoader(new URL[0], Bootstrap.class.getClassLoader());
+  private static ClassLoader createClassLoader(String flowerHome) {
+    String libs = flowerHome + "/libs/";
+    List<URL> urls = new ArrayList<URL>();
+    File file = new File(libs);
+    try {
+      if (file.exists()) {
+        for (String f : file.list()) {
+          urls.add(new URL("file:" + libs + f));
+        }
+      }
+    } catch (Exception e) {
+      logger.error("", e);
+    }
+
+    URL[] u = new URL[urls.size()];
+
+    ClassLoader classLoader = new FlowerClassLoader(urls.toArray(u), Bootstrap.class.getClassLoader());
     return classLoader;
   }
 

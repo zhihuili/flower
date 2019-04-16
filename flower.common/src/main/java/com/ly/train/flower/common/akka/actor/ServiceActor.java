@@ -132,7 +132,6 @@ public class ServiceActor extends AbstractFlowerActor {
       return;
     }
     ServiceContextUtil.cleanServiceContext(serviceContext);
-    logger.info("子节点 {}：{}", serviceName, refTypes);
     for (RefType refType : refTypes) {
       // condition fork for one-service to multi-service
       if (refType.getMessageType().isInstance(result)) {

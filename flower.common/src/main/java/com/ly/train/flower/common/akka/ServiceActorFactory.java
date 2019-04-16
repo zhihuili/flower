@@ -109,7 +109,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
           URL url = serviceConfig.getAddresses().iterator().next();
           String actorPath =
               String.format(actorPathFormat, serviceConfig.getApplication(), url.getHost(), url.getPort(), serviceName);
-//           logger.info("远程path: {}", actorPath);
+          // logger.info("远程path: {}", actorPath);
           ActorSelection actorSelection = getActorContext().actorSelection(actorPath);
           // CompletionStage<ActorRef> st =
           // actorSelection.resolveOne(java.time.Duration.ofSeconds(3));
@@ -117,7 +117,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
           // actorWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
           actorWrapper = new ActorSelectionWrapper(actorSelection).setServiceName(serviceName);
         }
-        logger.info("创建Actor {} : {}", serviceName, flowerConfig.getPort());
+        // logger.info("创建Actor {} : {}", serviceName, flowerConfig.getPort());
         if (logger.isTraceEnabled()) {
           logger.trace("create actor {} ： {}", serviceName, actorWrapper);
         }

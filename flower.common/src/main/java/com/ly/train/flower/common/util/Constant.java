@@ -41,6 +41,7 @@ public class Constant {
    */
   public static final String flowerConfigLocationKey = "flower.config.location";
   public static final String springConfigLocationKey = "spring.config.location";
+  public static final String flowerHome = "flower.home";
 
   /**
    * 默认超时时间3秒
