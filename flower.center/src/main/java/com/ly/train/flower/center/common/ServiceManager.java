@@ -21,15 +21,12 @@ package com.ly.train.flower.center.common;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import com.alibaba.fastjson.JSONObject;
-import com.ly.train.flower.center.common.cache.Cache;
-import com.ly.train.flower.center.common.cache.CacheManager;
 import com.ly.train.flower.common.service.config.ServiceConfig;
+import com.ly.train.flower.common.util.cache.Cache;
+import com.ly.train.flower.common.util.cache.CacheManager;
 import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
@@ -38,34 +35,37 @@ import com.ly.train.flower.registry.config.ServiceInfo;
  */
 @Service
 public class ServiceManager {
-  private static final Logger logger = LoggerFactory.getLogger(ServiceManager.class);
+  static final Logger logger = LoggerFactory.getLogger(ServiceManager.class);
 
-  private Timer timer = new Timer("flower-service-scanner");
+  protected Timer timer = new Timer("flower-service-scanner");
+  private CacheManager cacheManager = CacheManager.get("flower_center");
 
   public ServiceManager() {
-//    timer.schedule(new TimerTask() {
-//
-//      @Override
-//      public void run() {
-//        Set<String> keys = CacheManager.getAllKey();
-//        logger.info(
-//            "---------------------scan service list start--------------------------------------------------------------");
-//        for (String key : keys) {
-//          Cache<?> cache = CacheManager.getContent(key);
-//          logger.info("缓存中的数据 {} : {}", key, JSONObject.toJSONString(cache, true));
-//        }
-//        logger.info(
-//            "----------------------scan service list end---------------------------------------------------------------");
-//      }
-//    }, 3000, TimeUnit.SECONDS.toMillis(4));
+    // timer.schedule(new TimerTask() {
+    //
+    // @Override
+    // public void run() {
+    // Set<String> keys = CacheManager.getAllKey();
+    // logger.info(
+    // "---------------------scan service list
+    // start--------------------------------------------------------------");
+    // for (String key : keys) {
+    // Cache<?> cache = CacheManager.getContent(key);
+    // logger.info("缓存中的数据 {} : {}", key, JSONObject.toJSONString(cache, true));
+    // }
+    // logger.info(
+    // "----------------------scan service list
+    // end---------------------------------------------------------------");
+    // }
+    // }, 3000, TimeUnit.SECONDS.toMillis(4));
   }
 
 
   public boolean addServiceInfo(ServiceInfo serviceInfo) {
-    Cache<ServiceInfo> cache = CacheManager.getContent(serviceInfo.getClassName());
+    Cache<ServiceInfo> cache = cacheManager.getContent(serviceInfo.getClassName());
     if (cache == null) {
-      CacheManager.putContent(serviceInfo.getClassName(), serviceInfo, 6000);
-      cache = CacheManager.getContent(serviceInfo.getClassName());
+      cacheManager.add(serviceInfo.getClassName(), serviceInfo, 6000L);
+      cache = cacheManager.getContent(serviceInfo.getClassName());
     } else {
       cache.getValue().getAddresses().addAll(serviceInfo.getAddresses());
       cache.setTimeToLive(6000);
@@ -75,9 +75,9 @@ public class ServiceManager {
 
   public Set<ServiceInfo> getAllServiceInfo() {
     Set<ServiceInfo> ret = new HashSet<ServiceInfo>();
-    Set<String> keys = CacheManager.getAllKey();
+    Set<String> keys = cacheManager.getAllKey();
     for (String key : keys) {
-      Cache<Object> cache = CacheManager.getContent(key);
+      Cache<Object> cache = cacheManager.getContent(key);
       if (cache != null && cache.getValue() instanceof ServiceInfo) {
         ret.add((ServiceInfo) cache.getValue());
       }
@@ -86,15 +86,15 @@ public class ServiceManager {
   }
 
   public boolean addServiceConfig(ServiceConfig serviceConfig) {
-    CacheManager.putContent(serviceConfig.getFlowName(), serviceConfig, 6000);
+    cacheManager.add(serviceConfig.getFlowName(), serviceConfig, 6000);
     return true;
   }
 
   public Set<ServiceConfig> getAllServiceConfig() {
     Set<ServiceConfig> ret = new HashSet<ServiceConfig>();
-    Set<String> keys = CacheManager.getAllKey();
+    Set<String> keys = cacheManager.getAllKey();
     for (String key : keys) {
-      Cache<Object> cache = CacheManager.getContent(key);
+      Cache<Object> cache = cacheManager.getContent(key);
       if (cache != null && cache.getValue() instanceof ServiceConfig) {
         ret.add((ServiceConfig) cache.getValue());
       }

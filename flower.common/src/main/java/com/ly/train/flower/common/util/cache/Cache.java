@@ -16,7 +16,6 @@
 package com.ly.train.flower.common.util.cache;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class Cache<T> implements Serializable {
   private static final long serialVersionUID = 1L;
@@ -59,7 +58,7 @@ public class Cache<T> implements Serializable {
   }
 
   public Cache<T> setTimeToLive(long timeToLive) {
-    this.timeToLive = timeToLive + new Date().getTime();
+    this.timeToLive = timeToLive + System.currentTimeMillis();
     return this;
   }
 

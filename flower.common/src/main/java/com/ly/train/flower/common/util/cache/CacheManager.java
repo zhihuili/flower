@@ -24,14 +24,18 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.util.concurrent.NamedThreadFactory;
 
 public class CacheManager {
   private static final Logger log = LoggerFactory.getLogger(CacheManager.class);
-  private static CacheManager instance;
-  private ScheduledExecutorService executorService = null;
+  private static final String defaultCacheManager = "DEFAULT_CACHE_MANAGER";
+  private static final ConcurrentMap<String, CacheManager> cacheManagerMap = new ConcurrentHashMap<>();
+  private static final AtomicBoolean init = new AtomicBoolean();
+  private static ScheduledExecutorService executorService = null;
+
   private final ConcurrentMap<String, Cache<?>> cacheMap = new ConcurrentHashMap<String, Cache<?>>();
 
   private void clearCache() {
@@ -47,15 +51,42 @@ public class CacheManager {
   /**
    * This class is singleton so private constructor is used.
    */
-  private CacheManager() {
+  private CacheManager() {}
+
+  public static CacheManager get() {
+    return get(defaultCacheManager);
+  }
+
+  public static CacheManager get(String name) {
+    CacheManager cacheManager = cacheManagerMap.get(name);
+    if (cacheManager == null) {
+      synchronized (cacheManagerMap) {
+        cacheManager = cacheManagerMap.get(name);
+        if (cacheManager == null) {
+          cacheManager = new CacheManager();
+          cacheManagerMap.putIfAbsent(name, cacheManager);
+          init();
+        }
+      }
+    }
+    return cacheManager;
+  }
+
+  private static void init() {
     try {
-      this.executorService = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("CacheScanner"));
+      if (!init.compareAndSet(false, true)) {
+        return;
+      }
+      executorService = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("CacheScanner"));
       executorService.scheduleAtFixedRate(new Runnable() {
         @Override
         public void run() {
           try {
             // log.info("CacheManager clear cache start");
-            clearCache();
+            // clearCache();
+            for (Entry<String, CacheManager> entry : cacheManagerMap.entrySet()) {
+              entry.getValue().clearCache();
+            }
           } catch (Exception ex) {
             log.error("clearCache error ", ex);
           } finally {
@@ -67,17 +98,7 @@ public class CacheManager {
       log.error("CacheManager init timer error", e);
     }
 
-  }
 
-  public static CacheManager get() {
-    if (instance == null) {
-      synchronized (log) {
-        if (instance == null) {
-          instance = new CacheManager();
-        }
-      }
-    }
-    return instance;
   }
 
   /**
@@ -111,7 +132,7 @@ public class CacheManager {
   /**
    * Invalidates a single cache item
    * 
-   * @param key
+   * @param key key
    */
   public void invalidate(String key) {
     cacheMap.remove(key);
@@ -125,6 +146,11 @@ public class CacheManager {
    */
   private <T> void putCache(String key, Cache<T> object) {
     cacheMap.put(key, object);
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T> Cache<T> add(String key, Cache<T> object) {
+    return (Cache<T>) cacheMap.putIfAbsent(key, object);
   }
 
   /**
@@ -150,9 +176,19 @@ public class CacheManager {
    * 
    * @param key
    * @param content
-   * @param ttl ms
+   * @param ttl ms 有效时间
+   * @return
    */
-  public <T> void putContent(String key, T content, long ttl) {
+  public <T> Cache<T> add(String key, T content, long ttl) {
+    Cache<T> cache = new Cache<>();
+    cache.setKey(key);
+    cache.setValue(content);
+    cache.setTimeToLive(ttl);
+    cache.setExpired(false);
+    return (Cache<T>) add(key, cache);
+  }
+
+  public <T> void set(String key, T content, long ttl) {
     Cache<T> cache = new Cache<>();
     cache.setKey(key);
     cache.setValue(content);
