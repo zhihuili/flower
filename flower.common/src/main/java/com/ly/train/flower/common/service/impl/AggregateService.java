@@ -17,17 +17,16 @@ package com.ly.train.flower.common.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import com.ly.train.flower.common.annotation.Scope;
 import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.message.FlowMessage;
-import com.ly.train.flower.common.service.message.TimerMessage;
+import com.ly.train.flower.common.util.Assert;
 import com.ly.train.flower.common.util.Constant;
+import com.ly.train.flower.common.util.cache.Cache;
+import com.ly.train.flower.common.util.cache.CacheManager;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
@@ -39,12 +38,7 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
   private int sourceNumber = 0;
   private Long timeoutMillis = DefaultTimeOutMilliseconds;
 
-  // <messageId,Set<message>>
-  private static final ConcurrentMap<String, List<Object>> resultMap = new ConcurrentHashMap<String, List<Object>>();
-  // <messageId,sourceNumber>
-  private static final  ConcurrentMap<String, AtomicInteger> resultNumberMap = new ConcurrentHashMap<>();
-  // <messageId,addedTime>
-  private static final  ConcurrentMap<String, Long> resultDateMap = new ConcurrentHashMap<String, Long>();
+  private static final String cacheKeyPrefix = "FLOWER_AGGREGATE_SERVICE_";
 
   public AggregateService() {}
 
@@ -54,32 +48,39 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
 
   @Override
   public List<Object> process(Object message, ServiceContext context) {
-    FlowMessage flowMessage = context.getFlowMessage();
-    if (flowMessage instanceof TimerMessage) {
-      doClean();
-      return null;
-    }
+    FlowMessage<?> flowMessage = context.getFlowMessage();
 
     final String transactionId = flowMessage.getTransactionId();
-    // first joint message
-    if (!resultMap.containsKey(transactionId)) {
-      List<Object> objectSet = new ArrayList<Object>();
-      resultMap.put(transactionId, objectSet);
-      resultNumberMap.put(transactionId, new AtomicInteger(sourceNumber));
-      resultDateMap.put(transactionId, System.currentTimeMillis());
-    }
-    resultMap.get(transactionId).add(flowMessage.getMessage());
-
-    AtomicInteger number = resultNumberMap.get(transactionId);
-    if (number != null && number.decrementAndGet() <= 0) {
-      List<Object> returnObject = resultMap.get(transactionId);
-      resultMap.remove(transactionId);
-      resultNumberMap.remove(transactionId);
-      resultDateMap.remove(transactionId);
-
+    AggregateInfo aggregateInfo = getServiceInfo(context.getFlowName(), transactionId);
+    aggregateInfo.addResult(flowMessage.getMessage());
+    if (aggregateInfo.getResultNum().get() <= 0) {
+      clear(context.getFlowName(), transactionId);
+      List<Object> returnObject = aggregateInfo.getResults();
       return buildMessage(returnObject);
     }
     return null;
+  }
+
+  private void clear(final String flowName, final String transactionId) {
+    Assert.notNull(flowName, "flowName can't be null .");
+    CacheManager.get(cacheKeyPrefix + flowName).invalidate(transactionId);
+  }
+
+  private AggregateInfo getServiceInfo(final String flowName, final String transactionId) {
+    Assert.notNull(flowName, "flowName can't be null .");
+    CacheManager cacheManager = CacheManager.get(cacheKeyPrefix + flowName);
+    Cache<AggregateInfo> cache = cacheManager.getContent(transactionId);
+    AggregateInfo aggregateInfo = null;
+    if (cache == null) {
+      aggregateInfo = new AggregateInfo(transactionId, sourceNumber);
+      Cache<AggregateInfo> temp = cacheManager.add(transactionId, aggregateInfo, timeoutMillis);
+      if (temp != null) {
+        aggregateInfo = temp.getValue();
+      }
+    } else {
+      aggregateInfo = cache.getValue();
+    }
+    return aggregateInfo;
   }
 
   /**
@@ -97,13 +98,44 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
     this.sourceNumber = sourceNumber;
   }
 
-  private void doClean() {
-    long currentTimeMillis = System.currentTimeMillis();
-    for (Map.Entry<String, Long> entry : resultDateMap.entrySet())
-      if (currentTimeMillis - entry.getValue() > this.timeoutMillis) {
-        resultDateMap.remove(entry.getKey());
-        resultMap.remove(entry.getKey());
-        resultNumberMap.remove(entry.getKey());
+
+  // cahce object
+  class AggregateInfo {
+    private final long createTime = System.currentTimeMillis();
+    private final String id;
+    private List<Object> results;
+    private AtomicInteger resultNum;
+
+    public AggregateInfo(String id, int resultNum) {
+      Assert.notNull(id, "cacheKey can't be null.");
+      this.id = id;
+      this.resultNum = new AtomicInteger(resultNum);
+    }
+
+    public AggregateInfo addResult(Object result) {
+      if (results == null) {
+        results = new ArrayList<Object>();
       }
+      results.add(result);
+      this.resultNum.decrementAndGet();
+      return this;
+    }
+
+    public List<Object> getResults() {
+      return results;
+    }
+
+    public AtomicInteger getResultNum() {
+      return resultNum;
+    }
+
+    public String getId() {
+      return id;
+    }
+
+    public boolean isTimeout() {
+      return System.currentTimeMillis() - createTime > AggregateService.this.timeoutMillis;
+    }
+
   }
 }

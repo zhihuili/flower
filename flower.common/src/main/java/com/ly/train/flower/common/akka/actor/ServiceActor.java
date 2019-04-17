@@ -16,7 +16,6 @@
 package com.ly.train.flower.common.akka.actor;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -42,12 +41,10 @@ import com.ly.train.flower.common.util.CloneUtil;
 import com.ly.train.flower.common.util.CollectionUtil;
 import com.ly.train.flower.common.util.ExceptionUtil;
 import com.ly.train.flower.common.util.StringUtil;
+import com.ly.train.flower.common.util.cache.Cache;
+import com.ly.train.flower.common.util.cache.CacheManager;
 import akka.actor.ActorRef;
 import akka.actor.Props;
-import akka.dispatch.Futures;
-import scala.concurrent.Future;
-import scala.concurrent.duration.Duration;
-import scala.concurrent.duration.FiniteDuration;
 
 /**
  * Wrap service by actor, make service driven by message.
@@ -59,10 +56,11 @@ public class ServiceActor extends AbstractFlowerActor {
   /**
    * 同步要求结果的actor
    */
-  private static final Map<String, ActorRef> syncActors = new ConcurrentHashMap<String, ActorRef>();
+  // private static final Map<String, ActorRef> syncActors = new
+  // ConcurrentHashMap<String, ActorRef>();
 
-  protected final Future<String> delayFuture = Futures.successful("delay");
-  protected final FiniteDuration maxTimeout = Duration.create(9999, TimeUnit.DAYS);
+  private static final Long defaultTimeout = TimeUnit.SECONDS.toMillis(10);
+  private static final String serviceActorCachePrefix = "FLOWER_SERVICE_ACTOR_";
 
   private FlowerService service;
   private int count;
@@ -87,8 +85,9 @@ public class ServiceActor extends AbstractFlowerActor {
   @Override
   public void onServiceContextReceived(ServiceContext serviceContext) throws Throwable {
     FlowMessage flowMessage = serviceContext.getFlowMessage();
-    if (needCacheActorRef(serviceContext)) {
-      syncActors.putIfAbsent(serviceContext.getId(), getSender());
+    if (serviceContext.isSync()) {
+      CacheManager.get(serviceActorCachePrefix + serviceContext.getFlowName()).add(serviceContext.getId(), getSender(),
+          defaultTimeout);
     }
 
     FlowMessage<?> resultMessage = new FlowMessage<>();
@@ -107,22 +106,14 @@ public class ServiceActor extends AbstractFlowerActor {
           + "\r\n, param : " + flowMessage.getMessage(), e);
       resultMessage.setException(ExceptionUtil.getErrorMessage(e2));
       if (serviceContext.isSync()) {
-        ActorRef actor = syncActors.get(serviceContext.getId());
-        if (actor != null) {
-          actor.tell(resultMessage, getSelf());
-          syncActors.remove(serviceContext.getId());
-        }
+        handleSyncResult(serviceContext, resultMessage);
       }
       throw e2;
     }
 
     Set<RefType> nextActorRef = getNextServiceActors(serviceContext);
     if (serviceContext.isSync() && CollectionUtil.isEmpty(nextActorRef)) {
-      ActorRef actor = syncActors.get(serviceContext.getId());
-      if (actor != null) {
-        actor.tell(resultMessage, getSelf());
-        syncActors.remove(serviceContext.getId());
-      }
+      handleSyncResult(serviceContext, resultMessage);
       return;
     }
 
@@ -162,6 +153,20 @@ public class ServiceActor extends AbstractFlowerActor {
       }
     }
 
+  }
+
+  private void handleSyncResult(ServiceContext serviceContext, FlowMessage<?> resultMessage) {
+    CacheManager cacheManager = CacheManager.get(serviceActorCachePrefix + serviceContext.getFlowName());
+    Cache<ActorRef> cache = cacheManager.getContent(serviceContext.getId());
+    if (cache == null) {
+      logger.warn("maybe it's timeout. serviceContext : {}", serviceContext);
+      return;
+    }
+    ActorRef actor = cache.getValue();
+    if (actor != null) {
+      actor.tell(resultMessage, getSelf());
+      cacheManager.invalidate(serviceContext.getId());
+    }
   }
 
   /**
@@ -208,9 +213,6 @@ public class ServiceActor extends AbstractFlowerActor {
   }
 
 
-  private boolean needCacheActorRef(ServiceContext serviceContext) {
-    return serviceContext.isSync() && !syncActors.containsKey(serviceContext.getId());
-  }
 
   /**
    * Is String s in String ss?
@@ -271,10 +273,4 @@ public class ServiceActor extends AbstractFlowerActor {
 
   }
 
-  /**
-   * clear actor
-   */
-  void clear(String id) {
-    syncActors.remove(id);
-  }
 }

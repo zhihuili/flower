@@ -28,6 +28,7 @@ import com.ly.train.flower.base.service.ServiceA;
 import com.ly.train.flower.base.service.ServiceB;
 import com.ly.train.flower.base.service.ServiceC1;
 import com.ly.train.flower.base.service.ServiceC2;
+import com.ly.train.flower.base.service.ServiceD;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 
@@ -42,6 +43,21 @@ public class ServiceFacadeTest extends TestBase {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
     serviceFlow.buildFlow(ServiceB.class, Arrays.asList(ServiceC1.class, ServiceC2.class));
+    User user = new User();
+    user.setName("响应式编程");
+    user.setAge(2);
+
+    Object o = serviceFacade.syncCallService(flowName, user);
+    System.out.println(o);
+  }
+
+  @Test
+  public void testSyncCallAggregateService() throws Exception {
+    ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
+    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
+    serviceFlow.buildFlow(ServiceB.class, Arrays.asList(ServiceC1.class, ServiceC2.class));
+    serviceFlow.buildFlow(Arrays.asList(ServiceC1.class, ServiceC2.class), ServiceD.class);
+    serviceFlow.build();
     User user = new User();
     user.setName("响应式编程");
     user.setAge(2);
