@@ -73,5 +73,15 @@
 			<groupId>com.github.romix.akka</groupId>
 			<artifactId>akka-kryo-serialization_2.12</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>io.protostuff</groupId>
+			<artifactId>protostuff-runtime</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.protostuff</groupId>
+			<artifactId>protostuff-core</artifactId>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 </project>

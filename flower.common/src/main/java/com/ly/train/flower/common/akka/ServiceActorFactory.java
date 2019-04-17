@@ -64,7 +64,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
   private volatile ActorSystem actorSystem;
   private volatile ActorRef supervierActor;
   private volatile ActorContext actorContext;
-  private final FlowerConfig flowerConfig;
+  protected final FlowerConfig flowerConfig;
 
   public ServiceActorFactory(FlowerFactory flowerFactory) {
     this.flowerFactory = flowerFactory;

@@ -57,6 +57,8 @@
 		<logback.version>1.2.3</logback.version>
 		<jetty.version>9.4.14.v20181114</jetty.version>
 		<javassist.version>3.24.1-GA</javassist.version>
+		
+		<protostuff.version>1.5.9</protostuff.version>
 	</properties>
 
 	<dependencyManagement>
@@ -227,6 +229,16 @@
 						<artifactId>lz4</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>io.protostuff</groupId>
+				<artifactId>protostuff-runtime</artifactId>
+				<version>${protostuff.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.protostuff</groupId>
+				<artifactId>protostuff-core</artifactId>
+				<version>${protostuff.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
