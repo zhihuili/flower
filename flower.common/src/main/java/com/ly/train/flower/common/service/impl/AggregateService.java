@@ -69,7 +69,7 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
   private AggregateInfo getServiceInfo(final String flowName, final String transactionId) {
     Assert.notNull(flowName, "flowName can't be null .");
     CacheManager cacheManager = CacheManager.get(cacheKeyPrefix + flowName);
-    Cache<AggregateInfo> cache = cacheManager.getContent(transactionId);
+    Cache<AggregateInfo> cache = cacheManager.getCache(transactionId);
     AggregateInfo aggregateInfo = null;
     if (cache == null) {
       aggregateInfo = new AggregateInfo(transactionId, sourceNumber);

@@ -53,11 +53,6 @@ import akka.actor.Props;
  *
  */
 public class ServiceActor extends AbstractFlowerActor {
-  /**
-   * 同步要求结果的actor
-   */
-  // private static final Map<String, ActorRef> syncActors = new
-  // ConcurrentHashMap<String, ActorRef>();
 
   private static final Long defaultTimeout = TimeUnit.SECONDS.toMillis(10);
   private static final String serviceActorCachePrefix = "FLOWER_SERVICE_ACTOR_";
@@ -157,7 +152,7 @@ public class ServiceActor extends AbstractFlowerActor {
 
   private void handleSyncResult(ServiceContext serviceContext, FlowMessage<?> resultMessage) {
     CacheManager cacheManager = CacheManager.get(serviceActorCachePrefix + serviceContext.getFlowName());
-    Cache<ActorRef> cache = cacheManager.getContent(serviceContext.getId());
+    Cache<ActorRef> cache = cacheManager.getCache(serviceContext.getId());
     if (cache == null) {
       logger.warn("maybe it's timeout. serviceContext : {}", serviceContext);
       return;

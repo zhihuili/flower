@@ -108,7 +108,7 @@ public class CacheManager {
    * @return Cache
    */
   @SuppressWarnings("unchecked")
-  private <T> Cache<T> getCache(String key) {
+  private <T> Cache<T> getCacheWithoutValidate(String key) {
     return (Cache<T>) cacheMap.get(key);
   }
 
@@ -159,9 +159,9 @@ public class CacheManager {
    * @param key
    * @return {@code Cache}
    */
-  public <T> Cache<T> getContent(String key) {
+  public <T> Cache<T> getCache(String key) {
     if (hasCache(key)) {
-      Cache<T> cache = getCache(key);
+      Cache<T> cache = getCacheWithoutValidate(key);
       if (cacheExpired(cache)) {
         cache.setExpired(true);
         return null;
@@ -208,7 +208,7 @@ public class CacheManager {
     }
     long milisNow = new Date().getTime();
     long milisExpire = cache.getTimeToLive();
-    if (milisExpire < 0) {
+    if (milisExpire <= 0) {
       return false;
     } else if (milisNow >= milisExpire) {
       return true;
