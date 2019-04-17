@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import com.ly.train.flower.common.akka.ServiceRouter;
-import com.ly.train.flower.common.exception.FlowerException;
+import com.ly.train.flower.common.exception.ServiceException;
 import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.FlowerService;
@@ -40,6 +40,7 @@ import com.ly.train.flower.common.service.web.Web;
 import com.ly.train.flower.common.util.ClassUtil;
 import com.ly.train.flower.common.util.CloneUtil;
 import com.ly.train.flower.common.util.CollectionUtil;
+import com.ly.train.flower.common.util.ExceptionUtil;
 import com.ly.train.flower.common.util.StringUtil;
 import akka.actor.ActorRef;
 import akka.actor.Props;
@@ -85,30 +86,41 @@ public class ServiceActor extends AbstractFlowerActor {
   @SuppressWarnings({"unchecked", "rawtypes"})
   @Override
   public void onServiceContextReceived(ServiceContext serviceContext) throws Throwable {
-    FlowMessage fm = serviceContext.getFlowMessage();
+    FlowMessage flowMessage = serviceContext.getFlowMessage();
     if (needCacheActorRef(serviceContext)) {
       syncActors.putIfAbsent(serviceContext.getId(), getSender());
     }
 
-    Object result = null;
+    FlowMessage<?> resultMessage = new FlowMessage<>();
     try {
       ServiceContextUtil.fillServiceContext(serviceContext);
 
-      result = ((Service) getService(serviceContext)).process(fm.getMessage(), serviceContext);
+      Object result = ((Service) getService(serviceContext)).process(flowMessage.getMessage(), serviceContext);
+      resultMessage.setMessage(result);
     } catch (Throwable e) {
       Web web = serviceContext.getWeb();
       if (web != null) {
         web.complete();
       }
-      throw new FlowerException("fail to invoke service " + serviceContext.getCurrentServiceName() + " : " + service
-          + ", param : " + fm.getMessage(), e);
+
+      Exception e2 = new ServiceException("invoke service " + serviceContext.getCurrentServiceName() + " : " + service
+          + "\r\n, param : " + flowMessage.getMessage(), e);
+      resultMessage.setException(ExceptionUtil.getErrorMessage(e2));
+      if (serviceContext.isSync()) {
+        ActorRef actor = syncActors.get(serviceContext.getId());
+        if (actor != null) {
+          actor.tell(resultMessage, getSelf());
+          syncActors.remove(serviceContext.getId());
+        }
+      }
+      throw e2;
     }
 
     Set<RefType> nextActorRef = getNextServiceActors(serviceContext);
     if (serviceContext.isSync() && CollectionUtil.isEmpty(nextActorRef)) {
       ActorRef actor = syncActors.get(serviceContext.getId());
       if (actor != null) {
-        actor.tell(result, getSelf());
+        actor.tell(resultMessage, getSelf());
         syncActors.remove(serviceContext.getId());
       }
       return;
@@ -124,7 +136,7 @@ public class ServiceActor extends AbstractFlowerActor {
       }
     }
 
-    if (result == null) {// for joint service
+    if (resultMessage.getMessage() == null) {// for joint service
       return;
     }
     Set<RefType> refTypes = getNextServiceActors(serviceContext);
@@ -132,14 +144,18 @@ public class ServiceActor extends AbstractFlowerActor {
       return;
     }
     ServiceContextUtil.cleanServiceContext(serviceContext);
+    Object result = resultMessage.getMessage();
     for (RefType refType : refTypes) {
       // condition fork for one-service to multi-service
       if (refType.getMessageType().isInstance(result)) {
         if (!(result instanceof Condition) || !(((Condition) result).getCondition() instanceof String)
             || stringInStrings(refType.getServiceName(), ((Condition) result).getCondition().toString())) {
-          Object resultClone = CloneUtil.clone(result);
+          FlowMessage<?> resultMessageClone = CloneUtil.clone(resultMessage);
+          if (refType.isAggregate()) {
+            resultMessageClone.setTransactionId(flowMessage.getTransactionId());
+          }
           ServiceContext context = serviceContext.newInstance();
-          context.getFlowMessage().setMessage(resultClone);
+          context.setFlowMessage(resultMessageClone);
           context.setCurrentServiceName(refType.getServiceName());
           refType.getServiceRouter().asyncCallService(context, getSelf());
         }

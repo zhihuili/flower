@@ -13,9 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service.message;
+/**
+ * 
+ */
+package com.ly.train.flower.common.exception;
 
-public class TimerMessage extends FlowMessage<Object> {
+/**
+ * @author leeyazhou
+ *
+ */
+public class ServiceException extends RuntimeException {
 
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 6532232062131720108L;
+
+  public ServiceException() {
+    super();
+  }
+
+  public ServiceException(String message) {
+    super(message);
+  }
+
+  public ServiceException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public ServiceException(Throwable cause) {
+    super(cause);
+  }
 }

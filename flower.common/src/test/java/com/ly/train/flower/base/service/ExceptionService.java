@@ -16,34 +16,28 @@
 /**
  * 
  */
-package com.ly.train.flower.common.exception;
+package com.ly.train.flower.base.service;
+
+import com.ly.train.flower.base.model.User;
+import com.ly.train.flower.common.service.Service;
+import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
  *
  */
-public class FlowerException extends RuntimeException {
+public class ExceptionService implements Service<User, User> {
+  static final Logger logger = LoggerFactory.getLogger(ExceptionService.class);
 
-  private static final long serialVersionUID = 6532232062131720108L;
-
-  public FlowerException() {
-    super();
-  }
-
-  public FlowerException(String message) {
-    super(message);
-  }
-
-  public FlowerException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public FlowerException(Throwable cause) {
-    super(cause);
-  }
   @Override
-  public void printStackTrace() {
-    // TODO Auto-generated method stub
-    super.printStackTrace();
+  public User process(User message, ServiceContext context) throws Throwable {
+    int a = 10, b = 0;
+    if (a / b == 0) {
+      // 演示异常信息
+    }
+    return message;
   }
+
 }

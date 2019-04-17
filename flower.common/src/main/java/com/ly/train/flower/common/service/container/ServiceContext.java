@@ -35,7 +35,7 @@ public class ServiceContext implements Serializable {
   private boolean sync;
   private String flowName;
 
-  private FlowMessage flowMessage;
+  private FlowMessage<?> flowMessage;
 
   private String currentServiceName;
 
@@ -47,7 +47,7 @@ public class ServiceContext implements Serializable {
 
   public static <T> ServiceContext context(T message, Web web) {
     ServiceContext context = new ServiceContext();
-    context.setFlowMessage(new FlowMessage(message));
+    context.setFlowMessage(new FlowMessage<>(message));
     context.setWeb(web);
     return context;
   }
@@ -98,11 +98,11 @@ public class ServiceContext implements Serializable {
 
 
 
-  public FlowMessage getFlowMessage() {
+  public FlowMessage<?> getFlowMessage() {
     return flowMessage;
   }
 
-  public void setFlowMessage(FlowMessage flowMessage) {
+  public void setFlowMessage(FlowMessage<?> flowMessage) {
     this.flowMessage = flowMessage;
   }
 

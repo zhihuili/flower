@@ -27,6 +27,7 @@ import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.AbstractInit;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.util.ExtensionLoader;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
@@ -65,7 +66,7 @@ public class ServiceRouter extends AbstractInit {
    * @return obj
    * @throws Exception
    */
-  public Object syncCallService(ServiceContext serviceContext) {
+  public <T> T syncCallService(ServiceContext serviceContext) {
     serviceContext.setSync(true);
     ActorWrapper actorRef = chooseOne(serviceContext);
     try {
@@ -77,7 +78,14 @@ public class ServiceRouter extends AbstractInit {
       } else {
         future = Patterns.ask(((ActorSelectionWrapper) actorRef).getActorSelection(), serviceContext, timeout);
       }
-      return Await.result(future, duration);
+      @SuppressWarnings("unchecked")
+      FlowMessage<T> response = (FlowMessage<T>) Await.result(future, duration);
+      if (response.isError()) {
+        throw new FlowerException("fail to invoke \r\nCaused by: " + response.getException());
+      }
+      return response.getMessage();
+    } catch (FlowerException e) {
+      throw e;
     } catch (Exception e) {
       throw new FlowerException(" serviceContext : " + serviceContext, e);
     }

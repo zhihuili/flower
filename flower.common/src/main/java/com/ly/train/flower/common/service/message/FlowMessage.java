@@ -18,22 +18,21 @@ package com.ly.train.flower.common.service.message;
 import java.io.Serializable;
 import java.util.UUID;
 
-public class FlowMessage implements Serializable {
+public class FlowMessage<T> implements Serializable {
   private static final long serialVersionUID = 1L;
-  private String transactionId;
-  private String serviceName;
-  /**
-   * 流程索引
-   */
-  private int index;
-  private Object message;
+  private String transactionId = UUID.randomUUID().toString().replaceAll("-", "");
+  private T message;
+
+  private boolean error;
+
+  private String exception;
 
   public FlowMessage() {
-    this.transactionId = UUID.randomUUID().toString().replaceAll("-", "");
+    this(null);
   }
 
-  public FlowMessage(Object message) {
-    this();
+
+  public FlowMessage(T message) {
     this.message = message;
   }
 
@@ -41,32 +40,34 @@ public class FlowMessage implements Serializable {
     return transactionId;
   }
 
-  public Object getMessage() {
+  public T getMessage() {
     return message;
   }
 
-  public void setMessage(Object message) {
-    this.message = message;
+  @SuppressWarnings("unchecked")
+  public void setMessage(Object result) {
+    this.message = (T) result;
   }
 
   public void setTransactionId(String transactionId) {
     this.transactionId = transactionId;
   }
 
-  public String getServiceName() {
-    return serviceName;
+  public boolean isError() {
+    return error;
   }
 
-  public void setServiceName(String serviceName) {
-    this.serviceName = serviceName;
+  public void setError(boolean error) {
+    this.error = error;
   }
 
-  public int getIndex() {
-    return index;
+  public String getException() {
+    return exception;
   }
 
-  public void setIndex(int index) {
-    this.index = index;
+  public void setException(String exception) {
+    this.error = Boolean.TRUE;
+    this.exception = exception;
   }
 
   public static long getSerialversionuid() {

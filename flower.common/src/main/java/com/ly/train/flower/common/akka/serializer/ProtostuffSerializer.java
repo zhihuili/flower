@@ -37,13 +37,15 @@ public class ProtostuffSerializer extends JSerializer {
   }
 
   @Override
-  public byte[] toBinary(Object o) {
-    return ProtobufUtils.encode(o);
+  public byte[] toBinary(Object data) {
+    // logger.info("序列化: {}", data);
+    return ProtobufUtils.encode(data);
   }
 
   @Override
-  public Object fromBinaryJava(byte[] bytes, Class<?> manifest) {
-    return ProtobufUtils.decode(bytes, manifest);
+  public Object fromBinaryJava(byte[] data, Class<?> clazz) {
+    // logger.info("反序列化 {}: {}", clazz, data);
+    return ProtobufUtils.decode(data, clazz);
   }
 
 

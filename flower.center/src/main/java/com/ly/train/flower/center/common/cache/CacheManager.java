@@ -39,12 +39,12 @@ public class CacheManager {
         @Override
         public void run() {
           try {
-            log.info("CacheManager clear cache start");
+            // log.info("CacheManager clear cache start");
             clearCache();
           } catch (Exception ex) {
             log.error("clearCache error ", ex);
           } finally {
-            log.info("CacheManager clear cache finish");
+            // log.info("CacheManager clear cache finish");
           }
         }
       }, 4, 2 << 4, TimeUnit.SECONDS);
