@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import com.ly.train.flower.common.akka.ServiceRouter;
+import com.ly.train.flower.common.akka.serializer.protostuff.ProtobufUtils;
 import com.ly.train.flower.common.exception.ServiceException;
 import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Complete;
@@ -29,6 +30,7 @@ import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.service.container.ServiceMeta;
 import com.ly.train.flower.common.service.container.util.ServiceContextUtil;
 import com.ly.train.flower.common.service.impl.AggregateService;
 import com.ly.train.flower.common.service.message.Condition;
@@ -58,6 +60,7 @@ public class ServiceActor extends AbstractFlowerActor {
   private static final String serviceActorCachePrefix = "FLOWER_SERVICE_ACTOR_";
   private static final ConcurrentMap<String, Set<RefType>> nextServiceActorCache = new ConcurrentHashMap<>();
   private FlowerService service;
+  private Class<?> paramType;
   private int count;
   private final FlowerFactory flowerFactory;
 
@@ -88,8 +91,10 @@ public class ServiceActor extends AbstractFlowerActor {
     FlowMessage<?> resultMessage = new FlowMessage<>();
     try {
       ServiceContextUtil.fillServiceContext(serviceContext);
-
-      Object result = ((Service) getService(serviceContext)).process(flowMessage.getMessage(), serviceContext);
+      byte[] paramByte = ProtobufUtils.encode(flowMessage.getMessage());
+      Object param = ProtobufUtils.decode(paramByte, getParamType());
+      logger.info("服务参数类型 {} : {}", getParamType(), getService(serviceContext));
+      Object result = ((Service) getService(serviceContext)).process(param, serviceContext);
       resultMessage.setMessage(result);
     } catch (Throwable e) {
       Web web = serviceContext.getWeb();
@@ -122,34 +127,15 @@ public class ServiceActor extends AbstractFlowerActor {
       }
     }
 
-    if (resultMessage.getMessage() == null) {// for joint service
-      return;
-    }
-    Set<RefType> refTypes = getNextServiceActors(serviceContext);
-    if (refTypes == null) {
-      return;
-    }
-    ServiceContextUtil.cleanServiceContext(serviceContext);
-    Object result = resultMessage.getMessage();
-    for (RefType refType : refTypes) {
-      // condition fork for one-service to multi-service
-      if (refType.getMessageType().isInstance(result)) {
-        if (!(result instanceof Condition) || !(((Condition) result).getCondition() instanceof String)
-            || StringUtil.stringInStrings(refType.getServiceName(), ((Condition) result).getCondition().toString())) {
-          FlowMessage<?> resultMessageClone = CloneUtil.clone(resultMessage);
-          if (refType.isAggregate()) {
-            resultMessageClone.setTransactionId(flowMessage.getTransactionId());
-          }
-          ServiceContext context = serviceContext.newInstance();
-          context.setFlowMessage(resultMessageClone);
-          context.setCurrentServiceName(refType.getServiceName());
-          refType.getServiceRouter().asyncCallService(context, getSelf());
-        }
-      }
-    }
-
+    handleNextServices(serviceContext, resultMessage);
   }
 
+  /**
+   * 处理同步消息
+   * 
+   * @param serviceContext 上下文 {@link ServiceContext}
+   * @param resultMessage 消息内容 {@link FlowMessage}
+   */
   private void handleSyncResult(ServiceContext serviceContext, FlowMessage<?> resultMessage) {
     CacheManager cacheManager = CacheManager.get(serviceActorCachePrefix + serviceContext.getFlowName());
     Cache<ActorRef> cache = cacheManager.getCache(serviceContext.getId());
@@ -165,6 +151,41 @@ public class ServiceActor extends AbstractFlowerActor {
   }
 
   /**
+   * 处理当前服务的下行服务节点
+   * 
+   * @param serviceContext 上下文 {@link ServiceContext}
+   * @param resultMessage 消息内容 {@link FlowMessage}
+   */
+  private void handleNextServices(ServiceContext serviceContext, FlowMessage<?> resultMessage) {
+    if (resultMessage.getMessage() == null) {// for joint service
+      return;
+    }
+    Set<RefType> refTypes = getNextServiceActors(serviceContext);
+    if (refTypes == null) {
+      return;
+    }
+    ServiceContextUtil.cleanServiceContext(serviceContext);
+    Object result = resultMessage.getMessage();
+    final String transactionId = StringUtil.uuid();// 聚合消息时使用一致的id
+    for (RefType refType : refTypes) {
+      // condition fork for one-service to multi-service
+      if (refType.getMessageType().isInstance(result)) {
+        if (!(result instanceof Condition) || !(((Condition) result).getCondition() instanceof String)
+            || StringUtil.stringInStrings(refType.getServiceName(), ((Condition) result).getCondition().toString())) {
+          FlowMessage<?> resultMessageClone = CloneUtil.clone(resultMessage);
+          if (refType.isAggregate()) {
+            resultMessageClone.setTransactionId(transactionId);
+          }
+          ServiceContext context = serviceContext.newInstance();
+          context.setFlowMessage(resultMessageClone);
+          context.setCurrentServiceName(refType.getServiceName());
+          refType.getServiceRouter().asyncCallService(context, getSelf());
+        }
+      }
+    }
+  }
+
+  /**
    * 懒加载方式获取服务实例
    * 
    * @return {@link FlowerService}
@@ -172,6 +193,8 @@ public class ServiceActor extends AbstractFlowerActor {
   public FlowerService getService(ServiceContext serviceContext) {
     if (this.service == null) {
       this.service = flowerFactory.getServiceFactory().getServiceLoader().loadService(serviceName);
+      ServiceMeta serviceMeta = flowerFactory.getServiceFactory().getServiceLoader().loadServiceMeta(serviceName);
+      this.paramType = ClassUtil.forName(serviceMeta.getParamType());
       if (service instanceof Aggregate) {
         int num = flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
             .getServiceConfig(serviceName).getJointSourceNumber();
@@ -179,6 +202,15 @@ public class ServiceActor extends AbstractFlowerActor {
       }
     }
     return service;
+  }
+
+  private Class<?> getParamType() {
+    if (this.paramType == null) {
+      this.service = flowerFactory.getServiceFactory().getServiceLoader().loadService(serviceName);
+      ServiceMeta serviceMeta = flowerFactory.getServiceFactory().getServiceLoader().loadServiceMeta(serviceName);
+      this.paramType = ClassUtil.forName(serviceMeta.getParamType());
+    }
+    return paramType;
   }
 
   private Set<RefType> getNextServiceActors(ServiceContext serviceContext) {

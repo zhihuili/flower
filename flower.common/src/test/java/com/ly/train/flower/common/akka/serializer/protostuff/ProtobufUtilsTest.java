@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.akka.serializer;
+package com.ly.train.flower.common.akka.serializer.protostuff;
 
 import org.junit.Test;
-import com.ly.train.flower.common.akka.serializer.model.ModelA;
-import com.ly.train.flower.common.akka.serializer.model.ModelB;
+import com.ly.train.flower.common.akka.serializer.protostuff.model.ModelA;
+import com.ly.train.flower.common.akka.serializer.protostuff.model.ModelB;
 
 /**
  * @author leeyazhou

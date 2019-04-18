@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.akka.serializer.model;
+package com.ly.train.flower.common.akka.serializer.protostuff.model;
 
 import java.util.UUID;
 
@@ -21,11 +21,11 @@ import java.util.UUID;
  * @author leeyazhou
  *
  */
-public class ModelB extends ModelA{
+public class ModelA {
 
   private String id = UUID.randomUUID().toString().replace("-", "");
 
-  private String orderNo;
+  private String name;
 
   public String getId() {
     return id;
@@ -35,22 +35,21 @@ public class ModelB extends ModelA{
     this.id = id;
   }
 
-
-  public String getOrderNo() {
-    return orderNo;
+  public String getName() {
+    return name;
   }
 
-  public void setOrderNo(String orderNo) {
-    this.orderNo = orderNo;
+  public void setName(String name) {
+    this.name = name;
   }
 
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("ModelB [id=");
+    builder.append("ModelA [id=");
     builder.append(id);
-    builder.append(", orderNo=");
-    builder.append(orderNo);
+    builder.append(", name=");
+    builder.append(name);
     builder.append("]");
     return builder.toString();
   }

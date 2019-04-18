@@ -39,10 +39,12 @@ public class FlowRouter extends AbstractInit {
   private final ServiceConfig headerServiceConfig;
   private final String flowName;
   private ServiceFacade serviceFacade;
+  private final ServiceActorFactory serviceActorFactory;
 
   public FlowRouter(ServiceConfig headerServiceConfig, int number, FlowerFactory flowerFactory) {
     this.flowName = headerServiceConfig.getFlowName();
     this.headerServiceConfig = headerServiceConfig;
+    this.serviceActorFactory = flowerFactory.getServiceActorFactory();
     this.serviceFacade = flowerFactory.getServiceFacade();
     if (number > 0) {
       this.number = number;
@@ -69,6 +71,7 @@ public class FlowRouter extends AbstractInit {
     ServiceContext serviceContext = null;
     if (ctx != null) {
       Web web = new Web(ctx);
+      
       serviceContext = ServiceContext.context(message, web);
       ServiceContextUtil.record(serviceContext);
     } else {
@@ -86,7 +89,7 @@ public class FlowRouter extends AbstractInit {
    * 
    * @param message message
    * @return obj
-   * @throws TimeoutException 
+   * @throws TimeoutException
    */
   public Object syncCallService(Object message) throws TimeoutException {
     ServiceContext serviceContext = ServiceContext.context(message);

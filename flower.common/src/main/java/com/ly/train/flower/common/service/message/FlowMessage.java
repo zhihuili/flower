@@ -16,13 +16,13 @@
 package com.ly.train.flower.common.service.message;
 
 import java.io.Serializable;
-import java.util.UUID;
+import com.ly.train.flower.common.util.StringUtil;
 
 public class FlowMessage<T> implements Serializable {
   private static final long serialVersionUID = 1L;
-  private String transactionId = UUID.randomUUID().toString().replaceAll("-", "");
+  private String transactionId = StringUtil.uuid();
   private T message;
-
+  private byte[] messageByte;
   private boolean error;
 
   private String exception;
@@ -73,6 +73,16 @@ public class FlowMessage<T> implements Serializable {
   public static long getSerialversionuid() {
     return serialVersionUID;
   }
+
+  public byte[] getMessageByte() {
+    return messageByte;
+  }
+
+
+  public void setMessageByte(byte[] messageByte) {
+    this.messageByte = messageByte;
+  }
+
 
   @Override
   public String toString() {

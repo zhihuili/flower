@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.akka.serializer;
+package com.ly.train.flower.common.akka.serializer.protostuff;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import akka.actor.Extension;
 import akka.serialization.JSerializer;
 
 /**
  * @author leeyazhou
  *
  */
-public class ProtostuffSerializer extends JSerializer {
+public class ProtostuffSerializer extends JSerializer implements Extension {
   static final Logger logger = LoggerFactory.getLogger(ProtostuffSerializer.class);
 
   @Override

@@ -15,6 +15,7 @@
  */
 package com.ly.train.flower.common.akka.actor;
 
+import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import akka.actor.OneForOneStrategy;
@@ -27,7 +28,8 @@ public class SupervisorActor extends AbstractFlowerActor {
   private static SupervisorStrategy DEFAULT_STRATEGY = new OneForOneStrategy(10, Duration.create(1, TimeUnit.MINUTES),
       DeciderBuilder.match(ArithmeticException.class, e -> SupervisorStrategy.resume())
           .match(NullPointerException.class, e -> SupervisorStrategy.restart())
-          .match(IllegalArgumentException.class, e -> SupervisorStrategy.stop()).matchAny(o -> SupervisorStrategy.resume()).build());
+          .match(IllegalArgumentException.class, e -> SupervisorStrategy.stop())
+          .matchAny(o -> SupervisorStrategy.resume()).build());
 
   @Override
   public Receive createReceive() {
@@ -54,6 +56,12 @@ public class SupervisorActor extends AbstractFlowerActor {
     return Props.create(SupervisorActor.class);
   }
 
-  public static class GetActorContext {
+  /**
+   * message to get {@link SupervisorActor}
+   * 
+   * @author leeyazhou
+   */
+  public static class GetActorContext implements Serializable {
+    private static final long serialVersionUID = 1L;
   }
 }

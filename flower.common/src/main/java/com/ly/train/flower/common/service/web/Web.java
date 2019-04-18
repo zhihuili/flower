@@ -39,7 +39,6 @@ public class Web {
     this.servletRequest = context.getRequest();
     this.servletResponse = context.getResponse();
     servletResponse.setCharacterEncoding(Constant.ENCODING_UTF_8);
-    servletResponse.setContentType(Constant.DEFAULT_CONTENT_TEXT);
     try {
       this.writer = servletResponse.getWriter();
     } catch (IOException e) {
@@ -47,12 +46,17 @@ public class Web {
     }
   }
 
-  public void print(String s) throws IOException {
-    writer.print(s);
+  public void print(String message) throws IOException {
+    writer.print(message);
   }
 
-  public void println(String s) throws IOException {
-    writer.println(s);
+  public void printJSON(String json) throws IOException {
+    servletResponse.setContentType(Constant.DEFAULT_CONTENT_JSON);
+    print(json);
+  }
+
+  public void println(String message) throws IOException {
+    writer.println(message);
   }
 
   public void flush() {
@@ -71,8 +75,10 @@ public class Web {
    * Get the JSON data submitted by the post method
    * 
    * @return String / null
-   * @throws IOException When an error occurs while reading the InputStream, IOException is thrown
-   * @throws UnsupportedEncodingException Thrown when encountering an unresolved character encoding
+   * @throws IOException When an error occurs while reading the InputStream,
+   *         IOException is thrown
+   * @throws UnsupportedEncodingException Thrown when encountering an unresolved
+   *         character encoding
    * @since JDK 1.7+
    */
   public String getPostJson() throws IOException {

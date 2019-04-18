@@ -15,6 +15,8 @@
  */
 package com.ly.train.flower.common.util;
 
+import java.util.HashMap;
+import java.util.Map;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
@@ -24,27 +26,26 @@ import com.ly.train.flower.logging.LoggerFactory;
  */
 public class ClassUtil {
   private static final Logger logger = LoggerFactory.getLogger(ClassUtil.class);
+  private static final Map<String, Class<?>> cache = new HashMap<String, Class<?>>();
 
   public static Class<?> forName(String className) {
-    if (StringUtil.isNotBlank(className)) {
-      try {
-        return Class.forName(className);
-      } catch (ClassNotFoundException e) {
-        logger.error("", e);
-      }
-    }
-    return null;
+    return forName(className, ClassUtil.class.getClassLoader());
   }
 
   public static Class<?> forName(String className, ClassLoader loader) {
-    if (StringUtil.isNotBlank(className)) {
+    Class<?> ret = cache.get(className);
+    if (ret == null) {
       try {
-        return Class.forName(className, true, loader);
+        ret = Class.forName(className, true, loader);
+        Class<?> temp = cache.putIfAbsent(className, ret);
+        if (temp != null) {
+          ret = temp;
+        }
       } catch (ClassNotFoundException e) {
         logger.error("", e);
       }
     }
-    return null;
+    return ret;
   }
 
 }

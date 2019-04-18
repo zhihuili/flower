@@ -153,7 +153,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
 
   }
 
-  private ActorSystem getActorSystem() {
+  protected ActorSystem getActorSystem() {
     if (actorSystem == null) {
       synchronized (this) {
         if (actorSystem == null) {

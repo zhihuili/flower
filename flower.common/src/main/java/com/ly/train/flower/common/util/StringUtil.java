@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.UUID;
 
 /**
  * 
@@ -134,5 +135,9 @@ public final class StringUtil {
       }
     }
     return false;
+  }
+
+  public static String uuid() {
+    return UUID.randomUUID().toString().replace("-", "");
   }
 }
