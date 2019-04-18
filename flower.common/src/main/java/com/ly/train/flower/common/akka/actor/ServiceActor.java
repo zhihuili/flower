@@ -54,9 +54,9 @@ import akka.actor.Props;
  */
 public class ServiceActor extends AbstractFlowerActor {
 
-  private static final Long defaultTimeout = TimeUnit.SECONDS.toMillis(10);
+  public static final Long defaultTimeToLive = TimeUnit.SECONDS.toMillis(60);
   private static final String serviceActorCachePrefix = "FLOWER_SERVICE_ACTOR_";
-
+  private static final ConcurrentMap<String, Set<RefType>> nextServiceActorCache = new ConcurrentHashMap<>();
   private FlowerService service;
   private int count;
   private final FlowerFactory flowerFactory;
@@ -79,10 +79,10 @@ public class ServiceActor extends AbstractFlowerActor {
   @SuppressWarnings({"unchecked", "rawtypes"})
   @Override
   public void onServiceContextReceived(ServiceContext serviceContext) throws Throwable {
-    FlowMessage flowMessage = serviceContext.getFlowMessage();
+    FlowMessage<?> flowMessage = serviceContext.getFlowMessage();
     if (serviceContext.isSync()) {
       CacheManager.get(serviceActorCachePrefix + serviceContext.getFlowName()).add(serviceContext.getId(), getSender(),
-          defaultTimeout);
+          defaultTimeToLive);
     }
 
     FlowMessage<?> resultMessage = new FlowMessage<>();
@@ -135,7 +135,7 @@ public class ServiceActor extends AbstractFlowerActor {
       // condition fork for one-service to multi-service
       if (refType.getMessageType().isInstance(result)) {
         if (!(result instanceof Condition) || !(((Condition) result).getCondition() instanceof String)
-            || stringInStrings(refType.getServiceName(), ((Condition) result).getCondition().toString())) {
+            || StringUtil.stringInStrings(refType.getServiceName(), ((Condition) result).getCondition().toString())) {
           FlowMessage<?> resultMessageClone = CloneUtil.clone(resultMessage);
           if (refType.isAggregate()) {
             resultMessageClone.setTransactionId(flowMessage.getTransactionId());
@@ -181,8 +181,6 @@ public class ServiceActor extends AbstractFlowerActor {
     return service;
   }
 
-  private static final ConcurrentMap<String, Set<RefType>> nextServiceActorCache = new ConcurrentHashMap<>();
-
   private Set<RefType> getNextServiceActors(ServiceContext serviceContext) {
     final String cacheKey = serviceContext.getFlowName() + "_" + serviceContext.getCurrentServiceName();
     Set<RefType> nextServiceActors = nextServiceActorCache.get(cacheKey);
@@ -208,25 +206,6 @@ public class ServiceActor extends AbstractFlowerActor {
   }
 
 
-
-  /**
-   * Is String s in String ss?
-   * 
-   * @param s "service1"
-   * @param ss “service1,service2”
-   * @return
-   */
-  private boolean stringInStrings(String s, String ss) {
-    String[] sa = ss.split(",");
-    if (sa != null && sa.length > 0) {
-      for (String se : sa) {
-        if (se.equals(s)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
 
   static class RefType {
     private ServiceRouter serviceRouter;
@@ -264,6 +243,21 @@ public class ServiceActor extends AbstractFlowerActor {
 
     public void setServiceName(String serviceName) {
       this.serviceName = serviceName;
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder builder = new StringBuilder();
+      builder.append("RefType [serviceRouter=");
+      builder.append(serviceRouter);
+      builder.append(", messageType=");
+      builder.append(messageType);
+      builder.append(", serviceName=");
+      builder.append(serviceName);
+      builder.append(", aggregate=");
+      builder.append(aggregate);
+      builder.append("]");
+      return builder.toString();
     }
 
   }

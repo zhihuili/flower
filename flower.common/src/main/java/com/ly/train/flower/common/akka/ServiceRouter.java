@@ -18,6 +18,7 @@ package com.ly.train.flower.common.akka;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorRefWrapper;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorSelectionWrapper;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorWrapper;
@@ -64,20 +65,20 @@ public class ServiceRouter extends AbstractInit {
    * 
    * @param serviceContext {@link ServiceContext}
    * @return obj
-   * @throws Exception
+   * @throws TimeoutException timeout
    */
-  public <T> T syncCallService(ServiceContext serviceContext) {
+  public <T> T syncCallService(ServiceContext serviceContext) throws TimeoutException {
     serviceContext.setSync(true);
     ActorWrapper actorRef = chooseOne(serviceContext);
+    Timeout timeout = new Timeout(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
+    Duration duration = Duration.create(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
+    Future<Object> future = null;
+    if (actorRef instanceof ActorRefWrapper) {
+      future = Patterns.ask(((ActorRefWrapper) actorRef).getActorRef(), serviceContext, timeout);
+    } else {
+      future = Patterns.ask(((ActorSelectionWrapper) actorRef).getActorSelection(), serviceContext, timeout);
+    }
     try {
-      Timeout timeout = new Timeout(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
-      Duration duration = Duration.create(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
-      Future<Object> future = null;
-      if (actorRef instanceof ActorRefWrapper) {
-        future = Patterns.ask(((ActorRefWrapper) actorRef).getActorRef(), serviceContext, timeout);
-      } else {
-        future = Patterns.ask(((ActorSelectionWrapper) actorRef).getActorSelection(), serviceContext, timeout);
-      }
       @SuppressWarnings("unchecked")
       FlowMessage<T> response = (FlowMessage<T>) Await.result(future, duration);
       if (response.isError()) {
@@ -85,6 +86,8 @@ public class ServiceRouter extends AbstractInit {
       }
       return response.getMessage();
     } catch (FlowerException e) {
+      throw e;
+    } catch (TimeoutException e) {
       throw e;
     } catch (Exception e) {
       throw new FlowerException(" serviceContext : " + serviceContext, e);

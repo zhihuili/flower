@@ -13,32 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package com.ly.train.flower.common.exception;
+package com.ly.train.flower.common.akka.serializer;
+
+import org.junit.Test;
+import com.ly.train.flower.common.akka.serializer.model.ModelA;
+import com.ly.train.flower.common.akka.serializer.model.ModelB;
 
 /**
  * @author leeyazhou
  *
  */
-public class TimeoutException extends RuntimeException {
+public class ProtobufUtilsTest {
 
-  private static final long serialVersionUID = 1L;
+  @Test
+  public void testEncode() {
+    ModelB modelB = new ModelB();
+    modelB.setName("modelB");
+    modelB.setOrderNo("10001000");
+    byte[] modelBByte = ProtobufUtils.encode(modelB);
 
-  public TimeoutException() {
-    super();
-  }
-
-  public TimeoutException(String message) {
-    super(message);
-  }
-
-  public TimeoutException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public TimeoutException(Throwable cause) {
-    super(cause);
+    ModelA modelA = ProtobufUtils.decode(modelBByte, ModelA.class);
+    System.out.println(modelA.getName());
   }
 }

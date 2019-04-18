@@ -20,6 +20,7 @@ package com.ly.train.flower.common.akka.actor;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.junit.Test;
 import com.ly.train.flower.base.TestBase;
 import com.ly.train.flower.base.model.User;
@@ -81,7 +82,7 @@ public class ServiceFacadeTest extends TestBase {
   }
 
   @Test(expected = FlowerException.class)
-  public void testSyncException() {
+  public void testSyncException() throws TimeoutException {
 
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);

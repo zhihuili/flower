@@ -59,7 +59,8 @@ public final class StringUtil {
     return tokenizeToStringArray(str, delimiters, true, true);
   }
 
-  public static String[] tokenizeToStringArray(String str, String delimiters, boolean trimTokens, boolean ignoreEmptyTokens) {
+  public static String[] tokenizeToStringArray(String str, String delimiters, boolean trimTokens,
+      boolean ignoreEmptyTokens) {
 
     if (str == null) {
       return null;
@@ -114,5 +115,24 @@ public final class StringUtil {
       pos = idx + sub.length();
     }
     return count;
+  }
+
+  /**
+   * Is String s in String ss?
+   * 
+   * @param s "service1"
+   * @param ss “service1,service2”
+   * @return
+   */
+  public static boolean stringInStrings(String s, String ss) {
+    String[] sa = ss.split(",");
+    if (sa != null && sa.length > 0) {
+      for (String se : sa) {
+        if (se.equals(s)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }

@@ -16,6 +16,7 @@
 package com.ly.train.flower.common.akka;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 import javax.servlet.AsyncContext;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.FlowerFactory;
@@ -76,17 +77,19 @@ public class ServiceFacade {
    * @param flowName flowName
    * @param message message
    * @return object
+   * @throws TimeoutException 
    */
-  public Object syncCallService(String flowName, Object message) {
+  public Object syncCallService(String flowName, Object message) throws TimeoutException {
     FlowRouter serviceRouter = buildFlowRouter(flowName, -1);
     return serviceRouter.syncCallService(message);
   }
 
   /**
+   * @throws TimeoutException 
    * @deprecated serviceName 不必须，因为可以从流程中获取到首个服务
    */
   @Deprecated
-  public Object syncCallService(String flowName, String serviceName, Object message) {
+  public Object syncCallService(String flowName, String serviceName, Object message) throws TimeoutException {
     return syncCallService(flowName, message);
   }
 

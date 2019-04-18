@@ -16,6 +16,7 @@
 package com.ly.train.flower.common.akka;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 import javax.servlet.AsyncContext;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.AbstractInit;
@@ -85,8 +86,9 @@ public class FlowRouter extends AbstractInit {
    * 
    * @param message message
    * @return obj
+   * @throws TimeoutException 
    */
-  public Object syncCallService(Object message) {
+  public Object syncCallService(Object message) throws TimeoutException {
     ServiceContext serviceContext = ServiceContext.context(message);
     serviceContext.setFlowName(flowName);
     serviceContext.setCurrentServiceName(headerServiceConfig.getServiceName());

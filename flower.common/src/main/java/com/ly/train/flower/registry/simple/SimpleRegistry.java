@@ -21,6 +21,7 @@ package com.ly.train.flower.registry.simple;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeoutException;
 import com.ly.train.flower.common.akka.ServiceRouter;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.FlowerFactory;
@@ -93,7 +94,12 @@ public class SimpleRegistry extends AbstractRegistry {
     ServiceContext serviceContext = makeServiceContext(null);
     serviceContext.setCurrentServiceName("ServiceInfoListService");
     serviceContext.setSync(false);
-    Object o = serviceInfoListRouter.syncCallService(serviceContext);
+    Object o = null;
+    try {
+      o = serviceInfoListRouter.syncCallService(serviceContext);
+    } catch (TimeoutException e) {
+      e.printStackTrace();
+    }
     Set<ServiceInfo> ret = null;
     if (o != null) {
       ret = (Set<ServiceInfo>) o;
@@ -107,7 +113,12 @@ public class SimpleRegistry extends AbstractRegistry {
     ServiceContext serviceContext = makeServiceContext(null);
     serviceContext.setCurrentServiceName("ServiceConfigListService");
     serviceContext.setSync(false);
-    Object o = serviceConfigListRouter.syncCallService(serviceContext);
+    Object o = null;
+    try {
+      o = serviceConfigListRouter.syncCallService(serviceContext);
+    } catch (TimeoutException e) {
+      e.printStackTrace();
+    }
     Set<ServiceConfig> ret = null;
     if (o != null) {
       ret = (Set<ServiceConfig>) o;
