@@ -16,13 +16,15 @@
 package com.ly.train.flower.common.service.message;
 
 import java.io.Serializable;
+import com.ly.train.flower.common.serializer.Codec;
 import com.ly.train.flower.common.util.StringUtil;
 
-public class FlowMessage<T> implements Serializable {
+public class FlowMessage implements Serializable {
   private static final long serialVersionUID = 1L;
   private String transactionId = StringUtil.uuid();
-  private T message;
-  private byte[] messageByte;
+  private byte[] message;
+  private String messageType;
+  private int codec = Codec.Hessian.getCode();
   private boolean error;
 
   private String exception;
@@ -32,7 +34,7 @@ public class FlowMessage<T> implements Serializable {
   }
 
 
-  public FlowMessage(T message) {
+  public FlowMessage(byte[] message) {
     this.message = message;
   }
 
@@ -40,13 +42,12 @@ public class FlowMessage<T> implements Serializable {
     return transactionId;
   }
 
-  public T getMessage() {
+  public byte[] getMessage() {
     return message;
   }
 
-  @SuppressWarnings("unchecked")
-  public void setMessage(Object result) {
-    this.message = (T) result;
+  public void setMessage(byte[] result) {
+    this.message = result;
   }
 
   public void setTransactionId(String transactionId) {
@@ -70,19 +71,26 @@ public class FlowMessage<T> implements Serializable {
     this.exception = exception;
   }
 
+  public String getMessageType() {
+    return messageType;
+  }
+
+
+  public void setMessageType(String messageType) {
+    this.messageType = messageType;
+  }
+
+  public void setCodec(int codec) {
+    this.codec = codec;
+  }
+
+  public int getCodec() {
+    return codec;
+  }
+
   public static long getSerialversionuid() {
     return serialVersionUID;
   }
-
-  public byte[] getMessageByte() {
-    return messageByte;
-  }
-
-
-  public void setMessageByte(byte[] messageByte) {
-    this.messageByte = messageByte;
-  }
-
 
   @Override
   public String toString() {

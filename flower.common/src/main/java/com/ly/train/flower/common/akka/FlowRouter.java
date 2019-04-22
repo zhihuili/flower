@@ -15,7 +15,6 @@
  */
 package com.ly.train.flower.common.akka;
 
-import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 import javax.servlet.AsyncContext;
 import com.ly.train.flower.common.service.config.ServiceConfig;
@@ -39,12 +38,10 @@ public class FlowRouter extends AbstractInit {
   private final ServiceConfig headerServiceConfig;
   private final String flowName;
   private ServiceFacade serviceFacade;
-  private final ServiceActorFactory serviceActorFactory;
 
   public FlowRouter(ServiceConfig headerServiceConfig, int number, FlowerFactory flowerFactory) {
     this.flowName = headerServiceConfig.getFlowName();
     this.headerServiceConfig = headerServiceConfig;
-    this.serviceActorFactory = flowerFactory.getServiceActorFactory();
     this.serviceFacade = flowerFactory.getServiceFacade();
     if (number > 0) {
       this.number = number;
@@ -65,13 +62,11 @@ public class FlowRouter extends AbstractInit {
    * 
    * @param message
    * @param ctx
-   * @throws IOException
    */
   public <T> void asyncCallService(T message, AsyncContext ctx) {
     ServiceContext serviceContext = null;
     if (ctx != null) {
       Web web = new Web(ctx);
-      
       serviceContext = ServiceContext.context(message, web);
       ServiceContextUtil.record(serviceContext);
     } else {
@@ -114,7 +109,5 @@ public class FlowRouter extends AbstractInit {
   public ServiceConfig getServiceConfig() {
     return headerServiceConfig;
   }
-
-
 
 }

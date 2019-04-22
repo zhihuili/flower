@@ -15,10 +15,13 @@
  */
 package com.ly.train.flower.common.service.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 import com.ly.train.flower.common.annotation.Scope;
+import com.ly.train.flower.common.serializer.Codec;
 import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
@@ -39,6 +42,7 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
   private Long timeoutMillis = DefaultTimeOutMilliseconds;
 
   private static final String cacheKeyPrefix = "FLOWER_AGGREGATE_SERVICE_";
+  private ReentrantLock lock = new ReentrantLock();
 
   public AggregateService() {}
 
@@ -48,15 +52,13 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
 
   @Override
   public List<Object> process(Object message, ServiceContext context) {
-    FlowMessage<?> flowMessage = context.getFlowMessage();
+    FlowMessage flowMessage = context.getFlowMessage();
 
     final String transactionId = flowMessage.getTransactionId();
     AggregateInfo aggregateInfo = getServiceInfo(context.getFlowName(), transactionId);
-    aggregateInfo.addResult(flowMessage.getMessage());
-    if (aggregateInfo.getResultNum().get() <= 0) {
-      clear(context.getFlowName(), transactionId);
-      List<Object> returnObject = aggregateInfo.getResults();
-      return buildMessage(returnObject);
+    aggregateInfo.addResult(flowMessage);
+    if (aggregateInfo.getResultNum().decrementAndGet() <= 0) {
+      return buildMessage(context.getFlowName(), transactionId);
     }
     return null;
   }
@@ -70,16 +72,24 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
     Assert.notNull(flowName, "flowName can't be null .");
     CacheManager cacheManager = CacheManager.get(cacheKeyPrefix + flowName);
     Cache<AggregateInfo> cache = cacheManager.getCache(transactionId);
-    AggregateInfo aggregateInfo = null;
     if (cache == null) {
-      aggregateInfo = new AggregateInfo(transactionId, sourceNumber);
-      Cache<AggregateInfo> temp = cacheManager.add(transactionId, aggregateInfo, timeoutMillis);
-      if (temp != null) {
-        aggregateInfo = temp.getValue();
+      lock.lock();
+      try {
+        cache = cacheManager.getCache(transactionId);
+        if (cache == null) {
+          AggregateInfo aggregateInfo = new AggregateInfo(transactionId, sourceNumber);
+          Cache<AggregateInfo> temp = cacheManager.add(transactionId, aggregateInfo, timeoutMillis);
+          if (temp != null) {
+            cache = temp;
+          } else {
+            cache = cacheManager.getCache(transactionId);
+          }
+        }
+      } finally {
+        lock.unlock();
       }
-    } else {
-      aggregateInfo = cache.getValue();
     }
+    AggregateInfo aggregateInfo = cache.getValue();
     return aggregateInfo;
   }
 
@@ -89,8 +99,18 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
    * @param messages Set<Message>
    * @return Object
    */
-  public List<Object> buildMessage(List<Object> messages) {
-    return messages;
+  public List<Object> buildMessage(String flowName, String transactionId) {
+    List<Object> ret = new ArrayList<Object>();
+    try {
+      AggregateInfo aggregateInfo = getServiceInfo(flowName, transactionId);
+      List<FlowMessage> messages = aggregateInfo.getResults();
+      for (FlowMessage message : messages) {
+        ret.add(Codec.Hessian.decode(message.getMessage(), message.getMessageType()));
+      }
+    } finally {
+      clear(flowName, transactionId);
+    }
+    return ret;
   }
 
   // sourceNumber++ when initialize
@@ -100,10 +120,11 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
 
 
   // cahce object
-  class AggregateInfo {
+  class AggregateInfo implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final long createTime = System.currentTimeMillis();
     private final String id;
-    private List<Object> results;
+    private List<FlowMessage> results;
     private AtomicInteger resultNum;
 
     public AggregateInfo(String id, int resultNum) {
@@ -112,16 +133,15 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
       this.resultNum = new AtomicInteger(resultNum);
     }
 
-    public AggregateInfo addResult(Object result) {
+    public AggregateInfo addResult(FlowMessage result) {
       if (results == null) {
-        results = new ArrayList<Object>();
+        results = new ArrayList<>();
       }
       results.add(result);
-      this.resultNum.decrementAndGet();
       return this;
     }
 
-    public List<Object> getResults() {
+    public List<FlowMessage> getResults() {
       return results;
     }
 

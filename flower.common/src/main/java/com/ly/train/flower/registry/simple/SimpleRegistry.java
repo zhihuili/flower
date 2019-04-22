@@ -19,6 +19,7 @@
 package com.ly.train.flower.registry.simple;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
@@ -26,6 +27,7 @@ import com.ly.train.flower.common.akka.ServiceRouter;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.service.container.ServiceMeta;
 import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.registry.AbstractRegistry;
@@ -49,19 +51,28 @@ public class SimpleRegistry extends AbstractRegistry {
 
   public void setFlowerFactory(FlowerFactory flowerFactory) {
     this.flowerFactory = flowerFactory;
-
-    this.serviceInfoRegisterRouter = getServiceRouter("ServiceInfoRegisterService");
-    this.serviceInfoListRouter = getServiceRouter("ServiceInfoListService");
-    this.serviceConfigRegisterRouter = getServiceRouter("ServiceConfigRegisterService");
-    this.serviceConfigListRouter = getServiceRouter("ServiceConfigListService");
+    this.serviceInfoRegisterRouter =
+        getServiceRouter("ServiceInfoRegisterService", ServiceInfo.class.getName(), Boolean.class.getName());
+    this.serviceInfoListRouter =
+        getServiceRouter("ServiceInfoListService", ServiceInfo.class.getName(), HashSet.class.getName());
+    this.serviceConfigRegisterRouter =
+        getServiceRouter("ServiceConfigRegisterService", ServiceConfig.class.getName(), Boolean.class.getName());
+    this.serviceConfigListRouter =
+        getServiceRouter("ServiceConfigListService", ServiceConfig.class.getName(), HashSet.class.getName());
   }
 
-  private ServiceRouter getServiceRouter(String serviceName) {
+  private ServiceRouter getServiceRouter(String serviceName, String paramType, String resultType) {
     ServiceConfig serviceConfig = new ServiceConfig();
     serviceConfig.setServiceName(serviceName);
     serviceConfig.addAddress(getUrl());
     serviceConfig.setLocal(false);
     serviceConfig.setApplication(url.getParam(Constant.applicationName));
+    ServiceMeta serviceMeta = new ServiceMeta("no class name, register service name");
+    serviceConfig.setServiceMeta(serviceMeta);
+
+    serviceMeta.setServiceName(serviceName);
+    serviceMeta.setParamType(paramType);
+    serviceMeta.setResultType(resultType);
     return flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, 2);
   }
 
@@ -100,11 +111,13 @@ public class SimpleRegistry extends AbstractRegistry {
     } catch (TimeoutException e) {
       e.printStackTrace();
     }
-    Set<ServiceInfo> ret = null;
+    List<ServiceInfo> ret2 = new ArrayList<ServiceInfo>();
     if (o != null) {
-      ret = (Set<ServiceInfo>) o;
+      Set<ServiceInfo> ret = (Set<ServiceInfo>) o;
+      if (ret != null &&!ret.isEmpty()) {
+        ret2.addAll(ret);
+      }
     }
-    List<ServiceInfo> ret2 = new ArrayList<ServiceInfo>(ret);
     return ret2;
   }
 
@@ -119,11 +132,13 @@ public class SimpleRegistry extends AbstractRegistry {
     } catch (TimeoutException e) {
       e.printStackTrace();
     }
-    Set<ServiceConfig> ret = null;
+    List<ServiceConfig> ret2 = new ArrayList<ServiceConfig>();
     if (o != null) {
-      ret = (Set<ServiceConfig>) o;
+      Set<ServiceConfig> ret = (Set<ServiceConfig>) o;
+      if (ret != null &&!ret.isEmpty()) {
+        ret2.addAll(ret);
+      }
     }
-    List<ServiceConfig> ret2 = new ArrayList<ServiceConfig>(ret);
     return ret2;
   }
 }

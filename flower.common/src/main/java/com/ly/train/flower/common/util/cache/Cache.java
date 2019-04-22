@@ -20,7 +20,7 @@ import java.io.Serializable;
 public class Cache<T> implements Serializable {
   private static final long serialVersionUID = 1L;
   private String key;
-  private T value;
+  private volatile T value;
   private long timeToLive;
   private boolean expired;
 

@@ -15,13 +15,16 @@
  */
 package com.ly.train.flower.common.akka.serializer.protostuff.model;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * @author leeyazhou
  *
  */
-public class ModelA {
+public class ModelA implements Serializable {
+
+  private static final long serialVersionUID = 1L;
 
   private String id = UUID.randomUUID().toString().replace("-", "");
 

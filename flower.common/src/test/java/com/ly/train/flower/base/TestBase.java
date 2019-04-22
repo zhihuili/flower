@@ -43,10 +43,11 @@ public class TestBase {
   protected static ServiceLoader serviceLoader;
   protected static ServiceFacade serviceFacade;
 
+
   @BeforeClass
   public static void before() {
     flowerFactory = new SimpleFlowerFactory();
-//    flowerFactory.start();
+    // flowerFactory.start();
     serviceFactory = flowerFactory.getServiceFactory();
     serviceLoader = serviceFactory.getServiceLoader();
     serviceFacade = flowerFactory.getServiceFacade();

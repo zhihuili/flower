@@ -13,9 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service.message;
+package com.ly.train.flower.common.serializer;
 
-public class TimerMessage extends FlowMessage {
+import com.ly.train.flower.common.annotation.SPI;
 
-  private static final long serialVersionUID = 1L;
+/**
+ * @author leeyazhou
+ *
+ */
+@SPI(value = "protostuff")
+public interface Serializer {
+
+  byte[] encode(Object data);
+
+  Object decode(byte[] data, String className);
+
 }

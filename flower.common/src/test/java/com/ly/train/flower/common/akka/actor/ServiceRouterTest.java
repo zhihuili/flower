@@ -38,6 +38,7 @@ import com.ly.train.flower.common.service.container.ServiceFlow;
 public class ServiceRouterTest extends TestBase {
 
   private ServiceRouter serviceRouter;
+  
 
   private ServiceRouter getServiceRouter() {
     if (serviceRouter != null) {

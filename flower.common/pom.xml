@@ -73,13 +73,13 @@
 			<groupId>com.github.romix.akka</groupId>
 			<artifactId>akka-kryo-serialization_2.12</artifactId>
 		</dependency>
+		<!-- <dependency>
+			<groupId>com.caucho</groupId>
+			<artifactId>hessian</artifactId>
+		</dependency> -->
 		<dependency>
-			<groupId>io.protostuff</groupId>
-			<artifactId>protostuff-runtime</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.protostuff</groupId>
-			<artifactId>protostuff-core</artifactId>
+			<groupId>com.alibaba</groupId>
+			<artifactId>hessian-lite</artifactId>
 		</dependency>
 	</dependencies>
 </project>

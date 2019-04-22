@@ -13,53 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.akka.serializer.protostuff;
+package com.ly.train.flower.common.serializer.hessian;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
 import com.ly.train.flower.common.akka.serializer.protostuff.model.ModelA;
 import com.ly.train.flower.common.akka.serializer.protostuff.model.ModelB;
 import com.ly.train.flower.common.serializer.Codec;
-import com.ly.train.flower.common.serializer.Serializer;
-import com.ly.train.flower.common.util.ExtensionLoader;
 
 /**
  * @author leeyazhou
  *
  */
-public class ProtobufUtilsTest {
+public class HessianSerializerTest {
 
   @Test
-  public void testEncode() {
+  public void testObject() {
     ModelB modelB = new ModelB();
     modelB.setName("modelB");
     modelB.setOrderNo("10001000");
-    Codec codec = Codec.Hessian;
-    byte[] modelBByte = codec.getSerializer().encode(modelB);
-
-    ModelA modelA = (ModelA) codec.getSerializer().decode(modelBByte, ModelA.class.getName());
+    byte[] modelBByte = Codec.Hessian.encode(modelB);
+    ModelA modelA = (ModelA) Codec.Hessian.decode(modelBByte, ModelA.class.getName());
     System.out.println(modelA.getName());
+    System.out.println(modelA);
   }
 
   @Test
-  public void testEncodeObject() {
-    System.out.println(ExtensionLoader.load(Serializer.class).load().encode(new Object()));
+  public void testCollection() {
+    CollectionModel model = new CollectionModel();
+    model.setName("user");
+    model.setData(Arrays.asList("a", "b"));
+    model.setData2(new HashSet<String>());
+    byte[] modelBByte = Codec.Hessian.encode(model);
+    CollectionModel modelA = (CollectionModel) Codec.Hessian.decode(modelBByte, CollectionModel.class.getName());
+    System.out.println(modelA);
+    
+    Set<CollectionModel> sets = new HashSet<CollectionModel>();
+    sets.add(model);
+    byte[] setByte = Codec.Hessian.encode(sets);
+    sets = (Set) Codec.Hessian.decode(setByte, HashSet.class.getName());
+    System.out.println(sets);
   }
 
-  @Test
-  public void testSet() {
-    Set<String> data = new HashSet<String>();
-    data.add("aaa");
-    data.add("bbb");
-    data.add("aaa");
-    Codec codec = Codec.Hessian;
-    byte[] bytes = codec.getSerializer().encode(data);
-
-    data = (Set<String>) codec.getSerializer().decode(bytes, Set.class.getName());
-    data.isEmpty();
-    for (String item : data) {
-      System.out.println(item);
-    }
-  }
+  
 }

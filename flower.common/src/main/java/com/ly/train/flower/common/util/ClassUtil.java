@@ -15,8 +15,8 @@
  */
 package com.ly.train.flower.common.util;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
@@ -26,26 +26,56 @@ import com.ly.train.flower.logging.LoggerFactory;
  */
 public class ClassUtil {
   private static final Logger logger = LoggerFactory.getLogger(ClassUtil.class);
-  private static final Map<String, Class<?>> cache = new HashMap<String, Class<?>>();
+  private static final ConcurrentMap<String, ClassWrapper> cache = new ConcurrentHashMap<String, ClassWrapper>();
 
   public static Class<?> forName(String className) {
-    return forName(className, ClassUtil.class.getClassLoader());
+    return forName(className, ClassUtil.class.getClassLoader(), true);
   }
 
-  public static Class<?> forName(String className, ClassLoader loader) {
-    Class<?> ret = cache.get(className);
+  public static Class<?> forNameNoException(String className) {
+    return forName(className, ClassUtil.class.getClassLoader(), false);
+  }
+
+  public static boolean exists(String className) {
+    return forNameNoException(className) != null;
+  }
+
+  public static Class<?> forName(String className, ClassLoader loader, boolean throwException) {
+    if (StringUtil.isBlank(className)) {
+      return null;
+    }
+    ClassWrapper ret = cache.get(className);
     if (ret == null) {
+      Class<?> clazz = null;
       try {
-        ret = Class.forName(className, true, loader);
-        Class<?> temp = cache.putIfAbsent(className, ret);
-        if (temp != null) {
-          ret = temp;
-        }
+        clazz = Class.forName(className, true, loader);
       } catch (ClassNotFoundException e) {
-        logger.error("", e);
+        if (throwException) {
+          logger.error("", e);
+        }
+      }
+      ret = new ClassWrapper(clazz);
+      ClassWrapper temp = cache.putIfAbsent(className, ret);
+      if (temp != null) {
+        ret = temp;
       }
     }
-    return ret;
+    return ret.getClazz();
   }
 
+  static class ClassWrapper {
+    private Class<?> clazz;
+
+    public ClassWrapper(Class<?> clazz) {
+      this.clazz = clazz;
+    }
+
+    public Class<?> getClazz() {
+      return clazz;
+    }
+
+    public void setClazz(Class<?> clazz) {
+      this.clazz = clazz;
+    }
+  }
 }

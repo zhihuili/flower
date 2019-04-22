@@ -32,11 +32,11 @@ import com.ly.train.flower.common.util.concurrent.NamedThreadFactory;
 public class CacheManager {
   private static final Logger log = LoggerFactory.getLogger(CacheManager.class);
   private static final String defaultCacheManager = "DEFAULT_CACHE_MANAGER";
-  private static final ConcurrentMap<String, CacheManager> cacheManagerMap = new ConcurrentHashMap<>();
+  private volatile static ConcurrentMap<String, CacheManager> cacheManagerMap = new ConcurrentHashMap<>();
   private static final AtomicBoolean init = new AtomicBoolean();
   private static ScheduledExecutorService executorService = null;
 
-  private final ConcurrentMap<String, Cache<?>> cacheMap = new ConcurrentHashMap<String, Cache<?>>();
+  private volatile ConcurrentMap<String, Cache<?>> cacheMap = new ConcurrentHashMap<String, Cache<?>>();
 
   private void clearCache() {
     Iterator<Entry<String, Cache<?>>> it = cacheMap.entrySet().iterator();

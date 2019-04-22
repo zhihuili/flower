@@ -21,7 +21,7 @@ import java.util.UUID;
  * @author leeyazhou
  *
  */
-public class ModelB extends ModelA{
+public class ModelB extends ModelA {
 
   private String id = UUID.randomUUID().toString().replace("-", "");
 

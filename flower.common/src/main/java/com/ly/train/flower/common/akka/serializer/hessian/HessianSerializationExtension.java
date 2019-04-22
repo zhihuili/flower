@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.akka.serializer.protostuff;
+package com.ly.train.flower.common.akka.serializer.hessian;
 
 import akka.actor.AbstractExtensionId;
 import akka.actor.ExtendedActorSystem;
@@ -25,14 +25,14 @@ import akka.actor.ExtensionIdProvider;
  * @author leeyazhou
  *
  */
-public class ProtostuffSerializationExtension extends AbstractExtensionId<ProtostuffSerializer>
+public class HessianSerializationExtension extends AbstractExtensionId<HessianSerializer>
     implements ExtensionIdProvider {
 
-  private static final ProtostuffSerializationExtension instance = new ProtostuffSerializationExtension();
+  private static final HessianSerializationExtension instance = new HessianSerializationExtension();
 
   @Override
-  public ProtostuffSerializer createExtension(ExtendedActorSystem system) {
-    return new ProtostuffSerializer();
+  public HessianSerializer createExtension(ExtendedActorSystem system) {
+    return new HessianSerializer();
   }
 
   @Override

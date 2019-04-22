@@ -24,6 +24,8 @@ import com.ly.train.flower.common.akka.actor.wrapper.ActorSelectionWrapper;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.loadbalance.LoadBalance;
+import com.ly.train.flower.common.serializer.Codec;
+import com.ly.train.flower.common.serializer.util.CodecUtil;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.AbstractInit;
 import com.ly.train.flower.common.service.container.FlowerFactory;
@@ -46,10 +48,12 @@ public class ServiceRouter extends AbstractInit {
   private volatile List<ActorWrapper> actors = new ArrayList<>();
   private final ServiceConfig serviceConfig;
   private final FlowerFactory flowerFactory;
+  private final String returnType;
 
   public ServiceRouter(ServiceConfig serviceConfig, FlowerFactory flowerFactory, int number) {
     this.serviceConfig = serviceConfig;
     this.flowerFactory = flowerFactory;
+    this.returnType = serviceConfig.getServiceMeta().getResultType();
     if (number > 0) {
       this.number = number;
     }
@@ -67,7 +71,7 @@ public class ServiceRouter extends AbstractInit {
    * @return obj
    * @throws TimeoutException timeout
    */
-  public <T> T syncCallService(ServiceContext serviceContext) throws TimeoutException {
+  public Object syncCallService(ServiceContext serviceContext) throws TimeoutException {
     serviceContext.setSync(true);
     ActorWrapper actorRef = chooseOne(serviceContext);
     Timeout timeout = new Timeout(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
@@ -79,18 +83,19 @@ public class ServiceRouter extends AbstractInit {
       future = Patterns.ask(((ActorSelectionWrapper) actorRef).getActorSelection(), serviceContext, timeout);
     }
     try {
-      @SuppressWarnings("unchecked")
-      FlowMessage<T> response = (FlowMessage<T>) Await.result(future, duration);
+      FlowMessage response = (FlowMessage) Await.result(future, duration);
       if (response.isError()) {
         throw new FlowerException("fail to invoke \r\nCaused by: " + response.getException());
       }
-      return response.getMessage();
+      byte[] messageByte = response.getMessage();
+      Codec codec = CodecUtil.getInstance().getCodec(response.getMessageType());
+      return codec.getSerializer().decode(messageByte, null);
     } catch (FlowerException e) {
       throw e;
     } catch (TimeoutException e) {
       throw e;
     } catch (Exception e) {
-      throw new FlowerException(" serviceContext : " + serviceContext, e);
+      throw new FlowerException(returnType + ", serviceContext : " + serviceContext, e);
     }
   }
 
