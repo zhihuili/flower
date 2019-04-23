@@ -17,11 +17,13 @@ package com.ly.train.flower.common.service.container;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import com.ly.train.flower.common.serializer.Codec;
+import com.ly.train.flower.common.serializer.util.CodecUtil;
 import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.service.web.Web;
 import com.ly.train.flower.common.util.CloneUtil;
+import com.ly.train.flower.common.util.StringUtil;
 
 public class ServiceContext implements Serializable {
 
@@ -30,7 +32,7 @@ public class ServiceContext implements Serializable {
    * 附属参数
    */
   private Map<String, Object> attachments;
-  private String id = UUID.randomUUID().toString().replaceAll("-", "");
+  private String id = StringUtil.uuid();
   private Web web;
   private boolean sync;
   private String flowName;
@@ -47,7 +49,14 @@ public class ServiceContext implements Serializable {
 
   public static <T> ServiceContext context(T message, Web web) {
     ServiceContext context = new ServiceContext();
-    context.setFlowMessage(new FlowMessage(message));
+    FlowMessage flowMessage = new FlowMessage();
+    if (message != null) {
+      Codec codec = CodecUtil.getInstance().getCodec(message.getClass().getName());
+      flowMessage.setMessageType(message.getClass().getName());
+      flowMessage.setMessage(codec.encode(message));
+      flowMessage.setCodec(codec.getCode());
+    }
+    context.setFlowMessage(flowMessage);
     context.setWeb(web);
     return context;
   }
@@ -106,6 +115,7 @@ public class ServiceContext implements Serializable {
     this.flowMessage = flowMessage;
   }
 
+  
   /**
    * 服务ID
    * 

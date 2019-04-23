@@ -21,16 +21,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.common.base.Predicate;
 import com.ly.train.flower.common.annotation.FlowerServiceUtil;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;
+import com.ly.train.flower.common.scanner.DefaultClassScanner;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.util.Assert;
@@ -59,13 +54,9 @@ public class ServiceFactory extends AbstractInit {
     if (StringUtil.isBlank(basePackage)) {
       return;
     }
-    Predicate<String> filter = new FilterBuilder().includePackage(basePackage);// .include(".*\\.services").include(".*\\.flow");
-    ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-    configurationBuilder.filterInputsBy(filter).setScanners(new TypeAnnotationsScanner(), new SubTypesScanner());
-
-    Reflections reflections = new Reflections(configurationBuilder);
+    
     Set<Class<?>> flowers =
-        reflections.getTypesAnnotatedWith(com.ly.train.flower.common.annotation.FlowerService.class);
+        DefaultClassScanner.getInstance().getClassListByAnnotation(basePackage, com.ly.train.flower.common.annotation.FlowerService.class);
     logger.info("scan flowerService, basePackage : {}, find flowerService : {}", basePackage, flowers.size());
     for (Class<?> clazz : flowers) {
       serviceLoader.registerServiceType(FlowerServiceUtil.getServiceName(clazz), clazz);

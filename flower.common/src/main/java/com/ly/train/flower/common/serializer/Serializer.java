@@ -13,32 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package com.ly.train.flower.common.exception;
+package com.ly.train.flower.common.serializer;
+
+import com.ly.train.flower.common.annotation.SPI;
 
 /**
  * @author leeyazhou
  *
  */
-public class TimeoutException extends RuntimeException {
+@SPI(value = "protostuff")
+public interface Serializer {
 
-  private static final long serialVersionUID = 1L;
+  byte[] encode(Object data);
 
-  public TimeoutException() {
-    super();
-  }
+  Object decode(byte[] data, String className);
 
-  public TimeoutException(String message) {
-    super(message);
-  }
-
-  public TimeoutException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public TimeoutException(Throwable cause) {
-    super(cause);
-  }
 }

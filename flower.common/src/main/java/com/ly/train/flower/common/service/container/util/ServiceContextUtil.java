@@ -15,10 +15,11 @@
  */
 package com.ly.train.flower.common.service.container.util;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import com.ly.train.flower.common.akka.actor.ServiceActor;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.web.Web;
+import com.ly.train.flower.common.util.cache.Cache;
+import com.ly.train.flower.common.util.cache.CacheManager;
 
 /**
  * @author leeyazhou
@@ -28,14 +29,17 @@ public class ServiceContextUtil {
 
   private ServiceContextUtil() {}
 
-  private static final ConcurrentMap<String, Web> serviceContextCache = new ConcurrentHashMap<>();
+  private static final CacheManager cacheManager = CacheManager.get("FLOWER_SERVICE_CONTEXT_HOLDER");
 
   public static void record(ServiceContext serviceContext) {
-    serviceContextCache.putIfAbsent(serviceContext.getId(), serviceContext.getWeb());
+    cacheManager.add(serviceContext.getId(), serviceContext.getWeb(), ServiceActor.defaultTimeToLive);
   }
 
   public static void fillServiceContext(ServiceContext serviceContext) {
-    serviceContext.setWeb(serviceContextCache.get(serviceContext.getId()));
+    Cache<Web> cache = cacheManager.getCache(serviceContext.getId());
+    if (cache != null) {
+      serviceContext.setWeb(cache.getValue());
+    }
   }
 
   public static void cleanServiceContext(ServiceContext serviceContext) {

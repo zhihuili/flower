@@ -41,4 +41,9 @@ public class FlowerException extends RuntimeException {
   public FlowerException(Throwable cause) {
     super(cause);
   }
+  @Override
+  public void printStackTrace() {
+    // TODO Auto-generated method stub
+    super.printStackTrace();
+  }
 }

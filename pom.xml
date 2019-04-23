@@ -57,6 +57,8 @@
 		<logback.version>1.2.3</logback.version>
 		<jetty.version>9.4.14.v20181114</jetty.version>
 		<javassist.version>3.24.1-GA</javassist.version>
+
+		<protostuff.version>1.5.2</protostuff.version>
 	</properties>
 
 	<dependencyManagement>
@@ -228,6 +230,32 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<dependency>
+				<groupId>io.protostuff</groupId>
+				<artifactId>protostuff-runtime</artifactId>
+				<version>${protostuff.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.protostuff</groupId>
+				<artifactId>protostuff-core</artifactId>
+				<version>${protostuff.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.caucho</groupId>
+				<artifactId>hessian</artifactId>
+				<version>4.0.60</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>hessian-lite</artifactId>
+				<version>3.2.5</version>
+			</dependency>
+			<dependency>
+				<groupId>de.ruedigermoeller</groupId>
+				<artifactId>fst</artifactId>
+				<version>2.56</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 

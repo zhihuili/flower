@@ -15,7 +15,11 @@
  */
 package com.ly.train.flower.common.service.message;
 
-public class DefaultMessage {
+import java.io.Serializable;
+
+public class DefaultMessage implements Serializable {
+  private static final long serialVersionUID = 1L;
+
   private DefaultMessage() {}
 
   private static DefaultMessage defaultMessage = new DefaultMessage();

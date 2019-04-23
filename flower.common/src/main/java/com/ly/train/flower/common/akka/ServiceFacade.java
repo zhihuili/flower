@@ -16,6 +16,7 @@
 package com.ly.train.flower.common.akka;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 import javax.servlet.AsyncContext;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.FlowerFactory;
@@ -23,7 +24,7 @@ import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
 public class ServiceFacade {
-  private static final Logger logger = LoggerFactory.getLogger(ServiceFacade.class);
+  protected static final Logger logger = LoggerFactory.getLogger(ServiceFacade.class);
 
   private final FlowerFactory flowerFactory;
 
@@ -31,14 +32,6 @@ public class ServiceFacade {
     this.flowerFactory = flowerFactory;
   }
 
-
-  /**
-   * @deprecated serviceName 不必须，因为可以从流程中获取到首个服务
-   */
-  @Deprecated
-  public void asyncCallService(String flowName, String serviceName, Object message, AsyncContext ctx) {
-    asyncCallService(flowName, message, ctx);
-  }
 
   /**
    * 异步处理服务
@@ -53,14 +46,6 @@ public class ServiceFacade {
     serviceRouter.asyncCallService(message, asyncContext);
   }
 
-  /**
-   * 
-   * @see ServiceFacade#asyncCallService(String,Object,AsyncContext)
-   */
-  @Deprecated
-  public void asyncCallService(String flowName, String serviceName, Object message) {
-    asyncCallService(flowName, message, null);
-  }
 
   /**
    * @see ServiceFacade#asyncCallService(String,Object,AsyncContext)
@@ -76,18 +61,11 @@ public class ServiceFacade {
    * @param flowName flowName
    * @param message message
    * @return object
+   * @throws TimeoutException
    */
-  public Object syncCallService(String flowName, Object message) {
+  public Object syncCallService(String flowName, Object message) throws TimeoutException {
     FlowRouter serviceRouter = buildFlowRouter(flowName, -1);
     return serviceRouter.syncCallService(message);
-  }
-
-  /**
-   * @deprecated serviceName 不必须，因为可以从流程中获取到首个服务
-   */
-  @Deprecated
-  public Object syncCallService(String flowName, String serviceName, Object message) {
-    return syncCallService(flowName, message);
   }
 
 
@@ -108,6 +86,5 @@ public class ServiceFacade {
 
   public void shutdown() {
     flowerFactory.stop();
-    logger.info("shutdown.");
   }
 }

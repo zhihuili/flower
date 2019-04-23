@@ -73,5 +73,13 @@
 			<groupId>com.github.romix.akka</groupId>
 			<artifactId>akka-kryo-serialization_2.12</artifactId>
 		</dependency>
+		<!-- <dependency>
+			<groupId>com.caucho</groupId>
+			<artifactId>hessian</artifactId>
+		</dependency> -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>hessian-lite</artifactId>
+		</dependency>
 	</dependencies>
 </project>

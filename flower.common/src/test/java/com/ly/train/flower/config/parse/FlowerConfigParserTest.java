@@ -43,4 +43,9 @@ public class FlowerConfigParserTest {
     FlowerConfig flowerConfig = new FlowerConfigParser("conf/flower_25004.yml").parse();
     System.out.println(flowerConfig);
   }
+  @Test
+  public void testParseWithoutConfig() {
+    FlowerConfig flowerConfig = new FlowerConfigParser("conf/flower_25005.yml").parse();
+    System.out.println(flowerConfig);
+  }
 }

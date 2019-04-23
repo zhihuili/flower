@@ -42,6 +42,9 @@ public class ServiceInfo implements Serializable {
   private Map<String, Integer> number;
   private ServiceMeta serviceMeta;
 
+  public ServiceInfo() {
+  }
+
   public Map<String, Integer> getNumber() {
     return number;
   }
