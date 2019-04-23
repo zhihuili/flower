@@ -77,7 +77,6 @@ public class ServiceActor extends AbstractFlowerActor {
     this.serviceName = serviceName;
     this.flowNumber = flowNumber;
     this.flowerFactory = flowerFactory;
-    logger.info("服务数量定义： {} : {}", serviceName, flowNumber);
   }
 
   @SuppressWarnings({"unchecked", "rawtypes"})
