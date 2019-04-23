@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.center.common.cache;
+package com.ly.train.flower.common.util.cache;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class Cache<T> implements Serializable {
   private static final long serialVersionUID = 1L;
   private String key;
-  private T value;
+  private volatile T value;
   private long timeToLive;
   private boolean expired;
 
@@ -59,7 +58,7 @@ public class Cache<T> implements Serializable {
   }
 
   public Cache<T> setTimeToLive(long timeToLive) {
-    this.timeToLive = timeToLive + new Date().getTime();
+    this.timeToLive = timeToLive + System.currentTimeMillis();
     return this;
   }
 

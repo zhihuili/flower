@@ -92,6 +92,12 @@ public class FlowerConfig implements Serializable {
     StringBuilder builder = new StringBuilder();
     builder.append("FlowerConfig [name=");
     builder.append(name);
+    builder.append(", host=");
+    builder.append(host);
+    builder.append(", port=");
+    builder.append(port);
+    builder.append(", basePackage=");
+    builder.append(basePackage);
     builder.append(", registry=");
     builder.append(registry);
     builder.append("]");

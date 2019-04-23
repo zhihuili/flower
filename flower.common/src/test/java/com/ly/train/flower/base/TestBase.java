@@ -20,6 +20,7 @@ package com.ly.train.flower.base;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import com.ly.train.flower.base.service.ExceptionService;
 import com.ly.train.flower.base.service.ServiceA;
 import com.ly.train.flower.base.service.ServiceB;
 import com.ly.train.flower.base.service.ServiceC1;
@@ -42,10 +43,11 @@ public class TestBase {
   protected static ServiceLoader serviceLoader;
   protected static ServiceFacade serviceFacade;
 
+
   @BeforeClass
   public static void before() {
     flowerFactory = new SimpleFlowerFactory();
-//    flowerFactory.start();
+    // flowerFactory.start();
     serviceFactory = flowerFactory.getServiceFactory();
     serviceLoader = serviceFactory.getServiceLoader();
     serviceFacade = flowerFactory.getServiceFacade();
@@ -55,6 +57,7 @@ public class TestBase {
     serviceFactory.registerService(ServiceC1.class.getSimpleName(), ServiceC1.class);
     serviceFactory.registerService(ServiceC2.class.getSimpleName(), ServiceC2.class);
     serviceFactory.registerService(ServiceD.class.getSimpleName(), ServiceD.class);
+    serviceFactory.registerService(ExceptionService.class.getSimpleName(), ExceptionService.class);
   }
 
   @AfterClass

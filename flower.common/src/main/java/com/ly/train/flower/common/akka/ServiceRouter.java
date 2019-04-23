@@ -18,15 +18,19 @@ package com.ly.train.flower.common.akka;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorRefWrapper;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorSelectionWrapper;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.loadbalance.LoadBalance;
+import com.ly.train.flower.common.serializer.Codec;
+import com.ly.train.flower.common.serializer.util.CodecUtil;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.AbstractInit;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.service.message.FlowMessage;
 import com.ly.train.flower.common.util.ExtensionLoader;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
@@ -44,10 +48,12 @@ public class ServiceRouter extends AbstractInit {
   private volatile List<ActorWrapper> actors = new ArrayList<>();
   private final ServiceConfig serviceConfig;
   private final FlowerFactory flowerFactory;
+  private final String returnType;
 
   public ServiceRouter(ServiceConfig serviceConfig, FlowerFactory flowerFactory, int number) {
     this.serviceConfig = serviceConfig;
     this.flowerFactory = flowerFactory;
+    this.returnType = serviceConfig.getServiceMeta().getResultType();
     if (number > 0) {
       this.number = number;
     }
@@ -63,23 +69,33 @@ public class ServiceRouter extends AbstractInit {
    * 
    * @param serviceContext {@link ServiceContext}
    * @return obj
-   * @throws Exception
+   * @throws TimeoutException timeout
    */
-  public Object syncCallService(ServiceContext serviceContext) {
+  public Object syncCallService(ServiceContext serviceContext) throws TimeoutException {
     serviceContext.setSync(true);
     ActorWrapper actorRef = chooseOne(serviceContext);
+    Timeout timeout = new Timeout(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
+    Duration duration = Duration.create(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
+    Future<Object> future = null;
+    if (actorRef instanceof ActorRefWrapper) {
+      future = Patterns.ask(((ActorRefWrapper) actorRef).getActorRef(), serviceContext, timeout);
+    } else {
+      future = Patterns.ask(((ActorSelectionWrapper) actorRef).getActorSelection(), serviceContext, timeout);
+    }
     try {
-      Timeout timeout = new Timeout(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
-      Duration duration = Duration.create(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
-      Future<Object> future = null;
-      if (actorRef instanceof ActorRefWrapper) {
-        future = Patterns.ask(((ActorRefWrapper) actorRef).getActorRef(), serviceContext, timeout);
-      } else {
-        future = Patterns.ask(((ActorSelectionWrapper) actorRef).getActorSelection(), serviceContext, timeout);
+      FlowMessage response = (FlowMessage) Await.result(future, duration);
+      if (response.isError()) {
+        throw new FlowerException("fail to invoke \r\nCaused by: " + response.getException());
       }
-      return Await.result(future, duration);
+      byte[] messageByte = response.getMessage();
+      Codec codec = CodecUtil.getInstance().getCodec(response.getMessageType());
+      return codec.getSerializer().decode(messageByte, null);
+    } catch (FlowerException e) {
+      throw e;
+    } catch (TimeoutException e) {
+      throw e;
     } catch (Exception e) {
-      throw new FlowerException(" serviceContext : " + serviceContext, e);
+      throw new FlowerException(returnType + ", serviceContext : " + serviceContext, e);
     }
   }
 

@@ -39,6 +39,16 @@ public abstract class AbstractFlowerActor extends AbstractActor {
       unhandled(message);
     }).build();
   }
+  
+  @Override
+  public void postStop() throws Exception {
+    super.postStop();
+  }
+  
+  @Override
+  public void preStart() throws Exception {
+    super.preStart();
+  }
 
   public abstract void onServiceContextReceived(ServiceContext context) throws Throwable;
 
