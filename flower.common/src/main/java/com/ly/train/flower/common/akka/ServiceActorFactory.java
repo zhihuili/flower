@@ -214,7 +214,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
           flowRouter = new FlowRouter(serviceConfig, flowNumber, flowerFactory);
           flowRouter.init();
           flowRoutersCache.put(routerCacheKey, flowRouter);
-          logger.info("build service Router. flowName : {}, serviceName : {}, flowNumbe : {}", flowName, serviceName,
+          logger.info("build service Router. flowName : {}, serviceName : {}, flowNumber : {}", flowName, serviceName,
               flowNumber);
         }
 
@@ -238,7 +238,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
           serviceRouter = new ServiceRouter(serviceConfig, flowerFactory, flowNumber);
           serviceRouter.init();
           serviceRoutersCache.put(routerName, serviceRouter);
-          logger.info("build service Router. serviceName : {}, flowNumbe : {}", serviceName, flowNumber);
+          logger.info("build service Router. serviceName : {}, actorNumber : {}", serviceName, flowNumber);
         }
       } finally {
         serviceRouterLock.unlock();

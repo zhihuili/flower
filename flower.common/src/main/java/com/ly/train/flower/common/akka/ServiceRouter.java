@@ -44,18 +44,18 @@ import scala.concurrent.duration.Duration;
 public class ServiceRouter extends AbstractInit {
   protected static final Logger logger = LoggerFactory.getLogger(ServiceRouter.class);
   private final LoadBalance loadBalance = ExtensionLoader.load(LoadBalance.class).load();
-  private int number = 2 << 6;
+  private int actorNumber = 2 << 6;
   private volatile List<ActorWrapper> actors = new ArrayList<>();
   private final ServiceConfig serviceConfig;
   private final FlowerFactory flowerFactory;
   private final String returnType;
 
-  public ServiceRouter(ServiceConfig serviceConfig, FlowerFactory flowerFactory, int number) {
+  public ServiceRouter(ServiceConfig serviceConfig, FlowerFactory flowerFactory, int actorNumber) {
     this.serviceConfig = serviceConfig;
     this.flowerFactory = flowerFactory;
     this.returnType = serviceConfig.getServiceMeta().getResultType();
-    if (number > 0) {
-      this.number = number;
+    if (actorNumber > 0) {
+      this.actorNumber = actorNumber;
     }
   }
 
@@ -113,8 +113,8 @@ public class ServiceRouter extends AbstractInit {
     if (actors.isEmpty()) {
       synchronized (this) {
         if (actors.isEmpty()) {
-          for (int i = 0; i < number; i++) {
-            ActorWrapper actor = flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig, i, number);
+          for (int i = 0; i < actorNumber; i++) {
+            ActorWrapper actor = flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig, i, actorNumber);
             actors.add(actor);
           }
         }
@@ -137,7 +137,7 @@ public class ServiceRouter extends AbstractInit {
     builder.append("ServiceRouter [loadBalance=");
     builder.append(loadBalance);
     builder.append(", number=");
-    builder.append(number);
+    builder.append(actorNumber);
     builder.append(", serviceConfig=");
     builder.append(serviceConfig);
     builder.append("]");
