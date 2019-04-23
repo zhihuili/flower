@@ -73,15 +73,15 @@ public class ServiceFacade {
    * will be cached by flowName + "_" + serviceName
    * 
    * @param flowName flowName
-   * @param flowNumbe 数量
+   * @param actorNumber 数量
    * @return {@link ServiceRouter}
    */
-  public FlowRouter buildFlowRouter(String flowName, int flowNumbe) {
-    return flowerFactory.getServiceActorFactory().buildFlowRouter(flowName, flowNumbe);
+  public FlowRouter buildFlowRouter(String flowName, int actorNumber) {
+    return flowerFactory.getServiceActorFactory().buildFlowRouter(flowName, actorNumber);
   }
 
-  public ServiceRouter buildServiceRouter(ServiceConfig serviceConfig, int flowNumbe) {
-    return flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, flowNumbe);
+  public ServiceRouter buildServiceRouter(ServiceConfig serviceConfig, int actorNumber) {
+    return flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, actorNumber);
   }
 
   public void shutdown() {

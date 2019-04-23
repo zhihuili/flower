@@ -61,11 +61,11 @@ public class ServiceActor extends AbstractFlowerActor {
   private static final ConcurrentMap<String, Set<RefType>> nextServiceActorCache = new ConcurrentHashMap<>();
   private FlowerService service;
   private String paramType;
-  private int flowNumber;
+  private int actorNumber;
   private final FlowerFactory flowerFactory;
 
-  static public Props props(String serviceName, FlowerFactory flowerFactory, int flowNumber) {
-    return Props.create(ServiceActor.class, serviceName, flowerFactory, flowNumber);
+  static public Props props(String serviceName, FlowerFactory flowerFactory, int actorNumber) {
+    return Props.create(ServiceActor.class, serviceName, flowerFactory, actorNumber);
   }
 
   /**
@@ -75,7 +75,7 @@ public class ServiceActor extends AbstractFlowerActor {
 
   public ServiceActor(String serviceName, FlowerFactory flowerFactory, int flowNumber) {
     this.serviceName = serviceName;
-    this.flowNumber = flowNumber;
+    this.actorNumber = flowNumber;
     this.flowerFactory = flowerFactory;
   }
 
@@ -236,7 +236,7 @@ public class ServiceActor extends AbstractFlowerActor {
           flowerFactory.getServiceFactory().loadServiceMeta(serviceConfig);// 内部对serviceConfig的数据进行填充
           RefType refType = new RefType();
           refType.setAggregate(serviceConfig.isAggregateService());
-          refType.setServiceRouter(flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, flowNumber));
+          refType.setServiceRouter(flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, actorNumber));
           refType.setMessageType(ClassUtil.forName(serviceConfig.getServiceMeta().getParamType()));
           refType.setServiceName(serviceConfig.getServiceName());
           nextServiceActors.add(refType);
