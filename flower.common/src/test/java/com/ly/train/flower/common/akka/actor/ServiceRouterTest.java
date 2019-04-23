@@ -38,7 +38,7 @@ import com.ly.train.flower.common.service.container.ServiceFlow;
 public class ServiceRouterTest extends TestBase {
 
   private ServiceRouter serviceRouter;
-  
+
 
   private ServiceRouter getServiceRouter() {
     if (serviceRouter != null) {
@@ -59,7 +59,7 @@ public class ServiceRouterTest extends TestBase {
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
-
+    serviceFlow.build();
 
 
     User user = new User();

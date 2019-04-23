@@ -33,7 +33,7 @@ public class CodecUtil {
 
   private CodecUtil() {
     try {
-      codecCache.put(Object.class.getName(), Codec.KRYO);
+      // codecCache.put(Object.class.getName(), Codec.KRYO);
     } catch (Exception e) {
       logger.error("", e);
     }

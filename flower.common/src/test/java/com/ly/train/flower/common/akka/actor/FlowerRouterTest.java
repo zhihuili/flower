@@ -30,7 +30,7 @@ import com.ly.train.flower.common.service.container.ServiceFlow;
  * @author leeyazhou
  *
  */
-public class FlowerRouterTest extends TestBase{
+public class FlowerRouterTest extends TestBase {
 
 
 
@@ -48,7 +48,20 @@ public class FlowerRouterTest extends TestBase{
 
     Object o = router.syncCallService(user);
     System.out.println("响应结果： " + o);
-    Thread.sleep(TimeUnit.SECONDS.toMillis(3));
+  }
+
+  @Test
+  public void testSyncCallServiceSimple2() throws Exception {
+    ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
+    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
+    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
+    final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 3);
+    User user = new User();
+    user.setName("响应式编程 ");
+    user.setAge(2);
+
+    Object o = router.syncCallService(user);
+    System.out.println("响应结果： " + o);
   }
 
   @Test

@@ -61,11 +61,11 @@ public class ServiceActor extends AbstractFlowerActor {
   private static final ConcurrentMap<String, Set<RefType>> nextServiceActorCache = new ConcurrentHashMap<>();
   private FlowerService service;
   private String paramType;
-  private int count;
+  private int flowNumber;
   private final FlowerFactory flowerFactory;
 
-  static public Props props(String serviceName, FlowerFactory flowerFactory, int count) {
-    return Props.create(ServiceActor.class, serviceName, flowerFactory, count);
+  static public Props props(String serviceName, FlowerFactory flowerFactory, int flowNumber) {
+    return Props.create(ServiceActor.class, serviceName, flowerFactory, flowNumber);
   }
 
   /**
@@ -73,10 +73,11 @@ public class ServiceActor extends AbstractFlowerActor {
    */
   private String serviceName;
 
-  public ServiceActor(String serviceName, FlowerFactory flowerFactory, int count) {
+  public ServiceActor(String serviceName, FlowerFactory flowerFactory, int flowNumber) {
     this.serviceName = serviceName;
-    this.count = count;
+    this.flowNumber = flowNumber;
     this.flowerFactory = flowerFactory;
+    logger.info("服务数量定义： {} : {}", serviceName, flowNumber);
   }
 
   @SuppressWarnings({"unchecked", "rawtypes"})
@@ -236,7 +237,7 @@ public class ServiceActor extends AbstractFlowerActor {
           flowerFactory.getServiceFactory().loadServiceMeta(serviceConfig);// 内部对serviceConfig的数据进行填充
           RefType refType = new RefType();
           refType.setAggregate(serviceConfig.isAggregateService());
-          refType.setServiceRouter(flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, count));
+          refType.setServiceRouter(flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, flowNumber));
           refType.setMessageType(ClassUtil.forName(serviceConfig.getServiceMeta().getParamType()));
           refType.setServiceName(serviceConfig.getServiceName());
           nextServiceActors.add(refType);

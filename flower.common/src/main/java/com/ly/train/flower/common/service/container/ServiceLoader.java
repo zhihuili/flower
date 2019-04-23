@@ -183,7 +183,7 @@ public class ServiceLoader extends AbstractInit {
     } catch (Exception e) {
       logger.error("init service meta, serviceName : " + serviceName + ", serviceClass : " + serviceClass, e);
     }
-    logger.info("init ServiceMeta. {} : {}", serviceName, serviceMeta);
+    logger.debug("init ServiceMeta. {} : {}", serviceName, serviceMeta);
     serviceMetaCache.put(serviceName, serviceMeta);
   }
 

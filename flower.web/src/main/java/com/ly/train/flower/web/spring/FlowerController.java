@@ -36,7 +36,7 @@ import com.ly.train.flower.logging.LoggerFactory;
  */
 public abstract class FlowerController implements InitializingBean {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
-  private FlowRouter serviceRouter;
+  private FlowRouter flowRouter;
   private String flowerName;
   private String serviceName;
   private int flowerNumber;
@@ -50,23 +50,23 @@ public abstract class FlowerController implements InitializingBean {
     if (req != null) {
       context = req.startAsync();
     }
-    serviceRouter.asyncCallService(param, context);
+    flowRouter.asyncCallService(param, context);
   }
 
   @Override
   public void afterPropertiesSet() throws Exception {
     getFlowName();
     buildFlower();
-    this.serviceRouter = initServiceRouter();
+    this.flowRouter = initFlowRouter();
   }
 
   /**
    * 初始化路由
    * 
-   * @see com.ly.train.flower.common.actor.ServiceFacade#buildServiceRouter
+   * @see com.ly.train.flower.common.actor.ServiceFacade#buildFlowRouter
    * @return {@code ServiceRouter}
    */
-  private FlowRouter initServiceRouter() {
+  private FlowRouter initFlowRouter() {
     return flowerFactory.getServiceFacade().buildFlowRouter(getFlowName(), getFlowerNumber());
   }
 

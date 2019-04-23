@@ -27,9 +27,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.ly.train.flower.common.service.container.lifecyle.AbstractLifecycle;
 import com.ly.train.flower.common.util.concurrent.NamedThreadFactory;
 
-public class CacheManager {
+public class CacheManager extends AbstractLifecycle {
   private static final Logger log = LoggerFactory.getLogger(CacheManager.class);
   private static final String defaultCacheManager = "DEFAULT_CACHE_MANAGER";
   private volatile static ConcurrentMap<String, CacheManager> cacheManagerMap = new ConcurrentHashMap<>();
@@ -65,14 +66,15 @@ public class CacheManager {
         if (cacheManager == null) {
           cacheManager = new CacheManager();
           cacheManagerMap.putIfAbsent(name, cacheManager);
-          init();
+          cacheManager.init();
         }
       }
     }
     return cacheManager;
   }
 
-  private static void init() {
+  @Override
+  protected void doInit() {
     try {
       if (!init.compareAndSet(false, true)) {
         return;
@@ -214,6 +216,18 @@ public class CacheManager {
       return true;
     }
     return false;
+  }
+
+  @Override
+  protected void doStart() {
+    // do nothing
+  }
+
+  @Override
+  protected void doStop() {
+    if (executorService != null && !executorService.isShutdown()) {
+      executorService.shutdown();
+    }
   }
 
 }
