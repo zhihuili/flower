@@ -88,10 +88,10 @@ public class ServiceActorFactory extends AbstractLifecycle {
     return buildServiceActor(serviceConfig, index, -1);
   }
 
-  public ActorWrapper buildServiceActor(ServiceConfig serviceConfig, int index, int flowNumber) {
+  public ActorWrapper buildServiceActor(ServiceConfig serviceConfig, int index, int actorNumber) {
     final String serviceName = serviceConfig.getServiceName();
     // TODO  缓存key的考量，是否要添加flowNumber
-    final String cacheKey = serviceName + "_" + index + "_" + flowNumber;
+    final String cacheKey = serviceName + "_" + index ;
     ActorWrapper actorWrapper = serviceActorCache.get(cacheKey);
     if (actorWrapper != null) {
       return actorWrapper;
@@ -103,7 +103,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
       if (actorWrapper == null) {
         if (serviceConfig.isLocal()) {
           ActorRef actorRef =
-              getActorContext().actorOf(ServiceActor.props(serviceName, flowerFactory, flowNumber), cacheKey);
+              getActorContext().actorOf(ServiceActor.props(serviceName, flowerFactory, actorNumber), cacheKey);
           actorWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
         } else {
           // "akka.tcp://flower@127.0.0.1:2551/user/$a"

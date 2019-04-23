@@ -42,7 +42,8 @@ public class SimpleRegistryTest extends TestBase {
   @Test
   public void testRegister() throws Exception {
 
-    URL url = new URL("http", "127.0.0.1", 8080);
+    URL url = new URL("flower", "127.0.0.1", 8096);
+    url.addParam("application", "FlowerCenter");
     RegistryFactory factory = new SimpleRegistryFactory();
     Registry registry = factory.createRegistry(url);
     ((SimpleRegistry) registry).setFlowerFactory(flowerFactory);
@@ -54,12 +55,13 @@ public class SimpleRegistryTest extends TestBase {
     serviceInfo.addAddress(new URL("", "127.0.0.1", 12002));
     serviceInfo.setCreateTime(new Date());
     registry.register(serviceInfo);
-    Thread.sleep(2000);
+    Thread.sleep(20000);
   }
 
   @Test
   public void testGetProviders() throws Exception {
     URL url = new URL("http", "127.0.0.1", 8080);
+    url.addParam("application", "FlowerCenter");
     RegistryFactory factory = new SimpleRegistryFactory();
     Registry registry = factory.createRegistry(url);
     ((SimpleRegistry) registry).setFlowerFactory(flowerFactory);
