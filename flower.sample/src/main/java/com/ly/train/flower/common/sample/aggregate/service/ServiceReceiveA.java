@@ -40,6 +40,7 @@ public class ServiceReceiveA implements Service<List<Object>,Integer> {
         System.out.println("处理A分叉之后的聚合消息:");
         Integer sum = 0;
         if(null != message && message.size()>0) {
+            System.out.println("收到数量："+message.size());
             for (Object obj : message) {
                 if (obj instanceof Integer) {
                     sum += (Integer) obj;

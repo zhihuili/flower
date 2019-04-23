@@ -21,6 +21,8 @@ import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import com.ly.train.flower.web.spring.context.FlowerComponentScan;
 
+import java.util.Map;
+
 /**
  * 本示例兼容2019-4-10日master提交
  * @author: fengyu.zhang
@@ -34,10 +36,18 @@ public class AggregateApplication {
 
     /**
      * 使用jetty运行，不写该方法则默认使用tomcat运行
+     * 关于端口配置：
+     * application.yml 是spring-boot启动的配置，其优先级高于以下端口配置；
+     * 如果需要在代码中自定义端口，请勿在application.xml文件中配置端口；
      */
     @Bean
     public JettyServletWebServerFactory servletContainer(){
-        int port = 8081;
+        int port = 8080;
+        Map<String, String> map = System.getenv();
+        String envPort = map.get("PORT0");
+        if(envPort != null && !envPort.isEmpty()){
+            port = Integer.valueOf(envPort);
+        }
         return new JettyServletWebServerFactory(port) ;
     }
 }

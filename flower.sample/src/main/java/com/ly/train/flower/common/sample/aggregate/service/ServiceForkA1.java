@@ -16,18 +16,26 @@
 package com.ly.train.flower.common.sample.aggregate.service;
 
 import com.ly.train.flower.common.annotation.FlowerService;
+import com.ly.train.flower.common.sample.aggregate.dao.UserDao;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author: fengyu.zhang
  */
 @FlowerService
 public class ServiceForkA1 implements Service<Integer, Integer> {
+    @Autowired
+    UserDao userDao;
     @Override
     public Integer process(Integer message, ServiceContext context) throws Throwable {
+        System.out.println(userDao.findUser(1).getName());
         Integer result = message+1;
         System.out.println("ForkA1:已处理,结果:"+result);
         return result;
+    }
+    public String getName(){
+        return userDao.findUser(1).getName();
     }
 }
