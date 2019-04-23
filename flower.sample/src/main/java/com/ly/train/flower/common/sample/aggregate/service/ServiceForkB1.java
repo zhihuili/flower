@@ -24,8 +24,21 @@ import com.ly.train.flower.common.service.container.ServiceContext;
  */
 @FlowerService
 public class ServiceForkB1 implements Service<Integer,Integer> {
+//    @Autowired
+//    private FlowerFactory flowerFactory;
     @Override
     public Integer process(Integer message, ServiceContext context) throws Throwable {
+//        ServiceMeta serviceMeta = flowerFactory.getServiceFactory().getServiceLoader().loadServiceMeta("ServiceForkA1");
+//        ClassLoader classLoader = this.getClass().getClassLoader();
+//        Class<?> serviceClass = classLoader.loadClass(serviceMeta.getServiceClassName());
+//        String param = serviceMeta.getConfig(1);
+//        ServiceForkA1 forkA1 = null;
+//        if (param != null) {
+//            Constructor<?> constructor = serviceClass.getConstructor(String.class);
+//            forkA1 = (ServiceForkA1) constructor.newInstance(param);
+//        } else {
+//            forkA1 = (ServiceForkA1) serviceClass.newInstance();
+//        }
         Integer result = message+1;
         System.out.println("ForkB1:已处理,结果:"+result);
         return result;

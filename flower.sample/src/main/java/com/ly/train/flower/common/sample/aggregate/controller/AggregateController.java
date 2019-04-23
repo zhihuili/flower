@@ -29,7 +29,7 @@ import java.io.IOException;
  * @author: fengyu.zhang
  */
 @RestController
-@Flower(value = "aggregate",serviceName = "ServiceBegin", flowNumber = 1)
+@Flower(value = "aggregate",flowNumber = 6)
 public class AggregateController extends FlowerController {
 
     @RequestMapping(value = "/test/aggregate/{id}")
