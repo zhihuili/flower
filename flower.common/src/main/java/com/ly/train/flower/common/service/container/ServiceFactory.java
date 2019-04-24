@@ -54,9 +54,9 @@ public class ServiceFactory extends AbstractInit {
     if (StringUtil.isBlank(basePackage)) {
       return;
     }
-    
-    Set<Class<?>> flowers =
-        DefaultClassScanner.getInstance().getClassListByAnnotation(basePackage, com.ly.train.flower.common.annotation.FlowerService.class);
+
+    Set<Class<?>> flowers = DefaultClassScanner.getInstance().getClassListByAnnotation(basePackage,
+        com.ly.train.flower.common.annotation.FlowerService.class);
     logger.info("scan flowerService, basePackage : {}, find flowerService : {}", basePackage, flowers.size());
     for (Class<?> clazz : flowers) {
       serviceLoader.registerServiceType(FlowerServiceUtil.getServiceName(clazz), clazz);
@@ -76,8 +76,8 @@ public class ServiceFactory extends AbstractInit {
     serviceConfig.setServiceName(serviceName);
     serviceConfig.setServiceMeta(serviceMeta);
     serviceConfig.setApplication(flowerConfig.getName());
-    flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig);
-
+    // flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig);
+    flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, -1);
 
     Set<Registry> registries = flowerFactory.getRegistry();
     // logger.info("注册中心 {} : {}", serviceName, registries.size());

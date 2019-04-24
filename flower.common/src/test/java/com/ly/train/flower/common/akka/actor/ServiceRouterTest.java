@@ -27,6 +27,7 @@ import com.ly.train.flower.base.service.ServiceB;
 import com.ly.train.flower.base.service.ServiceC1;
 import com.ly.train.flower.base.service.ServiceC2;
 import com.ly.train.flower.common.akka.ServiceRouter;
+import com.ly.train.flower.common.annotation.FlowerServiceUtil;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.container.ServiceFlow;
@@ -48,7 +49,7 @@ public class ServiceRouterTest extends TestBase {
     serviceConfig.setServiceMeta(serviceLoader.loadServiceMeta("ServiceB"));
     serviceConfig.setFlowName(flowName);
     serviceConfig.setServiceName("ServiceB");
-    serviceRouter = serviceFacade.buildServiceRouter(serviceConfig, 1);
+    serviceRouter = serviceFacade.buildServiceRouter(serviceConfig, -1);
     return serviceRouter;
   }
 
@@ -68,6 +69,7 @@ public class ServiceRouterTest extends TestBase {
 
     ServiceContext serviceContext = ServiceContext.context(user);
     serviceContext.setFlowName(flowName);
+    serviceContext.setCurrentServiceName(FlowerServiceUtil.getServiceName(ServiceA.class));
     Object o = getServiceRouter().syncCallService(serviceContext);
     System.out.println("响应结果： " + o);
   }
@@ -85,6 +87,7 @@ public class ServiceRouterTest extends TestBase {
     user.setAge(2);
     ServiceContext serviceContext = ServiceContext.context(user);
     serviceContext.setFlowName(flowName);
+    serviceContext.setCurrentServiceName(FlowerServiceUtil.getServiceName(ServiceA.class));
     getServiceRouter().asyncCallService(serviceContext);
     Thread.sleep(TimeUnit.SECONDS.toMillis(2));
   }
@@ -108,6 +111,7 @@ public class ServiceRouterTest extends TestBase {
           user.setAge(2);
           try {
             ServiceContext serviceContext = ServiceContext.context(user);
+            serviceContext.setCurrentServiceName(FlowerServiceUtil.getServiceName(ServiceA.class));
             serviceContext.setFlowName(flowName);
             Object o = getServiceRouter().syncCallService(serviceContext);
             System.out.println("响应结果 ： " + o);
@@ -139,6 +143,7 @@ public class ServiceRouterTest extends TestBase {
           try {
             ServiceContext serviceContext = ServiceContext.context(user);
             serviceContext.setFlowName(flowName);
+            serviceContext.setCurrentServiceName(FlowerServiceUtil.getServiceName(ServiceA.class));
             getServiceRouter().asyncCallService(serviceContext);
           } catch (Exception e) {
             e.printStackTrace();

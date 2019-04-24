@@ -55,7 +55,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
 
   private volatile Map<String, ServiceRouter> serviceRoutersCache = new ConcurrentHashMap<>();
   private volatile Map<String, FlowRouter> flowRoutersCache = new ConcurrentHashMap<>();
-  public static final String actorPathFormat = "akka.tcp://%s@%s:%s/user/flower/%s_0";
+  public static final String actorPathFormat = "akka.tcp://%s@%s:%s/user/flower/%s_%s";
   private final int defaultFlowIndex = 0;
 
 
@@ -108,14 +108,9 @@ public class ServiceActorFactory extends AbstractLifecycle {
         } else {
           // "akka.tcp://flower@127.0.0.1:2551/user/$a"
           URL url = serviceConfig.getAddresses().iterator().next();
-          String actorPath =
-              String.format(actorPathFormat, serviceConfig.getApplication(), url.getHost(), url.getPort(), serviceName);
-          // logger.info("远程path: {}", actorPath);
+          String actorPath = String.format(actorPathFormat, serviceConfig.getApplication(), url.getHost(),
+              url.getPort(), serviceName, index % 128);
           ActorSelection actorSelection = getActorContext().actorSelection(actorPath);
-          // CompletionStage<ActorRef> st =
-          // actorSelection.resolveOne(java.time.Duration.ofSeconds(3));
-          // ActorRef actorRef = st.toCompletableFuture().get();
-          // actorWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
           actorWrapper = new ActorSelectionWrapper(actorSelection).setServiceName(serviceName);
         }
         // logger.info("创建Actor {} : {}", serviceName, flowerConfig.getPort());
@@ -126,7 +121,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
       }
     } catch (Exception e) {
       throw new FlowerException(
-          "fail to create flowerService,flowName : " + serviceConfig.getFlowName() + ", serviceName : " + serviceName
+          "fail to create flowerService, flowName : " + serviceConfig.getFlowName() + ", serviceName : " + serviceName
               + ", serviceClassName : " + serviceConfig.getServiceMeta().getServiceClassName(),
           e);
     } finally {
