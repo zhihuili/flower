@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReentrantLock;
 import com.ly.train.flower.common.annotation.Scope;
 import com.ly.train.flower.common.serializer.Codec;
 import com.ly.train.flower.common.service.Aggregate;
@@ -42,7 +41,7 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
   private Long timeoutMillis = DefaultTimeOutMilliseconds;
 
   private static final String cacheKeyPrefix = "FLOWER_AGGREGATE_SERVICE_";
-  private ReentrantLock lock = new ReentrantLock();
+//  private ReentrantLock lock = new ReentrantLock();
 
   public AggregateService() {}
 
@@ -55,10 +54,10 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
     FlowMessage flowMessage = context.getFlowMessage();
 
     final String transactionId = flowMessage.getTransactionId();
-    AggregateInfo aggregateInfo = getServiceInfo(context.getFlowName(), transactionId);
-    aggregateInfo.addResult(flowMessage);
-    if (aggregateInfo.getResultNum().decrementAndGet() <= 0) {
-      return buildMessage(context.getFlowName(), transactionId);
+    AggregateInfo aggregateInfo = getAndCacheResult(context.getFlowName(), transactionId, flowMessage);
+    if (aggregateInfo.getResultNum().get() <= 0) {
+      clear(context.getFlowName(), transactionId);
+      return buildMessage(aggregateInfo.getResults());
     }
     return null;
   }
@@ -68,16 +67,17 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
     CacheManager.get(cacheKeyPrefix + flowName).invalidate(transactionId);
   }
 
-  private AggregateInfo getServiceInfo(final String flowName, final String transactionId) {
+  private AggregateInfo getAndCacheResult(final String flowName, final String transactionId, FlowMessage flowMessage) {
     Assert.notNull(flowName, "flowName can't be null .");
     CacheManager cacheManager = CacheManager.get(cacheKeyPrefix + flowName);
-    Cache<AggregateInfo> cache = cacheManager.getCache(transactionId);
-    if (cache == null) {
-      lock.lock();
-      try {
+    AggregateInfo aggregateInfo = null;
+//    lock.lock();
+    try {
+      Cache<AggregateInfo> cache = cacheManager.getCache(transactionId);
+      if (cache == null) {
         cache = cacheManager.getCache(transactionId);
         if (cache == null) {
-          AggregateInfo aggregateInfo = new AggregateInfo(transactionId, sourceNumber);
+          aggregateInfo = new AggregateInfo(transactionId, sourceNumber);
           Cache<AggregateInfo> temp = cacheManager.add(transactionId, aggregateInfo, timeoutMillis);
           if (temp != null) {
             cache = temp;
@@ -85,11 +85,13 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
             cache = cacheManager.getCache(transactionId);
           }
         }
-      } finally {
-        lock.unlock();
       }
+      aggregateInfo = cache.getValue();
+      aggregateInfo.addResult(flowMessage);
+      aggregateInfo.getResultNum().decrementAndGet();// 计数-1
+    } finally {
+//      lock.unlock();
     }
-    AggregateInfo aggregateInfo = cache.getValue();
     return aggregateInfo;
   }
 
@@ -99,16 +101,15 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
    * @param messages Set<Message>
    * @return Object
    */
-  public List<Object> buildMessage(String flowName, String transactionId) {
+  public List<Object> buildMessage(List<FlowMessage> messages) {
     List<Object> ret = new ArrayList<Object>();
-    try {
-      AggregateInfo aggregateInfo = getServiceInfo(flowName, transactionId);
-      List<FlowMessage> messages = aggregateInfo.getResults();
-      for (FlowMessage message : messages) {
+    for (FlowMessage message : messages) {
+      try {
         ret.add(Codec.Hessian.decode(message.getMessage(), message.getMessageType()));
+      } catch (Exception e) {
+        logger.error("序列化异常 : ", e);
+        ret.add(1);
       }
-    } finally {
-      clear(flowName, transactionId);
     }
     return ret;
   }

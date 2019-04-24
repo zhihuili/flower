@@ -33,18 +33,18 @@ import akka.actor.ActorRef;
  */
 public class FlowRouter extends AbstractInit {
   static final com.ly.train.flower.logging.Logger logger = LoggerFactory.getLogger(FlowRouter.class);
-  private int actorNumber = 2 << 6;
+  private int flowerNumber = 2 << 6;
   private volatile ServiceRouter serviceRouter;
   private final ServiceConfig headerServiceConfig;
   private final String flowName;
   private ServiceFacade serviceFacade;
 
-  public FlowRouter(ServiceConfig headerServiceConfig, int actorNumber, FlowerFactory flowerFactory) {
+  public FlowRouter(ServiceConfig headerServiceConfig, int flowerNumber, FlowerFactory flowerFactory) {
     this.flowName = headerServiceConfig.getFlowName();
     this.headerServiceConfig = headerServiceConfig;
     this.serviceFacade = flowerFactory.getServiceFacade();
-    if (actorNumber > 0) {
-      this.actorNumber = actorNumber;
+    if (flowerNumber > 0) {
+      this.flowerNumber = flowerNumber;
     }
   }
 
@@ -98,7 +98,7 @@ public class FlowRouter extends AbstractInit {
     if (serviceRouter == null) {
       synchronized (this) {
         if (serviceRouter == null) {
-          this.serviceRouter = serviceFacade.buildServiceRouter(headerServiceConfig, actorNumber);
+          this.serviceRouter = serviceFacade.buildServiceRouter(headerServiceConfig, flowerNumber);
         }
       }
     }

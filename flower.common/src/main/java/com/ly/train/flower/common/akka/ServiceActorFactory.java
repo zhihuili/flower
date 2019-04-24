@@ -90,8 +90,8 @@ public class ServiceActorFactory extends AbstractLifecycle {
 
   public ActorWrapper buildServiceActor(ServiceConfig serviceConfig, int index, int actorNumber) {
     final String serviceName = serviceConfig.getServiceName();
-    // TODO  缓存key的考量，是否要添加flowNumber
-    final String cacheKey = serviceName + "_" + index ;
+    // TODO 缓存key的考量，是否要添加flowNumber
+    final String cacheKey = serviceName + "_" + index;
     ActorWrapper actorWrapper = serviceActorCache.get(cacheKey);
     if (actorWrapper != null) {
       return actorWrapper;
@@ -103,7 +103,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
       if (actorWrapper == null) {
         if (serviceConfig.isLocal()) {
           ActorRef actorRef =
-              getActorContext().actorOf(ServiceActor.props(serviceName, flowerFactory, actorNumber), cacheKey);
+              getActorContext().actorOf(ServiceActor.props(serviceName, flowerFactory, index, actorNumber), cacheKey);
           actorWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
         } else {
           // "akka.tcp://flower@127.0.0.1:2551/user/$a"
@@ -194,13 +194,13 @@ public class ServiceActorFactory extends AbstractLifecycle {
    * will be cached by flowName + "_" + serviceName
    * 
    * @param flowName flowName
-   * @param flowNumbe 数量
+   * @param flowNumber 数量
    * @return {@link ServiceRouter}
    */
-  public FlowRouter buildFlowRouter(String flowName, int flowNumbe) {
+  public FlowRouter buildFlowRouter(String flowName, int flowNumber) {
     final ServiceConfig serviceConfig = serviceFactory.getOrCreateServiceFlow(flowName).getHeadServiceConfig();
     if (serviceConfig == null) {
-      throw new FlowNotFoundException("flowName : " + flowName + ", flowNumbe : " + flowNumbe);
+      throw new FlowNotFoundException("flowName : " + flowName + ", flowNumbe : " + flowNumber);
     }
     final String serviceName = serviceConfig.getServiceName();
     final String routerCacheKey = flowName + "_" + serviceName;
@@ -211,11 +211,11 @@ public class ServiceActorFactory extends AbstractLifecycle {
       try {
         flowRouter = flowRoutersCache.get(routerCacheKey);
         if (flowRouter == null) {
-          flowRouter = new FlowRouter(serviceConfig, flowNumbe, flowerFactory);
+          flowRouter = new FlowRouter(serviceConfig, flowNumber, flowerFactory);
           flowRouter.init();
           flowRoutersCache.put(routerCacheKey, flowRouter);
-          logger.info("build service Router. flowName : {}, serviceName : {}, flowNumbe : {}", flowName, serviceName,
-              flowNumbe);
+          logger.info("build service Router. flowName : {}, serviceName : {}, flowNumber : {}", flowName, serviceName,
+              flowNumber);
         }
 
       } finally {
@@ -225,9 +225,9 @@ public class ServiceActorFactory extends AbstractLifecycle {
     return flowRouter;
   }
 
-  public ServiceRouter buildServiceRouter(ServiceConfig serviceConfig, int flowNumbe) {
+  public ServiceRouter buildServiceRouter(ServiceConfig serviceConfig, int flowNumber) {
     final String serviceName = serviceConfig.getServiceName();
-    final String routerName = serviceName + "_" + flowNumbe;
+    final String routerName = serviceName + "_" + flowNumber;
 
     ServiceRouter serviceRouter = serviceRoutersCache.get(routerName);
     if (serviceRouter == null) {
@@ -235,10 +235,10 @@ public class ServiceActorFactory extends AbstractLifecycle {
       try {
         serviceRouter = serviceRoutersCache.get(routerName);
         if (serviceRouter == null) {
-          serviceRouter = new ServiceRouter(serviceConfig, flowerFactory, flowNumbe);
+          serviceRouter = new ServiceRouter(serviceConfig, flowerFactory, flowNumber);
           serviceRouter.init();
           serviceRoutersCache.put(routerName, serviceRouter);
-          logger.info("build service Router. serviceName : {}, flowNumbe : {}", serviceName, flowNumbe);
+          logger.info("build service Router. serviceName : {}, actorNumber : {}", serviceName, flowNumber);
         }
       } finally {
         serviceRouterLock.unlock();

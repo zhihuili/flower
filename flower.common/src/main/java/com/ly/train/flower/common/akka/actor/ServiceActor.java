@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
-import com.ly.train.flower.common.akka.ServiceRouter;
+import com.ly.train.flower.common.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.common.exception.ServiceException;
 import com.ly.train.flower.common.serializer.Codec;
 import com.ly.train.flower.common.serializer.util.CodecUtil;
@@ -62,10 +62,11 @@ public class ServiceActor extends AbstractFlowerActor {
   private FlowerService service;
   private String paramType;
   private int actorNumber;
+  private int index;
   private final FlowerFactory flowerFactory;
 
-  static public Props props(String serviceName, FlowerFactory flowerFactory, int actorNumber) {
-    return Props.create(ServiceActor.class, serviceName, flowerFactory, actorNumber);
+  static public Props props(String serviceName, FlowerFactory flowerFactory, int index, int actorNumber) {
+    return Props.create(ServiceActor.class, serviceName, flowerFactory, index, actorNumber);
   }
 
   /**
@@ -73,8 +74,9 @@ public class ServiceActor extends AbstractFlowerActor {
    */
   private String serviceName;
 
-  public ServiceActor(String serviceName, FlowerFactory flowerFactory, int flowNumber) {
+  public ServiceActor(String serviceName, FlowerFactory flowerFactory, int index, int flowNumber) {
     this.serviceName = serviceName;
+    this.index = index;
     this.actorNumber = flowNumber;
     this.flowerFactory = flowerFactory;
   }
@@ -107,17 +109,15 @@ public class ServiceActor extends AbstractFlowerActor {
 
       Exception e2 = new ServiceException("invoke service " + serviceContext.getCurrentServiceName() + " : " + service
           + "\r\n, param : " + flowMessage.getMessage(), e);
-      FlowMessage errorMessage = new FlowMessage();
-      errorMessage.setException(ExceptionUtil.getErrorMessage(e2));
       if (serviceContext.isSync()) {
-        handleSyncResult(serviceContext, errorMessage);
+        handleSyncResult(serviceContext, ExceptionUtil.getErrorMessage(e2), true);
       }
       throw e2;
     }
 
     Set<RefType> nextActorRef = getNextServiceActors(serviceContext);
     if (serviceContext.isSync() && CollectionUtil.isEmpty(nextActorRef)) {
-      handleSyncResult(serviceContext, result);
+      handleSyncResult(serviceContext, result, false);
       return;
     }
 
@@ -140,7 +140,7 @@ public class ServiceActor extends AbstractFlowerActor {
    * @param serviceContext 上下文 {@link ServiceContext}
    * @param result 消息内容
    */
-  private void handleSyncResult(ServiceContext serviceContext, Object result) {
+  private void handleSyncResult(ServiceContext serviceContext, Object result, boolean error) {
     CacheManager cacheManager = CacheManager.get(serviceActorCachePrefix + serviceContext.getFlowName());
     Cache<ActorRef> cache = cacheManager.getCache(serviceContext.getId());
     if (cache == null) {
@@ -151,7 +151,11 @@ public class ServiceActor extends AbstractFlowerActor {
     if (actor != null) {
       FlowMessage resultMessage = new FlowMessage();
       Codec codec = CodecUtil.getInstance().getCodec(result.getClass().getName());
-      resultMessage.setMessage(codec.getSerializer().encode(result));
+      if (error) {
+        resultMessage.setException((String) result);
+      } else {
+        resultMessage.setMessage(codec.getSerializer().encode(result));
+      }
       resultMessage.setCodec(codec.getCode());
       resultMessage.setMessageType(result.getClass().getName());
       actor.tell(resultMessage, getSelf());
@@ -190,7 +194,7 @@ public class ServiceActor extends AbstractFlowerActor {
           ServiceContext context = serviceContext.newInstance();
           context.setFlowMessage(resultMessage);
           context.setCurrentServiceName(refType.getServiceName());
-          refType.getServiceRouter().asyncCallService(context, getSelf());
+          refType.getActorWrapper().tell(context, getSelf());
         }
       }
     }
@@ -236,7 +240,8 @@ public class ServiceActor extends AbstractFlowerActor {
           flowerFactory.getServiceFactory().loadServiceMeta(serviceConfig);// 内部对serviceConfig的数据进行填充
           RefType refType = new RefType();
           refType.setAggregate(serviceConfig.isAggregateService());
-          refType.setServiceRouter(flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, actorNumber));
+          refType.setActorWrapper(
+              flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig, index, actorNumber));
           refType.setMessageType(ClassUtil.forName(serviceConfig.getServiceMeta().getParamType()));
           refType.setServiceName(serviceConfig.getServiceName());
           nextServiceActors.add(refType);
@@ -251,17 +256,19 @@ public class ServiceActor extends AbstractFlowerActor {
 
 
   static class RefType {
-    private ServiceRouter serviceRouter;
+    private ActorWrapper actorWrapper;
     private Class<?> messageType;
     private String serviceName;
     private boolean aggregate;
 
-    public void setServiceRouter(ServiceRouter serviceRouter) {
-      this.serviceRouter = serviceRouter;
+
+
+    public ActorWrapper getActorWrapper() {
+      return actorWrapper;
     }
 
-    public ServiceRouter getServiceRouter() {
-      return serviceRouter;
+    public void setActorWrapper(ActorWrapper actorWrapper) {
+      this.actorWrapper = actorWrapper;
     }
 
     public boolean isAggregate() {
@@ -291,8 +298,8 @@ public class ServiceActor extends AbstractFlowerActor {
     @Override
     public String toString() {
       StringBuilder builder = new StringBuilder();
-      builder.append("RefType [serviceRouter=");
-      builder.append(serviceRouter);
+      builder.append("RefType [actorWrapper=");
+      builder.append(actorWrapper);
       builder.append(", messageType=");
       builder.append(messageType);
       builder.append(", serviceName=");
