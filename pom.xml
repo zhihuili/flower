@@ -55,7 +55,7 @@
 		<spring.version>5.1.5.RELEASE</spring.version>
 		<slf4j-api.version>1.7.26</slf4j-api.version>
 		<logback.version>1.2.3</logback.version>
-		<jetty.version>9.4.14.v20181114</jetty.version>
+		<jetty.version>9.4.17.v20190418</jetty.version>
 		<javassist.version>3.24.1-GA</javassist.version>
 
 		<protostuff.version>1.5.2</protostuff.version>
