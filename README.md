@@ -1,7 +1,7 @@
 # 流式微服务框架Flower
 
-![Build Status](https://travis-ci.org/yaolinxue/flower.svg?branch=master)
-[![codecov](https://codecov.io/gh/yaolinxue/flower/branch/master/graph/badge.svg)](https://codecov.io/gh/yaolinxue/flower)
+![Build Status](https://travis-ci.org/zhihuili/flower.svg?branch=master)
+[![codecov](https://codecov.io/gh/zhihuili/flower/branch/master/graph/badge.svg)](https://codecov.io/gh/zhihuili/flower)
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/zhihuili/flower.svg)](http://isitmaintained.com/project/zhihuili/flower "Percentage of issues still open")
 ![license](https://img.shields.io/github/license/zhihuili/flower.svg)
 [![star this repo](http://githubbadges.com/star.svg?user=zhihuili&repo=flower&style=flat)](https://github.com/zhihuili/flower)
