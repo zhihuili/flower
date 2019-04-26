@@ -37,7 +37,8 @@
 
 		<maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
 		<maven-checkstyle-plugin.version>2.15</maven-checkstyle-plugin.version>
-
+		<maven.java.formatter.plugin>0.4</maven.java.formatter.plugin>
+		
 		<akka.version>2.5.21</akka.version>
 		<akka-http.version>10.1.7</akka-http.version>
 		<reflections.version>0.9.11</reflections.version>
@@ -255,7 +256,16 @@
 				<artifactId>fst</artifactId>
 				<version>2.56</version>
 			</dependency>
-
+			<dependency>
+				<groupId>redis.clients</groupId>
+				<artifactId>jedis</artifactId>
+				<version>3.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.redisson</groupId>
+				<artifactId>redisson</artifactId>
+				<version>3.10.6</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -387,6 +397,22 @@
 						<format>xml</format>
 					</formats>
 					<check />
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.googlecode.maven-java-formatter-plugin</groupId>
+				<artifactId>maven-java-formatter-plugin</artifactId>
+				<version>${maven.java.formatter.plugin}</version>
+				<executions>
+					<execution>
+						<goals>
+							<!-- <goal>format</goal> -->
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<configFile>${user.dir}/conf/eclipse-java-google-style.xml</configFile>
+					<encoding>${project.encoding}</encoding>
 				</configuration>
 			</plugin>
 		</plugins>
