@@ -15,10 +15,9 @@
  */
 package com.ly.train.flower.container;
 
-import com.ly.train.flower.common.service.container.FlowerFactory;
-import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
-import com.ly.train.flower.logging.Logger;
-import com.ly.train.flower.logging.LoggerFactory;
+import java.lang.reflect.Method;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author leeyazhou
@@ -28,9 +27,12 @@ public class FlowerBootstrap extends Bootstrap {
   protected static final Logger logger = LoggerFactory.getLogger(FlowerBootstrap.class);
 
   @Override
-  public void doStartup(String configLocation) {
-    FlowerFactory flowerFactory = new SimpleFlowerFactory(configLocation);
-    flowerFactory.start();
+  public void doStartup(String configLocation) throws Throwable {
+    Class<?> flowerFactoryClazz = Class
+        .forName("com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory", true, getClassLoader());
+    Object flowerFactory = flowerFactoryClazz.getConstructor(String.class).newInstance(configLocation);
+    Method startMethod = flowerFactoryClazz.getMethod("start");
+    startMethod.invoke(flowerFactory);
   }
 
 }
