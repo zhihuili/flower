@@ -19,10 +19,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import com.ly.train.flower.common.loader.FlowerClassLoader;
-import com.ly.train.flower.common.util.Constant;
-import com.ly.train.flower.logging.Logger;
-import com.ly.train.flower.logging.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.ly.train.flower.container.loader.BootstrapClassLoader;
 
 /**
  * @author leeyazhou
@@ -31,18 +30,24 @@ import com.ly.train.flower.logging.LoggerFactory;
 public abstract class Bootstrap {
 
   private static final Logger logger = LoggerFactory.getLogger(Bootstrap.class);
+  public static final String flowerConfigLocationKey = "flower.config.location";
+  public static final String springConfigLocationKey = "spring.config.location";
+  public static final String flowerHomeKey = "flower.home";
 
   public static void main(String[] args) {
     String mainClass = "com.ly.train.flower.container.SpringBootstrap";
     logger.info("flower start class : {}", mainClass);
     try {
-      String flowerHome = System.getProperty(Constant.flowerHome);
+      String flowerHome = System.getProperty(flowerHomeKey);
       ClassLoader classLoader = createClassLoader(flowerHome);
       @SuppressWarnings("unchecked")
-      Class<Bootstrap> bootstrapClass = (Class<Bootstrap>) Class.forName(mainClass, true, classLoader);
+      Class<Bootstrap> bootstrapClass = (Class<Bootstrap>) classLoader.loadClass(mainClass);// (Class<Bootstrap>)
+                                                                                            // Class.forName(mainClass,
+      // true, classLoader);
       Bootstrap bootstrap = bootstrapClass.newInstance();
 
-      String configLocation = System.getProperty(Constant.springConfigLocationKey);
+      bootstrap.setClassLoader(classLoader);
+      String configLocation = System.getProperty(springConfigLocationKey);
       bootstrap.startup(configLocation);
     } catch (Throwable e) {
       logger.error("fail to start flower container.", e);
@@ -58,6 +63,7 @@ public abstract class Bootstrap {
       if (file.exists()) {
         for (String f : file.list()) {
           urls.add(new URL("file:" + libs + f));
+          logger.info(libs + f);
         }
       }
     } catch (Exception e) {
@@ -66,12 +72,22 @@ public abstract class Bootstrap {
 
     URL[] u = new URL[urls.size()];
 
-    ClassLoader classLoader = new FlowerClassLoader(urls.toArray(u), Bootstrap.class.getClassLoader());
+    ClassLoader classLoader = new BootstrapClassLoader(urls.toArray(u), Bootstrap.class.getClassLoader());
     return classLoader;
   }
 
   private void startup(String configLocation) throws Throwable {
     doStartup(configLocation);
+  }
+
+  private ClassLoader classLoader;
+
+  public void setClassLoader(ClassLoader classLoader) {
+    this.classLoader = classLoader;
+  }
+
+  public ClassLoader getClassLoader() {
+    return classLoader;
   }
 
   /**

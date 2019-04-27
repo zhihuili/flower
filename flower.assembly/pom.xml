@@ -16,9 +16,7 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -33,19 +31,19 @@
     <dependencies>
         <dependency>
             <groupId>com.ly.train</groupId>
-            <artifactId>flower.common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.ly.train</groupId>
-            <artifactId>flower.sample</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.ly.train</groupId>
             <artifactId>flower.center</artifactId>
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
+            <artifactId>flower.common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ly.train</groupId>
             <artifactId>flower.container</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ly.train</groupId>
+            <artifactId>flower.sample</artifactId>
         </dependency>
     </dependencies>
     <build>
@@ -55,10 +53,10 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
+                        <phase>package</phase>
                         <configuration>
                             <outputFile>flower.jar</outputFile>
                             <transformers>
@@ -66,12 +64,10 @@
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>reference.conf</resource>
                                 </transformer>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/spring.handlers</resource>
                                 </transformer>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/spring.schemas</resource>
                                 </transformer>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
