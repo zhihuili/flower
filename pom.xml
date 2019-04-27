@@ -411,7 +411,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<configFile>${user.dir}/conf/eclipse-java-google-style.xml</configFile>
+					<configFile>${user.dir}/conf/FlowerFormatter.xml</configFile>
 					<encoding>${project.encoding}</encoding>
 				</configuration>
 			</plugin>
