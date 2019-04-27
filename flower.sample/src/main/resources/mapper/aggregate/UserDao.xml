@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ly.train.flower.common.sample.aggregate.dao.UserDao">
+	<select id="listUsers" resultType="com.ly.train.flower.common.sample.web.mode.User">
+		select * from users
+	</select>
+	<select id="findUser" parameterType="_int" resultType="com.ly.train.flower.common.sample.web.mode.User">
+		select * from users where id= #{id}
+	</select>
+</mapper>

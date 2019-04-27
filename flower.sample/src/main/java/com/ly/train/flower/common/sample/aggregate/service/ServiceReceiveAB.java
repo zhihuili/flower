@@ -33,6 +33,7 @@ public class ServiceReceiveAB implements Service<Object,Void>, Flush, Complete {
     public Void process(Object message, ServiceContext context) throws Throwable {
         System.out.println("处理B分叉之后的聚合消息:");
         List<Integer> list = (List<Integer>)message;
+        System.out.println("收到数量："+list.size());
         for(Integer integer:list){
             System.out.println(integer);
         }

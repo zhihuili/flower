@@ -1,6 +1,6 @@
 # Flower分布式开发
 
-## Flower架构
+## Flower分布式部署架构
 <img src="img/flower-distribute.png" height="600"/>
 
 - Flower.center: Flower实现的注册中心，用于注册服务信息、流程信息
@@ -9,13 +9,16 @@
 
 ## 开发流程
 一. 启动Flower.center注册中心
-二. 启动业务服务Flower容器，自动向注册中心注册服务
-三. 启动Flower网关服务，编排流程
+
+二. 开发Flower Service，启动业务服务Flower容器，自动向注册中心注册服务
+
+三. 开发Flower web网关，启动Flower网关服务，编排流程
 
 ### 一. 注册中心
 Flower.center基于spring-boot开发，通过打包成fat-jar后通过命令行启动即可。
 
-`java -jar flower.center-0.1.2.jar`
+Flower注册中心启动入口`/flower.center/src/main/java/com/ly/train/flower/center/CenterApplication.java`
+Flower注册中心启动命令`java -jar flower.center-0.1.2.jar`
 
 ### 二. 启动业务Flower容器
 Flower部署支持Flower容器和Spring容器，下面的例子基于spring-boot演示
@@ -182,7 +185,7 @@ public class WebApplication {
 
 
 ### 实例项目细节
-[flower实例](https://github.com/leeyazhou/flower.showcase.git)
+[flower分布式实例](https://github.com/leeyazhou/flower.showcase.git)
 `https://github.com/leeyazhou/flower.showcase.git`
 
 # More

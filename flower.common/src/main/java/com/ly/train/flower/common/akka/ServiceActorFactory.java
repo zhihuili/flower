@@ -198,7 +198,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
       throw new FlowNotFoundException("flowName : " + flowName + ", flowNumbe : " + flowNumber);
     }
     final String serviceName = serviceConfig.getServiceName();
-    final String routerCacheKey = flowName + "_" + serviceName;
+    final String routerCacheKey = flowName + "_" + serviceName + "_" + flowNumber;
 
     FlowRouter flowRouter = flowRoutersCache.get(routerCacheKey);
     if (flowRouter == null) {

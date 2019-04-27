@@ -13,22 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.sample.aggregate.config;
+package com.ly.train.flower.common.sample.aggregate.dao;
 
-import com.ly.train.flower.common.service.container.FlowerFactory;
-import com.ly.train.flower.service.container.SpringFlowerFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import com.ly.train.flower.common.sample.web.mode.User;
 
-/**
- * @author fengyu.zhang
- *
- */
-@Configuration
-public class FlowerConfiguration {
-
-  @Bean
-  public FlowerFactory flowerFactory() {
-    return new SpringFlowerFactory();
-  }
+public interface UserDao {
+  User findUser(int id);
 }
