@@ -103,7 +103,9 @@ public class ServiceActorFactory extends AbstractLifecycle {
       if (actorWrapper == null) {
         if (serviceConfig.isLocal()) {
           ActorRef actorRef =
-              getActorContext().actorOf(ServiceActor.props(serviceName, flowerFactory, index, actorNumber), cacheKey);
+              getActorContext().actorOf(
+                  ServiceActor.props(serviceName, flowerFactory, index, actorNumber).withDispatcher(
+                      "dispatcher"), cacheKey);
           actorWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
         } else {
           // "akka.tcp://flower@127.0.0.1:2551/user/$a"
@@ -167,7 +169,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
           }
           logger.info("akka config ：{}", configBuilder.toString());
           Config config = ConfigFactory.parseString(configBuilder.toString()).withFallback(ConfigFactory.load());
-          actorSystem = ActorSystem.create(flowerConfig.getName(), config);
+          actorSystem = ActorSystem.create("flower", config);
           Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {

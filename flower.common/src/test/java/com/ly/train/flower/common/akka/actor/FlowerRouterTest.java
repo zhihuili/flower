@@ -39,7 +39,6 @@ public class FlowerRouterTest extends TestBase {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
     serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 3);
 
     User user = new User();
@@ -88,10 +87,11 @@ public class FlowerRouterTest extends TestBase {
     serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 4);
 
-    final int threadNum = 10;
-    final int numPerThread = 10;
+    final int threadNum = 200;
+    final int numPerThread = 10000;
     for (int i = 0; i < threadNum; i++) {
       new Thread(() -> {
+
         for (int j = 0; j < numPerThread; j++) {
 
           User user = new User();
@@ -104,9 +104,9 @@ public class FlowerRouterTest extends TestBase {
             e.printStackTrace();
           }
         }
-      }).start();
+      }, "test-" + i).start();
     }
-    Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+    Thread.sleep(TimeUnit.SECONDS.toMillis(50000000));
   }
 
   @Test
