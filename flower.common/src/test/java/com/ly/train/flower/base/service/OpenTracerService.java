@@ -16,18 +16,29 @@
 /**
  * 
  */
-package com.ly.train.flower.filter;
+package com.ly.train.flower.base.service;
 
+import com.ly.train.flower.base.model.User;
+import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
  *
  */
-public interface Filter<P, R> extends Service<P, R> {
+@FlowerService(filter = "opentracer")
+public class OpenTracerService implements Service<User, User> {
+  static final Logger logger = LoggerFactory.getLogger(OpenTracerService.class);
 
-  R filter(P message, ServiceContext context) throws Throwable;
+  @Override
+  public User process(User message, ServiceContext context) throws Throwable {
+    message.setDesc(message.getDesc() + " --> " + getClass().getSimpleName());
+    message.setAge(message.getAge() + 1);
+    logger.info("结束处理消息, message : {}", message);
+    return message;
+  }
 
-  void setNext(Filter<P, R> filter);
 }

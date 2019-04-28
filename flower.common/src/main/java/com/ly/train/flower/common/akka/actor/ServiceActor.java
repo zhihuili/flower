@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.common.exception.ServiceException;
 import com.ly.train.flower.common.serializer.Codec;
-import com.ly.train.flower.common.serializer.util.CodecUtil;
 import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.FlowerService;
@@ -42,9 +41,11 @@ import com.ly.train.flower.common.service.web.Web;
 import com.ly.train.flower.common.util.ClassUtil;
 import com.ly.train.flower.common.util.CollectionUtil;
 import com.ly.train.flower.common.util.ExceptionUtil;
+import com.ly.train.flower.common.util.ExtensionLoader;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.common.util.cache.Cache;
 import com.ly.train.flower.common.util.cache.CacheManager;
+import com.ly.train.flower.filter.Filter;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 
@@ -64,6 +65,7 @@ public class ServiceActor extends AbstractFlowerActor {
   private int actorNumber;
   private int index;
   private final FlowerFactory flowerFactory;
+  private Filter filter;
 
   static public Props props(String serviceName, FlowerFactory flowerFactory, int index, int actorNumber) {
     return Props.create(ServiceActor.class, serviceName, flowerFactory, index, actorNumber);
@@ -99,6 +101,9 @@ public class ServiceActor extends AbstractFlowerActor {
       }
 
       Object param = Codec.valueOf(flowMessage.getCodec()).decode(flowMessage.getMessage(), pType);
+      if (getFilter(serviceContext) != null) {
+        getFilter(serviceContext).filter(param, serviceContext);
+      }
       // logger.info("服务参数类型 {} : {}", pType, getService(serviceContext));
       result = ((Service) getService(serviceContext)).process(param, serviceContext);
     } catch (Throwable e) {
@@ -150,11 +155,11 @@ public class ServiceActor extends AbstractFlowerActor {
     ActorRef actor = cache.getValue();
     if (actor != null) {
       FlowMessage resultMessage = new FlowMessage();
-      Codec codec = CodecUtil.getInstance().getCodec(result.getClass().getName());
+      Codec codec = Codec.Hessian;
       if (error) {
         resultMessage.setException((String) result);
       } else {
-        resultMessage.setMessage(codec.getSerializer().encode(result));
+        resultMessage.setMessage(codec.encode(result));
       }
       resultMessage.setCodec(codec.getCode());
       resultMessage.setMessageType(result.getClass().getName());
@@ -179,16 +184,15 @@ public class ServiceActor extends AbstractFlowerActor {
       return;
     }
     ServiceContextUtil.cleanServiceContext(serviceContext);
-    Codec codec = CodecUtil.getInstance().getCodec(result.getClass().getName());
     for (RefType refType : refTypes) {
       // condition fork for one-service to multi-service
       if (refType.getMessageType().isInstance(result)) {
         if (!(result instanceof Condition) || !(((Condition) result).getCondition() instanceof String)
             || StringUtil.stringInStrings(refType.getServiceName(), ((Condition) result).getCondition().toString())) {
           FlowMessage resultMessage = new FlowMessage();
-          resultMessage.setMessage(codec.getSerializer().encode(result));
+          resultMessage.setMessage(Codec.Hessian.encode(result));
           resultMessage.setMessageType(result.getClass().getName());
-          resultMessage.setCodec(codec.getCode());
+          resultMessage.setCodec(Codec.Hessian.getCode());
           resultMessage.setTransactionId(oldTransactionId);
 
           ServiceContext context = serviceContext.newInstance();
@@ -217,6 +221,41 @@ public class ServiceActor extends AbstractFlowerActor {
       }
     }
     return service;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public Filter getFilter(ServiceContext serviceContext) {
+    if (this.filter != null) {
+      return filter;
+    }
+    FlowerService service = getService(serviceContext);
+    com.ly.train.flower.common.annotation.FlowerService flowerService =
+        service.getClass().getAnnotation(com.ly.train.flower.common.annotation.FlowerService.class);
+    if (flowerService == null) {
+      return null;
+    }
+    String[] filters = flowerService.filter();
+    if (filters == null) {
+      return null;
+    }
+    Filter ret = null;
+    for (String f : filters) {
+      if (StringUtil.isBlank(f)) {
+        continue;
+      }
+      Filter temp = ExtensionLoader.load(Filter.class).load(f);
+      if (temp == null) {
+        continue;
+      }
+      if (ret == null) {
+        ret = temp;
+      } else {
+        ret.setNext(ret);
+      }
+    }
+    this.filter = ret;
+
+    return filter;
   }
 
   private String getParamType(ServiceContext serviceContext) {

@@ -25,12 +25,14 @@ import com.ly.train.flower.filter.AbstractFilter;
  * @author leeyazhou
  *
  */
-public class LoggingFilter extends AbstractFilter{
+public class LoggingFilter extends AbstractFilter<Object, Object> {
 
   @Override
-  public void doFilter(ServiceContext serviceContext) {
-    
+  public Object doFilter(Object message, ServiceContext context) {
+    logger.info("message : {}, context : {}", message, context);
+    return message;
   }
 
-  
+
+
 }

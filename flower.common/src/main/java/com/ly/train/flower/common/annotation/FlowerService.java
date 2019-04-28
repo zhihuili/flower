@@ -50,4 +50,11 @@ public @interface FlowerService {
    */
   FlowerType type() default FlowerType.COMMON;
 
+  /**
+   * 过滤器
+   * 
+   * @return array
+   */
+  String[] filter() default "";
+
 }

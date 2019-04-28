@@ -18,8 +18,9 @@ package com.ly.train.flower.common.serializer.hessian;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import com.alibaba.com.caucho.hessian.io.Hessian2Input;
-import com.alibaba.com.caucho.hessian.io.Hessian2Output;
+import com.alibaba.com.caucho.hessian.io.HessianInput;
+import com.alibaba.com.caucho.hessian.io.HessianOutput;
+import com.alibaba.com.caucho.hessian.io.SerializerFactory;
 import com.ly.train.flower.common.serializer.Serializer;
 import com.ly.train.flower.common.util.ClassUtil;
 import com.ly.train.flower.common.util.IOUtil;
@@ -31,6 +32,7 @@ import com.ly.train.flower.logging.LoggerFactory;
  */
 public class HessianSerializer implements Serializer {
   static final Logger logger = LoggerFactory.getLogger(HessianSerializer.class);
+  private final SerializerFactory factory = new SerializerFactory();
 
   @Override
   public byte[] encode(Object data) {
@@ -38,16 +40,15 @@ public class HessianSerializer implements Serializer {
       return null;
     }
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    Hessian2Output out = new Hessian2Output(bos);
+    HessianOutput out = new HessianOutput(bos);
+    out.setSerializerFactory(factory);
     try {
-      out.startMessage();
       out.writeObject(data);
-      out.completeMessage();
+      out.flush();
     } catch (IOException e) {
       logger.error("", e);
     } finally {
       IOUtil.close(bos);
-      close(out);
     }
     return bos.toByteArray();
   }
@@ -58,35 +59,19 @@ public class HessianSerializer implements Serializer {
       return null;
     }
     ByteArrayInputStream bin = new ByteArrayInputStream(data);
-    Hessian2Input in = new Hessian2Input(bin);
+    HessianInput in = new HessianInput(bin);
+    in.setSerializerFactory(factory);
     Object ret = null;
     try {
-      in.startMessage();
       Class<?> expectedClass = ClassUtil.forName(className);
       ret = in.readObject(expectedClass);
-      in.completeMessage();
     } catch (Throwable e) {
       logger.error("className : " + className, e);
     } finally {
       IOUtil.close(bin);
-      close(in);
     }
     return ret;
   }
 
-  private void close(Hessian2Input in) {
-    try {
-      in.close();
-    } catch (IOException e) {
-      logger.error("", e);
-    }
-  }
 
-  private void close(Hessian2Output in) {
-    try {
-      in.close();
-    } catch (IOException e) {
-      logger.error("", e);
-    }
-  }
 }
