@@ -23,7 +23,7 @@ import com.ly.train.flower.service.container.SpringFlowerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @Service(value = "FlowerConfiguration2")
 public class FlowerConfiguration2 implements InitializingBean {

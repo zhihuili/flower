@@ -35,7 +35,7 @@ import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class SimpleRegistryTest extends TestBase {
 
@@ -47,7 +47,7 @@ public class SimpleRegistryTest extends TestBase {
     RegistryFactory factory = new SimpleRegistryFactory();
     Registry registry = factory.createRegistry(url);
     ((SimpleRegistry) registry).setFlowerFactory(flowerFactory);
-    
+
     ServiceInfo serviceInfo = new ServiceInfo();
     serviceInfo.setApplication("commonservice");
     serviceInfo.setClassName(ServiceA.class.getName());

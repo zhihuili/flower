@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Import;
 /**
  * 
  * @author leeyazhou
- *
+ * 
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

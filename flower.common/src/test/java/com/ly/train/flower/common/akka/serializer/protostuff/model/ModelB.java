@@ -19,7 +19,7 @@ import java.util.UUID;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ModelB extends ModelA {
 

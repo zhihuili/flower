@@ -25,7 +25,7 @@ import com.ly.train.flower.service.container.SpringFlowerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @Configuration
 public class FlowerConfiguration {

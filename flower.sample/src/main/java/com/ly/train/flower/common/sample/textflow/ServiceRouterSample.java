@@ -49,7 +49,7 @@ public class ServiceRouterSample extends TestBase {
     for (int i = 0; i < loopNumber; i++) {
       serviceFacade.asyncCallService(flowName, m1);
     }
-    System.out.println("single flow cost time (ms): " + (System.currentTimeMillis() - begin) );
+    System.out.println("single flow cost time (ms): " + (System.currentTimeMillis() - begin));
   }
 
 }

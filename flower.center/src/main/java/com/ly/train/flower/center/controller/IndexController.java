@@ -25,7 +25,7 @@ import com.ly.train.flower.center.util.R;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @RestController
 public class IndexController {

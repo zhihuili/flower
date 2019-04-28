@@ -22,7 +22,7 @@ import akka.actor.AbstractActor;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public abstract class AbstractFlowerActor extends AbstractActor {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -39,12 +39,12 @@ public abstract class AbstractFlowerActor extends AbstractActor {
       unhandled(message);
     }).build();
   }
-  
+
   @Override
   public void postStop() throws Exception {
     super.postStop();
   }
-  
+
   @Override
   public void preStart() throws Exception {
     super.preStart();

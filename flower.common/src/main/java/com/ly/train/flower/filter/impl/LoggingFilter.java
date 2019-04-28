@@ -23,7 +23,7 @@ import com.ly.train.flower.filter.AbstractFilter;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class LoggingFilter extends AbstractFilter<Object, Object> {
 

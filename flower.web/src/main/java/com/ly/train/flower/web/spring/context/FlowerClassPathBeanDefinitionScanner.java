@@ -26,7 +26,7 @@ import org.springframework.core.io.ResourceLoader;
 /**
  * 
  * @author leeyazhou
- *
+ * 
  */
 public class FlowerClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionScanner {
 

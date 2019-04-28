@@ -26,7 +26,7 @@ import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ServiceC2 implements Service<User, User> {
   static final Logger logger = LoggerFactory.getLogger(ServiceC2.class);

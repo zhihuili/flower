@@ -34,7 +34,7 @@ import com.ly.train.flower.web.spring.FlowerController;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @Flower(value = "flower", serviceName = "HeadService")
 @RequestMapping("/flower/")

@@ -20,7 +20,7 @@ import com.ly.train.flower.common.sample.TestBase;
 import com.ly.train.flower.common.sample.textflow.model.Message1;
 import com.ly.train.flower.common.sample.textflow.model.Message2;
 
-public class Sample  extends TestBase{
+public class Sample extends TestBase {
 
   @Test
   public void main() throws Exception {

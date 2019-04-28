@@ -27,7 +27,7 @@ import com.ly.train.flower.common.service.container.ServiceContext;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @FlowerService
 public class ServiceConfigRegisterService implements Service<ServiceConfig, Boolean> {

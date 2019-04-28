@@ -55,6 +55,19 @@
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-slf4j_2.12</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>io.opentracing</groupId>
+            <artifactId>opentracing-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentracing.brave</groupId>
+            <artifactId>brave-opentracing</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-sender-okhttp3</artifactId>
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -83,19 +96,6 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.opentracing</groupId>
-            <artifactId>opentracing-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.opentracing.brave</groupId>
-            <artifactId>brave-opentracing</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.zipkin.reporter2</groupId>
-            <artifactId>zipkin-sender-okhttp3</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -21,15 +21,16 @@ import org.junit.Test;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class FlowerClassLoaderTest {
 
   @Test
   @Ignore
   public void test() throws Exception {
-    URL[] urls = new URL[] {new URL(
-        "file:/Volumes/Data/Users/lee/Desktop/flower-showcase/order-platform-0.0.1-SNAPSHOT/libs/order-api-0.0.1-SNAPSHOT.jar")};
+    URL[] urls =
+        new URL[] {new URL(
+            "file:/Volumes/Data/Users/lee/Desktop/flower-showcase/order-platform-0.0.1-SNAPSHOT/libs/order-api-0.0.1-SNAPSHOT.jar")};
     ClassLoader classLoader = new FlowerClassLoader(urls, getClass().getClassLoader());
     Class<?> clazz = classLoader.loadClass("com.ly.train.order.model.Order");
     System.out.println(clazz);

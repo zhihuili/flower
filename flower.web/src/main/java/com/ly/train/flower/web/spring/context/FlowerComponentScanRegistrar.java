@@ -29,7 +29,7 @@ import org.springframework.util.ClassUtils;
 
 /**
  * flower {@link FlowerComponentScan} Bean Registrar
- *
+ * 
  */
 public class FlowerComponentScanRegistrar implements ImportBeanDefinitionRegistrar {
 
@@ -43,11 +43,10 @@ public class FlowerComponentScanRegistrar implements ImportBeanDefinitionRegistr
   }
 
   /**
-   *
+   * 
    * @param registry {@link BeanDefinitionRegistry}
    */
-  private void registerReferenceAnnotationBeanPostProcessor(BeanDefinitionRegistry registry,
-      Set<String> packagesToScan) {
+  private void registerReferenceAnnotationBeanPostProcessor(BeanDefinitionRegistry registry, Set<String> packagesToScan) {
 
     registerInfrastructureBean(registry, FlowerBeanRegistryPostProcessor.class.getSimpleName(),
         FlowerBeanRegistryPostProcessor.class, packagesToScan);

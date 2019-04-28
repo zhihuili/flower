@@ -22,7 +22,7 @@ import com.ly.train.flower.common.service.container.ServiceContext;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @SPI(value = "round", message = "轮训算法策略")
 public interface LoadBalance {

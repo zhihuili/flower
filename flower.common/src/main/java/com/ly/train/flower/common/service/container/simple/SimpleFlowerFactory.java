@@ -39,7 +39,7 @@ import com.ly.train.flower.registry.simple.SimpleRegistry;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFactory {
   private static final Logger logger = LoggerFactory.getLogger(SimpleFlowerFactory.class);

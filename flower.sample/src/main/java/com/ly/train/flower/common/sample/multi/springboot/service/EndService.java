@@ -26,7 +26,7 @@ import com.ly.train.flower.common.service.web.HttpComplete;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @FlowerService(type = FlowerType.AGGREGATE)
 public class EndService extends AbstractService<List<Object>, Object> implements Flush, HttpComplete, Complete {

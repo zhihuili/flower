@@ -23,7 +23,7 @@ import com.ly.train.flower.common.service.web.HttpComplete;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ServiceLoaderTest {
 

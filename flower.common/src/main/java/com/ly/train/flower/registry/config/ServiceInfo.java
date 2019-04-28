@@ -28,7 +28,7 @@ import com.ly.train.flower.common.util.URL;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ServiceInfo implements Serializable {
 
@@ -42,8 +42,7 @@ public class ServiceInfo implements Serializable {
   private Map<String, Integer> number;
   private ServiceMeta serviceMeta;
 
-  public ServiceInfo() {
-  }
+  public ServiceInfo() {}
 
   public Map<String, Integer> getNumber() {
     return number;

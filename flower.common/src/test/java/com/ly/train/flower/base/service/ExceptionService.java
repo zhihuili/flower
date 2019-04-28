@@ -26,7 +26,7 @@ import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ExceptionService implements Service<User, User> {
   static final Logger logger = LoggerFactory.getLogger(ExceptionService.class);

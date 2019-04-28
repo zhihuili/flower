@@ -28,7 +28,7 @@ import com.ly.train.flower.springboot.model.User;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @FlowerService
 public class EndService implements Service<Set<User>, Integer> {

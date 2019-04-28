@@ -23,7 +23,7 @@ import com.ly.train.flower.logging.Logger;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class Slf4jImpl implements Logger {
   private org.slf4j.Logger logger;

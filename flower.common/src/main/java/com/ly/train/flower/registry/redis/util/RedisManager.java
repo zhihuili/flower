@@ -48,7 +48,8 @@ public class RedisManager {
       jedisPoolConfig.setMaxIdle(10);
       jedisPoolConfig.setMaxWaitMillis(3000);// 类似于超时时间
       jedisPoolConfig.setTestOnBorrow(true);
-      jedisPool = new JedisPool(jedisPoolConfig, getUrl().getHost(), getUrl().getPort(), 3000, getUrl().getParam("password"));// 创建连接池
+      jedisPool =
+          new JedisPool(jedisPoolConfig, getUrl().getHost(), getUrl().getPort(), 3000, getUrl().getParam("password"));// 创建连接池
     }
     return jedisPool;
   }

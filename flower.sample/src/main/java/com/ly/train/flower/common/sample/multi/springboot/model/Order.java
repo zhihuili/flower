@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class Order implements Serializable {
 

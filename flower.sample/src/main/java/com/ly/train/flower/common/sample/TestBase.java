@@ -24,7 +24,7 @@ import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class TestBase {
 

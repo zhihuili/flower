@@ -28,7 +28,7 @@ import com.ly.train.flower.common.service.container.ServiceFlow;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class FlowerRouterTest extends TestBase {
 
@@ -136,5 +136,4 @@ public class FlowerRouterTest extends TestBase {
     }
     Thread.sleep(TimeUnit.SECONDS.toMillis(5));
   }
-
 }

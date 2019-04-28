@@ -29,7 +29,7 @@ import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ZookeeperRegistryTest {
 

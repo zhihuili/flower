@@ -41,7 +41,8 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
   private Long timeoutMillis = DefaultTimeOutMilliseconds;
 
   private static final String cacheKeyPrefix = "FLOWER_AGGREGATE_SERVICE_";
-//  private ReentrantLock lock = new ReentrantLock();
+
+  // private ReentrantLock lock = new ReentrantLock();
 
   public AggregateService() {}
 
@@ -71,7 +72,7 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
     Assert.notNull(flowName, "flowName can't be null .");
     CacheManager cacheManager = CacheManager.get(cacheKeyPrefix + flowName);
     AggregateInfo aggregateInfo = null;
-//    lock.lock();
+    // lock.lock();
     try {
       Cache<AggregateInfo> cache = cacheManager.getCache(transactionId);
       if (cache == null) {
@@ -90,7 +91,7 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
       aggregateInfo.addResult(flowMessage);
       aggregateInfo.getResultNum().decrementAndGet();// 计数-1
     } finally {
-//      lock.unlock();
+      // lock.unlock();
     }
     return aggregateInfo;
   }

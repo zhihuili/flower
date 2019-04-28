@@ -20,7 +20,7 @@ import akka.actor.ActorRef;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public interface ActorWrapper {
 

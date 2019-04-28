@@ -22,7 +22,7 @@ import com.ly.train.flower.center.model.Response;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class R {
 

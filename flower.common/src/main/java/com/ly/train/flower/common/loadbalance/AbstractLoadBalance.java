@@ -23,7 +23,7 @@ import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public abstract class AbstractLoadBalance implements LoadBalance {
   protected final Logger logger = LoggerFactory.getLogger(getClass());

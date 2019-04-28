@@ -41,14 +41,14 @@ import zipkin2.reporter.okhttp3.OkHttpSender;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class OpenTracingFilter extends AbstractFilter<Object, Object> {
 
   private static final String endpoint = "http://zipkin.iscoder.cn/api/v2/spans";
-  private static final Tracer tracer =
-      BraveTracer.create(Tracing.newBuilder().spanReporter(AsyncReporter.create(OkHttpSender.create(endpoint)))
-          .spanReporter(Reporter.CONSOLE).localServiceName("flower-demo").build());
+  private static final Tracer tracer = BraveTracer.create(Tracing.newBuilder()
+      .spanReporter(AsyncReporter.create(OkHttpSender.create(endpoint))).spanReporter(Reporter.CONSOLE)
+      .localServiceName("flower-demo").build());
 
   @Override
   public Object doFilter(Object message, ServiceContext context) {

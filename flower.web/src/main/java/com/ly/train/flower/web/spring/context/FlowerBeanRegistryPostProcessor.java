@@ -54,7 +54,7 @@ import com.ly.train.flower.web.springboot.annotation.BindController;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class FlowerBeanRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor, EnvironmentAware,
     ResourceLoaderAware, BeanClassLoaderAware, ApplicationContextAware, InitializingBean {

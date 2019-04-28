@@ -26,7 +26,7 @@ import com.ly.train.flower.registry.config.RegistryConfig;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class FlowerConfig implements Serializable {
   private static final long serialVersionUID = 1L;

@@ -24,7 +24,7 @@ import javassist.NotFoundException;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ReflectUtil {
   /**
@@ -86,8 +86,9 @@ public class ReflectUtil {
   }
 
   /**
-   * get class desc. boolean[].class => "[Z" Object.class => "Ljava/lang/Object;"
-   *
+   * get class desc. boolean[].class => "[Z" Object.class =>
+   * "Ljava/lang/Object;"
+   * 
    * @param c class.
    * @return desc.
    * @throws NotFoundException
@@ -130,7 +131,7 @@ public class ReflectUtil {
 
   /**
    * get constructor desc. "()V", "(Ljava/lang/String;I)V"
-   *
+   * 
    * @param c constructor.
    * @return desc
    */
@@ -148,7 +149,8 @@ public class ReflectUtil {
     try {
       cl = Thread.currentThread().getContextClassLoader();
     } catch (Throwable ex) {
-      // Cannot access thread context ClassLoader - falling back to system class loader...
+      // Cannot access thread context ClassLoader - falling back to system class
+      // loader...
     }
     if (cl == null) {
       // No thread context class loader -> use class loader of this class.
@@ -159,7 +161,7 @@ public class ReflectUtil {
 
   /**
    * get method desc. "(I)I", "()V", "(Ljava/lang/String;Z)V"
-   *
+   * 
    * @param m method.
    * @return desc.
    */

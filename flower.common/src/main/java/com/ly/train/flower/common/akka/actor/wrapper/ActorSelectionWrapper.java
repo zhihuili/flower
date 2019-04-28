@@ -23,7 +23,7 @@ import akka.actor.ActorSelection;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ActorSelectionWrapper implements ActorWrapper {
   private static final Logger logger = LoggerFactory.getLogger(ActorSelectionWrapper.class);

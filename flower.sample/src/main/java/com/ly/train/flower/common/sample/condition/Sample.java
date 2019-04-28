@@ -28,7 +28,7 @@ import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 
-public class Sample extends TestBase{
+public class Sample extends TestBase {
 
   @Test
   public void main() throws Exception {

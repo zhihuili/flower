@@ -24,7 +24,7 @@ import java.util.UUID;
 /**
  * 
  * @author leeyazhou
- *
+ * 
  */
 public final class StringUtil {
   private StringUtil() {

@@ -26,7 +26,7 @@ import com.ly.train.flower.common.util.ExtensionLoader;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ProtobufUtilsTest {
 

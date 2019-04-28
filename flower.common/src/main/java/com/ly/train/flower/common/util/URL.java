@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class URL implements Serializable {
 

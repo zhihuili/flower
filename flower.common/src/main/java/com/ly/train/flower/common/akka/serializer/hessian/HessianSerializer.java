@@ -23,7 +23,7 @@ import akka.serialization.JSerializer;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class HessianSerializer extends JSerializer implements Extension {
   static final Logger logger = LoggerFactory.getLogger(HessianSerializer.class);

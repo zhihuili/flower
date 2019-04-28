@@ -108,8 +108,9 @@ public class ServiceActorFactory extends AbstractLifecycle {
         } else {
           // "akka.tcp://flower@127.0.0.1:2551/user/$a"
           URL url = serviceConfig.getAddresses().iterator().next();
-          String actorPath = String.format(actorPathFormat, serviceConfig.getApplication(), url.getHost(),
-              url.getPort(), serviceName, index % 128);
+          String actorPath =
+              String.format(actorPathFormat, serviceConfig.getApplication(), url.getHost(), url.getPort(), serviceName,
+                  index % 128);
           ActorSelection actorSelection = getActorContext().actorSelection(actorPath);
           actorWrapper = new ActorSelectionWrapper(actorSelection).setServiceName(serviceName);
         }
@@ -120,10 +121,9 @@ public class ServiceActorFactory extends AbstractLifecycle {
         serviceActorCache.put(cacheKey, actorWrapper);
       }
     } catch (Exception e) {
-      throw new FlowerException(
-          "fail to create flowerService, flowName : " + serviceConfig.getFlowName() + ", serviceName : " + serviceName
-              + ", serviceClassName : " + serviceConfig.getServiceMeta().getServiceClassName(),
-          e);
+      throw new FlowerException("fail to create flowerService, flowName : " + serviceConfig.getFlowName()
+          + ", serviceName : " + serviceName + ", serviceClassName : "
+          + serviceConfig.getServiceMeta().getServiceClassName(), e);
     } finally {
       actorLock.unlock();
     }
@@ -136,8 +136,10 @@ public class ServiceActorFactory extends AbstractLifecycle {
       synchronized (this) {
         if (actorContext == null) {
           try {
-            actorContext = (ActorContext) Await.result(
-                Patterns.ask(getSupervierActor(), new SupervisorActor.GetActorContext(), DEFAULT_TIMEOUT - 1), timeout);
+            actorContext =
+                (ActorContext) Await.result(
+                    Patterns.ask(getSupervierActor(), new SupervisorActor.GetActorContext(), DEFAULT_TIMEOUT - 1),
+                    timeout);
           } catch (Exception e) {
             logger.error("", e);
             throw new FlowerException("", e);

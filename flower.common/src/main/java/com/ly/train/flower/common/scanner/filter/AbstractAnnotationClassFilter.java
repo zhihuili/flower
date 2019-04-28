@@ -26,7 +26,8 @@ public abstract class AbstractAnnotationClassFilter extends AbstractClassFilter 
     this.annotationClass = annotationClass;
   }
 
-  public AbstractAnnotationClassFilter(String packageName, Class<? extends Annotation> annotationClass, ClassLoader loader) {
+  public AbstractAnnotationClassFilter(String packageName, Class<? extends Annotation> annotationClass,
+      ClassLoader loader) {
     super(packageName, loader);
     this.annotationClass = annotationClass;
   }

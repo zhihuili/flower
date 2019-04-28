@@ -29,7 +29,7 @@ import com.ly.train.flower.registry.Registry;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public interface FlowerFactory extends Lifecycle {
 

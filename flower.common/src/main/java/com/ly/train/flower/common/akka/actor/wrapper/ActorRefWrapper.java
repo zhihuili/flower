@@ -22,7 +22,7 @@ import akka.actor.ActorRef;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ActorRefWrapper implements ActorWrapper {
   private static final Logger logger = LoggerFactory.getLogger(ActorRefWrapper.class);
@@ -42,8 +42,8 @@ public class ActorRefWrapper implements ActorWrapper {
 
   public void tell(ServiceContext message, ActorRef sender) {
     if (logger.isDebugEnabled()) {
-      logger.debug("流转Local消息. serviceName : {}, actor : {}, message : {}, sender : {}", serviceName, actorRef, message,
-          sender);
+      logger.debug("流转Local消息. serviceName : {}, actor : {}, message : {}, sender : {}", serviceName, actorRef,
+          message, sender);
     }
     if (sender == null) {
       sender = ActorRef.noSender();

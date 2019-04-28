@@ -23,7 +23,7 @@ import com.ly.train.flower.common.service.container.ServiceContext;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public interface Filter<P, R> extends Service<P, R> {
 

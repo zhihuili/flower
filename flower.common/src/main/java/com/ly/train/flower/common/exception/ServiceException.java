@@ -20,7 +20,7 @@ package com.ly.train.flower.common.exception;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ServiceException extends RuntimeException {
 

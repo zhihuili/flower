@@ -27,7 +27,7 @@ import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @FlowerService(filter = "opentracer")
 public class OpenTracerService implements Service<User, User> {

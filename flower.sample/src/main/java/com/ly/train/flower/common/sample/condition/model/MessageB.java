@@ -15,6 +15,6 @@
  */
 package com.ly.train.flower.common.sample.condition.model;
 
-public class MessageB implements Message{
+public class MessageB implements Message {
 
 }

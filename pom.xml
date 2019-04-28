@@ -178,6 +178,16 @@
                 <version>${gatling-charts-highcharts.version}</version>
             </dependency>
             <dependency>
+                <groupId>io.opentracing</groupId>
+                <artifactId>opentracing-api</artifactId>
+                <version>0.31.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentracing.brave</groupId>
+                <artifactId>brave-opentracing</artifactId>
+                <version>0.33.9</version>
+            </dependency>
+            <dependency>
                 <groupId>io.protostuff</groupId>
                 <artifactId>protostuff-core</artifactId>
                 <version>${protostuff.version}</version>
@@ -281,6 +291,13 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
+                <groupId>io.zipkin.brave</groupId>
+                <artifactId>brave-bom</artifactId>
+                <version>${brave.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.typesafe.akka</groupId>
                 <artifactId>akka-http-testkit_2.12</artifactId>
                 <version>${akka-http.version}</version>
@@ -297,23 +314,6 @@
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.zipkin.brave</groupId>
-                <artifactId>brave-bom</artifactId>
-                <version>${brave.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.opentracing</groupId>
-                <artifactId>opentracing-api</artifactId>
-                <version>0.31.0</version>
-            </dependency>
-            <dependency>
-                <groupId>io.opentracing.brave</groupId>
-                <artifactId>brave-opentracing</artifactId>
-                <version>0.33.9</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -24,7 +24,7 @@ import com.ly.train.flower.springboot.model.User;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @FlowerService
 public class UserService2 implements Service<User, User> {
