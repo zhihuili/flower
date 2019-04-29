@@ -270,7 +270,7 @@ public class ServiceActor extends AbstractFlowerActor {
   }
 
   private Set<RefType> getNextServiceActors(ServiceContext serviceContext) {
-    final String cacheKey = serviceContext.getFlowName() + "_" + serviceContext.getCurrentServiceName();
+    final String cacheKey = serviceContext.getFlowName() + "_" + serviceContext.getCurrentServiceName() + "_" + index;
     Set<RefType> nextServiceActors = nextServiceActorCache.get(cacheKey);
     if (nextServiceActors == null && StringUtil.isNotBlank(serviceContext.getFlowName())) {
       nextServiceActors = new HashSet<>();
