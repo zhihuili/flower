@@ -53,7 +53,8 @@ public abstract class AbstractFlowerActor extends AbstractActor {
   public abstract void onServiceContextReceived(ServiceContext context) throws Throwable;
 
   public void onException(Throwable throwable) {
-    logger.error("", throwable);
+    logger.error(throwable.getMessage());
+    logger.info("", throwable);
   }
 
   @Override
