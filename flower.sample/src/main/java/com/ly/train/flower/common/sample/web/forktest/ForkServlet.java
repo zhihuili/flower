@@ -61,12 +61,16 @@ public class ForkServlet extends FlowerHttpServlet {
   }
 
   private void buildServiceEnv() {
-    serviceFactory.registerService("serviceBegin", "com.ly.train.flower.common.sample.web.forktest.service.BeginService");
-    serviceFactory.registerService("GoodsService", "com.ly.train.flower.common.sample.web.forktest.service.GoodsService");
-    serviceFactory.registerService("OrderService", "com.ly.train.flower.common.sample.web.forktest.service.OrderService");
+    serviceFactory.registerService("serviceBegin",
+        "com.ly.train.flower.common.sample.web.forktest.service.BeginService");
+    serviceFactory.registerService("GoodsService",
+        "com.ly.train.flower.common.sample.web.forktest.service.GoodsService");
+    serviceFactory.registerService("OrderService",
+        "com.ly.train.flower.common.sample.web.forktest.service.OrderService");
     serviceFactory.registerService("UserService", "com.ly.train.flower.common.sample.web.forktest.service.UserService");
     serviceFactory.registerService("AggregateService", "com.ly.train.flower.common.service.AggregateService");
-    serviceFactory.registerService("serviceReturn", "com.ly.train.flower.common.sample.web.forktest.service.ReturnService");
+    serviceFactory.registerService("serviceReturn",
+        "com.ly.train.flower.common.sample.web.forktest.service.ReturnService");
 
     // 缺少该语句，会导致spring注入失败
     serviceFactory.registerFlowerService("GoodsService", (FlowerService) context.getBean("GoodsService"));

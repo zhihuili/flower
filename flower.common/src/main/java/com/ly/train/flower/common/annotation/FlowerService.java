@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -49,5 +49,12 @@ public @interface FlowerService {
    * @return {@link FlowerType}
    */
   FlowerType type() default FlowerType.COMMON;
+
+  /**
+   * 过滤器
+   * 
+   * @return array
+   */
+  String[] filter() default "";
 
 }

@@ -64,10 +64,10 @@ public class GenerateTestDate {
       }
     }
     System.out.println("测试完成-访问id：" + userId);
-    System.out.println("普通阻塞访问:" + blockUrl + "\n-总次数：" + count + "" + "\n-成功次数：" + blockSuccessCount + "\n-失败次数：" + blockFailureCount
-        + "\n-平均访问耗时:" + ((blockTotalTime * 1.0) / blockSuccessCount) + "ms");
-    System.out.println("Flower分叉访问:" + forkUrl + "\n-总次数：" + count + "" + "\n-成功次数：" + forkSuccessCount + "\n-失败次数：" + forkFailureCount
-        + "\n-平均访问耗时:" + ((forkTotalTime * 1.0) / forkSuccessCount) + "ms");
+    System.out.println("普通阻塞访问:" + blockUrl + "\n-总次数：" + count + "" + "\n-成功次数：" + blockSuccessCount + "\n-失败次数："
+        + blockFailureCount + "\n-平均访问耗时:" + ((blockTotalTime * 1.0) / blockSuccessCount) + "ms");
+    System.out.println("Flower分叉访问:" + forkUrl + "\n-总次数：" + count + "" + "\n-成功次数：" + forkSuccessCount + "\n-失败次数："
+        + forkFailureCount + "\n-平均访问耗时:" + ((forkTotalTime * 1.0) / forkSuccessCount) + "ms");
   }
 
   /**

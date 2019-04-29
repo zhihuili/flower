@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.common.exception.ServiceException;
 import com.ly.train.flower.common.serializer.Codec;
-import com.ly.train.flower.common.serializer.util.CodecUtil;
 import com.ly.train.flower.common.service.Aggregate;
 import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.FlowerService;
@@ -42,9 +41,11 @@ import com.ly.train.flower.common.service.web.Web;
 import com.ly.train.flower.common.util.ClassUtil;
 import com.ly.train.flower.common.util.CollectionUtil;
 import com.ly.train.flower.common.util.ExceptionUtil;
+import com.ly.train.flower.common.util.ExtensionLoader;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.common.util.cache.Cache;
 import com.ly.train.flower.common.util.cache.CacheManager;
+import com.ly.train.flower.filter.Filter;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 
@@ -52,7 +53,7 @@ import akka.actor.Props;
  * Wrap service by actor, make service driven by message.
  * 
  * @author zhihui.li
- *
+ * 
  */
 public class ServiceActor extends AbstractFlowerActor {
 
@@ -64,6 +65,7 @@ public class ServiceActor extends AbstractFlowerActor {
   private int actorNumber;
   private int index;
   private final FlowerFactory flowerFactory;
+  private Filter filter;
 
   static public Props props(String serviceName, FlowerFactory flowerFactory, int index, int actorNumber) {
     return Props.create(ServiceActor.class, serviceName, flowerFactory, index, actorNumber);
@@ -99,6 +101,9 @@ public class ServiceActor extends AbstractFlowerActor {
       }
 
       Object param = Codec.valueOf(flowMessage.getCodec()).decode(flowMessage.getMessage(), pType);
+      if (getFilter(serviceContext) != null) {
+        getFilter(serviceContext).filter(param, serviceContext);
+      }
       // logger.info("服务参数类型 {} : {}", pType, getService(serviceContext));
       result = ((Service) getService(serviceContext)).process(param, serviceContext);
     } catch (Throwable e) {
@@ -107,8 +112,9 @@ public class ServiceActor extends AbstractFlowerActor {
         web.complete();
       }
 
-      Exception e2 = new ServiceException("invoke service " + serviceContext.getCurrentServiceName() + " : " + service
-          + "\r\n, param : " + flowMessage.getMessage(), e);
+      Exception e2 =
+          new ServiceException("invoke service " + serviceContext.getCurrentServiceName() + " : " + service
+              + "\r\n, param : " + flowMessage.getMessage(), e);
       if (serviceContext.isSync()) {
         handleSyncResult(serviceContext, ExceptionUtil.getErrorMessage(e2), true);
       }
@@ -150,11 +156,11 @@ public class ServiceActor extends AbstractFlowerActor {
     ActorRef actor = cache.getValue();
     if (actor != null) {
       FlowMessage resultMessage = new FlowMessage();
-      Codec codec = CodecUtil.getInstance().getCodec(result.getClass().getName());
+      Codec codec = Codec.Hessian;
       if (error) {
         resultMessage.setException((String) result);
       } else {
-        resultMessage.setMessage(codec.getSerializer().encode(result));
+        resultMessage.setMessage(codec.encode(result));
       }
       resultMessage.setCodec(codec.getCode());
       resultMessage.setMessageType(result.getClass().getName());
@@ -179,16 +185,15 @@ public class ServiceActor extends AbstractFlowerActor {
       return;
     }
     ServiceContextUtil.cleanServiceContext(serviceContext);
-    Codec codec = CodecUtil.getInstance().getCodec(result.getClass().getName());
     for (RefType refType : refTypes) {
       // condition fork for one-service to multi-service
       if (refType.getMessageType().isInstance(result)) {
         if (!(result instanceof Condition) || !(((Condition) result).getCondition() instanceof String)
             || StringUtil.stringInStrings(refType.getServiceName(), ((Condition) result).getCondition().toString())) {
           FlowMessage resultMessage = new FlowMessage();
-          resultMessage.setMessage(codec.getSerializer().encode(result));
+          resultMessage.setMessage(Codec.Hessian.encode(result));
           resultMessage.setMessageType(result.getClass().getName());
-          resultMessage.setCodec(codec.getCode());
+          resultMessage.setCodec(Codec.Hessian.getCode());
           resultMessage.setTransactionId(oldTransactionId);
 
           ServiceContext context = serviceContext.newInstance();
@@ -211,12 +216,48 @@ public class ServiceActor extends AbstractFlowerActor {
       ServiceMeta serviceMeta = flowerFactory.getServiceFactory().getServiceLoader().loadServiceMeta(serviceName);
       this.paramType = serviceMeta.getParamType();
       if (service instanceof Aggregate) {
-        int num = flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
-            .getServiceConfig(serviceName).getJointSourceNumber().get();
+        int num =
+            flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
+                .getServiceConfig(serviceName).getJointSourceNumber().get();
         ((AggregateService) service).setSourceNumber(num);
       }
     }
     return service;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public Filter getFilter(ServiceContext serviceContext) {
+    if (this.filter != null) {
+      return filter;
+    }
+    FlowerService service = getService(serviceContext);
+    com.ly.train.flower.common.annotation.FlowerService flowerService =
+        service.getClass().getAnnotation(com.ly.train.flower.common.annotation.FlowerService.class);
+    if (flowerService == null) {
+      return null;
+    }
+    String[] filters = flowerService.filter();
+    if (filters == null) {
+      return null;
+    }
+    Filter ret = null;
+    for (String f : filters) {
+      if (StringUtil.isBlank(f)) {
+        continue;
+      }
+      Filter temp = ExtensionLoader.load(Filter.class).load(f);
+      if (temp == null) {
+        continue;
+      }
+      if (ret == null) {
+        ret = temp;
+      } else {
+        ret.setNext(ret);
+      }
+    }
+    this.filter = ret;
+
+    return filter;
   }
 
   private String getParamType(ServiceContext serviceContext) {
@@ -229,19 +270,20 @@ public class ServiceActor extends AbstractFlowerActor {
   }
 
   private Set<RefType> getNextServiceActors(ServiceContext serviceContext) {
-    final String cacheKey = serviceContext.getFlowName() + "_" + serviceContext.getCurrentServiceName();
+    final String cacheKey = serviceContext.getFlowName() + "_" + serviceContext.getCurrentServiceName() + "_" + index;
     Set<RefType> nextServiceActors = nextServiceActorCache.get(cacheKey);
     if (nextServiceActors == null && StringUtil.isNotBlank(serviceContext.getFlowName())) {
       nextServiceActors = new HashSet<>();
-      Set<ServiceConfig> serviceConfigs = flowerFactory.getServiceFactory()
-          .getOrCreateServiceFlow(serviceContext.getFlowName()).getNextFlow(serviceContext.getCurrentServiceName());
+      Set<ServiceConfig> serviceConfigs =
+          flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
+              .getNextFlow(serviceContext.getCurrentServiceName());
       if (serviceConfigs != null) {
         for (ServiceConfig serviceConfig : serviceConfigs) {
           flowerFactory.getServiceFactory().loadServiceMeta(serviceConfig);// 内部对serviceConfig的数据进行填充
           RefType refType = new RefType();
           refType.setAggregate(serviceConfig.isAggregateService());
-          refType.setActorWrapper(
-              flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig, index, actorNumber));
+          refType.setActorWrapper(flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig, index,
+              actorNumber));
           refType.setMessageType(ClassUtil.forName(serviceConfig.getServiceMeta().getParamType()));
           refType.setServiceName(serviceConfig.getServiceName());
           nextServiceActors.add(refType);

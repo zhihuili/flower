@@ -21,22 +21,21 @@ import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.web.Flush;
-
 import java.util.List;
 
 /**
  * @author: fengyu.zhang
  */
 @FlowerService(type = FlowerType.AGGREGATE)
-public class ServiceReceiveAB implements Service<Object,Void>, Flush, Complete {
-    @Override
-    public Void process(Object message, ServiceContext context) throws Throwable {
-        System.out.println("处理B分叉之后的聚合消息:");
-        List<Integer> list = (List<Integer>)message;
-        System.out.println("收到数量："+list.size());
-        for(Integer integer:list){
-            System.out.println(integer);
-        }
-        return null;
+public class ServiceReceiveAB implements Service<Object, Void>, Flush, Complete {
+  @Override
+  public Void process(Object message, ServiceContext context) throws Throwable {
+    System.out.println("处理B分叉之后的聚合消息:");
+    List<Integer> list = (List<Integer>) message;
+    System.out.println("收到数量：" + list.size());
+    for (Integer integer : list) {
+      System.out.println(integer);
     }
+    return null;
+  }
 }

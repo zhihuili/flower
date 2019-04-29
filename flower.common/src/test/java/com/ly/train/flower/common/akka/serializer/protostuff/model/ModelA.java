@@ -20,7 +20,7 @@ import java.util.UUID;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ModelA implements Serializable {
 

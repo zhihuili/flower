@@ -32,7 +32,7 @@ import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class FlowerApplicationListener implements ApplicationListener<ContextRefreshedEvent>, ApplicationContextAware {
   static final Logger logger = LoggerFactory.getLogger(FlowerApplicationListener.class);

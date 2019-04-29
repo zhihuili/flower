@@ -21,7 +21,7 @@ import com.ly.train.flower.common.serializer.kryo.KryoSerializer;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public enum Codec {
 

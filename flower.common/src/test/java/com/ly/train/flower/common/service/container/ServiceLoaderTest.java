@@ -23,7 +23,7 @@ import com.ly.train.flower.common.service.web.HttpComplete;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ServiceLoaderTest {
 
@@ -58,7 +58,9 @@ public class ServiceLoaderTest {
     }
 
     @Override
-    public void onError(Throwable throwable, String param) {}
+    public void onError(String param, ServiceContext context, Throwable throwable) {
+      super.onError(param, context, throwable);
+    }
   }
 
 }

@@ -22,7 +22,8 @@ import java.util.HashSet;
 import java.util.Set;
 import com.ly.train.flower.common.akka.ServiceActorFactory;
 import com.ly.train.flower.common.akka.ServiceFacade;
-import com.ly.train.flower.common.exception.ExceptionHandler;
+import com.ly.train.flower.common.exception.handler.ExceptionHandler;
+import com.ly.train.flower.common.exception.handler.ExceptionHandlerManager;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.lifecyle.AbstractLifecycle;
@@ -39,7 +40,7 @@ import com.ly.train.flower.registry.simple.SimpleRegistry;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFactory {
   private static final Logger logger = LoggerFactory.getLogger(SimpleFlowerFactory.class);
@@ -47,11 +48,11 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
   private static volatile FlowerFactory instance;
   private FlowerConfig flowerConfig;
   private volatile Set<Registry> registries;
-  private ExceptionHandler exceptionHandler;
   private volatile ServiceActorFactory serviceActorFactory;
   private volatile ServiceFactory serviceFactory;
   private volatile ServiceFacade serviceFacade;
   private String configLocation = "flower.yml";
+  private ExceptionHandlerManager exceptionHandlerManager = ExceptionHandlerManager.getInstance();
 
   public SimpleFlowerFactory() {
     this(null);
@@ -123,14 +124,6 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
   }
 
   @Override
-  public ExceptionHandler getExceptionHandler() {
-    if (this.exceptionHandler == null) {
-      this.exceptionHandler = new ExceptionHandler();
-    }
-    return exceptionHandler;
-  }
-
-  @Override
   public ServiceActorFactory getServiceActorFactory() {
     if (serviceActorFactory == null) {
       synchronized (this) {
@@ -174,5 +167,15 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
       }
     }
     return serviceFacade;
+  }
+
+  @Override
+  public void registerExceptionHandler(Class<? extends Throwable> exceptionClass, ExceptionHandler exceptionHandler) {
+    exceptionHandlerManager.registerHandler(exceptionClass, exceptionHandler);
+  }
+
+  @Override
+  public void setDefaultExceptionHandler(ExceptionHandler defaultExceptionHandler) {
+    exceptionHandlerManager.setDefaultExceptionHandler(defaultExceptionHandler);
   }
 }

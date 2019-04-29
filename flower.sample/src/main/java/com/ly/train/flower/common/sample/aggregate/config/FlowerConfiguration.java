@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author fengyu.zhang
- *
+ * 
  */
 @Configuration
 public class FlowerConfiguration {

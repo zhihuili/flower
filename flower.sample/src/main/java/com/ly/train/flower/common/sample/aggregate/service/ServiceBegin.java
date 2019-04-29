@@ -24,9 +24,9 @@ import com.ly.train.flower.common.service.container.ServiceContext;
  */
 @FlowerService
 public class ServiceBegin implements Service<Integer, Integer> {
-    @Override
-    public Integer process(Integer message, ServiceContext context) throws Throwable {
-        System.out.println("分叉处理，消息值："+message.toString());
-        return message;
-    }
+  @Override
+  public Integer process(Integer message, ServiceContext context) throws Throwable {
+    System.out.println("分叉处理，消息值：" + message.toString());
+    return message;
+  }
 }

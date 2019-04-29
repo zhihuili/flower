@@ -15,6 +15,7 @@
  */
 package com.ly.train.flower.common.akka.actor;
 
+import com.ly.train.flower.common.exception.handler.ExceptionHandlerManager;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
@@ -22,7 +23,7 @@ import akka.actor.AbstractActor;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public abstract class AbstractFlowerActor extends AbstractActor {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -33,18 +34,18 @@ public abstract class AbstractFlowerActor extends AbstractActor {
       try {
         onServiceContextReceived(context);
       } catch (Throwable e) {
-        onException(e);
+        onException(e, context);
       }
     }).matchAny(message -> {
       unhandled(message);
     }).build();
   }
-  
+
   @Override
   public void postStop() throws Exception {
     super.postStop();
   }
-  
+
   @Override
   public void preStart() throws Exception {
     super.preStart();
@@ -52,8 +53,8 @@ public abstract class AbstractFlowerActor extends AbstractActor {
 
   public abstract void onServiceContextReceived(ServiceContext context) throws Throwable;
 
-  public void onException(Throwable throwable) {
-    logger.error("", throwable);
+  public void onException(Throwable throwable, ServiceContext context) {
+    ExceptionHandlerManager.getInstance().getExceptionHandler(throwable.getClass()).handle(context, throwable);
   }
 
   @Override

@@ -29,7 +29,7 @@ import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @FlowerService(type = FlowerType.AGGREGATE)
 public class ServiceD implements Service<List<User>, List<User>> {

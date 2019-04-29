@@ -103,13 +103,16 @@ public class ServiceActorFactory extends AbstractLifecycle {
       if (actorWrapper == null) {
         if (serviceConfig.isLocal()) {
           ActorRef actorRef =
-              getActorContext().actorOf(ServiceActor.props(serviceName, flowerFactory, index, actorNumber), cacheKey);
+              getActorContext().actorOf(
+                  ServiceActor.props(serviceName, flowerFactory, index, actorNumber).withDispatcher("dispatcher"),
+                  cacheKey);
           actorWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
         } else {
           // "akka.tcp://flower@127.0.0.1:2551/user/$a"
           URL url = serviceConfig.getAddresses().iterator().next();
-          String actorPath = String.format(actorPathFormat, serviceConfig.getApplication(), url.getHost(),
-              url.getPort(), serviceName, index % 128);
+          String actorPath =
+              String.format(actorPathFormat, serviceConfig.getApplication(), url.getHost(), url.getPort(), serviceName,
+                  index % 128);
           ActorSelection actorSelection = getActorContext().actorSelection(actorPath);
           actorWrapper = new ActorSelectionWrapper(actorSelection).setServiceName(serviceName);
         }
@@ -120,10 +123,9 @@ public class ServiceActorFactory extends AbstractLifecycle {
         serviceActorCache.put(cacheKey, actorWrapper);
       }
     } catch (Exception e) {
-      throw new FlowerException(
-          "fail to create flowerService, flowName : " + serviceConfig.getFlowName() + ", serviceName : " + serviceName
-              + ", serviceClassName : " + serviceConfig.getServiceMeta().getServiceClassName(),
-          e);
+      throw new FlowerException("fail to create flowerService, flowName : " + serviceConfig.getFlowName()
+          + ", serviceName : " + serviceName + ", serviceClassName : "
+          + serviceConfig.getServiceMeta().getServiceClassName(), e);
     } finally {
       actorLock.unlock();
     }
@@ -136,8 +138,10 @@ public class ServiceActorFactory extends AbstractLifecycle {
       synchronized (this) {
         if (actorContext == null) {
           try {
-            actorContext = (ActorContext) Await.result(
-                Patterns.ask(getSupervierActor(), new SupervisorActor.GetActorContext(), DEFAULT_TIMEOUT - 1), timeout);
+            actorContext =
+                (ActorContext) Await.result(
+                    Patterns.ask(getSupervierActor(), new SupervisorActor.GetActorContext(), DEFAULT_TIMEOUT - 1),
+                    timeout);
           } catch (Exception e) {
             logger.error("", e);
             throw new FlowerException("", e);
@@ -165,7 +169,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
           }
           logger.info("akka config ：{}", configBuilder.toString());
           Config config = ConfigFactory.parseString(configBuilder.toString()).withFallback(ConfigFactory.load());
-          actorSystem = ActorSystem.create(flowerConfig.getName(), config);
+          actorSystem = ActorSystem.create("flower", config);
           Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {

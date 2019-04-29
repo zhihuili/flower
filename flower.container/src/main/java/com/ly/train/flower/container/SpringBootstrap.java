@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class SpringBootstrap extends Bootstrap {
   protected static final Logger logger = LoggerFactory.getLogger(SpringBootstrap.class);

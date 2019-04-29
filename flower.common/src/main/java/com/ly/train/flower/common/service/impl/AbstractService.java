@@ -18,7 +18,7 @@
  */
 package com.ly.train.flower.common.service.impl;
 
-import com.ly.train.flower.common.exception.ExceptionHandler;
+import com.ly.train.flower.common.exception.handler.ExceptionHandlerManager;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.logging.Logger;
@@ -26,7 +26,7 @@ import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public abstract class AbstractService<P, R> implements Service<P, R> {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -36,7 +36,7 @@ public abstract class AbstractService<P, R> implements Service<P, R> {
     try {
       return doProcess(message, context);
     } catch (Throwable throwable) {
-      onError(throwable, message);
+      onError(message, context, throwable);
     }
     return null;
   }
@@ -44,12 +44,12 @@ public abstract class AbstractService<P, R> implements Service<P, R> {
   /**
    * 请求参数
    * 
-   * @param throwable 异常堆栈
    * @param param 请求参数
+   * @param context 上下文
+   * @param throwable 异常堆栈
    */
-  public void onError(Throwable throwable, P param) {
-    logger.error("fail to invoke doProcess method.", throwable);
-    ExceptionHandler.handle(throwable);
+  public void onError(P param, ServiceContext context, Throwable throwable) {
+    ExceptionHandlerManager.getInstance().getExceptionHandler(throwable.getClass()).handle(context, throwable);
   }
 
   /**

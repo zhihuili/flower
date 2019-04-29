@@ -26,7 +26,7 @@ import com.ly.train.flower.common.util.URL;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class RegistryConfig implements Serializable {
 

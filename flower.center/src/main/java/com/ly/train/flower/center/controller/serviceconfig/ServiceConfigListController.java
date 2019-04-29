@@ -31,7 +31,7 @@ import com.ly.train.flower.common.service.config.ServiceConfig;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @RestController
 @RequestMapping("/serviceconfig/")

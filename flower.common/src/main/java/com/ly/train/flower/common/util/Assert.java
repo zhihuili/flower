@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class Assert {
 

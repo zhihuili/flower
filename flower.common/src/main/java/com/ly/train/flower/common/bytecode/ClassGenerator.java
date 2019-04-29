@@ -64,7 +64,7 @@ import javassist.bytecode.annotation.StringMemberValue;
 /**
  * 
  * @author leeyazhou
- *
+ * 
  */
 public final class ClassGenerator {
   private static final Logger logger = LoggerFactory.getLogger(ClassGenerator.class);
@@ -82,7 +82,9 @@ public final class ClassGenerator {
   private List<String> mConstructors;
   private List<String> mMethods;
   private Map<String, Method> mCopyMethods; // <method desc,method instance>
-  private Map<String, Constructor<?>> mCopyConstructors; // <constructor desc,constructor instance>
+  private Map<String, Constructor<?>> mCopyConstructors; // <constructor
+                                                         // desc,constructor
+                                                         // instance>
   private boolean mDefaultConstructor = false;
 
   // <method desc, <annotation,annotationProps>>
@@ -385,7 +387,8 @@ public final class ClassGenerator {
       if (mSuperClass != null) {
         ctClass.setSuperclass(ctcs);
       }
-      ctClass.addInterface(classPool.get(DC.class.getName())); // add dynamic class tag.
+      ctClass.addInterface(classPool.get(DC.class.getName())); // add dynamic
+                                                               // class tag.
       if (mInterfaces != null) {
         for (String cl : mInterfaces) {
           ctClass.addInterface(classPool.get(cl));
@@ -400,8 +403,9 @@ public final class ClassGenerator {
         for (String code : mMethods) {
           CtMethod method = null;
           if (code.charAt(0) == ':') {
-            method = CtNewMethod.copy(getCtMethod(mCopyMethods.get(code.substring(1))),
-                code.substring(1, code.indexOf('(')), ctClass, null);
+            method =
+                CtNewMethod.copy(getCtMethod(mCopyMethods.get(code.substring(1))),
+                    code.substring(1, code.indexOf('(')), ctClass, null);
           } else {
             method = CtNewMethod.make(code, ctClass);
           }
@@ -434,10 +438,12 @@ public final class ClassGenerator {
       if (mConstructors != null) {
         for (String code : mConstructors) {
           if (code.charAt(0) == ':') {
-            ctClass.addConstructor(
-                CtNewConstructor.copy(getCtConstructor(mCopyConstructors.get(code.substring(1))), ctClass, null));
+            ctClass.addConstructor(CtNewConstructor.copy(getCtConstructor(mCopyConstructors.get(code.substring(1))),
+                ctClass, null));
           } else {
-            String[] sn = ctClass.getSimpleName().split("\\$+"); // inner class name include $.
+            String[] sn = ctClass.getSimpleName().split("\\$+"); // inner class
+                                                                 // name include
+                                                                 // $.
             ctClass
                 .addConstructor(CtNewConstructor.make(code.replaceFirst(SIMPLE_NAME_TAG, sn[sn.length - 1]), ctClass));
           }

@@ -32,7 +32,7 @@ import com.ly.train.flower.web.spring.context.FlowerComponentScan;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @SpringBootApplication
 @EnableAutoConfiguration

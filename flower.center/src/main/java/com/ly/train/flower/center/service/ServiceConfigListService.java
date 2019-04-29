@@ -28,7 +28,7 @@ import com.ly.train.flower.common.service.container.ServiceContext;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @FlowerService(timeout = 1000)
 public class ServiceConfigListService implements Service<Object, Set<ServiceConfig>> {

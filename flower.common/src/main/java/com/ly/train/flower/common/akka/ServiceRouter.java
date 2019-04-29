@@ -25,7 +25,6 @@ import com.ly.train.flower.common.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.loadbalance.LoadBalance;
 import com.ly.train.flower.common.serializer.Codec;
-import com.ly.train.flower.common.serializer.util.CodecUtil;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.AbstractInit;
 import com.ly.train.flower.common.service.container.FlowerFactory;
@@ -88,8 +87,7 @@ public class ServiceRouter extends AbstractInit {
         throw new FlowerException("fail to invoke \r\nCaused by: " + response.getException());
       }
       byte[] messageByte = response.getMessage();
-      Codec codec = CodecUtil.getInstance().getCodec(response.getMessageType());
-      return codec.getSerializer().decode(messageByte, null);
+      return Codec.Hessian.decode(messageByte, null);
     } catch (FlowerException e) {
       throw e;
     } catch (TimeoutException e) {
@@ -114,7 +112,8 @@ public class ServiceRouter extends AbstractInit {
       synchronized (this) {
         if (actors.isEmpty()) {
           for (int i = 0; i < actorNumber; i++) {
-            ActorWrapper actor = flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig, i, actorNumber);
+            ActorWrapper actor =
+                flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig, i, actorNumber);
             actors.add(actor);
           }
         }

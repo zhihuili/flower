@@ -24,10 +24,10 @@ import com.ly.train.flower.common.service.container.ServiceContext;
  */
 @FlowerService
 public class ServiceForkA2 implements Service<Integer, Integer> {
-    @Override
-    public Integer process(Integer message, ServiceContext context) throws Throwable {
-        Integer result = message+2;
-        System.out.println("ForkA2:已处理,结果:"+result);
-        return result;
-    }
+  @Override
+  public Integer process(Integer message, ServiceContext context) throws Throwable {
+    Integer result = message + 2;
+    System.out.println("ForkA2:已处理,结果:" + result);
+    return result;
+  }
 }

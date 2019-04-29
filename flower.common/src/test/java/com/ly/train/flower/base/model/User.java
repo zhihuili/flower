@@ -22,7 +22,7 @@ import java.io.Serializable;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class User implements Serializable {
 

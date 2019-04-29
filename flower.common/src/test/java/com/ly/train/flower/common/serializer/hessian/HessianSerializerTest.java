@@ -25,7 +25,7 @@ import com.ly.train.flower.common.serializer.Codec;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class HessianSerializerTest {
 
@@ -49,7 +49,7 @@ public class HessianSerializerTest {
     byte[] modelBByte = Codec.Hessian.encode(model);
     CollectionModel modelA = (CollectionModel) Codec.Hessian.decode(modelBByte, CollectionModel.class.getName());
     System.out.println(modelA);
-    
+
     Set<CollectionModel> sets = new HashSet<CollectionModel>();
     sets.add(model);
     byte[] setByte = Codec.Hessian.encode(sets);
@@ -57,5 +57,5 @@ public class HessianSerializerTest {
     System.out.println(sets);
   }
 
-  
+
 }

@@ -24,7 +24,7 @@ import scala.concurrent.duration.FiniteDuration;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class Constant {
 

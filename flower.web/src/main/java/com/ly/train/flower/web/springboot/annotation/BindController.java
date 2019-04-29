@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface BindController {
-  
+
   String value() default "@RestController";
 
   String type() default "@RequestMapping";

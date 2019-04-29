@@ -19,31 +19,48 @@
 package com.ly.train.flower.filter;
 
 import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.service.impl.AbstractService;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
-public abstract class AbstractFilter implements Filter {
-
-  private AbstractFilter nextFilter;
+public abstract class AbstractFilter<P, R> extends AbstractService<P, R> implements Filter<P, R> {
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  private Filter<P, R> nextFilter;
 
   @Override
-  public void filter(ServiceContext serviceContext) {
-    doFilter(serviceContext);
+  public R doProcess(P message, ServiceContext context) throws Throwable {
+    return filter(message, context);
+  }
+
+  @Override
+  public R filter(P message, ServiceContext context) throws Throwable {
+    R ret = doFilter(message, context);
+    if (ret != null && nextFilter != null) {
+      return nextFilter.filter(message, context);
+    }
+    return ret;
+  }
+
+  @Override
+  public void setNext(Filter<P, R> filter) {
     if (nextFilter != null) {
-      nextFilter.filter(serviceContext);
-    }
-  }
-
- public abstract void doFilter(ServiceContext serviceContext);
-
-  public void addFilter(Filter filter) {
-    if (this.nextFilter == null) {
-      this.nextFilter = (AbstractFilter) filter;
+      nextFilter.setNext(filter);
     } else {
-      this.nextFilter.addFilter(filter);
+      this.nextFilter = filter;
     }
   }
+
+  /**
+   * 执行职责
+   * 
+   * @param message 参数
+   * @param context 上下文
+   * @return result
+   */
+  public abstract R doFilter(P message, ServiceContext context);
 
 }

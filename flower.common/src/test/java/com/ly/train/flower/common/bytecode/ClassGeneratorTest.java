@@ -25,7 +25,7 @@ import javassist.bytecode.annotation.Annotation;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ClassGeneratorTest {
 
@@ -51,9 +51,9 @@ public class ClassGeneratorTest {
     cg.addAnnotation(FlowerService.class.getName(), null);
     Class<?> cl = cg.toClass();
     cl.getField("FNAME").set(null, fname);
-    
-    
-    for(java.lang.annotation.Annotation an : cl.getAnnotations()) {
+
+
+    for (java.lang.annotation.Annotation an : cl.getAnnotations()) {
       System.out.println(an);
     }
     System.out.println(cl.getName());

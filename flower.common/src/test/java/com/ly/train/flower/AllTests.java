@@ -30,7 +30,7 @@ import com.ly.train.flower.registry.zookeeper.ZookeeperRegistryTest;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @RunWith(Suite.class)
 @SuiteClasses({ActorSelectionTest.class, ServiceFacadeTest.class, ServiceRouterTest.class, ClassGeneratorTest.class,

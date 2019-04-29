@@ -31,7 +31,7 @@ import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @Service
 public class ServiceManager {

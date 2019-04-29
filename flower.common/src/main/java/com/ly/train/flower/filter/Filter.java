@@ -18,15 +18,16 @@
  */
 package com.ly.train.flower.filter;
 
+import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
-public interface Filter {
+public interface Filter<P, R> extends Service<P, R> {
 
-  void filter(ServiceContext serviceContext);
+  R filter(P message, ServiceContext context) throws Throwable;
 
-
+  void setNext(Filter<P, R> filter);
 }

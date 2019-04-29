@@ -49,6 +49,6 @@ class CollectionModel implements Serializable {
   public void setData2(Set<String> data2) {
     this.data2 = data2;
   }
-  
-  
+
+
 }

@@ -19,7 +19,7 @@ import com.ly.train.flower.common.util.StringUtil;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class FlowerServiceUtil {
 

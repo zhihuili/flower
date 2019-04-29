@@ -27,14 +27,15 @@ import java.util.Set;
 /**
  * 
  * @author leeyazhou
- *
+ * 
  */
 public class CloneUtil {
   /**
    * 无需进行复制的特殊类型数组
    */
-  private static final Class<?>[] needlessCloneClasses = new Class[] {String.class, Boolean.class, Character.class, Byte.class, Short.class,
-      Integer.class, Long.class, Float.class, Double.class, Void.class, Object.class, Class.class};
+  private static final Class<?>[] needlessCloneClasses = new Class[] {String.class, Boolean.class, Character.class,
+      Byte.class, Short.class, Integer.class, Long.class, Float.class, Double.class, Void.class, Object.class,
+      Class.class};
 
   /**
    * 判断该类型对象是否无需复制
@@ -75,7 +76,8 @@ public class CloneUtil {
    * 复制对象数据
    * 
    * @param value 原始对象
-   * @param level 复制深度。小于0为无限深度，即将深入到最基本类型和Object类级别的数据复制； 大于0则按照其值复制到指定深度的数据，等于0则直接返回对象本身而不进行任何复制行为。
+   * @param level 复制深度。小于0为无限深度，即将深入到最基本类型和Object类级别的数据复制；
+   *        大于0则按照其值复制到指定深度的数据，等于0则直接返回对象本身而不进行任何复制行为。
    * @return 返回复制后的对象
    * @throws IllegalAccessException
    * @throws InstantiationException
@@ -83,8 +85,8 @@ public class CloneUtil {
    * @throws NoSuchMethodException
    */
   @SuppressWarnings("rawtypes")
-  public static Object clone(Object value, int level)
-      throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
+  public static Object clone(Object value, int level) throws IllegalAccessException, InstantiationException,
+      InvocationTargetException, NoSuchMethodException {
     if (value == null) {
       return null;
     }
@@ -141,8 +143,8 @@ public class CloneUtil {
       @SuppressWarnings("unchecked")
       Map<Object, Object> tmp = (Map<Object, Object>) c.newInstance();
       Map<?, ?> org = (Map<?, ?>) value;
-      for(Map.Entry t:org.entrySet()){
-        tmp.put(t.getKey(),clone(t.getValue(), level) );// 深度复制
+      for (Map.Entry t : org.entrySet()) {
+        tmp.put(t.getKey(), clone(t.getValue(), level));// 深度复制
       }
 
       value = tmp;
@@ -193,8 +195,8 @@ public class CloneUtil {
    * @throws InvocationTargetException
    * @throws NoSuchMethodException
    */
-  public static Object deepClone(Object value)
-      throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
+  public static Object deepClone(Object value) throws IllegalAccessException, InstantiationException,
+      InvocationTargetException, NoSuchMethodException {
     return clone(value, -1);
   }
 }

@@ -24,7 +24,7 @@ import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class FlowerHttpServlet extends HttpServlet {
 
@@ -49,7 +49,7 @@ public class FlowerHttpServlet extends HttpServlet {
   public ServiceFacade getServiceFacade() {
     return flowerFactory.getServiceFacade();
   }
-  
+
   public ServiceFlow getServiceFlow(String flowName) {
     return serviceFactory.getOrCreateServiceFlow(flowName);
   }

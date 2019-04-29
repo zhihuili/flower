@@ -96,7 +96,8 @@ public class HttpClient {
       connection.setDoOutput(true);
       connection.setDoInput(true);
       connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-      // connection.setRequestProperty("Authorization", "Bearer da3efcbf-0845-4fe3-8aba-ee040be542c0");
+      // connection.setRequestProperty("Authorization",
+      // "Bearer da3efcbf-0845-4fe3-8aba-ee040be542c0");
       os = connection.getOutputStream();
       if (httpClientBuilder.getParam() != null) {
         os.write(httpClientBuilder.getParam().getBytes(Constant.ENCODING_UTF_8));
@@ -114,8 +115,8 @@ public class HttpClient {
         result = sbf.toString();
       }
     } catch (Exception e) {
-      logger.error(
-          "请求异常，retryTimes : " + postRetryTimes + "， url : " + httpClientBuilder.getUrl() + ", param : " + httpClientBuilder.getParam(), e);
+      logger.error("请求异常，retryTimes : " + postRetryTimes + "， url : " + httpClientBuilder.getUrl() + ", param : "
+          + httpClientBuilder.getParam(), e);
       if (postRetryTimes++ < httpClientBuilder.getRetryTimes()) {
         result = post();
       }
@@ -128,8 +129,8 @@ public class HttpClient {
     return result;
   }
 
-  private void disconnect(HttpURLConnection connection){
-    if(connection!=null){
+  private void disconnect(HttpURLConnection connection) {
+    if (connection != null) {
       connection.disconnect();
     }
   }

@@ -35,7 +35,7 @@ import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class SimpleRegistry extends AbstractRegistry {
   protected FlowerFactory flowerFactory;
@@ -114,7 +114,7 @@ public class SimpleRegistry extends AbstractRegistry {
     List<ServiceInfo> ret2 = new ArrayList<ServiceInfo>();
     if (o != null) {
       Set<ServiceInfo> ret = (Set<ServiceInfo>) o;
-      if (ret != null &&!ret.isEmpty()) {
+      if (ret != null && !ret.isEmpty()) {
         ret2.addAll(ret);
       }
     }
@@ -135,7 +135,7 @@ public class SimpleRegistry extends AbstractRegistry {
     List<ServiceConfig> ret2 = new ArrayList<ServiceConfig>();
     if (o != null) {
       Set<ServiceConfig> ret = (Set<ServiceConfig>) o;
-      if (ret != null &&!ret.isEmpty()) {
+      if (ret != null && !ret.isEmpty()) {
         ret2.addAll(ret);
       }
     }

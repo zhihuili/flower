@@ -29,7 +29,7 @@ import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @Configuration
 public class FastJsonConfiguration implements WebMvcConfigurer {
@@ -37,9 +37,10 @@ public class FastJsonConfiguration implements WebMvcConfigurer {
   @Override
   public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
     FastJsonConfig fastJsonConfig = new FastJsonConfig();
-    fastJsonConfig.setSerializerFeatures(SerializerFeature.DisableCircularReferenceDetect, // SerializerFeature.WriteMapNullValue,
-        SerializerFeature.WriteNullListAsEmpty, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteNullBooleanAsFalse,
-        SerializerFeature.PrettyFormat);
+    fastJsonConfig.setSerializerFeatures(
+        SerializerFeature.DisableCircularReferenceDetect, // SerializerFeature.WriteMapNullValue,
+        SerializerFeature.WriteNullListAsEmpty, SerializerFeature.WriteNullStringAsEmpty,
+        SerializerFeature.WriteNullBooleanAsFalse, SerializerFeature.PrettyFormat);
     fastJsonConfig.setCharset(Charset.forName("UTF-8"));
     fastJsonConfig.setDateFormat("yyyy-MM-dd HH:mm:ss");
 

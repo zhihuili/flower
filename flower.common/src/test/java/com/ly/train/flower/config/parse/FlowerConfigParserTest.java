@@ -21,7 +21,7 @@ import com.ly.train.flower.config.parser.FlowerConfigParser;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class FlowerConfigParserTest {
 
@@ -43,6 +43,7 @@ public class FlowerConfigParserTest {
     FlowerConfig flowerConfig = new FlowerConfigParser("conf/flower_25004.yml").parse();
     System.out.println(flowerConfig);
   }
+
   @Test
   public void testParseWithoutConfig() {
     FlowerConfig flowerConfig = new FlowerConfigParser("conf/flower_25005.yml").parse();

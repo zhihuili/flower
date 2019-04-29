@@ -28,7 +28,7 @@ import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @FlowerService
 public class ServiceInfoListService implements Service<Object, Set<ServiceInfo>> {

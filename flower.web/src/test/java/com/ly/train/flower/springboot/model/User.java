@@ -20,7 +20,7 @@ package com.ly.train.flower.springboot.model;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class User {
 

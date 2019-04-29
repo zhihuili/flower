@@ -21,7 +21,7 @@ import com.ly.train.flower.common.service.impl.AbstractService;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class StartService extends AbstractService<OrderExt, OrderExt> {
 
@@ -31,8 +31,8 @@ public class StartService extends AbstractService<OrderExt, OrderExt> {
   }
 
   @Override
-  public void onError(Throwable throwable, OrderExt orderExt) {
-    super.onError(throwable, orderExt);
+  public void onError(OrderExt param, ServiceContext context, Throwable throwable) {
+    super.onError(param, context, throwable);
   }
 
 }

@@ -21,15 +21,16 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class FlowerBootstrap extends Bootstrap {
   protected static final Logger logger = LoggerFactory.getLogger(FlowerBootstrap.class);
 
   @Override
   public void doStartup(String configLocation) throws Throwable {
-    Class<?> flowerFactoryClazz = Class
-        .forName("com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory", true, getClassLoader());
+    Class<?> flowerFactoryClazz =
+        Class
+            .forName("com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory", true, getClassLoader());
     Object flowerFactory = flowerFactoryClazz.getConstructor(String.class).newInstance(configLocation);
     Method startMethod = flowerFactoryClazz.getMethod("start");
     startMethod.invoke(flowerFactory);

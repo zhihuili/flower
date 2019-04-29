@@ -21,7 +21,7 @@ import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public abstract class AbstractInit implements IInit {
   private static final Logger logger = LoggerFactory.getLogger(AbstractInit.class);

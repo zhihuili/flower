@@ -23,7 +23,7 @@ import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class CodecUtil {
   private static final Logger logger = LoggerFactory.getLogger(CodecUtil.class);

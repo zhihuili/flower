@@ -57,6 +57,7 @@
     <properties>
         <akka-http.version>10.1.7</akka-http.version>
         <akka.version>2.5.21</akka.version>
+        <brave.version>5.6.0</brave.version>
         <commons-io.version>2.6</commons-io.version>
         <druid.version>1.0.12</druid.version>
         <fastjson.version>1.2.54</fastjson.version>
@@ -177,6 +178,16 @@
                 <version>${gatling-charts-highcharts.version}</version>
             </dependency>
             <dependency>
+                <groupId>io.opentracing</groupId>
+                <artifactId>opentracing-api</artifactId>
+                <version>0.31.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentracing.brave</groupId>
+                <artifactId>brave-opentracing</artifactId>
+                <version>0.33.9</version>
+            </dependency>
+            <dependency>
                 <groupId>io.protostuff</groupId>
                 <artifactId>protostuff-core</artifactId>
                 <version>${protostuff.version}</version>
@@ -276,6 +287,13 @@
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.bom</artifactId>
                 <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.zipkin.brave</groupId>
+                <artifactId>brave-bom</artifactId>
+                <version>${brave.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -458,7 +476,7 @@
                 <executions>
                     <execution>
                         <goals>
-                            <!-- <goal>format</goal> -->
+                            <goal>format</goal>
                         </goals>
                     </execution>
                 </executions>
