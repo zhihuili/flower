@@ -55,7 +55,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
 
   private volatile Map<String, ServiceRouter> serviceRoutersCache = new ConcurrentHashMap<>();
   private volatile Map<String, FlowRouter> flowRoutersCache = new ConcurrentHashMap<>();
-  public static final String actorPathFormat = "akka.tcp://%s@%s:%s/user/flower/%s_%s";
+  public static final String actorPathFormat = "akka.tcp://flower@%s:%s/user/flower/%s_%s";
   private final int defaultFlowIndex = 0;
 
 
@@ -102,17 +102,14 @@ public class ServiceActorFactory extends AbstractLifecycle {
       actorWrapper = serviceActorCache.get(cacheKey);
       if (actorWrapper == null) {
         if (serviceConfig.isLocal()) {
-          ActorRef actorRef =
-              getActorContext().actorOf(
-                  ServiceActor.props(serviceName, flowerFactory, index, actorNumber).withDispatcher("dispatcher"),
-                  cacheKey);
+          ActorRef actorRef = getActorContext().actorOf(
+              ServiceActor.props(serviceName, flowerFactory, index, actorNumber).withDispatcher("dispatcher"),
+              cacheKey);
           actorWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
         } else {
           // "akka.tcp://flower@127.0.0.1:2551/user/$a"
           URL url = serviceConfig.getAddresses().iterator().next();
-          String actorPath =
-              String.format(actorPathFormat, serviceConfig.getApplication(), url.getHost(), url.getPort(), serviceName,
-                  index % 128);
+          String actorPath = String.format(actorPathFormat, url.getHost(), url.getPort(), serviceName, index % 128);
           ActorSelection actorSelection = getActorContext().actorSelection(actorPath);
           actorWrapper = new ActorSelectionWrapper(actorSelection).setServiceName(serviceName);
         }
@@ -123,9 +120,10 @@ public class ServiceActorFactory extends AbstractLifecycle {
         serviceActorCache.put(cacheKey, actorWrapper);
       }
     } catch (Exception e) {
-      throw new FlowerException("fail to create flowerService, flowName : " + serviceConfig.getFlowName()
-          + ", serviceName : " + serviceName + ", serviceClassName : "
-          + serviceConfig.getServiceMeta().getServiceClassName(), e);
+      throw new FlowerException(
+          "fail to create flowerService, flowName : " + serviceConfig.getFlowName() + ", serviceName : " + serviceName
+              + ", serviceClassName : " + serviceConfig.getServiceMeta().getServiceClassName(),
+          e);
     } finally {
       actorLock.unlock();
     }
@@ -138,10 +136,8 @@ public class ServiceActorFactory extends AbstractLifecycle {
       synchronized (this) {
         if (actorContext == null) {
           try {
-            actorContext =
-                (ActorContext) Await.result(
-                    Patterns.ask(getSupervierActor(), new SupervisorActor.GetActorContext(), DEFAULT_TIMEOUT - 1),
-                    timeout);
+            actorContext = (ActorContext) Await.result(
+                Patterns.ask(getSupervierActor(), new SupervisorActor.GetActorContext(), DEFAULT_TIMEOUT - 1), timeout);
           } catch (Exception e) {
             logger.error("", e);
             throw new FlowerException("", e);
@@ -160,13 +156,18 @@ public class ServiceActorFactory extends AbstractLifecycle {
           FlowerConfig flowerConfig = flowerFactory.getFlowerConfig();
           StringBuffer configBuilder = new StringBuffer();
 
+          final String sepator = "\r\n";
+          // @formatter:off
           if (StringUtil.isNotBlank(flowerConfig.getHost())) {
-            configBuilder.append("akka.actor.provider=\"remote\"").append("\r\n");
-            configBuilder.append("akka.remote.enabled-transports = [\"akka.remote.netty.tcp\"]").append("\r\n");
-            configBuilder.append("akka.remote.netty.tcp.hostname = ").append("\"").append(flowerConfig.getHost())
-                .append("\"").append("\r\n");
-            configBuilder.append("akka.remote.netty.tcp.port = \"").append(flowerConfig.getPort()).append("\"");
+            configBuilder.append(getFormatString("akka.actor.provider =%s", "remote")).append(sepator);
+            configBuilder.append(getFormatString("akka.remote.enabled-transports = [%s]", "akka.remote.netty.tcp")).append(sepator);
+            configBuilder.append(getFormatString("akka.remote.netty.tcp.hostname = %s", flowerConfig.getHost())).append(sepator);
+            configBuilder.append(getFormatString("akka.remote.netty.tcp.port = %s", flowerConfig.getPort())).append(sepator);
           }
+          configBuilder.append(getFormatString("dispatcher.fork-join-executor.parallelism-min = %s", flowerConfig.getParallelismMin())).append(sepator);
+          configBuilder.append(getFormatString("dispatcher.fork-join-executor.parallelism-max = %s", flowerConfig.getParallelismMax())).append(sepator);
+          configBuilder.append(getFormatString("dispatcher.fork-join-executor.parallelism-factor = %s", flowerConfig.getParallelismFactor())).append(sepator);
+          // @formatter:off
           logger.info("akka config ：{}", configBuilder.toString());
           Config config = ConfigFactory.parseString(configBuilder.toString()).withFallback(ConfigFactory.load());
           actorSystem = ActorSystem.create("flower", config);
@@ -188,6 +189,9 @@ public class ServiceActorFactory extends AbstractLifecycle {
     return actorSystem;
   }
 
+  private String getFormatString(String format, Object data) {
+    return String.format(format, "\"" + data + "\"");
+  }
 
   /**
    * will be cached by flowName + "_" + serviceName

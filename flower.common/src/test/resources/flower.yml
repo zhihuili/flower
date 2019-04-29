@@ -2,3 +2,6 @@ name: "LocalFlower"
 host: "127.0.0.1"
 port: 25005
 basePackage: com.ly.train.flower
+parallelismMin: 8
+parallelismMax: 256
+parallelismFactor: 8
