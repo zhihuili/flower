@@ -38,8 +38,8 @@ public class EndService extends AbstractService<List<Object>, Object> implements
   }
 
   @Override
-  public void onError(Throwable throwable, List<Object> param) {
-    super.onError(throwable, param);
+  public void onError(List<Object> param, ServiceContext context, Throwable throwable) {
+    super.onError(param, context, throwable);
   }
 
 }

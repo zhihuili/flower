@@ -104,8 +104,8 @@ public class ServiceActorFactory extends AbstractLifecycle {
         if (serviceConfig.isLocal()) {
           ActorRef actorRef =
               getActorContext().actorOf(
-                  ServiceActor.props(serviceName, flowerFactory, index, actorNumber).withDispatcher(
-                      "dispatcher"), cacheKey);
+                  ServiceActor.props(serviceName, flowerFactory, index, actorNumber).withDispatcher("dispatcher"),
+                  cacheKey);
           actorWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
         } else {
           // "akka.tcp://flower@127.0.0.1:2551/user/$a"

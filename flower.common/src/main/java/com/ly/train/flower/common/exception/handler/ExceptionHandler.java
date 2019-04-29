@@ -13,26 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.sample.multi.springboot.service;
+package com.ly.train.flower.common.exception.handler;
 
-import com.ly.train.flower.common.sample.multi.springboot.model.OrderExt;
 import com.ly.train.flower.common.service.container.ServiceContext;
-import com.ly.train.flower.common.service.impl.AbstractService;
 
 /**
  * @author leeyazhou
- * 
  */
-public class StartService extends AbstractService<OrderExt, OrderExt> {
+public interface ExceptionHandler {
 
-  @Override
-  public OrderExt doProcess(OrderExt message, ServiceContext context) {
-    return message;
-  }
-
-  @Override
-  public void onError(OrderExt param, ServiceContext context, Throwable throwable) {
-    super.onError(param, context, throwable);
-  }
+  /**
+   * 处理异常
+   * 
+   * @param context 上下文
+   * @param throwable 异常信息
+   */
+  void handle(ServiceContext context, Throwable throwable);
 
 }

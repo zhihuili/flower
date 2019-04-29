@@ -16,8 +16,9 @@
 /**
  * 
  */
-package com.ly.train.flower.common.exception;
+package com.ly.train.flower.common.exception.handler;
 
+import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
@@ -25,10 +26,12 @@ import com.ly.train.flower.logging.LoggerFactory;
  * @author leeyazhou
  * 
  */
-public class ExceptionHandler {
-  protected static final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
+public class DefaultExceptionHandler implements ExceptionHandler {
+  protected static final Logger logger = LoggerFactory.getLogger(DefaultExceptionHandler.class);
 
-  public static void handle(Throwable throwable) {
-    logger.error("", throwable);
+  @Override
+  public void handle(ServiceContext context, Throwable throwable) {
+    logger.error("context : " + context, throwable);
   }
+
 }

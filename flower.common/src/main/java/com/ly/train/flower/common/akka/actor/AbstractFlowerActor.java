@@ -15,6 +15,7 @@
  */
 package com.ly.train.flower.common.akka.actor;
 
+import com.ly.train.flower.common.exception.handler.ExceptionHandlerManager;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
@@ -33,7 +34,7 @@ public abstract class AbstractFlowerActor extends AbstractActor {
       try {
         onServiceContextReceived(context);
       } catch (Throwable e) {
-        onException(e);
+        onException(e, context);
       }
     }).matchAny(message -> {
       unhandled(message);
@@ -52,8 +53,8 @@ public abstract class AbstractFlowerActor extends AbstractActor {
 
   public abstract void onServiceContextReceived(ServiceContext context) throws Throwable;
 
-  public void onException(Throwable throwable) {
-    logger.error("", throwable);
+  public void onException(Throwable throwable, ServiceContext context) {
+    ExceptionHandlerManager.getInstance().getExceptionHandler(throwable.getClass()).handle(context, throwable);
   }
 
   @Override

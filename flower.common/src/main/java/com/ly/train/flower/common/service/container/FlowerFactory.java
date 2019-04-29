@@ -21,7 +21,7 @@ package com.ly.train.flower.common.service.container;
 import java.util.Set;
 import com.ly.train.flower.common.akka.ServiceActorFactory;
 import com.ly.train.flower.common.akka.ServiceFacade;
-import com.ly.train.flower.common.exception.ExceptionHandler;
+import com.ly.train.flower.common.exception.handler.ExceptionHandler;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.lifecyle.Lifecycle;
 import com.ly.train.flower.config.FlowerConfig;
@@ -48,12 +48,9 @@ public interface FlowerFactory extends Lifecycle {
    */
   Set<Registry> getRegistry();
 
-  /**
-   * 异常处理器
-   * 
-   * @return {@link ExceptionHandler}
-   */
-  ExceptionHandler getExceptionHandler();
+  void registerExceptionHandler(Class<? extends Throwable> exceptionClass, ExceptionHandler exceptionHandler);
+
+  void setDefaultExceptionHandler(ExceptionHandler exceptionHandler);
 
   /**
    * akka Actor 工厂
