@@ -123,7 +123,6 @@ public class FlowerBeanRegistryPostProcessor implements BeanDefinitionRegistryPo
       logger.info("scan basepackage ：{}", basePackage);
       for (BeanDefinitionHolder beanHolder : beanDefinitionHolders) {
         String beanName = beanHolder.getBeanName();
-        beanName = beanName.substring(0, 1).toUpperCase() + beanName.substring(1);
         if (!registry.containsBeanDefinition(beanName)) {
           registry.registerBeanDefinition(beanName, beanHolder.getBeanDefinition());
           Class<?> beanType = applicationContext.getType(beanName);
