@@ -37,6 +37,21 @@ public class FlowerConfig implements Serializable {
   private Set<RegistryConfig> registry;
   private String basePackage;
 
+  /**
+   * 最小并行度
+   */
+  private int parallelismMin = 8;
+
+  /**
+   * 最大并行度
+   */
+  private int parallelismMax = 128;
+
+  /**
+   * 并行度因子
+   */
+  private int parallelismFactor = 16;
+
   public Set<RegistryConfig> getRegistry() {
     return registry;
   }
@@ -85,6 +100,30 @@ public class FlowerConfig implements Serializable {
 
   public void setBasePackage(String basePackage) {
     this.basePackage = basePackage;
+  }
+
+  public int getParallelismMin() {
+    return parallelismMin;
+  }
+
+  public void setParallelismMin(int parallelismMin) {
+    this.parallelismMin = parallelismMin;
+  }
+
+  public int getParallelismMax() {
+    return parallelismMax;
+  }
+
+  public void setParallelismMax(int parallelismMax) {
+    this.parallelismMax = parallelismMax;
+  }
+
+  public int getParallelismFactor() {
+    return parallelismFactor;
+  }
+
+  public void setParallelismFactor(int parallelismFactor) {
+    this.parallelismFactor = parallelismFactor;
   }
 
   @Override

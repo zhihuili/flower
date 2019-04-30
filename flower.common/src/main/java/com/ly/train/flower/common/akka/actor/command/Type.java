@@ -13,19 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service.message;
+package com.ly.train.flower.common.akka.actor.command;
 
-import com.ly.train.flower.common.akka.actor.message.Message;
+/**
+ * 请求/响应
+ * 
+ * @author leeyazhou
+ */
+public enum Type {
 
-public class DefaultMessage implements Message {
-  private static final long serialVersionUID = 1L;
+  REQUEST(0),
 
-  private DefaultMessage() {}
+  RESPONSE(1);
 
-  private static DefaultMessage defaultMessage = new DefaultMessage();
+  private int code;
 
-  public static DefaultMessage getMessage() {
-    return defaultMessage;
+  private Type(int code) {
+    this.code = code;
   }
 
+  public int getCode() {
+    return code;
+  }
 }

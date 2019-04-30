@@ -15,11 +15,11 @@
  */
 package com.ly.train.flower.common.service.message;
 
-import java.io.Serializable;
+import com.ly.train.flower.common.akka.actor.message.Message;
 import com.ly.train.flower.common.serializer.Codec;
 import com.ly.train.flower.common.util.StringUtil;
 
-public class FlowMessage implements Serializable {
+public class FlowMessage implements Message {
   private static final long serialVersionUID = 1L;
   private String transactionId = StringUtil.uuid();
   private byte[] message;

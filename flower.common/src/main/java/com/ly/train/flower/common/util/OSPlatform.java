@@ -13,19 +13,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service.message;
+package com.ly.train.flower.common.util;
 
-import com.ly.train.flower.common.akka.actor.message.Message;
+public enum OSPlatform {
 
-public class DefaultMessage implements Message {
-  private static final long serialVersionUID = 1L;
+  Any("any"),
 
-  private DefaultMessage() {}
+  Linux("Linux"),
 
-  private static DefaultMessage defaultMessage = new DefaultMessage();
+  Mac_OS("Mac OS"),
 
-  public static DefaultMessage getMessage() {
-    return defaultMessage;
+  Mac_OS_X("Mac OS X"),
+
+  Windows("Windows"),
+
+  OS2("OS/2"),
+
+  Solaris("Solaris"),
+
+  SunOS("SunOS"),
+
+  MPEiX("MPE/iX"),
+
+  HP_UX("HP-UX"),
+
+  AIX("AIX"),
+
+  OS390("OS/390"),
+
+  FreeBSD("FreeBSD"),
+
+  Irix("Irix"),
+
+  Digital_Unix("Digital Unix"),
+
+  NetWare_411("NetWare"),
+
+  OSF1("OSF1"),
+
+  OpenVMS("OpenVMS"),
+
+  Others("Others");
+
+  private String desc;
+
+  private OSPlatform(String desc) {
+    this.desc = desc;
+  }
+
+  public String toString() {
+    return desc;
   }
 
 }

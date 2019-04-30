@@ -15,7 +15,6 @@
  */
 package com.ly.train.flower.common.akka;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -23,6 +22,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import com.ly.train.flower.common.akka.actor.ServiceActor;
 import com.ly.train.flower.common.akka.actor.SupervisorActor;
+import com.ly.train.flower.common.akka.actor.command.Command;
+import com.ly.train.flower.common.akka.actor.command.CreateCommand;
+import com.ly.train.flower.common.akka.actor.command.GetContextCommand;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorRefWrapper;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorSelectionWrapper;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorWrapper;
@@ -45,6 +47,7 @@ import akka.actor.ActorSelection;
 import akka.actor.ActorSystem;
 import akka.pattern.Patterns;
 import scala.concurrent.Await;
+import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
 public class ServiceActorFactory extends AbstractLifecycle {
@@ -53,9 +56,12 @@ public class ServiceActorFactory extends AbstractLifecycle {
   private static final Duration timeout = Duration.create(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
   private final ConcurrentMap<String, ActorWrapper> serviceActorCache = new ConcurrentHashMap<>();
 
-  private volatile Map<String, ServiceRouter> serviceRoutersCache = new ConcurrentHashMap<>();
-  private volatile Map<String, FlowRouter> flowRoutersCache = new ConcurrentHashMap<>();
-  public static final String actorPathFormat = "akka.tcp://%s@%s:%s/user/flower/%s_%s";
+  private volatile ConcurrentMap<String, ServiceRouter> serviceRoutersCache = new ConcurrentHashMap<>();
+  private volatile ConcurrentMap<String, FlowRouter> flowRoutersCache = new ConcurrentHashMap<>();
+  private volatile ConcurrentMap<String, ActorSelection> superActorCache =
+      new ConcurrentHashMap<String, ActorSelection>();
+  public static final String actorPathFormat = "akka.tcp://flower@%s:%s/user/flower/%s_%s";
+  public static final String superActorPathFormat = "akka.tcp://flower@%s:%s/user/flower";
   private final int defaultFlowIndex = 0;
 
 
@@ -70,6 +76,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
     this.flowerFactory = flowerFactory;
     this.flowerConfig = flowerFactory.getFlowerConfig();
     this.serviceFactory = flowerFactory.getServiceFactory();
+    init();
   }
 
   private volatile Lock actorLock = new ReentrantLock();
@@ -78,17 +85,16 @@ public class ServiceActorFactory extends AbstractLifecycle {
 
 
   @Override
-  protected void doInit() {}
+  protected void doInit() {
+
+
+  }
 
   public ActorWrapper buildServiceActor(ServiceConfig serviceConfig) {
     return buildServiceActor(serviceConfig, defaultFlowIndex);
   }
 
   public ActorWrapper buildServiceActor(ServiceConfig serviceConfig, int index) {
-    return buildServiceActor(serviceConfig, index, -1);
-  }
-
-  public ActorWrapper buildServiceActor(ServiceConfig serviceConfig, int index, int actorNumber) {
     final String serviceName = serviceConfig.getServiceName();
     // TODO 缓存key的考量，是否要添加flowNumber
     final String cacheKey = serviceName + "_" + index;
@@ -104,15 +110,13 @@ public class ServiceActorFactory extends AbstractLifecycle {
         if (serviceConfig.isLocal()) {
           ActorRef actorRef =
               getActorContext().actorOf(
-                  ServiceActor.props(serviceName, flowerFactory, index, actorNumber).withDispatcher("dispatcher"),
-                  cacheKey);
+                  ServiceActor.props(serviceName, flowerFactory, index).withDispatcher("dispatcher"), cacheKey);
           actorWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
         } else {
           // "akka.tcp://flower@127.0.0.1:2551/user/$a"
           URL url = serviceConfig.getAddresses().iterator().next();
-          String actorPath =
-              String.format(actorPathFormat, serviceConfig.getApplication(), url.getHost(), url.getPort(), serviceName,
-                  index % 128);
+          createRemoteActor(url, new CreateCommand(serviceName, index));
+          String actorPath = String.format(actorPathFormat, url.getHost(), url.getPort(), serviceName, index);
           ActorSelection actorSelection = getActorContext().actorSelection(actorPath);
           actorWrapper = new ActorSelectionWrapper(actorSelection).setServiceName(serviceName);
         }
@@ -132,16 +136,29 @@ public class ServiceActorFactory extends AbstractLifecycle {
     return actorWrapper;
   }
 
+  private void createRemoteActor(URL url, Command command) throws Exception {
+    final String cacheKey = url.getHost() + ":" + url.getPort();
+    ActorSelection superActor = superActorCache.get(cacheKey);
+    if (superActor == null) {
+      String actorPath = String.format(superActorPathFormat, url.getHost(), url.getPort());
+      superActor = getActorContext().actorSelection(actorPath);
+      ActorSelection temp = superActorCache.putIfAbsent(cacheKey, superActor);
+      if (temp != null) {
+        superActor = temp;
+      }
+    }
+    Future<Object> future = Patterns.ask(superActor, command, DEFAULT_TIMEOUT - 1);
+    Await.result(future, timeout);
+  }
+
 
   protected ActorContext getActorContext() {
     if (actorContext == null) {
       synchronized (this) {
         if (actorContext == null) {
           try {
-            actorContext =
-                (ActorContext) Await.result(
-                    Patterns.ask(getSupervierActor(), new SupervisorActor.GetActorContext(), DEFAULT_TIMEOUT - 1),
-                    timeout);
+            Future<Object> future = Patterns.ask(getSupervierActor(), new GetContextCommand(), DEFAULT_TIMEOUT - 1);
+            actorContext = (ActorContext) Await.result(future, timeout);
           } catch (Exception e) {
             logger.error("", e);
             throw new FlowerException("", e);
@@ -160,13 +177,18 @@ public class ServiceActorFactory extends AbstractLifecycle {
           FlowerConfig flowerConfig = flowerFactory.getFlowerConfig();
           StringBuffer configBuilder = new StringBuffer();
 
+          final String sepator = "\r\n";
+          // @formatter:off
           if (StringUtil.isNotBlank(flowerConfig.getHost())) {
-            configBuilder.append("akka.actor.provider=\"remote\"").append("\r\n");
-            configBuilder.append("akka.remote.enabled-transports = [\"akka.remote.netty.tcp\"]").append("\r\n");
-            configBuilder.append("akka.remote.netty.tcp.hostname = ").append("\"").append(flowerConfig.getHost())
-                .append("\"").append("\r\n");
-            configBuilder.append("akka.remote.netty.tcp.port = \"").append(flowerConfig.getPort()).append("\"");
+            configBuilder.append(getFormatString("akka.actor.provider = %s", "remote")).append(sepator);
+            configBuilder.append(getFormatString("akka.remote.enabled-transports = [%s]", "akka.remote.netty.tcp")).append(sepator);
+            configBuilder.append(getFormatString("akka.remote.netty.tcp.hostname = %s", flowerConfig.getHost())).append(sepator);
+            configBuilder.append(getFormatString("akka.remote.netty.tcp.port = %s", flowerConfig.getPort())).append(sepator);
           }
+          configBuilder.append(getFormatString("dispatcher.fork-join-executor.parallelism-min = %s", flowerConfig.getParallelismMin())).append(sepator);
+          configBuilder.append(getFormatString("dispatcher.fork-join-executor.parallelism-max = %s", flowerConfig.getParallelismMax())).append(sepator);
+          configBuilder.append(getFormatString("dispatcher.fork-join-executor.parallelism-factor = %s", flowerConfig.getParallelismFactor())).append(sepator);
+          // @formatter:off
           logger.info("akka config ：{}", configBuilder.toString());
           Config config = ConfigFactory.parseString(configBuilder.toString()).withFallback(ConfigFactory.load());
           actorSystem = ActorSystem.create("flower", config);
@@ -188,6 +210,9 @@ public class ServiceActorFactory extends AbstractLifecycle {
     return actorSystem;
   }
 
+  private String getFormatString(String format, Object data) {
+    return String.format(format, "\"" + data + "\"");
+  }
 
   /**
    * will be cached by flowName + "_" + serviceName
@@ -250,7 +275,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
     if (supervierActor == null) {
       synchronized (this) {
         if (supervierActor == null) {
-          this.supervierActor = getActorSystem().actorOf(SupervisorActor.props(), "flower");
+          this.supervierActor = getActorSystem().actorOf(SupervisorActor.props(this), "flower");
         }
       }
     }

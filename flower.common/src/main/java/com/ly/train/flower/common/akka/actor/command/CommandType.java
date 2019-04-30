@@ -13,19 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service.message;
+package com.ly.train.flower.common.akka.actor.command;
 
-import com.ly.train.flower.common.akka.actor.message.Message;
+/**
+ * @author leeyazhou
+ */
+public enum CommandType {
 
-public class DefaultMessage implements Message {
-  private static final long serialVersionUID = 1L;
+  /**
+   * 创建Actor
+   */
+  CREATE_ACTOR(0, "创建Actor"),
 
-  private DefaultMessage() {}
+  /**
+   * 获取ActorContext
+   */
+  GET_CONTEXT(1, "获取ActorContext");
 
-  private static DefaultMessage defaultMessage = new DefaultMessage();
+  private int code;
+  private String description;
 
-  public static DefaultMessage getMessage() {
-    return defaultMessage;
+  private CommandType(int code, String description) {
+    this.code = code;
+    this.description = description;
   }
 
+  public int getCode() {
+    return code;
+  }
+
+  public String getDescription() {
+    return description;
+  }
 }
