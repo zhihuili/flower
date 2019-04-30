@@ -67,7 +67,7 @@
         <github.repo>flower</github.repo>
         <java.version>1.8</java.version>
         <javassist.version>3.24.1-GA</javassist.version>
-        <jetty.version>9.4.14.v20181114</jetty.version>
+        <jetty.version>9.4.17.v20190418</jetty.version>
         <junit.version>4.12</junit.version>
         <logback.version>1.2.3</logback.version>
         <maven-checkstyle-plugin.version>2.15</maven-checkstyle-plugin.version>
