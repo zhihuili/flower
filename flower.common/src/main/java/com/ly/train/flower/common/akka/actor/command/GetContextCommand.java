@@ -13,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service.message;
+package com.ly.train.flower.common.akka.actor.command;
 
-import com.ly.train.flower.common.akka.actor.message.Message;
+/**
+ * @author leeyazhou
+ */
+public class GetContextCommand implements Command {
 
-public class DefaultMessage implements Message {
   private static final long serialVersionUID = 1L;
+  private CommandType commandType = CommandType.GET_CONTEXT;
+  private Type type = Type.REQUEST;
 
-  private DefaultMessage() {}
-
-  private static DefaultMessage defaultMessage = new DefaultMessage();
-
-  public static DefaultMessage getMessage() {
-    return defaultMessage;
+  @Override
+  public CommandType getCommandType() {
+    return commandType;
   }
 
+  @Override
+  public Type getType() {
+    return type;
+  }
 }

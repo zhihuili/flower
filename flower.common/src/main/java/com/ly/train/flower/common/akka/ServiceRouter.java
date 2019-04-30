@@ -112,8 +112,7 @@ public class ServiceRouter extends AbstractInit {
       synchronized (this) {
         if (actors.isEmpty()) {
           for (int i = 0; i < actorNumber; i++) {
-            ActorWrapper actor =
-                flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig, i, actorNumber);
+            ActorWrapper actor = flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig, i);
             actors.add(actor);
           }
         }

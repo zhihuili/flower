@@ -19,6 +19,7 @@
 package com.ly.train.flower.registry.redis;
 
 import java.util.List;
+import com.alibaba.fastjson.JSONObject;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.registry.AbstractRegistry;
@@ -32,7 +33,8 @@ import com.ly.train.flower.registry.redis.util.RedisManager;
  */
 public class RedisRegistry extends AbstractRegistry {
 
-  private static final String prefix = "flower:";
+  private final String providerKeyFormatter = root + ":%s:providers:%s";
+  private final String consumerKeyFormatter = root + ":%s:consumers:%s";
   private RedisClient redisClient;
 
   public RedisRegistry(URL url) {
@@ -42,9 +44,10 @@ public class RedisRegistry extends AbstractRegistry {
 
   @Override
   public boolean doRegister(ServiceInfo serviceInfo) {
-    String key = prefix + serviceInfo.getClassName() + ":providers:" + serviceInfo.getApplication();
-    redisClient.setnx(key, serviceInfo.getClassName());
-    return false;
+    URL u = serviceInfo.getAddresses().iterator().next();
+    String key = String.format(providerKeyFormatter, serviceInfo.getClassName(), u.getHost() + ":" + u.getPort());
+    redisClient.setex(key, 10, JSONObject.toJSONString(serviceInfo));
+    return true;
   }
 
   @Override

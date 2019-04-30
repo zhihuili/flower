@@ -43,6 +43,8 @@ public abstract class AbstractRegistry implements Registry {
   protected final ConcurrentMap<String, ServiceConfig> serviceConfigCache = new ConcurrentHashMap<>();
   private static final ScheduledExecutorService executorService = Executors
       .newSingleThreadScheduledExecutor(new NamedThreadFactory("registry"));
+
+  protected final String root = "flower";
   protected final URL url;
 
   public AbstractRegistry(URL url) {

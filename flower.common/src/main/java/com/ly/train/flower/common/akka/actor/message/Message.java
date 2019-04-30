@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.service.message;
+package com.ly.train.flower.common.akka.actor.message;
 
-import com.ly.train.flower.common.akka.actor.message.Message;
+import java.io.Serializable;
 
-public class DefaultMessage implements Message {
-  private static final long serialVersionUID = 1L;
-
-  private DefaultMessage() {}
-
-  private static DefaultMessage defaultMessage = new DefaultMessage();
-
-  public static DefaultMessage getMessage() {
-    return defaultMessage;
-  }
+/**
+ * 通过akka传递的消息需要实现Message接口
+ * 
+ * @author leeyazhou
+ */
+public interface Message extends Serializable {
 
 }

@@ -15,6 +15,8 @@
  */
 package com.ly.train.flower.common.service.message;
 
-public interface ReturnMessage {
+import com.ly.train.flower.common.akka.actor.message.Message;
+
+public interface ReturnMessage extends Message {
 
 }
