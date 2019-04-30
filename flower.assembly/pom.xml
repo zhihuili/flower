@@ -58,7 +58,9 @@
                         </goals>
                         <phase>package</phase>
                         <configuration>
-                            <outputFile>flower.jar</outputFile>
+                            <keepDependenciesWithProvidedScope>true</keepDependenciesWithProvidedScope>
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <createSourcesJar>true</createSourcesJar>
                             <transformers>
 
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
@@ -86,6 +88,21 @@
                             </filters>
 
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <descriptor>src/assembly/assembly.xml</descriptor>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>package</phase>
                     </execution>
                 </executions>
             </plugin>
