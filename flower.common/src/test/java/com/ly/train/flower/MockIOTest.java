@@ -13,27 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package com.ly.train.flower.common.util;
+package com.ly.train.flower;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
 
 /**
  * @author leeyazhou
- * 
  */
-public class HttpClientTest {
-  @Test
-  public void testGet() {
-    String ret = HttpClient.builder().setUrl("https://www.baidu.com").build().get();
-    System.out.println(ret);
-  }
+public class MockIOTest {
 
   @Test
-  public void testPost() {
-    String ret = HttpClient.builder().setUrl("https://www.baidu.com").setParam("name=liyazhou").build().post();
-    System.out.println(ret);
+  public void test() {
+    List<String> data = new ArrayList<String>();
+    data.add("a");
+    // Awaitility.await().atMost(15,
+    // TimeUnit.SECONDS).until(conditionEvaluator);
   }
 }

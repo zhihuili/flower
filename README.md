@@ -7,7 +7,7 @@
 [![star this repo](http://githubbadges.com/star.svg?user=zhihuili&repo=flower&style=flat)](https://github.com/zhihuili/flower)
 [![fork this repo](http://githubbadges.com/fork.svg?user=zhihuili&repo=flower&style=flat)](https://github.com/zhihuili/flower/fork)
 
-Flower是一个构建在Akka上的反应式微服务框架，开发者只需要针对每一个细粒度的业务功能开发一个Service服务，并将这些Service按照业务流程进行可视化编排，即可得到一个反应式系统
+Flower是一个构建在Akka上的反应式微服务框架，开发者只需要针对每一个细粒度的业务功能开发一个Service服务，并将这些Service按照业务流程进行可视化编排，即可得到一个反应式系统。
 * 即时响应：服务流程的调用者可以得到即时响应，无需等待整个Service流程执行完毕；Service之间无调用阻塞，即时响应。
 * 回弹性：当Service失效、服务器失效，系统能够进行自修复，依然保持响应，不会出现系统崩溃。
 * 弹性：能够对调用负载压力做出响应，能够自动进行资源伸缩适应负载压力，能够根据系统负载能力控制请求的进入速度（回压）。
@@ -15,14 +15,15 @@ Flower是一个构建在Akka上的反应式微服务框架，开发者只需要�
 
 
 **Flower既是一个反应式编程框架，又是一个分布式微服务框架。**
+
 **Flower框架使得开发者无需关注反应式编程细节，即可得到一个反应式系统。**
 
 
------------
-
+---
 * [Flower反应式编程Quick Start](/docs/quick_start.md)
-
 * [Flower应用指南](/docs/program_guide.md)
 * [Flower分布式开发](/docs/distribution_design.md)
 * [Flower框架设计](/docs/design.md)
+* [Flower贡献](CONTRIBUTING.md)
+* [Apache License 2.0](https://github.com/zhihuili/flower/blob/master/LICENSE.txt)
 

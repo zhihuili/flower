@@ -36,9 +36,11 @@
         <module>flower.center</module>
         <module>flower.sample</module>
         <module>flower.web</module>
-        <module>flower.assembly</module>
+        <module>flower.distribution</module>
         <module>flower.bom</module>
         <module>flower.container</module>
+        <module>flower.test</module>
+        <module>flower.all</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:${github.org}/${github.repo}.git</connection>
@@ -315,6 +317,19 @@
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.awaitility</groupId>
+                <artifactId>awaitility</artifactId>
+                <version>3.1.6</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>2.27.0</version>
+                <scope>test</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

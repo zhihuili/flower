@@ -20,6 +20,7 @@ package com.ly.train.flower.registry.simple;
 
 import java.util.Date;
 import java.util.List;
+import org.junit.Ignore;
 import org.junit.Test;
 import com.ly.train.flower.base.TestBase;
 import com.ly.train.flower.base.service.ServiceA;
@@ -40,6 +41,7 @@ import com.ly.train.flower.registry.config.ServiceInfo;
 public class SimpleRegistryTest extends TestBase {
 
   @Test
+  @Ignore
   public void testRegister() throws Exception {
 
     URL url = new URL("flower", "127.0.0.1", 8096);
@@ -59,6 +61,7 @@ public class SimpleRegistryTest extends TestBase {
   }
 
   @Test
+  @Ignore
   public void testGetProviders() throws Exception {
     URL url = new URL("http", "127.0.0.1", 8080);
     url.addParam("application", "FlowerCenter");
@@ -77,6 +80,7 @@ public class SimpleRegistryTest extends TestBase {
   }
 
   @Test
+  @Ignore
   public void testRegisterServiceConfig() {
     URL url = new URL("http", "127.0.0.1", 8080);
     RegistryFactory factory = ExtensionLoader.load(RegistryFactory.class).load();
@@ -92,6 +96,7 @@ public class SimpleRegistryTest extends TestBase {
   }
 
   @Test
+  @Ignore
   public void testGetServiceConfig() throws Exception {
     URL url = new URL("http", "127.0.0.1", 8080);
     RegistryFactory factory = ExtensionLoader.load(RegistryFactory.class).load();
