@@ -15,16 +15,13 @@
  */
 package com.ly.train.flower.test.service;
 
-import com.ly.train.flower.common.service.Complete;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.impl.AbstractService;
-import com.ly.train.flower.common.service.web.Flush;
-import com.ly.train.flower.common.service.web.HttpComplete;
 
 /**
  * @author leeyazhou
  */
-public class EndService extends AbstractService<String, String> implements HttpComplete, Complete, Flush {
+public class BusinessService extends AbstractService<String, String> {
 
   @Override
   public String doProcess(String message, ServiceContext context) throws Throwable {

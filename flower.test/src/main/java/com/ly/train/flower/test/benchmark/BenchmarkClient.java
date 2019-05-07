@@ -21,10 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import com.ly.train.flower.common.akka.FlowRouter;
-import com.ly.train.flower.common.service.container.FlowerFactory;
-import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
-import com.ly.train.flower.test.service.EndService;
-import com.ly.train.flower.test.service.StartService;
+import com.ly.train.flower.test.util.FlowerUtil;
 
 /**
  * @author lee
@@ -35,7 +32,7 @@ public class BenchmarkClient extends AbstractBenchmarkClient {
 
   public static void main(String[] args) throws InterruptedException {
     BenchmarkClient client = new BenchmarkClient();
-    long runtime = 60;
+    long runtime = 600;
     int threadNum = 128;
     if (args != null && args.length > 0) {
       runtime = Long.parseLong(args[0]);
@@ -50,19 +47,11 @@ public class BenchmarkClient extends AbstractBenchmarkClient {
     System.exit(0);
   }
 
-  private FlowerFactory prepareFlower() {
-    FlowerFactory flowerFactory = new SimpleFlowerFactory();
-    flowerFactory.getServiceFactory().registerService(StartService.class.getSimpleName(), StartService.class);
-    flowerFactory.getServiceFactory().registerService(EndService.class.getSimpleName(), EndService.class);
-    flowerFactory.getServiceFactory().getOrCreateServiceFlow(flowName).buildFlow(StartService.class, EndService.class);
-    return flowerFactory;
-  }
 
   @Override
   public void doBenchmark() throws InterruptedException {
     CountDownLatch countDownlatch = new CountDownLatch(getThreadNum());
-    FlowerFactory flowerFactory = prepareFlower();
-    FlowRouter flowRouter = flowerFactory.getServiceActorFactory().buildFlowRouter(flowName, getThreadNum());
+    FlowRouter flowRouter = FlowerUtil.buildFlowRouter(flowName, getThreadNum());
     check(flowRouter);
 
     long endTime = System.currentTimeMillis() + runtime * 1000;
@@ -75,7 +64,9 @@ public class BenchmarkClient extends AbstractBenchmarkClient {
       BenchmarkRunnableImpl benchmarkRunnable = new BenchmarkRunnableImpl(countDownlatch, flowRouter, endTime, i);
       benchmarkRunnables.add(benchmarkRunnable);
       benchmarkRunnable.setMessage("Flower is Good.");
-      benchmarkRunnable.start();
+    }
+    for(int i = 0; i < getThreadNum(); i++) {
+      benchmarkRunnables.get(i).start();
     }
     this.setBenchmarkRunnables(benchmarkRunnables);
     countDownlatch.await();

@@ -34,14 +34,6 @@ public class AbstractBenchmarkClient {
   protected List<BenchmarkRunnable> benchmarkRunnables;
 
   public AbstractBenchmarkClient() {
-    Timer timer = new Timer();
-    timer.schedule(new TimerTask() {
-
-      @Override
-      public void run() {
-        printResult();
-      }
-    }, 3000, 5000);
   }
 
   public void setRuntime(long runtime) {
@@ -64,6 +56,14 @@ public class AbstractBenchmarkClient {
 
   public void markStart() {
     this.start = System.currentTimeMillis();
+    Timer timer = new Timer();
+    timer.schedule(new TimerTask() {
+
+      @Override
+      public void run() {
+        printResult();
+      }
+    }, 3000, 5000);
   }
 
   /**
@@ -104,6 +104,8 @@ public class AbstractBenchmarkClient {
     long currentRuntime = (System.currentTimeMillis() - start) / 1000;
     for (BenchmarkRunnable benchmarkRunnable : benchmarkRunnables) {
       long[] responseSpreads = benchmarkRunnable.getResult().get(0);
+      allRequestSum += benchmarkRunnable.getResult().get(1)[0];
+      allErrorRequestSum += benchmarkRunnable.getResult().get(2)[0];
       below0sum += responseSpreads[0];
       above0sum += responseSpreads[1];
       above1sum += responseSpreads[2];
@@ -113,9 +115,6 @@ public class AbstractBenchmarkClient {
       above100sum += responseSpreads[6];
       above500sum += responseSpreads[7];
       above1000sum += responseSpreads[8];
-
-      allRequestSum += benchmarkRunnable.getResult().get(1)[0];
-      allErrorRequestSum += benchmarkRunnable.getResult().get(2)[0];
     }
 
     System.out.println(" RT <= 0 : " + below0sum * 100 / allRequestSum + "% " + below0sum + "/" + allRequestSum);
@@ -124,16 +123,19 @@ public class AbstractBenchmarkClient {
     System.out.println(" RT (5,10] : " + above5sum * 100 / allRequestSum + "% " + above5sum + "/" + allRequestSum);
     System.out.println(" RT (10,50] : " + above10sum * 100 / allRequestSum + "% " + above10sum + "/" + allRequestSum);
     System.out.println(" RT (50,100] : " + above50sum * 100 / allRequestSum + "% " + above50sum + "/" + allRequestSum);
-    System.out
-        .println(" RT (100,500] : " + above100sum * 100 / allRequestSum + "% " + above100sum + "/" + allRequestSum);
-    System.out
-        .println(" RT (500,1000] : " + above500sum * 100 / allRequestSum + "% " + above500sum + "/" + allRequestSum);
+    System.out.println(" RT (100,500] : " + above100sum * 100 / allRequestSum + "% " + above100sum + "/"
+        + allRequestSum);
+    System.out.println(" RT (500,1000] : " + above500sum * 100 / allRequestSum + "% " + above500sum + "/"
+        + allRequestSum);
     System.out
         .println(" RT > 1000 : " + above1000sum * 100 / allRequestSum + "% " + above1000sum + "/" + allRequestSum);
 
     System.out.println("allRequestSum \t: " + allRequestSum);
     System.out.println("allErrorRequestSum : " + allErrorRequestSum);
     System.out.println("runtime(second) : " + currentRuntime);
+    if (currentRuntime == 0) {
+      currentRuntime = 1;
+    }
     System.out.println("Average/sec \t: " + allRequestSum / currentRuntime);
     System.out.println("currentTime : " + dateFormat.format(new Date()));
     System.out.println("**********************************************************************\n");
