@@ -13,27 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.ly.train.flower.test.benchmark;
+
+import java.util.List;
+import com.ly.train.flower.common.util.ServiceThread;
+
 /**
- * 
+ * @author lee
  */
-package com.ly.train.flower.common.util;
+public abstract class BenchmarkRunnable extends ServiceThread {
 
-import org.junit.Test;
+  public abstract List<long[]> getResult();
 
-/**
- * @author leeyazhou
- * 
- */
-public class HttpClientTest {
-  @Test
-  public void testGet() {
-    String ret = HttpClient.builder().setUrl("https://www.baidu.com").build().get();
-    System.out.println(ret);
-  }
-
-  @Test
-  public void testPost() {
-    String ret = HttpClient.builder().setUrl("https://www.baidu.com").setParam("name=liyazhou").build().post();
-    System.out.println(ret);
-  }
 }

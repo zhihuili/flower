@@ -25,7 +25,6 @@
         <relativePath>..</relativePath>
     </parent>
     <artifactId>flower.common</artifactId>
-    <name>flower.common</name>
     <dependencies>
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -75,6 +74,14 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>

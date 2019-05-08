@@ -13,27 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package com.ly.train.flower.common.util;
+package com.ly.train.flower.test.service;
 
-import org.junit.Test;
+import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.service.impl.AbstractService;
 
 /**
  * @author leeyazhou
- * 
  */
-public class HttpClientTest {
-  @Test
-  public void testGet() {
-    String ret = HttpClient.builder().setUrl("https://www.baidu.com").build().get();
-    System.out.println(ret);
+public class BusinessService extends AbstractService<String, String> {
+
+  @Override
+  public String doProcess(String message, ServiceContext context) throws Throwable {
+    return message;
   }
 
-  @Test
-  public void testPost() {
-    String ret = HttpClient.builder().setUrl("https://www.baidu.com").setParam("name=liyazhou").build().post();
-    System.out.println(ret);
-  }
 }

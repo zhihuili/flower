@@ -47,7 +47,6 @@ public class TestBase {
   @BeforeClass
   public static void before() {
     flowerFactory = new SimpleFlowerFactory();
-    // flowerFactory.start();
     serviceFactory = flowerFactory.getServiceFactory();
     serviceLoader = serviceFactory.getServiceLoader();
     serviceFacade = flowerFactory.getServiceFacade();

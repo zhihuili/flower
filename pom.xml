@@ -36,9 +36,11 @@
         <module>flower.center</module>
         <module>flower.sample</module>
         <module>flower.web</module>
-        <module>flower.assembly</module>
+        <module>flower.distribution</module>
         <module>flower.bom</module>
         <module>flower.container</module>
+        <module>flower.test</module>
+        <module>flower.all</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:${github.org}/${github.repo}.git</connection>
@@ -68,6 +70,7 @@
         <java.version>1.8</java.version>
         <javassist.version>3.24.1-GA</javassist.version>
         <jetty.version>9.4.17.v20190418</jetty.version>
+        <jmeter.version>5.1.1</jmeter.version>
         <junit.version>4.12</junit.version>
         <logback.version>1.2.3</logback.version>
         <maven-checkstyle-plugin.version>2.15</maven-checkstyle-plugin.version>
@@ -284,6 +287,18 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>org.apache.jmeter</groupId>
+                <artifactId>ApacheJMeter_core</artifactId>
+                <version>${jmeter.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.jmeter</groupId>
+                <artifactId>ApacheJMeter_java</artifactId>
+                <version>${jmeter.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.bom</artifactId>
                 <version>${project.version}</version>
@@ -315,6 +330,18 @@
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.awaitility</groupId>
+                <artifactId>awaitility</artifactId>
+                <version>3.1.6</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>2.27.0</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -342,6 +369,11 @@
                         </formats>
                         <check />
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.10</version>
                 </plugin>
             </plugins>
         </pluginManagement>
