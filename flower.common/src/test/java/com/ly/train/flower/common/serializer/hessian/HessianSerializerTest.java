@@ -19,8 +19,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
-import com.ly.train.flower.common.akka.serializer.protostuff.model.ModelA;
-import com.ly.train.flower.common.akka.serializer.protostuff.model.ModelB;
+import com.ly.train.flower.common.akka.serializer.hessian.model.ModelA;
+import com.ly.train.flower.common.akka.serializer.hessian.model.ModelB;
 import com.ly.train.flower.common.serializer.Codec;
 
 /**

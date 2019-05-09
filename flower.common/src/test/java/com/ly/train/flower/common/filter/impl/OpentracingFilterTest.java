@@ -43,7 +43,7 @@ public class OpentracingFilterTest extends TestBase {
     user.setAge(2);
     Object o = router.syncCallService(user);
     System.out.println("响应结果： " + o);
-    Thread.sleep(1000);
+    Thread.sleep(30000);
   }
 
 }

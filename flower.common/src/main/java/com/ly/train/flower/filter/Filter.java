@@ -19,13 +19,14 @@
 package com.ly.train.flower.filter;
 
 import com.ly.train.flower.common.service.Service;
+import com.ly.train.flower.common.service.container.IInit;
 import com.ly.train.flower.common.service.container.ServiceContext;
 
 /**
  * @author leeyazhou
  * 
  */
-public interface Filter<P, R> extends Service<P, R> {
+public interface Filter<P, R> extends Service<P, R>, IInit {
 
   R filter(P message, ServiceContext context) throws Throwable;
 

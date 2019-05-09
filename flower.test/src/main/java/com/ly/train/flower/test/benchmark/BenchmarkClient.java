@@ -44,7 +44,7 @@ public class BenchmarkClient extends AbstractBenchmarkClient {
     client.setRuntime(runtime);
 
     client.doBenchmark();
-    System.exit(0);
+    FlowerUtil.stop();
   }
 
 

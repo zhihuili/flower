@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.akka.serializer.protostuff;
+package com.ly.train.flower.common.akka.serializer.hessian;
 
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
-import com.ly.train.flower.common.akka.serializer.protostuff.model.ModelA;
-import com.ly.train.flower.common.akka.serializer.protostuff.model.ModelB;
+import com.ly.train.flower.common.akka.serializer.hessian.model.ModelA;
+import com.ly.train.flower.common.akka.serializer.hessian.model.ModelB;
 import com.ly.train.flower.common.serializer.Codec;
 import com.ly.train.flower.common.serializer.Serializer;
 import com.ly.train.flower.common.util.ExtensionLoader;
@@ -28,7 +28,7 @@ import com.ly.train.flower.common.util.ExtensionLoader;
  * @author leeyazhou
  * 
  */
-public class ProtobufUtilsTest {
+public class HessianTest {
 
   @Test
   public void testEncode() {
