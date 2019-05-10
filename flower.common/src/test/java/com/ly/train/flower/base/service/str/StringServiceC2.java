@@ -16,9 +16,8 @@
 /**
  * 
  */
-package com.ly.train.flower.base.service;
+package com.ly.train.flower.base.service.str;
 
-import com.ly.train.flower.base.model.User;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.logging.Logger;
@@ -28,13 +27,11 @@ import com.ly.train.flower.logging.LoggerFactory;
  * @author leeyazhou
  * 
  */
-public class ServiceB implements Service<User, User> {
-  static final Logger logger = LoggerFactory.getLogger(ServiceB.class);
+public class StringServiceC2 implements Service<String, String> {
+  static final Logger logger = LoggerFactory.getLogger(StringServiceC2.class);
 
   @Override
-  public User process(User message, ServiceContext context) throws Throwable {
-    message.setDesc(message.getDesc() + " --> " + getClass().getSimpleName());
-    message.setAge(message.getAge() + 1);
+  public String process(String message, ServiceContext context) throws Throwable {
     logger.info("结束处理消息, message : {}", message);
     return message;
   }

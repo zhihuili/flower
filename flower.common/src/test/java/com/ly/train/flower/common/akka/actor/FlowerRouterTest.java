@@ -16,13 +16,14 @@
 package com.ly.train.flower.common.akka.actor;
 
 import java.util.concurrent.TimeUnit;
+import org.junit.Assert;
 import org.junit.Test;
 import com.ly.train.flower.base.TestBase;
 import com.ly.train.flower.base.model.User;
-import com.ly.train.flower.base.service.ServiceA;
-import com.ly.train.flower.base.service.ServiceB;
-import com.ly.train.flower.base.service.ServiceC1;
-import com.ly.train.flower.base.service.ServiceC2;
+import com.ly.train.flower.base.service.user.UserServiceA;
+import com.ly.train.flower.base.service.user.UserServiceB;
+import com.ly.train.flower.base.service.user.UserServiceC1;
+import com.ly.train.flower.base.service.user.UserServiceC2;
 import com.ly.train.flower.common.akka.FlowRouter;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 
@@ -37,8 +38,8 @@ public class FlowerRouterTest extends TestBase {
   @Test
   public void testSyncCallServiceSimple() throws Exception {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 3);
 
     User user = new User();
@@ -52,23 +53,25 @@ public class FlowerRouterTest extends TestBase {
   @Test
   public void testSyncCallServiceSimple2() throws Exception {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 3);
     User user = new User();
-    user.setName("响应式编程 ");
+    String name = "响应式编程 ";
+    user.setName(name);
     user.setAge(2);
 
-    Object o = router.syncCallService(user);
-    System.out.println("响应结果： " + o);
+    User o = (User) router.syncCallService(user);
+    Assert.assertEquals(user.getAge() + 3, o.getAge());
+    Assert.assertEquals(name, o.getName());
   }
 
   @Test
   public void testAsyncCallServiceSimple() throws Exception {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC2.class);
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2);
 
     User user = new User();
@@ -82,9 +85,9 @@ public class FlowerRouterTest extends TestBase {
   @Test
   public void testSyncCallServiceMutliThread() throws Exception {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC2.class);
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 4);
 
     final int threadNum = 200;
@@ -112,9 +115,9 @@ public class FlowerRouterTest extends TestBase {
   @Test
   public void testAsyncCallServiceMutliThread() throws Exception {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC2.class);
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 4);
 
     final int threadNum = 10;

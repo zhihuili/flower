@@ -16,12 +16,9 @@
 /**
  * 
  */
-package com.ly.train.flower.base.service;
+package com.ly.train.flower.base.service.user;
 
-import java.util.List;
 import com.ly.train.flower.base.model.User;
-import com.ly.train.flower.common.annotation.FlowerService;
-import com.ly.train.flower.common.annotation.FlowerType;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.logging.Logger;
@@ -31,12 +28,13 @@ import com.ly.train.flower.logging.LoggerFactory;
  * @author leeyazhou
  * 
  */
-@FlowerService(type = FlowerType.AGGREGATE)
-public class ServiceD implements Service<List<User>, List<User>> {
-  static final Logger logger = LoggerFactory.getLogger(ServiceD.class);
+public class UserServiceC1 implements Service<User, User> {
+  static final Logger logger = LoggerFactory.getLogger(UserServiceC1.class);
 
   @Override
-  public List<User> process(List<User> message, ServiceContext context) throws Throwable {
+  public User process(User message, ServiceContext context) throws Throwable {
+    message.setDesc(message.getDesc() + " --> " + getClass().getSimpleName());
+    message.setAge(message.getAge() + 1);
     logger.info("结束处理消息, message : {}", message);
     return message;
   }

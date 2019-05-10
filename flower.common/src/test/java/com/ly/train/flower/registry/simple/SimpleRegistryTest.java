@@ -23,9 +23,9 @@ import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
 import com.ly.train.flower.base.TestBase;
-import com.ly.train.flower.base.service.ServiceA;
-import com.ly.train.flower.base.service.ServiceB;
-import com.ly.train.flower.base.service.ServiceC1;
+import com.ly.train.flower.base.service.user.UserServiceA;
+import com.ly.train.flower.base.service.user.UserServiceB;
+import com.ly.train.flower.base.service.user.UserServiceC1;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.common.util.ExtensionLoader;
@@ -52,7 +52,7 @@ public class SimpleRegistryTest extends TestBase {
 
     ServiceInfo serviceInfo = new ServiceInfo();
     serviceInfo.setApplication("commonservice");
-    serviceInfo.setClassName(ServiceA.class.getName());
+    serviceInfo.setClassName(UserServiceA.class.getName());
     serviceInfo.addAddress(new URL("", "127.0.0.1", 12001));
     serviceInfo.addAddress(new URL("", "127.0.0.1", 12002));
     serviceInfo.setCreateTime(new Date());
@@ -71,7 +71,7 @@ public class SimpleRegistryTest extends TestBase {
 
 
     ServiceInfo serviceInfo = new ServiceInfo();
-    serviceInfo.setClassName(ServiceA.class.getName());
+    serviceInfo.setClassName(UserServiceA.class.getName());
     serviceInfo.addAddress(new URL("flower", "127.0.0.1", 12001));
     serviceInfo.addAddress(new URL("flower", "127.0.0.1", 12002));
     serviceInfo.setCreateTime(new Date());
@@ -88,8 +88,8 @@ public class SimpleRegistryTest extends TestBase {
     ((SimpleRegistry) registry).setFlowerFactory(flowerFactory);
 
     ServiceConfig serviceConfig =
-        ServiceFlow.getOrCreate("registerFlow", serviceFactory).buildFlow(ServiceA.class, ServiceB.class)
-            .buildFlow(ServiceB.class, ServiceC1.class).getServiceConfig("ServiceA");
+        ServiceFlow.getOrCreate("registerFlow", serviceFactory).buildFlow(UserServiceA.class, UserServiceB.class)
+            .buildFlow(UserServiceB.class, UserServiceC1.class).getServiceConfig("ServiceA");
     serviceConfig.addAddress(new URL("flower", "127.0.0.1", 12001));
     serviceConfig.addAddress(new URL("flower", "127.0.0.1", 12002));
     registry.registerServiceConfig(serviceConfig);

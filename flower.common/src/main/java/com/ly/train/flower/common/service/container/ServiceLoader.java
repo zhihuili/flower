@@ -245,7 +245,10 @@ public class ServiceLoader extends AbstractInit {
       logger.info("find service, path : {}", path);
       List<Pair<String, String>> services = FileUtil.readService("/" + path);
       for (Pair<String, String> pair : services) {
-        registerServiceType(pair.getKey(), pair.getValue());
+        boolean flag = registerServiceType(pair.getKey(), pair.getValue());
+        if (flag == false) {
+          logger.warn("register service error, path : {}, service : {}", path, pair);
+        }
       }
     }
 

@@ -18,14 +18,16 @@
  */
 package com.ly.train.flower.common.akka.actor;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import org.junit.Assert;
 import org.junit.Test;
 import com.ly.train.flower.base.TestBase;
 import com.ly.train.flower.base.model.User;
-import com.ly.train.flower.base.service.ServiceA;
-import com.ly.train.flower.base.service.ServiceB;
-import com.ly.train.flower.base.service.ServiceC1;
-import com.ly.train.flower.base.service.ServiceC2;
+import com.ly.train.flower.base.service.user.UserServiceA;
+import com.ly.train.flower.base.service.user.UserServiceB;
+import com.ly.train.flower.base.service.user.UserServiceC1;
+import com.ly.train.flower.base.service.user.UserServiceC2;
 import com.ly.train.flower.common.akka.ServiceRouter;
 import com.ly.train.flower.common.annotation.FlowerServiceUtil;
 import com.ly.train.flower.common.service.config.ServiceConfig;
@@ -46,9 +48,9 @@ public class ServiceRouterTest extends TestBase {
       return serviceRouter;
     }
     ServiceConfig serviceConfig = new ServiceConfig();
-    serviceConfig.setServiceMeta(serviceLoader.loadServiceMeta("ServiceB"));
+    serviceConfig.setServiceMeta(serviceLoader.loadServiceMeta("UserServiceB"));
     serviceConfig.setFlowName(flowName);
-    serviceConfig.setServiceName("ServiceB");
+    serviceConfig.setServiceName("UserServiceB");
     serviceRouter = serviceFacade.buildServiceRouter(serviceConfig, -1);
     return serviceRouter;
   }
@@ -57,9 +59,9 @@ public class ServiceRouterTest extends TestBase {
   public void testSyncCallServiceSimple() throws Exception {
 
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC2.class);
     serviceFlow.build();
 
 
@@ -69,7 +71,7 @@ public class ServiceRouterTest extends TestBase {
 
     ServiceContext serviceContext = ServiceContext.context(user);
     serviceContext.setFlowName(flowName);
-    serviceContext.setCurrentServiceName(FlowerServiceUtil.getServiceName(ServiceA.class));
+    serviceContext.setCurrentServiceName(FlowerServiceUtil.getServiceName(UserServiceA.class));
     Object o = getServiceRouter().syncCallService(serviceContext);
     System.out.println("响应结果： " + o);
   }
@@ -77,9 +79,9 @@ public class ServiceRouterTest extends TestBase {
   @Test
   public void testAsyncCallServiceSimple() throws Exception {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC2.class);
 
 
     User user = new User();
@@ -87,7 +89,7 @@ public class ServiceRouterTest extends TestBase {
     user.setAge(2);
     ServiceContext serviceContext = ServiceContext.context(user);
     serviceContext.setFlowName(flowName);
-    serviceContext.setCurrentServiceName(FlowerServiceUtil.getServiceName(ServiceA.class));
+    serviceContext.setCurrentServiceName(FlowerServiceUtil.getServiceName(UserServiceA.class));
     getServiceRouter().asyncCallService(serviceContext);
     Thread.sleep(TimeUnit.SECONDS.toMillis(2));
   }
@@ -96,25 +98,26 @@ public class ServiceRouterTest extends TestBase {
   @Test
   public void testSyncCallServiceMutliThread() throws Exception {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
 
-    final int threadNum = 10;
-    final int numPerThread = 10;
+    final int threadNum = 100;
+    final int numPerThread = 100;
     for (int i = 0; i < threadNum; i++) {
+      final int temp = i;
       new Thread(() -> {
         for (int j = 0; j < numPerThread; j++) {
-
+          final String name = "响应式编程 - " + temp + "-" + j;
           User user = new User();
-          user.setName("响应式编程 - " + j);
+          user.setName(name);
           user.setAge(2);
           try {
             ServiceContext serviceContext = ServiceContext.context(user);
-            serviceContext.setCurrentServiceName(FlowerServiceUtil.getServiceName(ServiceA.class));
+            serviceContext.setCurrentServiceName(FlowerServiceUtil.getServiceName(UserServiceA.class));
             serviceContext.setFlowName(flowName);
-            Object o = getServiceRouter().syncCallService(serviceContext);
-            System.out.println("响应结果 ： " + o);
+            User o = (User) getServiceRouter().syncCallService(serviceContext);
+
+            Assert.assertEquals(name, o.getName());
           } catch (Exception e) {
             e.printStackTrace();
           }
@@ -127,9 +130,8 @@ public class ServiceRouterTest extends TestBase {
   @Test
   public void testAsyncCallServiceMutliThread() throws Exception {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
 
     final int threadNum = 10;
     final int numPerThread = 10;
@@ -143,7 +145,7 @@ public class ServiceRouterTest extends TestBase {
           try {
             ServiceContext serviceContext = ServiceContext.context(user);
             serviceContext.setFlowName(flowName);
-            serviceContext.setCurrentServiceName(FlowerServiceUtil.getServiceName(ServiceA.class));
+            serviceContext.setCurrentServiceName(FlowerServiceUtil.getServiceName(UserServiceA.class));
             getServiceRouter().asyncCallService(serviceContext);
           } catch (Exception e) {
             e.printStackTrace();
