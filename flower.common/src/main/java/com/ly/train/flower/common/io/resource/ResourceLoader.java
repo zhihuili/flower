@@ -1,4 +1,4 @@
-package com.ly.train.flower.common.io;
+package com.ly.train.flower.common.io.resource;
 
 import java.io.File;
 import java.io.IOException;

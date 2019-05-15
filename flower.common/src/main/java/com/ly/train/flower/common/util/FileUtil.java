@@ -28,7 +28,7 @@ import java.util.zip.ZipEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.exception.FlowerException;
-import com.ly.train.flower.common.io.Resource;
+import com.ly.train.flower.common.io.resource.Resource;
 
 public class FileUtil {
   static final Logger logger = LoggerFactory.getLogger(FileUtil.class);

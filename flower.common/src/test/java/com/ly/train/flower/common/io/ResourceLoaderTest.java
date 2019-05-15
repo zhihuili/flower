@@ -2,6 +2,8 @@ package com.ly.train.flower.common.io;
 
 import java.util.List;
 import org.junit.Test;
+import com.ly.train.flower.common.io.resource.Resource;
+import com.ly.train.flower.common.io.resource.ResourceLoader;
 import com.ly.train.flower.common.util.FileUtil;
 import com.ly.train.flower.common.util.Pair;
 
