@@ -65,7 +65,7 @@ public class BenchmarkClient extends AbstractBenchmarkClient {
       benchmarkRunnables.add(benchmarkRunnable);
       benchmarkRunnable.setMessage("Flower is Good.");
     }
-    for(int i = 0; i < getThreadNum(); i++) {
+    for (int i = 0; i < getThreadNum(); i++) {
       benchmarkRunnables.get(i).start();
     }
     this.setBenchmarkRunnables(benchmarkRunnables);

@@ -363,6 +363,7 @@ public final class ServiceFlow {
     ServiceConfig serviceConfig = serviceConfigsCache.get(serviceName);
     if (serviceConfig == null) {
       serviceConfig = new ServiceConfig();
+      serviceConfig.setApplication(flowerFactory.getFlowerConfig().getName());
       serviceConfig.addAddress(flowerFactory.getFlowerConfig().toURL());
       serviceConfig.setFlowName(flowName);
       serviceConfig.setServiceName(serviceName);

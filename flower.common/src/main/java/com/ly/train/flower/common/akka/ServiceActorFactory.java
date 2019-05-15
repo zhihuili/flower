@@ -108,8 +108,9 @@ public class ServiceActorFactory extends AbstractLifecycle {
       actorWrapper = serviceActorCache.get(cacheKey);
       if (actorWrapper == null) {
         if (serviceConfig.isLocal()) {
-          ActorRef actorRef = getActorContext()
-              .actorOf(ServiceActor.props(serviceName, flowerFactory, index).withDispatcher("dispatcher"), cacheKey);
+          ActorRef actorRef =
+              getActorContext().actorOf(
+                  ServiceActor.props(serviceName, flowerFactory, index).withDispatcher("dispatcher"), cacheKey);
           actorWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
         } else {
           // "akka.tcp://flower@127.0.0.1:2551/user/$a"
@@ -126,10 +127,9 @@ public class ServiceActorFactory extends AbstractLifecycle {
         serviceActorCache.put(cacheKey, actorWrapper);
       }
     } catch (Exception e) {
-      throw new FlowerException(
-          "fail to create flowerService, flowName : " + serviceConfig.getFlowName() + ", serviceName : " + serviceName
-              + ", serviceClassName : " + serviceConfig.getServiceMeta().getServiceClassName(),
-          e);
+      throw new FlowerException("fail to create flowerService, flowName : " + serviceConfig.getFlowName()
+          + ", serviceName : " + serviceName + ", serviceClassName : "
+          + serviceConfig.getServiceMeta().getServiceClassName(), e);
     } finally {
       actorLock.unlock();
     }
@@ -275,8 +275,8 @@ public class ServiceActorFactory extends AbstractLifecycle {
     if (supervierActor == null) {
       synchronized (this) {
         if (supervierActor == null) {
-          this.supervierActor = getActorSystem().systemImpl().systemActorOf(SupervisorActor.props(this), "flower");
-//          this.supervierActor = getActorSystem().actorOf(SupervisorActor.props(this), "flower");
+//          this.supervierActor = getActorSystem().systemImpl().systemActorOf(SupervisorActor.props(this), "flower");
+          this.supervierActor = getActorSystem().actorOf(SupervisorActor.props(this), "flower");
         }
       }
     }

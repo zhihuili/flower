@@ -43,8 +43,7 @@ public class ZookeeperRegistryTest {
 
     ServiceInfo serviceInfo = new ServiceInfo();
     serviceInfo.setClassName(UserServiceA.class.getName());
-    serviceInfo.addAddress(new URL("", "127.0.0.1", 12001));
-    serviceInfo.addAddress(new URL("", "127.0.0.1", 12002));
+    serviceInfo.setAddress(new URL("", "127.0.0.1", 12001));
     serviceInfo.setCreateTime(new Date());
     registry.register(serviceInfo);
   }
@@ -58,8 +57,7 @@ public class ZookeeperRegistryTest {
 
     ServiceInfo serviceInfo = new ServiceInfo();
     serviceInfo.setClassName(UserServiceA.class.getName());
-    serviceInfo.addAddress(new URL("", "127.0.0.1", 12001));
-    serviceInfo.addAddress(new URL("", "127.0.0.1", 12002));
+    serviceInfo.setAddress(new URL("", "127.0.0.1", 12001));
     serviceInfo.setCreateTime(new Date());
     List<ServiceInfo> serviceInfos = registry.getProvider(serviceInfo);
     System.out.println("请求结果:" + serviceInfos);

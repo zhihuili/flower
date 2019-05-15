@@ -13,31 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.registry.redis.util.command.string;
+package com.ly.train.flower.registry.util;
 
-import com.ly.train.flower.registry.redis.util.command.RedisCommand;
-import redis.clients.jedis.Jedis;
-
-/**
- * @author leeyazhou
- * 
- */
-public class StringSetnxCommand implements RedisCommand<Long> {
-  private String key;
-  private String value;
-
-  /**
-   * @param key
-   * @param value
-   */
-  public StringSetnxCommand(String key, String value) {
-    this.key = key;
-    this.value = value;
-  }
-
-  @Override
-  public Long doExecute(Jedis jedis) {
-    return jedis.setnx(key, value);
-  }
+public class RegistryUtil {
 
 }

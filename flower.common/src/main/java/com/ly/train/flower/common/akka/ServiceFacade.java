@@ -64,8 +64,8 @@ public class ServiceFacade {
    * @throws TimeoutException
    */
   public Object syncCallService(String flowName, Object message) throws TimeoutException {
-    FlowRouter serviceRouter = buildFlowRouter(flowName, -1);
-    return serviceRouter.syncCallService(message);
+    FlowRouter flowRouter = buildFlowRouter(flowName, -1);
+    return flowRouter.syncCallService(message);
   }
 
 

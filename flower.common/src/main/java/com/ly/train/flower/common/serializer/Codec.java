@@ -17,7 +17,6 @@ package com.ly.train.flower.common.serializer;
 
 import com.ly.train.flower.common.serializer.hessian.HessianSerializer;
 import com.ly.train.flower.common.serializer.jdk.JdkSerializer;
-import com.ly.train.flower.common.serializer.kryo.KryoSerializer;
 
 /**
  * @author leeyazhou
@@ -30,14 +29,8 @@ public enum Codec {
    */
   JDK("jdk", 0, new JdkSerializer()),
 
-  /**
-   * kryo
-   */
-  KRYO("kryo", 1, new KryoSerializer()),
 
-
-
-  Hessian("hessian", 2, new HessianSerializer());
+  Hessian("hessian", 1, new HessianSerializer());
 
   private String name;
   private int code;

@@ -91,6 +91,7 @@ public class ServiceActor extends AbstractFlowerActor {
     }
 
     Object result = null;
+    Object param = null;
     try {
       ServiceContextUtil.fillServiceContext(serviceContext);
       String pType = getParamType(serviceContext);
@@ -98,7 +99,7 @@ public class ServiceActor extends AbstractFlowerActor {
         pType = flowMessage.getMessageType();
       }
 
-      Object param = Codec.valueOf(flowMessage.getCodec()).decode(flowMessage.getMessage(), pType);
+      param = Codec.valueOf(flowMessage.getCodec()).decode(flowMessage.getMessage(), pType);
       if (getFilter(serviceContext) != null) {
         getFilter(serviceContext).filter(param, serviceContext);
       }
@@ -112,7 +113,7 @@ public class ServiceActor extends AbstractFlowerActor {
 
       Exception e2 =
           new ServiceException("invoke service " + serviceContext.getCurrentServiceName() + " : " + service
-              + "\r\n, param : " + flowMessage.getMessage(), e);
+              + "\r\n, param : " + param, e);
       if (serviceContext.isSync()) {
         handleSyncResult(serviceContext, ExceptionUtil.getErrorMessage(e2), true);
       }
@@ -145,6 +146,7 @@ public class ServiceActor extends AbstractFlowerActor {
    * @param result 消息内容
    */
   private void handleSyncResult(ServiceContext serviceContext, Object result, boolean error) {
+    logger.info("处理返回消息");
     CacheManager cacheManager = CacheManager.get(serviceActorCachePrefix + serviceContext.getFlowName());
     Cache<ActorRef> cache = cacheManager.getCache(serviceContext.getId());
     if (cache == null) {

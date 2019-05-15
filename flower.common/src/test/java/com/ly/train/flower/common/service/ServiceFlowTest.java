@@ -64,7 +64,8 @@ public class ServiceFlowTest extends TestBase {
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceC1.class);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceC2.class);
-    serviceFlow.buildFlow(Arrays.asList(UserServiceB.class, UserServiceC1.class, UserServiceC2.class), UserServiceD.class);
+    serviceFlow.buildFlow(Arrays.asList(UserServiceB.class, UserServiceC1.class, UserServiceC2.class),
+        UserServiceD.class);
     serviceFlow.build();
   }
 
@@ -81,7 +82,8 @@ public class ServiceFlowTest extends TestBase {
   @Test
   public void testBuildFlowOneToMany() {
     ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
-    serviceFlow.buildFlow(UserServiceA.class, Arrays.asList(UserServiceB.class, UserServiceC1.class, UserServiceC2.class));
+    serviceFlow.buildFlow(UserServiceA.class,
+        Arrays.asList(UserServiceB.class, UserServiceC1.class, UserServiceC2.class));
     serviceFlow.build();
   }
 

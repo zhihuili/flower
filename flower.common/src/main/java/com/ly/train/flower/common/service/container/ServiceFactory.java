@@ -91,7 +91,7 @@ public class ServiceFactory extends AbstractInit {
 
     ServiceInfo serviceInfo = new ServiceInfo();
     serviceInfo.setApplication(flowerConfig.getName());
-    serviceInfo.addAddress(flowerConfig.toURL());
+    serviceInfo.setAddress(flowerConfig.toURL());
     serviceInfo.setCreateTime(new Date());
     serviceInfo.setClassName(serviceClassName);
     serviceInfo.setServiceMeta(serviceMeta);
@@ -199,7 +199,7 @@ public class ServiceFactory extends AbstractInit {
           // logger.info("注册中心获取连接: {}", serviceInfo);
           if (serviceInfo.getServiceName().equals(serviceConfig.getServiceName())) {
             // add service address
-            serviceConfig.setAddresses(serviceInfo.getAddresses());
+            serviceConfig.addAddress(serviceInfo.getAddress());
             serviceMeta = serviceInfo.getServiceMeta();
             serviceConfig.setApplication(serviceInfo.getApplication());
             break;

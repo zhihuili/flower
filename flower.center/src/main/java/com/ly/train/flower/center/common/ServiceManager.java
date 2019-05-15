@@ -62,12 +62,14 @@ public class ServiceManager {
 
 
   public boolean addServiceInfo(ServiceInfo serviceInfo) {
-    Cache<ServiceInfo> cache = cacheManager.getCache(serviceInfo.getClassName());
+    Cache<Set<ServiceInfo>> cache = cacheManager.getCache(serviceInfo.getClassName());
     if (cache == null) {
-      cacheManager.add(serviceInfo.getClassName(), serviceInfo, 6000L);
+      Set<ServiceInfo> c = new HashSet<ServiceInfo>();
+      c.add(serviceInfo);
+      cacheManager.add(serviceInfo.getClassName(), c, 6000L);
       cache = cacheManager.getCache(serviceInfo.getClassName());
     } else {
-      cache.getValue().getAddresses().addAll(serviceInfo.getAddresses());
+      cache.getValue().add(serviceInfo);
       cache.setTimeToLive(6000);
     }
     return true;
@@ -78,8 +80,8 @@ public class ServiceManager {
     Set<String> keys = cacheManager.getAllKey();
     for (String key : keys) {
       Cache<Object> cache = cacheManager.getCache(key);
-      if (cache != null && cache.getValue() instanceof ServiceInfo) {
-        ret.add((ServiceInfo) cache.getValue());
+      if (cache != null && cache.getValue() instanceof Set) {
+        ret.addAll((Set<ServiceInfo>) cache.getValue());
       }
     }
     return ret;

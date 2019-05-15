@@ -74,7 +74,6 @@ public class ServiceRouter extends AbstractInit {
     serviceContext.setSync(true);
     ActorWrapper actorRef = chooseOne(serviceContext);
     Timeout timeout = new Timeout(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
-    Duration duration = Duration.create(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
     Future<Object> future = null;
     if (actorRef instanceof ActorRefWrapper) {
       future = Patterns.ask(((ActorRefWrapper) actorRef).getActorRef(), serviceContext, timeout);
@@ -82,6 +81,7 @@ public class ServiceRouter extends AbstractInit {
       future = Patterns.ask(((ActorSelectionWrapper) actorRef).getActorSelection(), serviceContext, timeout);
     }
     try {
+      Duration duration = Duration.create(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
       FlowMessage response = (FlowMessage) Await.result(future, duration);
       if (response.isError()) {
         throw new FlowerException("fail to invoke \r\nCaused by: " + response.getException());
