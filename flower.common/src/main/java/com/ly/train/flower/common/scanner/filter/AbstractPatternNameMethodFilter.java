@@ -15,6 +15,10 @@
  */
 package com.ly.train.flower.common.scanner.filter;
 
+/**
+ * 
+ * @author leeyazhou
+ */
 public abstract class AbstractPatternNameMethodFilter extends AbstractMethodFilter {
 
   protected final String methodPattern;

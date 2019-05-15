@@ -34,7 +34,6 @@ import akka.actor.ActorRef;
 public class FlowRouter extends AbstractInit {
   static final com.ly.train.flower.logging.Logger logger = LoggerFactory.getLogger(FlowRouter.class);
   private int flowerNumber = 2 << 6;
-  private volatile ServiceRouter serviceRouter;
   private final ServiceConfig headerServiceConfig;
   private final String flowName;
   private ServiceFacade serviceFacade;
@@ -95,16 +94,8 @@ public class FlowRouter extends AbstractInit {
   }
 
   private ServiceRouter getServiceRouter() {
-    if (serviceRouter == null) {
-      synchronized (this) {
-        if (serviceRouter == null) {
-          this.serviceRouter = serviceFacade.buildServiceRouter(headerServiceConfig, flowerNumber);
-        }
-      }
-    }
-    return serviceRouter;
+    return serviceFacade.buildServiceRouter(headerServiceConfig, flowerNumber);
   }
-
 
   public ServiceConfig getServiceConfig() {
     return headerServiceConfig;

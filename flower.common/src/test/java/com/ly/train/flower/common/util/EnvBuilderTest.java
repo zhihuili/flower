@@ -15,10 +15,7 @@
  */
 package com.ly.train.flower.common.util;
 
-import java.util.Set;
 import org.junit.Test;
-import org.reflections.Reflections;
-import com.ly.train.flower.common.annotation.FlowerService;
 
 public class EnvBuilderTest {
 
@@ -28,12 +25,5 @@ public class EnvBuilderTest {
   }
 
   @Test
-  public void testScanner() {
-    Reflections reflections = new Reflections("com.ly");
-    Set<Class<?>> classes = reflections.getTypesAnnotatedWith(FlowerService.class);
-
-    for (Class<?> c : classes) {
-      System.out.println(c);
-    }
-  }
+  public void testScanner() {}
 }

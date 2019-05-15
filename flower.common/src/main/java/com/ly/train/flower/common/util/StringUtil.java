@@ -140,4 +140,77 @@ public final class StringUtil {
   public static String uuid() {
     return UUID.randomUUID().toString().replace("-", "");
   }
+
+  public static String[] delimitedListToStringArray(String str, String delimiter) {
+    return delimitedListToStringArray(str, delimiter, null);
+  }
+
+  public static String[] delimitedListToStringArray(String str, String delimiter, String charsToDelete) {
+
+    if (str == null) {
+      return new String[0];
+    }
+    if (delimiter == null) {
+      return new String[] {str};
+    }
+
+    List<String> result = new ArrayList<>();
+    if (delimiter.isEmpty()) {
+      for (int i = 0; i < str.length(); i++) {
+        result.add(deleteAny(str.substring(i, i + 1), charsToDelete));
+      }
+    } else {
+      int pos = 0;
+      int delPos;
+      while ((delPos = str.indexOf(delimiter, pos)) != -1) {
+        result.add(deleteAny(str.substring(pos, delPos), charsToDelete));
+        pos = delPos + delimiter.length();
+      }
+      if (str.length() > 0 && pos <= str.length()) {
+        // Add rest of String, but not in case of empty input.
+        result.add(deleteAny(str.substring(pos), charsToDelete));
+      }
+    }
+    return toStringArray(result);
+  }
+
+  public static String deleteAny(String inString, String charsToDelete) {
+    if (!hasLength(inString) || !hasLength(charsToDelete)) {
+      return inString;
+    }
+
+    StringBuilder sb = new StringBuilder(inString.length());
+    for (int i = 0; i < inString.length(); i++) {
+      char c = inString.charAt(i);
+      if (charsToDelete.indexOf(c) == -1) {
+        sb.append(c);
+      }
+    }
+    return sb.toString();
+  }
+
+  public static String capitalize(String str) {
+    return changeFirstCharacterCase(str, true);
+  }
+
+  private static String changeFirstCharacterCase(String str, boolean capitalize) {
+    if (!hasLength(str)) {
+      return str;
+    }
+
+    char baseChar = str.charAt(0);
+    char updatedChar;
+    if (capitalize) {
+      updatedChar = Character.toUpperCase(baseChar);
+    } else {
+      updatedChar = Character.toLowerCase(baseChar);
+    }
+    if (baseChar == updatedChar) {
+      return str;
+    }
+
+    char[] chars = str.toCharArray();
+    chars[0] = updatedChar;
+    return new String(chars, 0, chars.length);
+  }
 }
