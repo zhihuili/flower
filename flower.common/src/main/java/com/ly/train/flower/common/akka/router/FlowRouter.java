@@ -53,15 +53,15 @@ public class FlowRouter extends AbstractInit implements Router {
     getServiceRouter();
   }
 
-  public void asyncCallService(Object message) {
-    asyncCallService(message, null);
+  public <T> void asyncCallService(T message) {
+    this.asyncCallService(message, null);
   }
 
   /**
    * 异步调用
    * 
-   * @param message
-   * @param ctx
+   * @param message message
+   * @param ctx {@link AsyncContext}
    */
   public <T> void asyncCallService(T message, AsyncContext ctx) {
     ServiceContext serviceContext = null;
@@ -82,16 +82,19 @@ public class FlowRouter extends AbstractInit implements Router {
   /**
    * 同步调用
    * 
+   * @param <P> 入参
+   * @param <R> 出参
    * @param message message
-   * @return obj
+   * @return R
    * @throws TimeoutException
    */
-  public Object syncCallService(Object message) throws TimeoutException {
+  @SuppressWarnings("unchecked")
+  public <P, R> R syncCallService(P message) throws TimeoutException {
     ServiceContext serviceContext = ServiceContext.context(message);
     serviceContext.setFlowName(flowName);
     serviceContext.setCurrentServiceName(headerServiceConfig.getServiceName());
     serviceContext.setSync(true);
-    return getServiceRouter().syncCallService(serviceContext);
+    return (R) getServiceRouter().syncCallService(serviceContext);
   }
 
   private ServiceRouter getServiceRouter() {

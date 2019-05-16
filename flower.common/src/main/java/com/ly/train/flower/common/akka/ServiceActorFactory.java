@@ -108,8 +108,9 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
       actorWrapper = serviceActorCache.get(cacheKey);
       if (actorWrapper == null) {
         if (serviceConfig.isLocal()) {
-          ActorRef actorRef = getActorContext()
-              .actorOf(ServiceActor.props(serviceName, flowerFactory, index).withDispatcher("dispatcher"), cacheKey);
+          ActorRef actorRef =
+              getActorContext().actorOf(
+                  ServiceActor.props(serviceName, flowerFactory, index).withDispatcher("dispatcher"), cacheKey);
           actorWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
         } else {
           // "akka.tcp://flower@127.0.0.1:2551/user/$a"
@@ -126,10 +127,9 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
         serviceActorCache.put(cacheKey, actorWrapper);
       }
     } catch (Exception e) {
-      throw new FlowerException(
-          "fail to create flowerService, flowName : " + serviceConfig.getFlowName() + ", serviceName : " + serviceName
-              + ", serviceClassName : " + serviceConfig.getServiceMeta().getServiceClassName(),
-          e);
+      throw new FlowerException("fail to create flowerService, flowName : " + serviceConfig.getFlowName()
+          + ", serviceName : " + serviceName + ", serviceClassName : "
+          + serviceConfig.getServiceMeta().getServiceClassName(), e);
     } finally {
       actorLock.unlock();
     }
