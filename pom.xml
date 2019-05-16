@@ -40,7 +40,6 @@
         <module>flower.center</module>
         <module>flower.sample</module>
         <module>flower.web</module>
-        <module>flower.distribution</module>
         <module>flower.bom</module>
         <module>flower.container</module>
         <module>flower.test</module>
