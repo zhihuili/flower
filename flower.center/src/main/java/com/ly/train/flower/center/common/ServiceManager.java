@@ -41,23 +41,6 @@ public class ServiceManager {
   private CacheManager cacheManager = CacheManager.get("flower_center");
 
   public ServiceManager() {
-    // timer.schedule(new TimerTask() {
-    //
-    // @Override
-    // public void run() {
-    // Set<String> keys = CacheManager.getAllKey();
-    // logger.info(
-    // "---------------------scan service list
-    // start--------------------------------------------------------------");
-    // for (String key : keys) {
-    // Cache<?> cache = CacheManager.getContent(key);
-    // logger.info("缓存中的数据 {} : {}", key, JSONObject.toJSONString(cache, true));
-    // }
-    // logger.info(
-    // "----------------------scan service list
-    // end---------------------------------------------------------------");
-    // }
-    // }, 3000, TimeUnit.SECONDS.toMillis(4));
   }
 
 

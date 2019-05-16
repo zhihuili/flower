@@ -146,7 +146,6 @@ public class ServiceActor extends AbstractFlowerActor {
    * @param result 消息内容
    */
   private void handleSyncResult(ServiceContext serviceContext, Object result, boolean error) {
-    logger.info("处理返回消息");
     CacheManager cacheManager = CacheManager.get(serviceActorCachePrefix + serviceContext.getFlowName());
     Cache<ActorRef> cache = cacheManager.getCache(serviceContext.getId());
     if (cache == null) {
