@@ -33,8 +33,7 @@ public class AbstractBenchmarkClient {
 
   protected List<BenchmarkRunnable> benchmarkRunnables;
 
-  public AbstractBenchmarkClient() {
-  }
+  public AbstractBenchmarkClient() {}
 
   public void setRuntime(long runtime) {
     this.runtime = runtime;

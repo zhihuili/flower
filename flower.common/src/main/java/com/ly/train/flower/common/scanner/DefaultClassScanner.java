@@ -22,13 +22,17 @@ import com.ly.train.flower.common.scanner.filter.AbstractAnnotationClassFilter;
 import com.ly.train.flower.common.scanner.filter.AbstractClassFilter;
 import com.ly.train.flower.common.scanner.filter.AbstractSupperClassFilter;
 
+/**
+ * 
+ * @author leeyazhou
+ */
 public class DefaultClassScanner implements ClassScanner {
-  private static final DefaultClassScanner Instance = new DefaultClassScanner();
+  private static final DefaultClassScanner classScanner = new DefaultClassScanner();
 
   private DefaultClassScanner() {}
 
   public static DefaultClassScanner getInstance() {
-    return Instance;
+    return classScanner;
   }
 
   @Override

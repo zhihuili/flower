@@ -19,10 +19,10 @@ import org.junit.Test;
 import com.ly.train.flower.base.TestBase;
 import com.ly.train.flower.base.model.User;
 import com.ly.train.flower.base.service.OpenTracerService;
-import com.ly.train.flower.base.service.ServiceA;
-import com.ly.train.flower.base.service.ServiceB;
-import com.ly.train.flower.base.service.ServiceC1;
-import com.ly.train.flower.common.akka.FlowRouter;
+import com.ly.train.flower.base.service.user.UserServiceA;
+import com.ly.train.flower.base.service.user.UserServiceB;
+import com.ly.train.flower.base.service.user.UserServiceC1;
+import com.ly.train.flower.common.akka.router.FlowRouter;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 
 /**
@@ -33,9 +33,9 @@ public class OpentracingFilterTest extends TestBase {
   @Test
   public void testSyncCallServiceSimple() throws Exception {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
-    serviceFlow.buildFlow(ServiceC1.class, OpenTracerService.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
+    serviceFlow.buildFlow(UserServiceC1.class, OpenTracerService.class);
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 3);
 
     User user = new User();
@@ -43,7 +43,7 @@ public class OpentracingFilterTest extends TestBase {
     user.setAge(2);
     Object o = router.syncCallService(user);
     System.out.println("响应结果： " + o);
-    Thread.sleep(1000);
+    Thread.sleep(30000);
   }
 
 }

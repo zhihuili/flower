@@ -18,6 +18,8 @@ package com.ly.train.flower.common.akka;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 import javax.servlet.AsyncContext;
+import com.ly.train.flower.common.akka.router.FlowRouter;
+import com.ly.train.flower.common.akka.router.ServiceRouter;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.logging.Logger;
@@ -26,10 +28,10 @@ import com.ly.train.flower.logging.LoggerFactory;
 public class ServiceFacade {
   protected static final Logger logger = LoggerFactory.getLogger(ServiceFacade.class);
 
-  private final FlowerFactory flowerFactory;
+  private final ActorFactory actorFactory;
 
   public ServiceFacade(FlowerFactory flowerFactory) {
-    this.flowerFactory = flowerFactory;
+    this.actorFactory = flowerFactory.getActorFactory();
   }
 
 
@@ -64,8 +66,8 @@ public class ServiceFacade {
    * @throws TimeoutException
    */
   public Object syncCallService(String flowName, Object message) throws TimeoutException {
-    FlowRouter serviceRouter = buildFlowRouter(flowName, -1);
-    return serviceRouter.syncCallService(message);
+    FlowRouter flowRouter = buildFlowRouter(flowName, -1);
+    return flowRouter.syncCallService(message);
   }
 
 
@@ -77,14 +79,11 @@ public class ServiceFacade {
    * @return {@link ServiceRouter}
    */
   public FlowRouter buildFlowRouter(String flowName, int actorNumber) {
-    return flowerFactory.getServiceActorFactory().buildFlowRouter(flowName, actorNumber);
+    return actorFactory.buildFlowRouter(flowName, actorNumber);
   }
 
   public ServiceRouter buildServiceRouter(ServiceConfig serviceConfig, int actorNumber) {
-    return flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, actorNumber);
+    return actorFactory.buildServiceRouter(serviceConfig, actorNumber);
   }
 
-  public void shutdown() {
-    flowerFactory.stop();
-  }
 }

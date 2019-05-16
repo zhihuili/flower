@@ -15,25 +15,20 @@
  */
 package com.ly.train.flower.common.service.container;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.regex.Pattern;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.common.base.Predicate;
 import com.ly.train.flower.common.annotation.FlowerServiceUtil;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;
+import com.ly.train.flower.common.io.resource.Resource;
+import com.ly.train.flower.common.io.resource.ResourceLoader;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.impl.AggregateService;
@@ -78,7 +73,11 @@ public class ServiceLoader extends AbstractInit {
   @Override
   protected void doInit() {
     // this.loadInnerFlowService();
-    this.loadServiceAndFlow();
+    try {
+      this.loadServiceAndFlow();
+    } catch (IOException e) {
+      logger.error("", e);
+    }
   }
 
   public boolean registerFlowerService(String serviceName, FlowerService flowerService) {
@@ -232,28 +231,25 @@ public class ServiceLoader extends AbstractInit {
     registerServiceType(NothingService.class.getSimpleName(), NothingService.class);
   }
 
-  protected void loadServiceAndFlow() {
-    Predicate<String> filter = new FilterBuilder().include(".*\\.services").include(".*\\.flow");
-    ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-    configurationBuilder.setUrls(ClasspathHelper.forClassLoader());
-
-    configurationBuilder.filterInputsBy(filter).setScanners(new ResourcesScanner());
-    Reflections reflections = new Reflections(configurationBuilder);
-
-    Set<String> servicesFiles = reflections.getResources(Pattern.compile(".*\\.services"));
-    for (String path : servicesFiles) {
-      logger.info("find service, path : {}", path);
-      List<Pair<String, String>> services = FileUtil.readService("/" + path);
+  protected void loadServiceAndFlow() throws IOException {
+    Resource[] resources = new ResourceLoader("", ".services").getResources();
+    for (Resource resource : resources) {
+      logger.info("find service, path : {}", resource.getURL());
+      List<Pair<String, String>> services = FileUtil.readService(resource);
       for (Pair<String, String> pair : services) {
-        registerServiceType(pair.getKey(), pair.getValue());
+        boolean flag = registerServiceType(pair.getKey(), pair.getValue());
+        if (flag == false) {
+          logger.warn("register service error, path : {}, service : {}", resource.getURL(), pair);
+        }
       }
-    }
 
-    Set<String> flowFiles = reflections.getResources(Pattern.compile(".*\\.flow"));
-    for (String path : flowFiles) {
-      logger.info("find flow file, path : {}", path);
-      String flowName = path.substring(0, path.lastIndexOf("."));
-      ServiceFlow.getOrCreate(flowName, serviceFactory).buildFlow(FileUtil.readFlow("/" + path));
+    }
+    resources = new ResourceLoader("", ".flow").getResources();
+    for (Resource resource : resources) {
+      logger.info("find flow file, path : {}", resource.getPath());
+      String flowName = resource.getName();
+      flowName = flowName.substring(0, flowName.lastIndexOf("."));
+      ServiceFlow.getOrCreate(flowName, serviceFactory).buildFlow(FileUtil.readFlow(resource));
     }
 
   }

@@ -17,6 +17,7 @@ package com.ly.train.flower.common.util;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
@@ -24,6 +25,7 @@ public abstract class ServiceThread implements Runnable {
   private static final Logger log = LoggerFactory.getLogger(ServiceThread.class);
 
   private static final long JOIN_TIME = 90 * 1000;
+  private static final AtomicInteger index = new AtomicInteger();
 
   protected final Thread thread;
   protected final CountDownLatch2 waitPoint = new CountDownLatch2(1);
@@ -31,7 +33,7 @@ public abstract class ServiceThread implements Runnable {
   protected volatile boolean stopped = false;
 
   public ServiceThread() {
-    this.thread = new Thread(this, this.getServiceName());
+    this.thread = new Thread(this, this.getServiceName() + "-" + index.incrementAndGet());
   }
 
   public abstract String getServiceName();

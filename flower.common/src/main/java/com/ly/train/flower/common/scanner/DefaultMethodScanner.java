@@ -21,6 +21,10 @@ import java.util.List;
 import com.ly.train.flower.common.scanner.filter.AbstractAnnotationMethodFilter;
 import com.ly.train.flower.common.scanner.filter.AbstractPatternNameMethodFilter;
 
+/**
+ * 
+ * @author leeyazhou
+ */
 public class DefaultMethodScanner implements MethodScanner {
   private static final DefaultMethodScanner instance = new DefaultMethodScanner();
 

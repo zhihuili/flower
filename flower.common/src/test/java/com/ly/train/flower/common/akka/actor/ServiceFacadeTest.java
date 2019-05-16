@@ -25,11 +25,11 @@ import org.junit.Test;
 import com.ly.train.flower.base.TestBase;
 import com.ly.train.flower.base.model.User;
 import com.ly.train.flower.base.service.ExceptionService;
-import com.ly.train.flower.base.service.ServiceA;
-import com.ly.train.flower.base.service.ServiceB;
-import com.ly.train.flower.base.service.ServiceC1;
-import com.ly.train.flower.base.service.ServiceC2;
-import com.ly.train.flower.base.service.ServiceD;
+import com.ly.train.flower.base.service.user.UserServiceA;
+import com.ly.train.flower.base.service.user.UserServiceB;
+import com.ly.train.flower.base.service.user.UserServiceC1;
+import com.ly.train.flower.base.service.user.UserServiceC2;
+import com.ly.train.flower.base.service.user.UserServiceD;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 
@@ -42,8 +42,8 @@ public class ServiceFacadeTest extends TestBase {
   @Test
   public void testSyncCallService() throws Exception {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, Arrays.asList(ServiceC1.class, ServiceC2.class));
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, Arrays.asList(UserServiceC1.class, UserServiceC2.class));
     User user = new User();
     user.setName("响应式编程");
     user.setAge(2);
@@ -55,9 +55,9 @@ public class ServiceFacadeTest extends TestBase {
   @Test
   public void testSyncCallAggregateService() throws Exception {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, Arrays.asList(ServiceC1.class, ServiceC2.class));
-    serviceFlow.buildFlow(Arrays.asList(ServiceC1.class, ServiceC2.class), ServiceD.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, Arrays.asList(UserServiceC1.class, UserServiceC2.class));
+    serviceFlow.buildFlow(Arrays.asList(UserServiceC1.class, UserServiceC2.class), UserServiceD.class);
     serviceFlow.build();
     User user = new User();
     user.setName("响应式编程");
@@ -70,9 +70,9 @@ public class ServiceFacadeTest extends TestBase {
   @Test
   public void testAsyncCallService() throws Exception {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC2.class);
 
     User user = new User();
     user.setName("响应式编程");
@@ -85,10 +85,10 @@ public class ServiceFacadeTest extends TestBase {
   public void testSyncException() throws TimeoutException {
 
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
-    serviceFlow.buildFlow(ServiceC1.class, ExceptionService.class);
-    serviceFlow.buildFlow(ExceptionService.class, ServiceC2.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
+    serviceFlow.buildFlow(UserServiceC1.class, ExceptionService.class);
+    serviceFlow.buildFlow(ExceptionService.class, UserServiceC2.class);
     User user = new User();
     user.setName("响应式编程");
     user.setAge(2);

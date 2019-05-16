@@ -36,7 +36,6 @@ import io.opentracing.propagation.TextMapExtractAdapter;
 import io.opentracing.propagation.TextMapInjectAdapter;
 import io.opentracing.tag.Tags;
 import zipkin2.reporter.AsyncReporter;
-import zipkin2.reporter.Reporter;
 import zipkin2.reporter.okhttp3.OkHttpSender;
 
 /**

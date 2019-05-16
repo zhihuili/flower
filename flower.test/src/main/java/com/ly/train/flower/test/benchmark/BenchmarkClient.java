@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import com.ly.train.flower.common.akka.FlowRouter;
+import com.ly.train.flower.common.akka.router.FlowRouter;
 import com.ly.train.flower.test.util.FlowerUtil;
 
 /**
@@ -44,7 +44,7 @@ public class BenchmarkClient extends AbstractBenchmarkClient {
     client.setRuntime(runtime);
 
     client.doBenchmark();
-    System.exit(0);
+    FlowerUtil.stop();
   }
 
 
@@ -65,7 +65,7 @@ public class BenchmarkClient extends AbstractBenchmarkClient {
       benchmarkRunnables.add(benchmarkRunnable);
       benchmarkRunnable.setMessage("Flower is Good.");
     }
-    for(int i = 0; i < getThreadNum(); i++) {
+    for (int i = 0; i < getThreadNum(); i++) {
       benchmarkRunnables.get(i).start();
     }
     this.setBenchmarkRunnables(benchmarkRunnables);

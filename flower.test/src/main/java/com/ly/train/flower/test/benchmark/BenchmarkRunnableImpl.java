@@ -18,7 +18,7 @@ package com.ly.train.flower.test.benchmark;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import com.ly.train.flower.common.akka.FlowRouter;
+import com.ly.train.flower.common.akka.router.FlowRouter;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 

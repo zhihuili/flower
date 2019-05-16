@@ -28,10 +28,14 @@ import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
+/**
+ * 
+ * @author leeyazhou
+ */
 public abstract class AbstractClassFilter {
   private static final Logger logger = LoggerFactory.getLogger(AbstractClassFilter.class);
-  protected static ClassLoader defaultClassLoader = Thread.currentThread().getContextClassLoader();
-  protected final String packageName;
+  private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+  private final String packageName;
   private boolean isDebugEnabled = logger.isDebugEnabled();
 
   protected AbstractClassFilter(final String packageName) {
@@ -39,8 +43,8 @@ public abstract class AbstractClassFilter {
   }
 
   protected AbstractClassFilter(final String packageName, ClassLoader classLoader) {
-    this.packageName = packageName;
-    AbstractClassFilter.defaultClassLoader = classLoader;
+    this(packageName);
+    this.classLoader = classLoader;
   }
 
   public final Set<Class<?>> getClassList() {
@@ -48,7 +52,7 @@ public abstract class AbstractClassFilter {
     Set<Class<?>> clazzes = new HashSet<Class<?>>();
     try {
       // 从包名获取 URL 类型的资源
-      Enumeration<URL> urls = defaultClassLoader.getResources(packageName.replace(".", "/"));
+      Enumeration<URL> urls = classLoader.getResources(packageName.replace(".", "/"));
       // 遍历 URL 资源
       URL url;
       while (urls.hasMoreElements()) {
@@ -82,7 +86,6 @@ public abstract class AbstractClassFilter {
         }
       }
     } catch (Exception err) {
-      err.printStackTrace();
       logger.error("find class error！", err);
     }
     return clazzes;
@@ -125,14 +128,13 @@ public abstract class AbstractClassFilter {
         }
       }
     } catch (Exception err) {
-      err.printStackTrace();
       logger.error("find class error！", err);
     }
   }
 
   private void doAddClass(Set<Class<?>> clazzes, String className) throws ClassNotFoundException {
     // 加载类
-    Class<?> cls = defaultClassLoader.loadClass(className);
+    Class<?> cls = classLoader.loadClass(className);
     // 判断是否可以添加类
     if (filterCondition(cls)) {
       // 添加类

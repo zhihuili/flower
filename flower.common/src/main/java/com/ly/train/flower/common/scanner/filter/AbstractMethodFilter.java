@@ -19,6 +19,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 
+ * @author leeyazhou
+ */
 public abstract class AbstractMethodFilter {
   protected final Class<?> clazz;
 

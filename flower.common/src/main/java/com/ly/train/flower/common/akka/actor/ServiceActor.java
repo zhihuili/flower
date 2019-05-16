@@ -64,7 +64,7 @@ public class ServiceActor extends AbstractFlowerActor {
   private String paramType;
   private int index;
   private final FlowerFactory flowerFactory;
-  private Filter filter;
+  private Filter<Object, ?> filter;
 
   static public Props props(String serviceName, FlowerFactory flowerFactory, int index) {
     return Props.create(ServiceActor.class, serviceName, flowerFactory, index);
@@ -91,6 +91,7 @@ public class ServiceActor extends AbstractFlowerActor {
     }
 
     Object result = null;
+    Object param = null;
     try {
       ServiceContextUtil.fillServiceContext(serviceContext);
       String pType = getParamType(serviceContext);
@@ -98,7 +99,7 @@ public class ServiceActor extends AbstractFlowerActor {
         pType = flowMessage.getMessageType();
       }
 
-      Object param = Codec.valueOf(flowMessage.getCodec()).decode(flowMessage.getMessage(), pType);
+      param = Codec.valueOf(flowMessage.getCodec()).decode(flowMessage.getMessage(), pType);
       if (getFilter(serviceContext) != null) {
         getFilter(serviceContext).filter(param, serviceContext);
       }
@@ -112,7 +113,7 @@ public class ServiceActor extends AbstractFlowerActor {
 
       Exception e2 =
           new ServiceException("invoke service " + serviceContext.getCurrentServiceName() + " : " + service
-              + "\r\n, param : " + flowMessage.getMessage(), e);
+              + "\r\n, param : " + param, e);
       if (serviceContext.isSync()) {
         handleSyncResult(serviceContext, ExceptionUtil.getErrorMessage(e2), true);
       }
@@ -145,6 +146,7 @@ public class ServiceActor extends AbstractFlowerActor {
    * @param result 消息内容
    */
   private void handleSyncResult(ServiceContext serviceContext, Object result, boolean error) {
+    logger.info("处理返回消息");
     CacheManager cacheManager = CacheManager.get(serviceActorCachePrefix + serviceContext.getFlowName());
     Cache<ActorRef> cache = cacheManager.getCache(serviceContext.getId());
     if (cache == null) {
@@ -279,8 +281,8 @@ public class ServiceActor extends AbstractFlowerActor {
         for (ServiceConfig serviceConfig : serviceConfigs) {
           flowerFactory.getServiceFactory().loadServiceMeta(serviceConfig);// 内部对serviceConfig的数据进行填充
           RefType refType = new RefType();
-          refType.setAggregate(serviceConfig.isAggregateService());
-          refType.setActorWrapper(flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig, index));
+          refType.setIndex(index);
+          refType.setServiceConfig(serviceConfig);
           refType.setMessageType(ClassUtil.forName(serviceConfig.getServiceMeta().getParamType()));
           refType.setServiceName(serviceConfig.getServiceName());
           nextServiceActors.add(refType);
@@ -294,28 +296,22 @@ public class ServiceActor extends AbstractFlowerActor {
 
 
 
-  static class RefType {
-    private ActorWrapper actorWrapper;
+  class RefType {
     private Class<?> messageType;
     private String serviceName;
-    private boolean aggregate;
+    private int index;
+    private ServiceConfig serviceConfig;
 
+    public void setServiceConfig(ServiceConfig serviceConfig) {
+      this.serviceConfig = serviceConfig;
+    }
 
+    public void setIndex(int index) {
+      this.index = index;
+    }
 
     public ActorWrapper getActorWrapper() {
-      return actorWrapper;
-    }
-
-    public void setActorWrapper(ActorWrapper actorWrapper) {
-      this.actorWrapper = actorWrapper;
-    }
-
-    public boolean isAggregate() {
-      return aggregate;
-    }
-
-    public void setAggregate(boolean aggregate) {
-      this.aggregate = aggregate;
+      return flowerFactory.getActorFactory().buildServiceActor(serviceConfig, index);
     }
 
     public Class<?> getMessageType() {
@@ -337,14 +333,10 @@ public class ServiceActor extends AbstractFlowerActor {
     @Override
     public String toString() {
       StringBuilder builder = new StringBuilder();
-      builder.append("RefType [actorWrapper=");
-      builder.append(actorWrapper);
-      builder.append(", messageType=");
+      builder.append("RefType [messageType=");
       builder.append(messageType);
       builder.append(", serviceName=");
       builder.append(serviceName);
-      builder.append(", aggregate=");
-      builder.append(aggregate);
       builder.append("]");
       return builder.toString();
     }

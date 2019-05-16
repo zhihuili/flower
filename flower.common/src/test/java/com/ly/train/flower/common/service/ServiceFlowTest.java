@@ -23,11 +23,11 @@ import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
 import com.ly.train.flower.base.TestBase;
-import com.ly.train.flower.base.service.ServiceA;
-import com.ly.train.flower.base.service.ServiceB;
-import com.ly.train.flower.base.service.ServiceC1;
-import com.ly.train.flower.base.service.ServiceC2;
-import com.ly.train.flower.base.service.ServiceD;
+import com.ly.train.flower.base.service.user.UserServiceA;
+import com.ly.train.flower.base.service.user.UserServiceB;
+import com.ly.train.flower.base.service.user.UserServiceC1;
+import com.ly.train.flower.base.service.user.UserServiceC2;
+import com.ly.train.flower.base.service.user.UserServiceD;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.common.util.Pair;
 
@@ -41,9 +41,9 @@ public class ServiceFlowTest extends TestBase {
   @Test
   public void testBuildFlowSimple() throws Exception {
     ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
-    serviceFlow.buildFlow(ServiceC1.class, ServiceC2.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
+    serviceFlow.buildFlow(UserServiceC1.class, UserServiceC2.class);
     serviceFlow.build();
   }
 
@@ -51,9 +51,9 @@ public class ServiceFlowTest extends TestBase {
   @Test
   public void testBuildFlowAggregate() throws Exception {
     ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, Arrays.asList(ServiceC1.class, ServiceC2.class));
-    serviceFlow.buildFlow(Arrays.asList(ServiceC1.class, ServiceC2.class), ServiceD.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, Arrays.asList(UserServiceC1.class, UserServiceC2.class));
+    serviceFlow.buildFlow(Arrays.asList(UserServiceC1.class, UserServiceC2.class), UserServiceD.class);
     serviceFlow.buildFlow(Arrays.asList("ServiceC1", "ServiceC2"), "ServiceD");
     serviceFlow.build();
   }
@@ -61,19 +61,20 @@ public class ServiceFlowTest extends TestBase {
   @Test
   public void testBuildFlowManyToOne() {
     ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceA.class, ServiceC1.class);
-    serviceFlow.buildFlow(ServiceA.class, ServiceC2.class);
-    serviceFlow.buildFlow(Arrays.asList(ServiceB.class, ServiceC1.class, ServiceC2.class), ServiceD.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceC1.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceC2.class);
+    serviceFlow.buildFlow(Arrays.asList(UserServiceB.class, UserServiceC1.class, UserServiceC2.class),
+        UserServiceD.class);
     serviceFlow.build();
   }
 
   @Test
   public void testBuildFlowManyToOneString() {
     ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceA.class, ServiceC1.class);
-    serviceFlow.buildFlow(ServiceA.class, ServiceC2.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceC1.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceC2.class);
     serviceFlow.buildFlow(Arrays.asList("ServiceB", "ServiceC1", "ServiceC2"), "ServiceD");
     serviceFlow.build();
   }
@@ -81,7 +82,8 @@ public class ServiceFlowTest extends TestBase {
   @Test
   public void testBuildFlowOneToMany() {
     ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
-    serviceFlow.buildFlow(ServiceA.class, Arrays.asList(ServiceB.class, ServiceC1.class, ServiceC2.class));
+    serviceFlow.buildFlow(UserServiceA.class,
+        Arrays.asList(UserServiceB.class, UserServiceC1.class, UserServiceC2.class));
     serviceFlow.build();
   }
 

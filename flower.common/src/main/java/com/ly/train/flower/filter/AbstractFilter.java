@@ -32,6 +32,9 @@ public abstract class AbstractFilter<P, R> extends AbstractService<P, R> impleme
   private Filter<P, R> nextFilter;
 
   @Override
+  public void init() {}
+
+  @Override
   public R doProcess(P message, ServiceContext context) throws Throwable {
     return filter(message, context);
   }

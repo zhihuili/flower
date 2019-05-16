@@ -17,6 +17,10 @@ package com.ly.train.flower.common.scanner.filter;
 
 import java.lang.annotation.Annotation;
 
+/**
+ * 
+ * @author leeyazhou
+ */
 public abstract class AbstractAnnotationMethodFilter extends AbstractMethodFilter {
 
   protected final Class<? extends Annotation> annotationType;

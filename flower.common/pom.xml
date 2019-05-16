@@ -30,17 +30,9 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
         </dependency>
-        <!-- <dependency>
-			<groupId>com.caucho</groupId>
-			<artifactId>hessian</artifactId>
-		</dependency> -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>hessian-lite</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.romix.akka</groupId>
-            <artifactId>akka-kryo-serialization_2.12</artifactId>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
@@ -80,12 +72,12 @@
             <artifactId>awaitility</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -94,10 +86,6 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>

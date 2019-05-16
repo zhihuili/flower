@@ -20,14 +20,9 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * simple introduction
- * 
- * <p>
  * 类扫描接口
- * </p>
  * 
- * @author Alex.j 2014-5-23
- * @since 1.0
+ * @author leeyazhou
  */
 public interface MethodScanner {
 

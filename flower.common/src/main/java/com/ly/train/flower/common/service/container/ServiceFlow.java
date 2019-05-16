@@ -200,7 +200,7 @@ public final class ServiceFlow {
   public ServiceFlow build() {
     logger.info(" build {} success. \n {}", flowName, this);
     logger.info("start register ServiceConfig : {}", header);
-    flowerFactory.getServiceActorFactory().buildFlowRouter(flowName, 1);
+    flowerFactory.getActorFactory().buildFlowRouter(flowName, 1);
     String json = JSONObject.toJSONString(header);
     ServiceConfig config = JSONObject.parseObject(json, ServiceConfig.class);
     Set<Registry> registries = flowerFactory.getRegistry();
@@ -363,6 +363,7 @@ public final class ServiceFlow {
     ServiceConfig serviceConfig = serviceConfigsCache.get(serviceName);
     if (serviceConfig == null) {
       serviceConfig = new ServiceConfig();
+      serviceConfig.setApplication(flowerFactory.getFlowerConfig().getName());
       serviceConfig.addAddress(flowerFactory.getFlowerConfig().toURL());
       serviceConfig.setFlowName(flowName);
       serviceConfig.setServiceName(serviceName);

@@ -44,7 +44,8 @@ public abstract class AbstractRegistry implements Registry {
   private static final ScheduledExecutorService executorService = Executors
       .newSingleThreadScheduledExecutor(new NamedThreadFactory("registry"));
 
-  protected final String root = "flower";
+  protected final String infoRoot = "flower:info";
+  protected final String configRoot = "flower:config";
   protected final URL url;
 
   public AbstractRegistry(URL url) {

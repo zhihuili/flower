@@ -20,6 +20,7 @@ package com.ly.train.flower.common.service.container.simple;
 
 import java.util.HashSet;
 import java.util.Set;
+import com.ly.train.flower.common.akka.ActorFactory;
 import com.ly.train.flower.common.akka.ServiceActorFactory;
 import com.ly.train.flower.common.akka.ServiceFacade;
 import com.ly.train.flower.common.exception.handler.ExceptionHandler;
@@ -80,7 +81,7 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
   @Override
   protected void doInit() {
     getServiceFactory().init();
-    getServiceActorFactory().init();
+    getActorFactory().init();
   }
 
   private Set<Registry> initRegistryFactories() {
@@ -124,7 +125,7 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
   }
 
   @Override
-  public ServiceActorFactory getServiceActorFactory() {
+  public ActorFactory getActorFactory() {
     if (serviceActorFactory == null) {
       synchronized (this) {
         this.serviceActorFactory = new ServiceActorFactory(this);
@@ -137,7 +138,7 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
   @Override
   public void doStart() {
     logger.info("start FlowerFactory");
-    getServiceActorFactory().start();
+    getActorFactory().start();
   }
 
   @Override

@@ -15,6 +15,10 @@
  */
 package com.ly.train.flower.common.scanner.filter;
 
+/**
+ * 
+ * @author leeyazhou
+ */
 public abstract class AbstractSupperClassFilter extends AbstractClassFilter {
 
   protected final Class<?> superClass;
