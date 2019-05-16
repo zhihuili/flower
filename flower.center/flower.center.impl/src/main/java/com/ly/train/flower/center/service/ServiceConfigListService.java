@@ -34,12 +34,12 @@ import com.ly.train.flower.common.service.container.ServiceContext;
 public class ServiceConfigListService implements Service<Object, Set<ServiceConfig>> {
 
   @Autowired
-  protected ServiceConfigStore serviceManager;
+  protected ServiceConfigStore serviceConfigStore;
 
   @Override
   public Set<ServiceConfig> process(Object message, ServiceContext context) throws Throwable {
 
-    return serviceManager.getAllServiceConfig();
+    return serviceConfigStore.getAllServiceConfig();
   }
 
 }

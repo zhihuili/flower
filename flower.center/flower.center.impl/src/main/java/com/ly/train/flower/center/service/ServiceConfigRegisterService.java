@@ -31,13 +31,12 @@ import com.ly.train.flower.common.service.container.ServiceContext;
  */
 @FlowerService
 public class ServiceConfigRegisterService implements Service<ServiceConfig, Boolean> {
-
   @Autowired
-  protected ServiceConfigStore serviceManager;
+  protected ServiceConfigStore serviceConfigStore ;
 
   @Override
   public Boolean process(ServiceConfig message, ServiceContext context) throws Throwable {
-    serviceManager.addServiceConfig(message);
+    serviceConfigStore.addServiceConfig(message);
     return Boolean.TRUE;
   }
 

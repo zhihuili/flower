@@ -32,7 +32,7 @@ public class ServiceConfigMemoryStore implements ServiceConfigStore {
 
   static final Logger logger = LoggerFactory.getLogger(ServiceConfigMemoryStore.class);
 
-  private CacheManager cacheManager = CacheManager.get("flower_center");
+  private CacheManager cacheManager = CacheManager.get("flower_center_config");
 
 
 

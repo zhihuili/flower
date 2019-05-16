@@ -30,7 +30,7 @@ import com.ly.train.flower.registry.config.ServiceInfo;
 public class ServiceInfoMemoryStore implements ServiceInfoStore {
   static final Logger logger = LoggerFactory.getLogger(ServiceInfoMemoryStore.class);
 
-  private CacheManager cacheManager = CacheManager.get("flower_center");
+  private CacheManager cacheManager = CacheManager.get("flower_center_info");
 
   public boolean addServiceInfo(ServiceInfo serviceInfo) {
     Cache<Set<ServiceInfo>> cache = cacheManager.getCache(serviceInfo.getClassName());

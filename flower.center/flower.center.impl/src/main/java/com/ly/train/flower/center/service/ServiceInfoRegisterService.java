@@ -33,11 +33,11 @@ import com.ly.train.flower.registry.config.ServiceInfo;
 public class ServiceInfoRegisterService implements Service<ServiceInfo, Boolean> {
 
   @Autowired
-  protected ServiceInfoStore serviceManager;
+  protected ServiceInfoStore serviceInfoStore ;
 
   @Override
   public Boolean process(ServiceInfo message, ServiceContext context) throws Throwable {
-    serviceManager.addServiceInfo(message);
+    serviceInfoStore.addServiceInfo(message);
     return Boolean.TRUE;
   }
 

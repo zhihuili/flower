@@ -34,12 +34,12 @@ import com.ly.train.flower.registry.config.ServiceInfo;
 public class ServiceInfoListService implements Service<Object, Set<ServiceInfo>> {
 
   @Autowired
-  protected ServiceInfoStore serviceManager;
+  protected ServiceInfoStore serviceInfoStore;
 
   @Override
   public Set<ServiceInfo> process(Object message, ServiceContext context) throws Throwable {
 
-    return serviceManager.getAllServiceInfo();
+    return serviceInfoStore.getAllServiceInfo();
   }
 
 }
