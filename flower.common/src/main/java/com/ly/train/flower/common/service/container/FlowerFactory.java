@@ -19,6 +19,7 @@
 package com.ly.train.flower.common.service.container;
 
 import java.util.Set;
+import com.ly.train.flower.common.akka.ActorFactory;
 import com.ly.train.flower.common.akka.ServiceActorFactory;
 import com.ly.train.flower.common.akka.ServiceFacade;
 import com.ly.train.flower.common.exception.handler.ExceptionHandler;
@@ -55,9 +56,9 @@ public interface FlowerFactory extends Lifecycle {
   /**
    * akka Actor 工厂
    * 
-   * @return {@link ServiceActorFactory}
+   * @return {@link ActorFactory}
    */
-  ServiceActorFactory getServiceActorFactory();
+  ActorFactory getActorFactory();
 
   /**
    * {@link Service}工厂

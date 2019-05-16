@@ -25,7 +25,7 @@ import com.ly.train.flower.base.service.user.UserServiceB;
 import com.ly.train.flower.base.service.user.UserServiceC1;
 import com.ly.train.flower.base.service.user.UserServiceC2;
 import com.ly.train.flower.base.service.user.UserServiceD;
-import com.ly.train.flower.common.akka.FlowRouter;
+import com.ly.train.flower.common.akka.router.FlowRouter;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
@@ -99,7 +99,7 @@ public class ActorSelectionTest {
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC2.class);
     serviceFlow.buildFlow(Arrays.asList(UserServiceC1.class, UserServiceC2.class), UserServiceD.class);
     serviceFlow.build();
-    FlowRouter flowRouter = flowerFactory1.getServiceActorFactory().buildFlowRouter(flowName, 8);
+    FlowRouter flowRouter = flowerFactory1.getActorFactory().buildFlowRouter(flowName, 8);
     flowRouter.asyncCallService(message);
     Thread.sleep(3000);
   }

@@ -28,6 +28,8 @@ import com.ly.train.flower.common.akka.actor.command.GetContextCommand;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorRefWrapper;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorSelectionWrapper;
 import com.ly.train.flower.common.akka.actor.wrapper.ActorWrapper;
+import com.ly.train.flower.common.akka.router.FlowRouter;
+import com.ly.train.flower.common.akka.router.ServiceRouter;
 import com.ly.train.flower.common.exception.FlowNotFoundException;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.service.config.ServiceConfig;
@@ -50,7 +52,7 @@ import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
-public class ServiceActorFactory extends AbstractLifecycle {
+public class ServiceActorFactory extends AbstractLifecycle implements ActorFactory {
   private static final Logger logger = LoggerFactory.getLogger(ServiceActorFactory.class);
   private static final Long DEFAULT_TIMEOUT = 5000L;
   private static final Duration timeout = Duration.create(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -86,10 +88,12 @@ public class ServiceActorFactory extends AbstractLifecycle {
   @Override
   protected void doInit() {}
 
+  @Override
   public ActorWrapper buildServiceActor(ServiceConfig serviceConfig) {
     return buildServiceActor(serviceConfig, defaultFlowIndex);
   }
 
+  @Override
   public ActorWrapper buildServiceActor(ServiceConfig serviceConfig, int index) {
     final String serviceName = serviceConfig.getServiceName();
     // TODO 缓存key的考量，是否要添加flowNumber
@@ -148,13 +152,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
   }
 
 
-  /**
-   * will be cached by flowName + "_" + serviceName
-   * 
-   * @param flowName flowName
-   * @param flowNumber 数量
-   * @return {@link ServiceRouter}
-   */
+  @Override
   public FlowRouter buildFlowRouter(String flowName, int flowNumber) {
     final ServiceConfig serviceConfig = serviceFactory.getOrCreateServiceFlow(flowName).getHeadServiceConfig();
     if (serviceConfig == null) {
@@ -183,6 +181,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
     return flowRouter;
   }
 
+  @Override
   public ServiceRouter buildServiceRouter(ServiceConfig serviceConfig, int flowNumber) {
     final String serviceName = serviceConfig.getServiceName();
     final String routerName = serviceName + "_" + flowNumber;
@@ -209,11 +208,12 @@ public class ServiceActorFactory extends AbstractLifecycle {
   protected void doStart() {
     try {
       this.actorSystem = createActorSystem();
-      this.supervierActor = getActorSystem().actorOf(SupervisorActor.props(this), "flower");
+      this.supervierActor = actorSystem.actorOf(SupervisorActor.props(this), "flower");
       Future<Object> future = Patterns.ask(getSupervierActor(), new GetContextCommand(), DEFAULT_TIMEOUT - 1);
       this.actorContext = (ActorContext) Await.result(future, timeout);
     } catch (Exception e) {
-      logger.error("", e);
+      logger.error("fail to start flower", e);
+      stop();
       throw new FlowerException("", e);
     }
   }
@@ -256,7 +256,7 @@ public class ServiceActorFactory extends AbstractLifecycle {
 
   @Override
   protected void doStop() {
-    logger.info("akka system terminate, system : {}", actorSystem);
+    logger.info("stop flower, config : {}", flowerConfig);
     if (actorSystem != null) {
       actorSystem.terminate();
     }

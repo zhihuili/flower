@@ -28,7 +28,7 @@ import com.ly.train.flower.base.service.user.UserServiceA;
 import com.ly.train.flower.base.service.user.UserServiceB;
 import com.ly.train.flower.base.service.user.UserServiceC1;
 import com.ly.train.flower.base.service.user.UserServiceC2;
-import com.ly.train.flower.common.akka.ServiceRouter;
+import com.ly.train.flower.common.akka.router.ServiceRouter;
 import com.ly.train.flower.common.annotation.FlowerServiceUtil;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.ServiceContext;

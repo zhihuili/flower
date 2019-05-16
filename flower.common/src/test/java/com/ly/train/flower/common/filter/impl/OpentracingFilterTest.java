@@ -22,7 +22,7 @@ import com.ly.train.flower.base.service.OpenTracerService;
 import com.ly.train.flower.base.service.user.UserServiceA;
 import com.ly.train.flower.base.service.user.UserServiceB;
 import com.ly.train.flower.base.service.user.UserServiceC1;
-import com.ly.train.flower.common.akka.FlowRouter;
+import com.ly.train.flower.common.akka.router.FlowRouter;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 
 /**

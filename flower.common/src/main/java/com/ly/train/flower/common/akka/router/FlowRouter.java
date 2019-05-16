@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.akka;
+package com.ly.train.flower.common.akka.router;
 
 import java.util.concurrent.TimeoutException;
 import javax.servlet.AsyncContext;
+import com.ly.train.flower.common.akka.ServiceFacade;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.AbstractInit;
 import com.ly.train.flower.common.service.container.FlowerFactory;
@@ -31,7 +32,7 @@ import akka.actor.ActorRef;
  * @author leeyazhou
  * 
  */
-public class FlowRouter extends AbstractInit {
+public class FlowRouter extends AbstractInit implements Router {
   static final com.ly.train.flower.logging.Logger logger = LoggerFactory.getLogger(FlowRouter.class);
   private int flowerNumber = 2 << 6;
   private final ServiceConfig headerServiceConfig;

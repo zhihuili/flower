@@ -15,7 +15,7 @@
  */
 package com.ly.train.flower.test.util;
 
-import com.ly.train.flower.common.akka.FlowRouter;
+import com.ly.train.flower.common.akka.router.FlowRouter;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
@@ -49,7 +49,7 @@ public class FlowerUtil {
     serviceFlow.buildFlow(StartService.class, BusinessService.class);
     serviceFlow.buildFlow(BusinessService.class, EmailService.class);
     serviceFlow.buildFlow(BusinessService.class, EndService.class);
-    return flowerFactory.getServiceActorFactory().buildFlowRouter(flowName, threadNum);
+    return flowerFactory.getActorFactory().buildFlowRouter(flowName, threadNum);
   }
 
   public static void stop() {

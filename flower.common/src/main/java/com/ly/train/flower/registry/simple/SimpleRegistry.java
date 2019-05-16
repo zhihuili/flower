@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
-import com.ly.train.flower.common.akka.ServiceRouter;
+import com.ly.train.flower.common.akka.router.ServiceRouter;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceContext;
@@ -73,7 +73,7 @@ public class SimpleRegistry extends AbstractRegistry {
     serviceMeta.setServiceName(serviceName);
     serviceMeta.setParamType(paramType);
     serviceMeta.setResultType(resultType);
-    return flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, 2);
+    return flowerFactory.getActorFactory().buildServiceRouter(serviceConfig, 2);
   }
 
   private ServiceContext makeServiceContext(Object message) {

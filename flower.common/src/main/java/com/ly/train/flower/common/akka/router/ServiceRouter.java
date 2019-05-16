@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.common.akka;
+package com.ly.train.flower.common.akka.router;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,7 @@ import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
-public class ServiceRouter extends AbstractInit {
+public class ServiceRouter extends AbstractInit implements Router {
   protected static final Logger logger = LoggerFactory.getLogger(ServiceRouter.class);
   private final LoadBalance loadBalance = ExtensionLoader.load(LoadBalance.class).load();
   private int actorNumber = 2 << 6;
@@ -112,7 +112,7 @@ public class ServiceRouter extends AbstractInit {
       synchronized (this) {
         if (actors.isEmpty()) {
           for (int i = 0; i < actorNumber; i++) {
-            ActorWrapper actor = flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig, i);
+            ActorWrapper actor = flowerFactory.getActorFactory().buildServiceActor(serviceConfig, i);
             actors.add(actor);
           }
         }

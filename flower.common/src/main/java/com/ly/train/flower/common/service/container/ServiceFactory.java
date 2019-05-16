@@ -78,7 +78,7 @@ public class ServiceFactory extends AbstractInit {
     serviceConfig.setServiceMeta(serviceMeta);
     serviceConfig.setApplication(flowerConfig.getName());
     // flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig);
-    flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, -1);
+    flowerFactory.getActorFactory().buildServiceRouter(serviceConfig, -1);
 
     Set<Registry> registries = flowerFactory.getRegistry();
     // logger.info("注册中心 {} : {}", serviceName, registries.size());
