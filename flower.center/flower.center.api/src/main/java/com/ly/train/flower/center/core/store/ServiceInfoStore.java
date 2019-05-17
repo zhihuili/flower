@@ -25,5 +25,5 @@ public interface ServiceInfoStore {
 
   boolean addServiceInfo(ServiceInfo serviceInfo);
 
-  Set<ServiceInfo> getAllServiceInfo();
+  Set<ServiceInfo> getServiceInfo(ServiceInfo serviceInfo);
 }

@@ -116,8 +116,9 @@ public class ServiceActor extends AbstractFlowerActor {
               + "\r\n, param : " + param, e);
       if (serviceContext.isSync()) {
         handleSyncResult(serviceContext, ExceptionUtil.getErrorMessage(e2), true);
+      } else {
+        throw e2;
       }
-      throw e2;
     }
 
     Set<RefType> nextActorRef = getNextServiceActors(serviceContext);
@@ -156,13 +157,17 @@ public class ServiceActor extends AbstractFlowerActor {
     if (actor != null) {
       FlowMessage resultMessage = new FlowMessage();
       Codec codec = Codec.Hessian;
+      resultMessage.setCodec(codec.getCode());
+      if (result != null) {
+        resultMessage.setMessageType(result.getClass().getName());
+      }
       if (error) {
         resultMessage.setException((String) result);
       } else {
         resultMessage.setMessage(codec.encode(result));
       }
-      resultMessage.setCodec(codec.getCode());
-      resultMessage.setMessageType(result.getClass().getName());
+
+
       actor.tell(resultMessage, getSelf());
       cacheManager.invalidate(serviceContext.getId());
     }
@@ -289,7 +294,6 @@ public class ServiceActor extends AbstractFlowerActor {
         nextServiceActorCache.put(cacheKey, nextServiceActors);
       }
     }
-
     return nextServiceActors;
   }
 

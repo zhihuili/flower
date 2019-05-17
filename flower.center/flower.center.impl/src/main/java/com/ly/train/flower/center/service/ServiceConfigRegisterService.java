@@ -32,7 +32,7 @@ import com.ly.train.flower.common.service.container.ServiceContext;
 @FlowerService
 public class ServiceConfigRegisterService implements Service<ServiceConfig, Boolean> {
   @Autowired
-  protected ServiceConfigStore serviceConfigStore ;
+  protected ServiceConfigStore serviceConfigStore;
 
   @Override
   public Boolean process(ServiceConfig message, ServiceContext context) throws Throwable {

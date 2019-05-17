@@ -15,8 +15,6 @@
  */
 package com.ly.train.flower.center.core.store.memory;
 
-import java.util.HashSet;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ly.train.flower.center.core.store.ServiceConfigStore;
@@ -37,20 +35,19 @@ public class ServiceConfigMemoryStore implements ServiceConfigStore {
 
 
   public boolean addServiceConfig(ServiceConfig serviceConfig) {
-    cacheManager.add(serviceConfig.getFlowName(), serviceConfig, 6000);
+    String key = serviceConfig.getApplication() + "_" + serviceConfig.getFlowName();
+    cacheManager.add(key, serviceConfig, 6000);
     return true;
   }
 
-  public Set<ServiceConfig> getAllServiceConfig() {
-    Set<ServiceConfig> ret = new HashSet<ServiceConfig>();
-    Set<String> keys = cacheManager.getAllKey();
-    for (String key : keys) {
-      Cache<Object> cache = cacheManager.getCache(key);
-      if (cache != null && cache.getValue() instanceof ServiceConfig) {
-        ret.add((ServiceConfig) cache.getValue());
-      }
+  @Override
+  public ServiceConfig getServiceConfig(ServiceConfig serviceConfig) {
+    String key = serviceConfig.getApplication() + "_" + serviceConfig.getFlowName();
+    Cache<Object> cache = cacheManager.getCache(key);
+    if (cache != null && cache.getValue() instanceof ServiceConfig) {
+      return (ServiceConfig) cache.getValue();
     }
-    return ret;
+    return null;
   }
 
 

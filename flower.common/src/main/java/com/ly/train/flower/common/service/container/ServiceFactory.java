@@ -150,9 +150,7 @@ public class ServiceFactory extends AbstractInit {
     if (serviceFlow != null) {
       return serviceFlow;
     }
-    if (serviceFlow == null) {
-      serviceFlow = getServiceFlowFromRegistry(flowName);
-    }
+    serviceFlow = getServiceFlowFromRegistry(flowName);
     if (serviceFlow == null) {
       serviceFlow = new ServiceFlow(flowName, flowerFactory);
       serviceFlows.putIfAbsent(flowName, serviceFlow);
@@ -169,57 +167,61 @@ public class ServiceFactory extends AbstractInit {
    */
   public ServiceMeta loadServiceMeta(ServiceConfig serviceConfig) {
     ServiceMeta serviceMeta = serviceLoader.loadServiceMeta(serviceConfig.getServiceName());
-    if (serviceMeta == null) {
-      serviceMeta = this.loadServiceMetaFromRegistrry(serviceConfig);
-      if (serviceMeta != null) {
-        serviceConfig.setServiceMeta(serviceMeta);
-        serviceConfig.setLocal(false);
-        serviceMeta.setLocal(false);
-        return serviceMeta;
-      }
-      throw new ServiceNotFoundException("serviceName : " + serviceConfig.getServiceName() + ", serviceConfig : "
-          + serviceConfig);
-    } else {
+    if (serviceMeta != null) {
       serviceConfig.setLocal(true);
       serviceMeta.setLocal(true);
+      return serviceMeta;
     }
-    return serviceMeta;
+
+    ServiceInfo serviceInfo = this.loadServiceInfoFromRegistrry(serviceConfig);
+    serviceConfig.addAddress(serviceInfo.getAddress());
+    serviceConfig.setApplication(serviceInfo.getApplication());
+    serviceMeta = serviceInfo.getServiceMeta();
+    if (serviceMeta != null) {
+      serviceConfig.setServiceMeta(serviceMeta);
+      serviceConfig.setLocal(false);
+      serviceMeta.setLocal(false);
+      return serviceMeta;
+    }
+    throw new ServiceNotFoundException("serviceName : " + serviceConfig.getServiceName() + ", serviceConfig : "
+        + serviceConfig);
   }
 
-  public ServiceMeta loadServiceMetaFromRegistrry(ServiceConfig serviceConfig) {
+  public ServiceInfo loadServiceInfoFromRegistrry(ServiceConfig serviceConfig) {
     Set<Registry> registries = flowerFactory.getRegistry();
     if (registries == null || registries.isEmpty()) {
       return null;
     }
-    ServiceMeta serviceMeta = null;
+    ServiceInfo queryInfo = new ServiceInfo();
+    queryInfo.setServiceName(serviceConfig.getServiceName());
+    queryInfo.setApplication(serviceConfig.getApplication());
     for (Registry registry : registries) {
-      List<ServiceInfo> serviceInfos = registry.getProvider(null);
+      List<ServiceInfo> serviceInfos = registry.getProvider(queryInfo);
       if (serviceInfos != null) {
         for (ServiceInfo serviceInfo : serviceInfos) {
           // logger.info("注册中心获取连接: {}", serviceInfo);
           if (serviceInfo.getServiceName().equals(serviceConfig.getServiceName())) {
             // add service address
-            serviceConfig.addAddress(serviceInfo.getAddress());
-            serviceMeta = serviceInfo.getServiceMeta();
-            serviceConfig.setApplication(serviceInfo.getApplication());
-            break;
+            return serviceInfo;
           }
         }
       }
     }
 
-    return serviceMeta;
+    return null;
   }
 
   private ServiceFlow getServiceFlowFromRegistry(String flowName) {
     Set<Registry> registries = flowerFactory.getRegistry();
+    ServiceConfig serviceConfig = new ServiceConfig(flowName);
+    serviceConfig.setApplication(flowerConfig.getName());
     for (Registry registry : registries) {
-      List<ServiceConfig> configs = registry.getServiceConfig(null);
+      List<ServiceConfig> configs = registry.getServiceConfig(serviceConfig);
       for (ServiceConfig config : configs) {
         if (flowName.contentEquals(config.getFlowName())) {
           ServiceFlow serviceFlow = new ServiceFlow(flowName, config, flowerFactory);
           serviceFlows.putIfAbsent(flowName, serviceFlow);
-          logger.info(" load ServiceConfig from registry {} ：{}", flowName, serviceFlow);
+          logger.info("load ServiceConfig from registry {} ：{}", flowName, serviceFlow);
           return serviceFlow;
         }
       }

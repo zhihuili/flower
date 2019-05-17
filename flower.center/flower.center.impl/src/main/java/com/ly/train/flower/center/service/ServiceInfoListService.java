@@ -31,15 +31,17 @@ import com.ly.train.flower.registry.config.ServiceInfo;
  * 
  */
 @FlowerService
-public class ServiceInfoListService implements Service<Object, Set<ServiceInfo>> {
+public class ServiceInfoListService implements Service<ServiceInfo, Set<ServiceInfo>> {
 
   @Autowired
   protected ServiceInfoStore serviceInfoStore;
 
   @Override
-  public Set<ServiceInfo> process(Object message, ServiceContext context) throws Throwable {
-
-    return serviceInfoStore.getAllServiceInfo();
+  public Set<ServiceInfo> process(ServiceInfo message, ServiceContext context) throws Throwable {
+    if (message == null) {
+      return null;
+    }
+    return serviceInfoStore.getServiceInfo(message);
   }
 
 }

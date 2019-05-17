@@ -15,7 +15,6 @@
  */
 package com.ly.train.flower.center.core.store;
 
-import java.util.Set;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 
 /**
@@ -25,5 +24,5 @@ public interface ServiceConfigStore {
 
   boolean addServiceConfig(ServiceConfig serviceConfig);
 
-  Set<ServiceConfig> getAllServiceConfig();
+  ServiceConfig getServiceConfig(ServiceConfig serviceConfig);
 }

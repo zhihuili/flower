@@ -15,12 +15,16 @@
  */
 package com.ly.train.flower.center.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import com.ly.train.flower.center.core.store.ServiceConfigStore;
 import com.ly.train.flower.center.core.store.ServiceInfoStore;
-import com.ly.train.flower.center.core.store.memory.ServiceConfigMemoryStore;
-import com.ly.train.flower.center.core.store.memory.ServiceInfoMemoryStore;
+import com.ly.train.flower.center.redis.RedisClient;
+import com.ly.train.flower.center.redis.RedisManager;
+import com.ly.train.flower.center.store.redis.ServiceConfigRedisStore;
+import com.ly.train.flower.center.store.redis.ServiceInfoRedisStore;
 
 /**
  * @author leeyazhou
@@ -28,18 +32,36 @@ import com.ly.train.flower.center.core.store.memory.ServiceInfoMemoryStore;
 @Configuration
 public class StoreConfig {
 
-  private String store = "memory";
-
   @Bean
   public ServiceConfigStore serviceConfigStore() {
-    ServiceConfigStore serviceConfigStore = new ServiceConfigMemoryStore();
+    ServiceConfigRedisStore serviceConfigStore = new ServiceConfigRedisStore();
+    serviceConfigStore.setRedisClient(redisClient);
     return serviceConfigStore;
   }
 
   @Bean
   public ServiceInfoStore serviceInfoStore() {
-    ServiceInfoStore serviceConfigStore = new ServiceInfoMemoryStore();
+    ServiceInfoRedisStore serviceConfigStore = new ServiceInfoRedisStore();
+    serviceConfigStore.setRedisClient(redisClient);
     return serviceConfigStore;
   }
 
+  @Value("${flower.center.redis.host}")
+  private String host;
+  @Value("${flower.center.redis.port}")
+  private int port;
+  @Value("${flower.center.redis.password}")
+  private String password;
+
+  @Autowired
+  private RedisClient redisClient;
+
+  @Bean
+  public RedisClient redisClient() {
+    RedisManager manager = new RedisManager();
+    manager.setHost(host);
+    manager.setPort(port);
+    manager.setPassword(password);
+    return manager.getRedisClient();
+  }
 }

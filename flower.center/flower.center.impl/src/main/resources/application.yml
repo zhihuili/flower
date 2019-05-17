@@ -21,3 +21,9 @@ spring:
          enabled: true
          force: true
          
+flower:
+   center:
+      redis:
+         host: 10.100.216.147
+         port: 6399
+         password: flowerpassword

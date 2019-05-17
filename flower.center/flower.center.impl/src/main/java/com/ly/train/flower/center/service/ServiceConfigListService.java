@@ -18,7 +18,6 @@
  */
 package com.ly.train.flower.center.service;
 
-import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.ly.train.flower.center.core.store.ServiceConfigStore;
 import com.ly.train.flower.common.annotation.FlowerService;
@@ -31,15 +30,17 @@ import com.ly.train.flower.common.service.container.ServiceContext;
  * 
  */
 @FlowerService(timeout = 1000)
-public class ServiceConfigListService implements Service<Object, Set<ServiceConfig>> {
+public class ServiceConfigListService implements Service<ServiceConfig, ServiceConfig> {
 
   @Autowired
   protected ServiceConfigStore serviceConfigStore;
 
   @Override
-  public Set<ServiceConfig> process(Object message, ServiceContext context) throws Throwable {
-
-    return serviceConfigStore.getAllServiceConfig();
+  public ServiceConfig process(ServiceConfig message, ServiceContext context) throws Throwable {
+    if (message == null) {
+      return null;
+    }
+    return serviceConfigStore.getServiceConfig(message);
   }
 
 }

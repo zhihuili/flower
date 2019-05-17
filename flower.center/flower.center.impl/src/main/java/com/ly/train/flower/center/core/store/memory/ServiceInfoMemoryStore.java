@@ -32,13 +32,15 @@ public class ServiceInfoMemoryStore implements ServiceInfoStore {
 
   private CacheManager cacheManager = CacheManager.get("flower_center_info");
 
+
   public boolean addServiceInfo(ServiceInfo serviceInfo) {
-    Cache<Set<ServiceInfo>> cache = cacheManager.getCache(serviceInfo.getClassName());
+    final String cacheKey = serviceInfo.getApplication() + "_" + serviceInfo.getServiceName();
+    Cache<Set<ServiceInfo>> cache = cacheManager.getCache(cacheKey);
     if (cache == null) {
       Set<ServiceInfo> c = new HashSet<ServiceInfo>();
       c.add(serviceInfo);
-      cacheManager.add(serviceInfo.getClassName(), c, 6000L);
-      cache = cacheManager.getCache(serviceInfo.getClassName());
+      cacheManager.add(cacheKey, c, 6000L);
+      cache = cacheManager.getCache(cacheKey);
     } else {
       cache.getValue().add(serviceInfo);
       cache.setTimeToLive(6000);
@@ -46,15 +48,13 @@ public class ServiceInfoMemoryStore implements ServiceInfoStore {
     return true;
   }
 
-  public Set<ServiceInfo> getAllServiceInfo() {
-    Set<ServiceInfo> ret = new HashSet<ServiceInfo>();
-    Set<String> keys = cacheManager.getAllKey();
-    for (String key : keys) {
-      Cache<Object> cache = cacheManager.getCache(key);
-      if (cache != null && cache.getValue() instanceof Set) {
-        ret.addAll((Set<ServiceInfo>) cache.getValue());
-      }
+  @Override
+  public Set<ServiceInfo> getServiceInfo(ServiceInfo serviceInfo) {
+    final String cacheKey = serviceInfo.getApplication() + "_" + serviceInfo.getServiceName();
+    Cache<Object> cache = cacheManager.getCache(cacheKey);
+    if (cache == null) {
+      return null;
     }
-    return ret;
+    return (Set<ServiceInfo>) cache.getValue();
   }
 }

@@ -24,7 +24,10 @@
         <version>0.1.3</version>
         <relativePath>..</relativePath>
     </parent>
-
     <artifactId>flower.center</artifactId>
     <packaging>pom</packaging>
+    <modules>
+        <module>flower.center.api</module>
+        <module>flower.center.impl</module>
+    </modules>
 </project>

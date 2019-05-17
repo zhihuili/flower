@@ -102,7 +102,7 @@ public class SimpleRegistry extends AbstractRegistry {
 
   @Override
   public List<ServiceInfo> doGetProvider(ServiceInfo serviceInfo) {
-    ServiceContext serviceContext = makeServiceContext(null);
+    ServiceContext serviceContext = makeServiceContext(serviceInfo);
     serviceContext.setCurrentServiceName("ServiceInfoListService");
     serviceContext.setSync(false);
     Object o = null;
@@ -123,7 +123,7 @@ public class SimpleRegistry extends AbstractRegistry {
 
   @Override
   public List<ServiceConfig> doGetServiceConfig(ServiceConfig serviceConfig) {
-    ServiceContext serviceContext = makeServiceContext(null);
+    ServiceContext serviceContext = makeServiceContext(serviceConfig);
     serviceContext.setCurrentServiceName("ServiceConfigListService");
     serviceContext.setSync(false);
     Object o = null;
@@ -134,9 +134,9 @@ public class SimpleRegistry extends AbstractRegistry {
     }
     List<ServiceConfig> ret2 = new ArrayList<ServiceConfig>();
     if (o != null) {
-      Set<ServiceConfig> ret = (Set<ServiceConfig>) o;
-      if (ret != null && !ret.isEmpty()) {
-        ret2.addAll(ret);
+      ServiceConfig ret = (ServiceConfig) o;
+      if (ret != null) {
+        ret2.add(ret);
       }
     }
     return ret2;
