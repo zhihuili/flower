@@ -13,29 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package com.ly.train.flower.center.util;
+package com.ly.train.flower.center.core.config;
 
-import com.ly.train.flower.center.model.Response;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import com.ly.train.flower.common.service.container.FlowerFactory;
+import com.ly.train.flower.service.container.SpringFlowerFactory;
 
 /**
  * @author leeyazhou
  * 
  */
-public class R {
+@Configuration
+public class FlowerConfiguration {
 
-  public static <T> Response<T> ok(T data) {
-
-    return new Response<>(data);
-  }
-
-  public static <T> Response<T> ok() {
-    return new Response<T>();
-  }
-
-  public static <T> Response<T> error(int code, String msg) {
-    return new Response<>(code, msg);
+  @Bean
+  public static FlowerFactory flowerFactory() {
+    FlowerFactory flowerFactory = new SpringFlowerFactory();
+    flowerFactory.init();
+    return flowerFactory;
   }
 }

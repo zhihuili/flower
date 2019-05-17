@@ -41,16 +41,22 @@ public class ResourceLoader {
   private static final Logger logger = LoggerFactory.getLogger(ResourceLoader.class);
   private String rootPath;
   private final String subfix;
-  private ClassLoader classLoader = getClass().getClassLoader();
+  private ClassLoader classLoader;
   private Set<String> cache = new TreeSet<String>();
 
-  public ResourceLoader(String rootPath, String subfix) {
-    this.rootPath = rootPath;
-    this.subfix = subfix;
+  public ResourceLoader(String rootPath) {
+    this(rootPath, null);
   }
 
+  public ResourceLoader(String rootPath, String subfix) {
+    this(rootPath, subfix, Thread.currentThread().getContextClassLoader());
+  }
+
+
+
   public ResourceLoader(String rootPath, String subfix, ClassLoader classLoader) {
-    this(rootPath, subfix);
+    this.rootPath = rootPath;
+    this.subfix = subfix;
     this.classLoader = classLoader;
   }
 
@@ -101,20 +107,34 @@ public class ResourceLoader {
         continue;
       }
       String name = entry.getName();
-      if (name.endsWith(subfix)) {
-        JarResource resource = new JarResource(url);
-        String path = url.getPath();
-        if (path.startsWith(ResourceUtil.FILE_URL_PREFIX)) {
-          path = path.substring(ResourceUtil.FILE_URL_PREFIX.length());
-        }
-        if (path.endsWith(ResourceUtil.JAR_URL_SEPARATOR)) {
-          path = path.substring(0, path.indexOf(ResourceUtil.JAR_URL_SEPARATOR));
-        }
-        resource.setName(name);
-        resource.setJarResource(true);
-        resource.setPath(path);
-        resources.add(resource);
+
+      boolean flag = true;
+      if (StringUtil.isNotBlank(rootPath) && !name.startsWith(rootPath)) {
+        flag = false;
       }
+      if (!flag) {
+        continue;
+      }
+      if (StringUtil.isNotBlank(subfix) && !name.endsWith(subfix)) {
+        flag = false;
+      }
+
+      if (!flag) {
+        continue;
+      }
+
+      JarResource resource = new JarResource(url);
+      String path = url.getPath();
+      if (path.startsWith(ResourceUtil.FILE_URL_PREFIX)) {
+        path = path.substring(ResourceUtil.FILE_URL_PREFIX.length());
+      }
+      if (path.endsWith(ResourceUtil.JAR_URL_SEPARATOR)) {
+        path = path.substring(0, path.indexOf(ResourceUtil.JAR_URL_SEPARATOR));
+      }
+      resource.setName(name);
+      resource.setJarResource(true);
+      resource.setPath(path);
+      resources.add(resource);
     }
   }
 
@@ -136,7 +156,7 @@ public class ResourceLoader {
       }
     }
 
-    if ("".equals(rootPath)) {
+    if (StringUtil.isBlank(rootPath)) {
       addAllClassLoaderJarRoots(classLoader, resources);
     }
     return resources;

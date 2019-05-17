@@ -16,32 +16,24 @@
 /**
  * 
  */
-package com.ly.train.flower.center.controller;
-
-import com.ly.train.flower.center.model.Response;
-import com.ly.train.flower.center.util.R;
-import com.ly.train.flower.logging.Logger;
-import com.ly.train.flower.logging.LoggerFactory;
-import com.ly.train.flower.web.spring.FlowerController;
+package com.ly.train.flower.center.core.util;
 
 /**
  * @author leeyazhou
  * 
  */
-public abstract class BaseController extends FlowerController {
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+public class R {
 
-  protected <T> Response<T> ok(T data) {
+  public static <T> Response<T> ok(T data) {
 
-    return R.ok(data);
+    return new Response<>(data);
   }
 
-  public <T> Response<T> ok() {
-    return R.ok();
+  public static <T> Response<T> ok() {
+    return new Response<T>();
   }
 
-  protected <T> Response<T> error(int code, String msg) {
-    return R.error(code, msg);
+  public static <T> Response<T> error(int code, String msg) {
+    return new Response<>(code, msg);
   }
-
 }

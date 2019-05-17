@@ -15,15 +15,40 @@
  */
 package com.ly.train.flower.common.io.resource;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import com.ly.train.flower.common.util.IOUtil;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
  */
 public class JarResource extends AbstractResource {
+  private static final Logger logger = LoggerFactory.getLogger(JarResource.class);
 
   public JarResource(URL url) {
     super(url);
+  }
+
+  @Override
+  public InputStream getInputStream() {
+    JarFile jarFile = null;
+    try {
+      jarFile = new JarFile(getPath());
+      ZipEntry zipEntry = jarFile.getEntry(getName());
+      return jarFile.getInputStream(zipEntry);
+    } catch (IOException e) {
+      logger.error("path : " + getPath() + ", name : " + getName(), e);
+    } finally {
+      IOUtil.close(jarFile);
+    }
+
+    return null;
+
   }
 
 }

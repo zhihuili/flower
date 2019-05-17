@@ -16,7 +16,7 @@
 /**
  * 
  */
-package com.ly.train.flower.center.config;
+package com.ly.train.flower.center.core.config;
 
 import java.nio.charset.Charset;
 import java.util.List;

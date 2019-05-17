@@ -16,7 +16,7 @@
 /**
  * 
  */
-package com.ly.train.flower.center.model;
+package com.ly.train.flower.center.core.util;
 
 /**
  * @author leeyazhou

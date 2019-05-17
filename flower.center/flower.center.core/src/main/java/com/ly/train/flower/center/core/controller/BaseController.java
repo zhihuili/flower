@@ -16,25 +16,32 @@
 /**
  * 
  */
-package com.ly.train.flower.center.controller;
+package com.ly.train.flower.center.core.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import com.ly.train.flower.center.model.Response;
-import com.ly.train.flower.center.util.R;
+import com.ly.train.flower.center.core.util.R;
+import com.ly.train.flower.center.core.util.Response;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
+import com.ly.train.flower.web.spring.FlowerController;
 
 /**
  * @author leeyazhou
  * 
  */
-@RestController
-public class IndexController {
+public abstract class BaseController extends FlowerController {
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+  protected <T> Response<T> ok(T data) {
 
+    return R.ok(data);
+  }
 
-  @GetMapping(value = {"/", "index.htm", "index.html"})
-  public Response<String> index() {
-    return R.ok("请求成功");
+  public <T> Response<T> ok() {
+    return R.ok();
+  }
+
+  protected <T> Response<T> error(int code, String msg) {
+    return R.error(code, msg);
   }
 
 }

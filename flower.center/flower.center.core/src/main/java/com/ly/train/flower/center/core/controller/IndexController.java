@@ -13,24 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.center.config;
+/**
+ * 
+ */
+package com.ly.train.flower.center.core.controller;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import com.ly.train.flower.common.service.container.FlowerFactory;
-import com.ly.train.flower.service.container.SpringFlowerFactory;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.ly.train.flower.center.core.util.R;
+import com.ly.train.flower.center.core.util.Response;
 
 /**
  * @author leeyazhou
  * 
  */
-@Configuration
-public class FlowerConfiguration {
+@RestController
+public class IndexController {
 
-  @Bean
-  public static FlowerFactory flowerFactory() {
-    FlowerFactory flowerFactory = new SpringFlowerFactory();
-    flowerFactory.init();
-    return flowerFactory;
+
+
+  @GetMapping(value = {"/", "index.htm", "index.html"})
+  public Response<String> index() {
+    return R.ok("请求成功");
   }
+
 }

@@ -15,16 +15,30 @@
  */
 package com.ly.train.flower.common.io.resource;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URL;
+import com.ly.train.flower.logging.Logger;
+import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
  */
 public class UrlResource extends AbstractResource {
-
+  private static final Logger logger = LoggerFactory.getLogger(UrlResource.class);
 
   public UrlResource(URL url) {
     super(url);
   }
 
+  @Override
+  public InputStream getInputStream() {
+    try {
+      return new FileInputStream(getPath());
+    } catch (FileNotFoundException e) {
+      logger.error("path : " + getPath() + ", name : " + getName(), e);
+    }
+    return null;
+  }
 }

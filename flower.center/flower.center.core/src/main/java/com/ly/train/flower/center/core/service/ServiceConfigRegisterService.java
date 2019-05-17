@@ -16,7 +16,7 @@
 /**
  * 
  */
-package com.ly.train.flower.center.service;
+package com.ly.train.flower.center.core.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import com.ly.train.flower.center.core.store.ServiceConfigStore;
@@ -29,18 +29,15 @@ import com.ly.train.flower.common.service.container.ServiceContext;
  * @author leeyazhou
  * 
  */
-@FlowerService(timeout = 1000)
-public class ServiceConfigListService implements Service<ServiceConfig, ServiceConfig> {
-
+@FlowerService
+public class ServiceConfigRegisterService implements Service<ServiceConfig, Boolean> {
   @Autowired
   protected ServiceConfigStore serviceConfigStore;
 
   @Override
-  public ServiceConfig process(ServiceConfig message, ServiceContext context) throws Throwable {
-    if (message == null) {
-      return null;
-    }
-    return serviceConfigStore.getServiceConfig(message);
+  public Boolean process(ServiceConfig message, ServiceContext context) throws Throwable {
+    serviceConfigStore.addServiceConfig(message);
+    return Boolean.TRUE;
   }
 
 }

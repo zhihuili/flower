@@ -29,6 +29,11 @@
 			</dependency>
 			<dependency>
 				<groupId>com.ly.train</groupId>
+				<artifactId>flower.center.core</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ly.train</groupId>
 				<artifactId>flower.center.impl</artifactId>
 				<version>${revision}</version>
 			</dependency>

@@ -16,7 +16,7 @@
 /**
  * 
  */
-package com.ly.train.flower.center.service;
+package com.ly.train.flower.center.core.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import com.ly.train.flower.center.core.store.ServiceInfoStore;

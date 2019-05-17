@@ -34,12 +34,7 @@
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
-            <artifactId>flower.center.api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.ly.train</groupId>
-            <artifactId>flower.registry.redis</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <artifactId>flower.center.core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
@@ -60,6 +55,10 @@
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-stream_2.12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>

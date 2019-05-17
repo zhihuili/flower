@@ -15,13 +15,13 @@
  */
 package com.ly.train.flower.common.io.resource;
 
+import java.io.IOException;
 import java.net.URL;
 
 /**
  * @author leeyazhou
  */
-public class AbstractResource implements Resource {
-
+public abstract class AbstractResource implements Resource {
   private URL url;
 
   /**
@@ -83,6 +83,9 @@ public class AbstractResource implements Resource {
     return url;
   }
 
+  @Override
+  public void close() throws IOException {
 
+  }
 
 }

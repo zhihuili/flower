@@ -15,12 +15,14 @@
  */
 package com.ly.train.flower.common.io.resource;
 
+import java.io.Closeable;
+import java.io.InputStream;
 import java.net.URL;
 
 /**
  * @author leeyazhou
  */
-public interface Resource {
+public interface Resource extends Closeable {
 
 
   URL getURL();
@@ -30,4 +32,6 @@ public interface Resource {
   String getPath();
 
   String getName();
+
+  InputStream getInputStream();
 }
