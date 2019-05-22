@@ -1,4 +1,4 @@
-# 反应式微服务框架Flower
+# <img src="docs/img/flowerlogo.png" height="50"/>反应式微服务框架Flower
 
 ![Build Status](https://travis-ci.org/zhihuili/flower.svg?branch=master)
 [![codecov](https://codecov.io/gh/zhihuili/flower/branch/master/graph/badge.svg)](https://codecov.io/gh/zhihuili/flower)
