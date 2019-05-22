@@ -31,6 +31,7 @@ import com.ly.train.flower.common.service.container.ServiceFlow;
 public class CondtionServiceSample extends TestBase {
 
   private String flowName = "conditionSample";
+
   @Test
   public void main() throws Exception {
     buildServiceEnv(flowerFactory);
