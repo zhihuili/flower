@@ -18,12 +18,21 @@ Flower是一个构建在Akka上的反应式微服务框架，开发者只需要�
 
 **Flower框架使得开发者无需关注反应式编程细节，即可得到一个反应式系统。**
 
+## 快速上手
 
----
-* [Flower反应式编程Quick Start](/docs/quick_start.md)
+5分钟开发一个反应式应用，[Flower反应式编程快速上手](/docs/quick_start.md)
+
+## 文档
+
 * [Flower应用指南](/docs/program_guide.md)
 * [Flower分布式开发](/docs/distribution_design.md)
 * [Flower框架设计](/docs/design.md)
-* [Flower贡献](CONTRIBUTING.md)
-* [Apache License 2.0](https://github.com/zhihuili/flower/blob/master/LICENSE.txt)
+
+## 参与开发
+
+欢迎你参与到Flower的开发中，[如何参与](CONTRIBUTING.md)?
+
+## License
+
+Flower is released under the [Apache License 2.0](https://github.com/zhihuili/flower/blob/master/LICENSE.txt)
 
