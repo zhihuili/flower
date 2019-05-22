@@ -111,9 +111,8 @@ public class ServiceActor extends AbstractFlowerActor {
         web.complete();
       }
 
-      Exception e2 =
-          new ServiceException("invoke service " + serviceContext.getCurrentServiceName() + " : " + service
-              + "\r\n, param : " + param, e);
+      Exception e2 = new ServiceException(
+          "invoke service " + serviceContext.getCurrentServiceName() + " : " + service + "\r\n, param : " + param, e);
       if (serviceContext.isSync()) {
         handleSyncResult(serviceContext, ExceptionUtil.getErrorMessage(e2), true);
       } else {
@@ -191,20 +190,34 @@ public class ServiceActor extends AbstractFlowerActor {
     ServiceContextUtil.cleanServiceContext(serviceContext);
     for (RefType refType : refTypes) {
       // condition fork for one-service to multi-service
-      if (refType.getMessageType().isInstance(result)) {
-        if (!(result instanceof Condition) || !(((Condition) result).getCondition() instanceof String)
-            || StringUtil.stringInStrings(refType.getServiceName(), ((Condition) result).getCondition().toString())) {
-          FlowMessage resultMessage = new FlowMessage();
-          resultMessage.setMessage(Codec.Hessian.encode(result));
-          resultMessage.setMessageType(result.getClass().getName());
-          resultMessage.setCodec(Codec.Hessian.getCode());
-          resultMessage.setTransactionId(oldTransactionId);
-
-          ServiceContext context = serviceContext.newInstance();
-          context.setFlowMessage(resultMessage);
-          context.setCurrentServiceName(refType.getServiceName());
-          refType.getActorWrapper().tell(context, getSelf());
+      if (!refType.getMessageType().isInstance(result)) {
+        logger.warn("result {} is not compatible for {}, so discard it. currentService : {}, nextService : {}",
+            refType.getMessageType(), serviceContext.getCurrentServiceName(), refType.getServiceName());
+        continue;
+      }
+      boolean flag = true;
+      // check
+      if (Condition.class.isInstance(result)) {
+        Object con = ((Condition) result).getCondition();
+        if (String.class.isInstance(con)) {
+          if (StringUtil.stringNotInStrings(refType.getServiceName(), con.toString())) {
+            flag = false;
+            // TODO how to log it
+          }
         }
+      }
+
+      if (flag) {
+        FlowMessage resultMessage = new FlowMessage();
+        resultMessage.setMessage(Codec.Hessian.encode(result));
+        resultMessage.setMessageType(result.getClass().getName());
+        resultMessage.setCodec(Codec.Hessian.getCode());
+        resultMessage.setTransactionId(oldTransactionId);
+
+        ServiceContext context = serviceContext.newInstance();
+        context.setFlowMessage(resultMessage);
+        context.setCurrentServiceName(refType.getServiceName());
+        refType.getActorWrapper().tell(context, getSelf());
       }
     }
   }
@@ -220,9 +233,8 @@ public class ServiceActor extends AbstractFlowerActor {
       ServiceMeta serviceMeta = flowerFactory.getServiceFactory().getServiceLoader().loadServiceMeta(serviceName);
       this.paramType = serviceMeta.getParamType();
       if (service instanceof Aggregate) {
-        int num =
-            flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
-                .getServiceConfig(serviceName).getJointSourceNumber().get();
+        int num = flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
+            .getServiceConfig(serviceName).getJointSourceNumber().get();
         ((AggregateService) service).setSourceNumber(num);
       }
     }
@@ -278,9 +290,8 @@ public class ServiceActor extends AbstractFlowerActor {
     Set<RefType> nextServiceActors = nextServiceActorCache.get(cacheKey);
     if (nextServiceActors == null && StringUtil.isNotBlank(serviceContext.getFlowName())) {
       nextServiceActors = new HashSet<>();
-      Set<ServiceConfig> serviceConfigs =
-          flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
-              .getNextFlow(serviceContext.getCurrentServiceName());
+      Set<ServiceConfig> serviceConfigs = flowerFactory.getServiceFactory()
+          .getOrCreateServiceFlow(serviceContext.getFlowName()).getNextFlow(serviceContext.getCurrentServiceName());
       if (serviceConfigs != null) {
         for (ServiceConfig serviceConfig : serviceConfigs) {
           flowerFactory.getServiceFactory().loadServiceMeta(serviceConfig);// 内部对serviceConfig的数据进行填充
