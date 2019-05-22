@@ -21,7 +21,7 @@
     <parent>
         <groupId>com.ly.train</groupId>
         <artifactId>flower.center</artifactId>
-        <version>0.1.3</version>
+        <version>0.1.4</version>
     </parent>
     <artifactId>flower.center.api</artifactId>
 
