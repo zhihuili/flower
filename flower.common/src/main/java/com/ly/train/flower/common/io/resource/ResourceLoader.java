@@ -71,7 +71,7 @@ public class ResourceLoader {
           String file = URLDecoder.decode(url.getFile(), "UTF-8");
           File dir = new File(file);
           if (dir.isDirectory()) {
-            parseClassFile(dir, rootPath, resources);
+            parseFile(dir, rootPath, resources);
           } else {
             throw new IllegalArgumentException("file must be directory, url : " + url);
           }
@@ -85,15 +85,16 @@ public class ResourceLoader {
     return resources.toArray(new Resource[resources.size()]);
   }
 
-  protected void parseClassFile(File dir, String packageName, Set<Resource> resources) throws MalformedURLException {
+  protected void parseFile(File dir, String packageName, Set<Resource> resources) throws MalformedURLException {
     if (dir.isDirectory()) {
       File[] files = dir.listFiles();
       for (File file : files) {
-        parseClassFile(file, packageName, resources);
+        parseFile(file, packageName, resources);
       }
     } else if (dir.getName().endsWith(subfix)) {
       UrlResource resource = new UrlResource(dir.toURI().toURL());
       resource.setPath(dir.getPath());
+      resource.setName(dir.getName());
       resources.add(resource);
     }
   }
