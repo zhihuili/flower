@@ -111,13 +111,13 @@ public class ServiceActor extends AbstractFlowerActor {
         web.complete();
       }
 
-      Exception e2 =
-          new ServiceException("invoke service " + serviceContext.getCurrentServiceName() + " : " + service
-              + "\r\n, param : " + param, e);
+      Exception e2 = new ServiceException(
+          "invoke service " + serviceContext.getCurrentServiceName() + " : " + service + "\r\n, param : " + param, e);
       if (serviceContext.isSync()) {
         handleSyncResult(serviceContext, ExceptionUtil.getErrorMessage(e2), true);
+      } else {
+        throw e2;
       }
-      throw e2;
     }
 
     Set<RefType> nextActorRef = getNextServiceActors(serviceContext);
@@ -146,7 +146,6 @@ public class ServiceActor extends AbstractFlowerActor {
    * @param result 消息内容
    */
   private void handleSyncResult(ServiceContext serviceContext, Object result, boolean error) {
-    logger.info("处理返回消息");
     CacheManager cacheManager = CacheManager.get(serviceActorCachePrefix + serviceContext.getFlowName());
     Cache<ActorRef> cache = cacheManager.getCache(serviceContext.getId());
     if (cache == null) {
@@ -157,13 +156,17 @@ public class ServiceActor extends AbstractFlowerActor {
     if (actor != null) {
       FlowMessage resultMessage = new FlowMessage();
       Codec codec = Codec.Hessian;
+      resultMessage.setCodec(codec.getCode());
+      if (result != null) {
+        resultMessage.setMessageType(result.getClass().getName());
+      }
       if (error) {
         resultMessage.setException((String) result);
       } else {
         resultMessage.setMessage(codec.encode(result));
       }
-      resultMessage.setCodec(codec.getCode());
-      resultMessage.setMessageType(result.getClass().getName());
+
+
       actor.tell(resultMessage, getSelf());
       cacheManager.invalidate(serviceContext.getId());
     }
@@ -187,20 +190,34 @@ public class ServiceActor extends AbstractFlowerActor {
     ServiceContextUtil.cleanServiceContext(serviceContext);
     for (RefType refType : refTypes) {
       // condition fork for one-service to multi-service
-      if (refType.getMessageType().isInstance(result)) {
-        if (!(result instanceof Condition) || !(((Condition) result).getCondition() instanceof String)
-            || StringUtil.stringInStrings(refType.getServiceName(), ((Condition) result).getCondition().toString())) {
-          FlowMessage resultMessage = new FlowMessage();
-          resultMessage.setMessage(Codec.Hessian.encode(result));
-          resultMessage.setMessageType(result.getClass().getName());
-          resultMessage.setCodec(Codec.Hessian.getCode());
-          resultMessage.setTransactionId(oldTransactionId);
-
-          ServiceContext context = serviceContext.newInstance();
-          context.setFlowMessage(resultMessage);
-          context.setCurrentServiceName(refType.getServiceName());
-          refType.getActorWrapper().tell(context, getSelf());
+      if (!refType.getMessageType().isInstance(result)) {
+        logger.warn("result {} is not compatible for {}, so discard it. currentService : {}, nextService : {}",
+            refType.getMessageType(), serviceContext.getCurrentServiceName(), refType.getServiceName());
+        continue;
+      }
+      boolean flag = true;
+      // check
+      if (Condition.class.isInstance(result)) {
+        Object con = ((Condition) result).getCondition();
+        if (String.class.isInstance(con)) {
+          if (StringUtil.stringNotInStrings(refType.getServiceName(), con.toString())) {
+            flag = false;
+            // TODO how to log it
+          }
         }
+      }
+
+      if (flag) {
+        FlowMessage resultMessage = new FlowMessage();
+        resultMessage.setMessage(Codec.Hessian.encode(result));
+        resultMessage.setMessageType(result.getClass().getName());
+        resultMessage.setCodec(Codec.Hessian.getCode());
+        resultMessage.setTransactionId(oldTransactionId);
+
+        ServiceContext context = serviceContext.newInstance();
+        context.setFlowMessage(resultMessage);
+        context.setCurrentServiceName(refType.getServiceName());
+        refType.getActorWrapper().tell(context, getSelf());
       }
     }
   }
@@ -216,9 +233,8 @@ public class ServiceActor extends AbstractFlowerActor {
       ServiceMeta serviceMeta = flowerFactory.getServiceFactory().getServiceLoader().loadServiceMeta(serviceName);
       this.paramType = serviceMeta.getParamType();
       if (service instanceof Aggregate) {
-        int num =
-            flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
-                .getServiceConfig(serviceName).getJointSourceNumber().get();
+        int num = flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
+            .getServiceConfig(serviceName).getJointSourceNumber().get();
         ((AggregateService) service).setSourceNumber(num);
       }
     }
@@ -274,9 +290,8 @@ public class ServiceActor extends AbstractFlowerActor {
     Set<RefType> nextServiceActors = nextServiceActorCache.get(cacheKey);
     if (nextServiceActors == null && StringUtil.isNotBlank(serviceContext.getFlowName())) {
       nextServiceActors = new HashSet<>();
-      Set<ServiceConfig> serviceConfigs =
-          flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
-              .getNextFlow(serviceContext.getCurrentServiceName());
+      Set<ServiceConfig> serviceConfigs = flowerFactory.getServiceFactory()
+          .getOrCreateServiceFlow(serviceContext.getFlowName()).getNextFlow(serviceContext.getCurrentServiceName());
       if (serviceConfigs != null) {
         for (ServiceConfig serviceConfig : serviceConfigs) {
           flowerFactory.getServiceFactory().loadServiceMeta(serviceConfig);// 内部对serviceConfig的数据进行填充
@@ -290,7 +305,6 @@ public class ServiceActor extends AbstractFlowerActor {
         nextServiceActorCache.put(cacheKey, nextServiceActors);
       }
     }
-
     return nextServiceActors;
   }
 

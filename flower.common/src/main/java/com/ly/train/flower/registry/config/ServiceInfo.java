@@ -107,8 +107,12 @@ public class ServiceInfo implements Serializable {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("ServiceInfo [className=");
+    builder.append("ServiceInfo [application=");
+    builder.append(application);
+    builder.append(", className=");
     builder.append(className);
+    builder.append(", serviceName=");
+    builder.append(serviceName);
     builder.append(", address=");
     builder.append(address);
     builder.append(", createTime=");

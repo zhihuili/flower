@@ -15,7 +15,9 @@
  */
 package com.ly.train.flower.common.service.message;
 
-public interface Condition {
+import java.io.Serializable;
+
+public interface Condition extends Serializable {
 
   void setCondition(Object condition);
 

@@ -40,6 +40,18 @@ public class ResourceLoaderTest {
   }
 
   @Test
+  public void testGetResources2() {
+    ResourceLoader resourceLoader = new ResourceLoader("META-INF", "");
+    Resource[] a = resourceLoader.getResources();
+    System.out.println(a);
+    // for (Resource r : a) {
+    // System.out.println(r.getURL());
+    // List<Pair<String, String>> re = FileUtil.readService(r);
+    // System.out.println(re);
+    // }
+  }
+
+  @Test
   public void testGetResourcesCLass() {
     ResourceLoader resourceLoader = new ResourceLoader("com.ly", ".class");
     Resource[] a = resourceLoader.getResources();

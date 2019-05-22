@@ -24,6 +24,26 @@
 			</dependency>
 			<dependency>
 				<groupId>com.ly.train</groupId>
+				<artifactId>flower.center.api</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ly.train</groupId>
+				<artifactId>flower.center.core</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ly.train</groupId>
+				<artifactId>flower.center.impl</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ly.train</groupId>
+				<artifactId>flower.core</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ly.train</groupId>
 				<artifactId>flower.sample</artifactId>
 				<version>${revision}</version>
 			</dependency>

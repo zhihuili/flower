@@ -137,6 +137,18 @@ public final class StringUtil {
     return false;
   }
 
+  public static boolean stringNotInStrings(String s, String ss) {
+    String[] sa = ss.split(",");
+    if (sa != null && sa.length > 0) {
+      for (String se : sa) {
+        if (se.equals(s)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   public static String uuid() {
     return UUID.randomUUID().toString().replace("-", "");
   }

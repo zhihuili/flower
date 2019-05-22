@@ -18,10 +18,12 @@
  */
 package com.ly.train.flower.common.sample.condition.model;
 
+import java.io.Serializable;
+
 /**
  * @author leeyazhou
  * 
  */
-public interface Message {
+public interface Message extends Serializable {
 
 }

@@ -20,7 +20,6 @@ package com.ly.train.flower.common.service.container;
 
 import java.util.Set;
 import com.ly.train.flower.common.akka.ActorFactory;
-import com.ly.train.flower.common.akka.ServiceActorFactory;
 import com.ly.train.flower.common.akka.ServiceFacade;
 import com.ly.train.flower.common.exception.handler.ExceptionHandler;
 import com.ly.train.flower.common.service.Service;
@@ -49,8 +48,19 @@ public interface FlowerFactory extends Lifecycle {
    */
   Set<Registry> getRegistry();
 
+  /**
+   * 注册异常处理器
+   * 
+   * @param exceptionClass exception Class
+   * @param exceptionHandler {@link ExceptionHandler}
+   */
   void registerExceptionHandler(Class<? extends Throwable> exceptionClass, ExceptionHandler exceptionHandler);
 
+  /**
+   * 设置默认异常处理器
+   * 
+   * @param exceptionHandler {@link ExceptionHandler}
+   */
   void setDefaultExceptionHandler(ExceptionHandler exceptionHandler);
 
   /**
@@ -67,6 +77,11 @@ public interface FlowerFactory extends Lifecycle {
    */
   ServiceFactory getServiceFactory();
 
+  /**
+   * service facade
+   * 
+   * @return {@link ServiceFacade}
+   */
   ServiceFacade getServiceFacade();
 
 }

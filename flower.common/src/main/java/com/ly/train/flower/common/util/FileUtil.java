@@ -38,16 +38,8 @@ public class FileUtil {
     BufferedReader br = null;
     String line;
     List<Pair<String, String>> flow = new ArrayList<>();
-    InputStream inputStream = null;
-    JarFile jarFile = null;
+    InputStream inputStream = resource.getInputStream();
     try {
-      if (resource.isJarResource()) {
-        jarFile = new JarFile(resource.getPath());
-        ZipEntry zipEntry = jarFile.getEntry(resource.getName());
-        inputStream = jarFile.getInputStream(zipEntry);
-      } else {
-        inputStream = new FileInputStream(resource.getPath());
-      }
       fr = new InputStreamReader(inputStream, Constant.ENCODING_UTF_8);
       br = new BufferedReader(fr);
       while ((line = br.readLine()) != null) {
@@ -66,7 +58,6 @@ public class FileUtil {
       logger.error("filePath : " + resource, e);
     } finally {
       close(br, fr);
-      IOUtil.close(jarFile);
       IOUtil.close(inputStream);
     }
     return flow;

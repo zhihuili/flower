@@ -83,8 +83,12 @@ public class ActorSelectionTest {
     serviceFlow.buildFlow(Arrays.asList(UserServiceC1.class, UserServiceC2.class), UserServiceD.class);
     serviceFlow.build();
 
-    Object ret = flowerFactory1.getServiceFacade().syncCallService(flowName, message);
-    System.out.println("返回结果：" + ret);
+    try {
+      Object ret = flowerFactory1.getServiceFacade().syncCallService(flowName, message);
+      System.out.println("返回结果：" + ret);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   @Test

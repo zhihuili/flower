@@ -25,6 +25,7 @@ public class ServiceA implements Service<String, Message> {
 
   @Override
   public Message process(String message, ServiceContext context) {
+    System.out.println(getClass().getSimpleName() + " 进行处理 ： " + message);
     if ("b".equals(message)) {
       return new MessageB();
     }

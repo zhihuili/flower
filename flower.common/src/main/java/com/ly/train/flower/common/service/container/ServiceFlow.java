@@ -370,6 +370,7 @@ public final class ServiceFlow {
       serviceConfig.setIndex(index.getAndIncrement());
       serviceConfig.setServiceMeta(serviceFactory.loadServiceMeta(serviceConfig));
       serviceConfigsCache.putIfAbsent(serviceName, serviceConfig);
+      serviceConfig = serviceConfigsCache.get(serviceName);
     }
     return serviceConfig;
   }

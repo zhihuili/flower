@@ -41,7 +41,6 @@ import com.ly.train.flower.registry.config.ServiceInfo;
 public class SimpleRegistryTest extends TestBase {
 
   @Test
-  @Ignore
   public void testRegister() throws Exception {
 
     URL url = new URL("flower", "127.0.0.1", 8096);
@@ -51,18 +50,18 @@ public class SimpleRegistryTest extends TestBase {
     ((SimpleRegistry) registry).setFlowerFactory(flowerFactory);
 
     ServiceInfo serviceInfo = new ServiceInfo();
-    serviceInfo.setApplication("commonservice");
+    serviceInfo.setApplication(flowerFactory.getFlowerConfig().getName());
     serviceInfo.setClassName(UserServiceA.class.getName());
-    serviceInfo.setAddress(new URL("", "127.0.0.1", 12001));
+    serviceInfo.setServiceName(UserServiceA.class.getName());
+    serviceInfo.setAddress(flowerFactory.getFlowerConfig().toURL());
     serviceInfo.setCreateTime(new Date());
     registry.register(serviceInfo);
-    Thread.sleep(20000);
+    Thread.sleep(2000);
   }
 
   @Test
-  @Ignore
   public void testGetProviders() throws Exception {
-    URL url = new URL("http", "127.0.0.1", 8080);
+    URL url = new URL("http", "127.0.0.1", 8096);
     url.addParam("application", "FlowerCenter");
     RegistryFactory factory = new SimpleRegistryFactory();
     Registry registry = factory.createRegistry(url);
@@ -70,8 +69,8 @@ public class SimpleRegistryTest extends TestBase {
 
 
     ServiceInfo serviceInfo = new ServiceInfo();
+    serviceInfo.setApplication(flowerFactory.getFlowerConfig().getName());
     serviceInfo.setClassName(UserServiceA.class.getName());
-    serviceInfo.setAddress(new URL("", "127.0.0.1", 12001));
     serviceInfo.setCreateTime(new Date());
     List<ServiceInfo> serviceInfos = registry.getProvider(serviceInfo);
     System.out.println("请求结果:" + serviceInfos);

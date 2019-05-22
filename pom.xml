@@ -44,6 +44,8 @@
         <module>flower.container</module>
         <module>flower.test</module>
         <module>flower.all</module>
+        <module>flower.filter</module>
+        <module>flower.core</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:${github.org}/${github.repo}.git</connection>

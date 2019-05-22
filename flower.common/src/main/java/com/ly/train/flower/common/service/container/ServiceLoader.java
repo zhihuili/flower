@@ -75,7 +75,7 @@ public class ServiceLoader extends AbstractInit {
     // this.loadInnerFlowService();
     try {
       this.loadServiceAndFlow();
-    } catch (IOException e) {
+    } catch (Exception e) {
       logger.error("", e);
     }
   }
@@ -101,7 +101,7 @@ public class ServiceLoader extends AbstractInit {
             }
             final String serviceClassName = serviceMeta.getServiceClassName();
             Class<?> serviceClass = classLoader.loadClass(serviceClassName);
-            String param = loadServiceMeta(serviceName).getConfig(1);
+            String param = loadServiceMeta(serviceName).getConfig(0);
             if (param != null) {
               Constructor<?> constructor = serviceClass.getConstructor(String.class);
               service = (FlowerService) constructor.newInstance(param);
@@ -132,6 +132,7 @@ public class ServiceLoader extends AbstractInit {
 
   public boolean registerServiceType(String serviceName, String serviceClassName) {
     Class<?> serviceClass = null;
+    final String tempClassName = serviceClassName;
     try {
       String[] tt = serviceClassName.trim().split(";");
       if (tt.length > 1) {
@@ -143,7 +144,7 @@ public class ServiceLoader extends AbstractInit {
       logger.error(msg, e);
       return false;
     }
-    return registerServiceType(serviceName, serviceClass, serviceClassName);
+    return registerServiceType(serviceName, serviceClass, tempClassName);
   }
 
   public boolean registerServiceType(String serviceName, Class<?> serviceClass) {
