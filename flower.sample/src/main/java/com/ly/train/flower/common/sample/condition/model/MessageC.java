@@ -16,6 +16,10 @@
 package com.ly.train.flower.common.sample.condition.model;
 
 public class MessageC implements Message {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
   private int i;
   private String s;
 

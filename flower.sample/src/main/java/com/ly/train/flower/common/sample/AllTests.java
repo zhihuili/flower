@@ -27,7 +27,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses({com.ly.train.flower.common.sample.condition.Sample.class,
+@SuiteClasses({com.ly.train.flower.common.sample.condition.CondtionServiceSample.class,
     com.ly.train.flower.common.sample.programflow.Sample.class,
     com.ly.train.flower.common.sample.supervisor.Sample.class,
     com.ly.train.flower.common.sample.supervisor.BatchSample.class,

@@ -19,8 +19,10 @@ import com.ly.train.flower.common.service.message.Condition;
 
 public class MessageX implements Condition {
 
+  private static final long serialVersionUID = 1L;
   private Object condition;
 
+  @Override
   public void setCondition(Object src) {
     this.condition = src;
   }

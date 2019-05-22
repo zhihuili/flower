@@ -28,12 +28,14 @@ import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 
-public class Sample extends TestBase {
+public class CondtionServiceSample extends TestBase {
 
+  private String flowName = "conditionSample";
   @Test
   public void main() throws Exception {
     buildServiceEnv(flowerFactory);
-    flowerFactory.getServiceFacade().asyncCallService("sample", "c");
+    flowerFactory.getServiceFacade().asyncCallService(flowName, "c");
+    Thread.sleep(3000);
   }
 
   public void buildServiceEnv(FlowerFactory flowerFactory) {
@@ -48,7 +50,7 @@ public class Sample extends TestBase {
     serviceFactory.registerService("serviceCondition",
         "com.ly.train.flower.common.service.impl.ConditionService;serviceF,serviceG");
 
-    ServiceFlow serviceFlow = ServiceFlow.getOrCreate("sample", serviceFactory);
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
 
     serviceFlow.buildFlow("serviceA", "serviceB");
     serviceFlow.buildFlow("serviceA", "serviceC");
@@ -57,7 +59,7 @@ public class Sample extends TestBase {
     serviceFlow.buildFlow("serviceE", "serviceCondition");
     serviceFlow.buildFlow("serviceCondition", "serviceF");
     serviceFlow.buildFlow("serviceCondition", "serviceG");
-
+    serviceFlow.build();
   }
 
 }
