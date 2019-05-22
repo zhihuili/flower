@@ -32,6 +32,16 @@ Flower是一个构建在Akka上的反应式微服务框架，开发者只需要�
 
 欢迎你参与到Flower的开发中，[如何参与](CONTRIBUTING.md)?
 
+## [版本号](https://semver.org/lang/zh-CN/)
+
+版本格式：主版本号.次版本号.修订号，版本号递增规则如下：
+
++ 主版本号：当你做了不兼容的 API 修改，
++ 次版本号：当你做了向下兼容的功能性新增，
++ 修订号：当你做了向下兼容的问题修正。
+
+先行版本号及版本编译元数据可以加到“主版本号.次版本号.修订号”的后面，作为延伸。
+
 ## License
 
 Flower is released under the [Apache License 2.0](https://github.com/zhihuili/flower/blob/master/LICENSE.txt)
