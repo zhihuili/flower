@@ -17,6 +17,7 @@ package com.ly.train.flower.common.akka.actor;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -111,33 +112,21 @@ public class ServiceActor extends AbstractFlowerActor {
         web.complete();
       }
 
-      Exception e2 =
-          new ServiceException("invoke service " + serviceContext.getCurrentServiceName() + " : " + service
-              + "\r\n, param : " + param, e);
+      Exception e2 = new ServiceException(
+          "invoke service " + serviceContext.getCurrentServiceName() + " : " + service + "\r\n, param : " + param, e);
       if (serviceContext.isSync()) {
         handleSyncResult(serviceContext, ExceptionUtil.getErrorMessage(e2), true);
       } else {
         throw e2;
       }
     }
-
-    Set<RefType> nextActorRef = getNextServiceActors(serviceContext);
-    if (serviceContext.isSync() && CollectionUtil.isEmpty(nextActorRef)) {
-      handleSyncResult(serviceContext, result, false);
-      return;
+    if (result != null && result instanceof CompletableFuture) {
+      ((CompletableFuture) result).whenComplete((r, e) -> {
+        handleNextServices(serviceContext, r, flowMessage.getTransactionId());
+      });
+    } else {
+      handleNextServices(serviceContext, result, flowMessage.getTransactionId());
     }
-
-    Web web = serviceContext.getWeb();
-    if (web != null) {
-      if (service instanceof Flush) {
-        web.flush();
-      }
-      if (service instanceof HttpComplete || service instanceof Complete) {
-        web.complete();
-      }
-    }
-
-    handleNextServices(serviceContext, result, flowMessage.getTransactionId());
   }
 
   /**
@@ -181,6 +170,22 @@ public class ServiceActor extends AbstractFlowerActor {
    * @param oldTransactionId oldTransactionId 聚合服务时会用到
    */
   private void handleNextServices(ServiceContext serviceContext, Object result, final String oldTransactionId) {
+    Set<RefType> nextActorRef = getNextServiceActors(serviceContext);
+    if (serviceContext.isSync() && CollectionUtil.isEmpty(nextActorRef)) {
+      handleSyncResult(serviceContext, result, false);
+      return;
+    }
+
+    Web web = serviceContext.getWeb();
+    if (web != null) {
+      if (service instanceof Flush) {
+        web.flush();
+      }
+      if (service instanceof HttpComplete || service instanceof Complete) {
+        web.complete();
+      }
+    }
+
     if (result == null) {// for joint service
       return;
     }
@@ -234,9 +239,8 @@ public class ServiceActor extends AbstractFlowerActor {
       ServiceMeta serviceMeta = flowerFactory.getServiceFactory().getServiceLoader().loadServiceMeta(serviceName);
       this.paramType = serviceMeta.getParamType();
       if (service instanceof Aggregate) {
-        int num =
-            flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
-                .getServiceConfig(serviceName).getJointSourceNumber().get();
+        int num = flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
+            .getServiceConfig(serviceName).getJointSourceNumber().get();
         ((AggregateService) service).setSourceNumber(num);
       }
     }
@@ -292,9 +296,8 @@ public class ServiceActor extends AbstractFlowerActor {
     Set<RefType> nextServiceActors = nextServiceActorCache.get(cacheKey);
     if (nextServiceActors == null && StringUtil.isNotBlank(serviceContext.getFlowName())) {
       nextServiceActors = new HashSet<>();
-      Set<ServiceConfig> serviceConfigs =
-          flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
-              .getNextFlow(serviceContext.getCurrentServiceName());
+      Set<ServiceConfig> serviceConfigs = flowerFactory.getServiceFactory()
+          .getOrCreateServiceFlow(serviceContext.getFlowName()).getNextFlow(serviceContext.getCurrentServiceName());
       if (serviceConfigs != null) {
         for (ServiceConfig serviceConfig : serviceConfigs) {
           flowerFactory.getServiceFactory().loadServiceMeta(serviceConfig);// 内部对serviceConfig的数据进行填充
