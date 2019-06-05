@@ -239,8 +239,9 @@ public class ServiceActor extends AbstractFlowerActor {
       ServiceMeta serviceMeta = flowerFactory.getServiceFactory().getServiceLoader().loadServiceMeta(serviceName);
       this.paramType = serviceMeta.getParamType();
       if (service instanceof Aggregate) {
-        int num = flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
-            .getServiceConfig(serviceName).getJointSourceNumber().get();
+        int num =
+            flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
+                .getServiceConfig(serviceName).getJointSourceNumber().get();
         ((AggregateService) service).setSourceNumber(num);
       }
     }
@@ -296,8 +297,9 @@ public class ServiceActor extends AbstractFlowerActor {
     Set<RefType> nextServiceActors = nextServiceActorCache.get(cacheKey);
     if (nextServiceActors == null && StringUtil.isNotBlank(serviceContext.getFlowName())) {
       nextServiceActors = new HashSet<>();
-      Set<ServiceConfig> serviceConfigs = flowerFactory.getServiceFactory()
-          .getOrCreateServiceFlow(serviceContext.getFlowName()).getNextFlow(serviceContext.getCurrentServiceName());
+      Set<ServiceConfig> serviceConfigs =
+          flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
+              .getNextFlow(serviceContext.getCurrentServiceName());
       if (serviceConfigs != null) {
         for (ServiceConfig serviceConfig : serviceConfigs) {
           flowerFactory.getServiceFactory().loadServiceMeta(serviceConfig);// 内部对serviceConfig的数据进行填充
