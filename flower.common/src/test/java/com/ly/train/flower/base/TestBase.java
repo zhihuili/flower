@@ -60,7 +60,8 @@ public class TestBase {
   }
 
   @AfterClass
-  public static void stop() {
+  public static void stop() throws InterruptedException {
+    Thread.sleep(2000);
     flowerFactory.stop();
   }
 }

@@ -17,8 +17,6 @@ package com.ly.train.flower.common.service.container;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -30,15 +28,14 @@ import com.ly.train.flower.common.exception.ServiceNotFoundException;
 import com.ly.train.flower.common.io.resource.Resource;
 import com.ly.train.flower.common.io.resource.ResourceLoader;
 import com.ly.train.flower.common.service.FlowerService;
-import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.impl.AggregateService;
 import com.ly.train.flower.common.service.impl.ConditionService;
 import com.ly.train.flower.common.service.impl.NothingService;
-import com.ly.train.flower.common.util.ClassUtil;
 import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.FileUtil;
 import com.ly.train.flower.common.util.Pair;
 import com.ly.train.flower.common.util.StringUtil;
+import com.ly.train.flower.common.util.TypeParameterUtil;
 
 public class ServiceLoader extends AbstractInit {
   private static final Logger logger = LoggerFactory.getLogger(ServiceLoader.class);
@@ -56,19 +53,6 @@ public class ServiceLoader extends AbstractInit {
     this.serviceFactory = serviceFactory;
     this.classLoader = this.getClass().getClassLoader();
   }
-
-  // @SuppressWarnings("unused")
-  // private static ServiceLoader getInstance() {
-  // if (serviceLoader == null) {
-  // synchronized (logger) {
-  // if (serviceLoader == null) {
-  // serviceLoader = new ServiceLoader();
-  // serviceLoader.init();
-  // }
-  // }
-  // }
-  // return serviceLoader;
-  // }
 
   @Override
   protected void doInit() {
@@ -167,7 +151,7 @@ public class ServiceLoader extends AbstractInit {
     serviceMeta.setInnerAggregateService(Constant.AGGREGATE_SERVICE_NAME.equals(serviceClass.getName()));
     serviceMeta.setTimeout(FlowerServiceUtil.getTimeout(serviceClass));
     try {
-      Pair<Class<?>, Class<?>> params = getServiceClassParam(serviceClass);
+      Pair<Class<?>, Class<?>> params = TypeParameterUtil.getServiceClassParam(serviceClass);
       serviceMeta.setParamType(params.getKey().getName());
       serviceMeta.setResultType(params.getValue().getName());
 
@@ -187,44 +171,6 @@ public class ServiceLoader extends AbstractInit {
     serviceMetaCache.put(serviceName, serviceMeta);
   }
 
-  private Pair<Class<?>, Class<?>> getServiceClassParam(Class<?> serviceClass) {
-    Type[] paramTypes = null;
-    Type[] types = serviceClass.getGenericInterfaces();
-    if (types != null) {
-      for (Type type : types) {
-        if (type instanceof ParameterizedType) {
-          Class<?> a = ClassUtil.forName(((ParameterizedType) type).getRawType().getTypeName());
-          if (Service.class.isAssignableFrom(a)) {
-            paramTypes = ((ParameterizedType) type).getActualTypeArguments();
-            break;
-          }
-        }
-      }
-    }
-    if (paramTypes == null) {
-      Type type = serviceClass.getGenericSuperclass();
-      if (type instanceof ParameterizedType) {
-        paramTypes = ((ParameterizedType) type).getActualTypeArguments();
-      }
-    }
-
-    Class<?> paramType = Object.class;
-    Class<?> returnType = Object.class;
-    if (paramTypes != null) {
-      if (paramTypes[0] instanceof ParameterizedType) {
-        paramType = (Class<?>) ((ParameterizedType) paramTypes[0]).getRawType();
-      } else {
-        paramType = (Class<?>) paramTypes[0];
-      }
-
-      if (paramTypes[1] instanceof ParameterizedType) {
-        returnType = (Class<?>) ((ParameterizedType) paramTypes[1]).getRawType();
-      } else {
-        returnType = (Class<?>) paramTypes[1];
-      }
-    }
-    return new Pair<Class<?>, Class<?>>(paramType, returnType);
-  }
 
   protected void loadInnerFlowService() {
     registerServiceType(AggregateService.class.getSimpleName(), AggregateService.class);

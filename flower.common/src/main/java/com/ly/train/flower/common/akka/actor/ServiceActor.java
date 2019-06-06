@@ -17,6 +17,7 @@ package com.ly.train.flower.common.akka.actor;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -111,33 +112,21 @@ public class ServiceActor extends AbstractFlowerActor {
         web.complete();
       }
 
-      Exception e2 =
-          new ServiceException("invoke service " + serviceContext.getCurrentServiceName() + " : " + service
-              + "\r\n, param : " + param, e);
+      Exception e2 = new ServiceException(
+          "invoke service " + serviceContext.getCurrentServiceName() + " : " + service + "\r\n, param : " + param, e);
       if (serviceContext.isSync()) {
         handleSyncResult(serviceContext, ExceptionUtil.getErrorMessage(e2), true);
       } else {
         throw e2;
       }
     }
-
-    Set<RefType> nextActorRef = getNextServiceActors(serviceContext);
-    if (serviceContext.isSync() && CollectionUtil.isEmpty(nextActorRef)) {
-      handleSyncResult(serviceContext, result, false);
-      return;
+    if (result != null && result instanceof CompletableFuture) {
+      ((CompletableFuture) result).whenComplete((r, e) -> {
+        handleNextServices(serviceContext, r, flowMessage.getTransactionId());
+      });
+    } else {
+      handleNextServices(serviceContext, result, flowMessage.getTransactionId());
     }
-
-    Web web = serviceContext.getWeb();
-    if (web != null) {
-      if (service instanceof Flush) {
-        web.flush();
-      }
-      if (service instanceof HttpComplete || service instanceof Complete) {
-        web.complete();
-      }
-    }
-
-    handleNextServices(serviceContext, result, flowMessage.getTransactionId());
   }
 
   /**
@@ -181,6 +170,22 @@ public class ServiceActor extends AbstractFlowerActor {
    * @param oldTransactionId oldTransactionId 聚合服务时会用到
    */
   private void handleNextServices(ServiceContext serviceContext, Object result, final String oldTransactionId) {
+    Set<RefType> nextActorRef = getNextServiceActors(serviceContext);
+    if (serviceContext.isSync() && CollectionUtil.isEmpty(nextActorRef)) {
+      handleSyncResult(serviceContext, result, false);
+      return;
+    }
+
+    Web web = serviceContext.getWeb();
+    if (web != null) {
+      if (service instanceof Flush) {
+        web.flush();
+      }
+      if (service instanceof HttpComplete || service instanceof Complete) {
+        web.complete();
+      }
+    }
+
     if (result == null) {// for joint service
       return;
     }

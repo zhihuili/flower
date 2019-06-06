@@ -168,7 +168,8 @@ public class FlowerBeanRegistryPostProcessor implements BeanDefinitionRegistryPo
     this.applicationContext = applicationContext;
   }
 
-  // protected Class<?> generateControllerClass(BeanDefinitionHolder beanHolder) {
+  // protected Class<?> generateControllerClass(BeanDefinitionHolder beanHolder)
+  // {
   // Class<?> originClass = null;
   // try {
   // originClass =
