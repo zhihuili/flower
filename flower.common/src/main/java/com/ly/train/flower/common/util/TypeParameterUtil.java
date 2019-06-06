@@ -41,8 +41,8 @@ public class TypeParameterUtil {
       }
       paramType = getClassByType(paramTypes[0]);
       returnType = getClassByType(paramTypes[1]);
-      if (returnType.isAssignableFrom(CompletableFuture.class)) {
-        returnType = (Class<?>) ((ParameterizedType) paramTypes[1]).getActualTypeArguments()[0];
+      if (!Object.class.equals(returnType) && returnType.isAssignableFrom(CompletableFuture.class)) {
+        returnType = getClassByType(((ParameterizedType) paramTypes[1]).getActualTypeArguments()[0]);
       }
 
     }
