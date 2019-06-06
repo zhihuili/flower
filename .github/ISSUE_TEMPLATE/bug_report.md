@@ -1,38 +1,31 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: BUG报告
+about: 创建一个BUG报告帮助我们改进
 title: "[BUG]"
 labels: bug
 assignees: ''
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+## BUG详情
+> BUG详情描述
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+## 重现步骤
+重现步骤如下:
+1. ...
+2. ...
+3. ...
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+## 预期效果
+> 清晰准确表达一下预期效果
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+## 截图
+> 截图信息
 
-**Desktop (please complete the following information):**
+## 环境信息
  - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
+ - JDK版本 [e.g. chrome, safari]
  - Version [e.g. 22]
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
-
-**Additional context**
-Add any other context about the problem here.
+## 其他信息
+> 任何可以帮助理解的内容
