@@ -7,7 +7,7 @@
 	<artifactId>flower.bom</artifactId>
 	<packaging>pom</packaging>
 	<properties>
-		<revision>0.1.2</revision>
+		<revision>0.1.4</revision>
 	</properties>
 
 	<dependencyManagement>
@@ -20,6 +20,26 @@
 			<dependency>
 				<groupId>com.ly.train</groupId>
 				<artifactId>flower.center</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ly.train</groupId>
+				<artifactId>flower.center.api</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ly.train</groupId>
+				<artifactId>flower.center.core</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ly.train</groupId>
+				<artifactId>flower.center.impl</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ly.train</groupId>
+				<artifactId>flower.core</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>

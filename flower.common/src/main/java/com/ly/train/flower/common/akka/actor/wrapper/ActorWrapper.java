@@ -15,12 +15,12 @@
  */
 package com.ly.train.flower.common.akka.actor.wrapper;
 
-import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.akka.actor.message.Message;
 import akka.actor.ActorRef;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public interface ActorWrapper {
 
@@ -31,7 +31,7 @@ public interface ActorWrapper {
    * 
    * @param message 消息
    */
-  void tell(ServiceContext message);
+  void tell(Message message);
 
   /**
    * 发送消息
@@ -39,5 +39,5 @@ public interface ActorWrapper {
    * @param message 消息
    * @param sender 发送方
    */
-  void tell(ServiceContext message, ActorRef sender);
+  void tell(Message message, ActorRef sender);
 }

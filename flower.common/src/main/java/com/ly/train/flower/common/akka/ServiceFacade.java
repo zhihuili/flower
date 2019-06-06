@@ -16,29 +16,24 @@
 package com.ly.train.flower.common.akka;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 import javax.servlet.AsyncContext;
+import com.ly.train.flower.common.akka.router.FlowRouter;
+import com.ly.train.flower.common.akka.router.ServiceRouter;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
 
 public class ServiceFacade {
-  private static final Logger logger = LoggerFactory.getLogger(ServiceFacade.class);
+  protected static final Logger logger = LoggerFactory.getLogger(ServiceFacade.class);
 
-  private final FlowerFactory flowerFactory;
+  private final ActorFactory actorFactory;
 
   public ServiceFacade(FlowerFactory flowerFactory) {
-    this.flowerFactory = flowerFactory;
+    this.actorFactory = flowerFactory.getActorFactory();
   }
 
-
-  /**
-   * @deprecated serviceName 不必须，因为可以从流程中获取到首个服务
-   */
-  @Deprecated
-  public void asyncCallService(String flowName, String serviceName, Object message, AsyncContext ctx) {
-    asyncCallService(flowName, message, ctx);
-  }
 
   /**
    * 异步处理服务
@@ -53,14 +48,6 @@ public class ServiceFacade {
     serviceRouter.asyncCallService(message, asyncContext);
   }
 
-  /**
-   * 
-   * @see ServiceFacade#asyncCallService(String,Object,AsyncContext)
-   */
-  @Deprecated
-  public void asyncCallService(String flowName, String serviceName, Object message) {
-    asyncCallService(flowName, message, null);
-  }
 
   /**
    * @see ServiceFacade#asyncCallService(String,Object,AsyncContext)
@@ -76,19 +63,11 @@ public class ServiceFacade {
    * @param flowName flowName
    * @param message message
    * @return object
-   * @throws Exception
+   * @throws TimeoutException
    */
-  public Object syncCallService(String flowName, Object message) throws Exception {
-    FlowRouter serviceRouter = buildFlowRouter(flowName, 2);
-    return serviceRouter.syncCallService(message);
-  }
-
-  /**
-   * @deprecated serviceName 不必须，因为可以从流程中获取到首个服务
-   */
-  @Deprecated
-  public Object syncCallService(String flowName, String serviceName, Object message) throws Exception {
-    return syncCallService(flowName, message);
+  public Object syncCallService(String flowName, Object message) throws TimeoutException {
+    FlowRouter flowRouter = buildFlowRouter(flowName, -1);
+    return flowRouter.syncCallService(message);
   }
 
 
@@ -96,19 +75,15 @@ public class ServiceFacade {
    * will be cached by flowName + "_" + serviceName
    * 
    * @param flowName flowName
-   * @param flowNumbe 数量
+   * @param actorNumber 数量
    * @return {@link ServiceRouter}
    */
-  public FlowRouter buildFlowRouter(String flowName, int flowNumbe) {
-    return flowerFactory.getServiceActorFactory().buildFlowRouter(flowName, flowNumbe);
+  public FlowRouter buildFlowRouter(String flowName, int actorNumber) {
+    return actorFactory.buildFlowRouter(flowName, actorNumber);
   }
 
-  public ServiceRouter buildServiceRouter(ServiceConfig serviceConfig, int flowNumbe) {
-    return flowerFactory.getServiceActorFactory().buildServiceRouter(serviceConfig, flowNumbe);
+  public ServiceRouter buildServiceRouter(ServiceConfig serviceConfig, int actorNumber) {
+    return actorFactory.buildServiceRouter(serviceConfig, actorNumber);
   }
 
-  public void shutdown() {
-    flowerFactory.stop();
-    logger.info("shutdown.");
-  }
 }

@@ -20,7 +20,7 @@ import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class SpringFlowerFactory extends SimpleFlowerFactory implements InitializingBean {
 

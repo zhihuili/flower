@@ -18,7 +18,6 @@
  */
 package com.ly.train.flower.web.spring.context;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,17 +43,14 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.web.bind.annotation.RestController;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.annotation.FlowerServiceUtil;
-import com.ly.train.flower.common.bytecode.ClassGenerator;
 import com.ly.train.flower.common.service.container.FlowerFactory;
-import com.ly.train.flower.web.springboot.annotation.BindController;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class FlowerBeanRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor, EnvironmentAware,
     ResourceLoaderAware, BeanClassLoaderAware, ApplicationContextAware, InitializingBean {
@@ -64,7 +60,10 @@ public class FlowerBeanRegistryPostProcessor implements BeanDefinitionRegistryPo
   private ResourceLoader resourceLoader;
   private ApplicationContext applicationContext;
 
-  private final Set<String> packagesToScan;
+  private Set<String> packagesToScan;
+
+
+  public FlowerBeanRegistryPostProcessor() {}
 
   public FlowerBeanRegistryPostProcessor(Set<String> packagesToScan) {
     this.packagesToScan = packagesToScan;
@@ -72,6 +71,10 @@ public class FlowerBeanRegistryPostProcessor implements BeanDefinitionRegistryPo
 
   public FlowerBeanRegistryPostProcessor(String... packagesToScan) {
     this(Arrays.asList(packagesToScan));
+  }
+
+  public void setPackagesToScan(Set<String> packagesToScan) {
+    this.packagesToScan = packagesToScan;
   }
 
   public FlowerBeanRegistryPostProcessor(Collection<String> packagesToScan) {
@@ -116,7 +119,6 @@ public class FlowerBeanRegistryPostProcessor implements BeanDefinitionRegistryPo
       logger.info("scan basepackage ：{}", basePackage);
       for (BeanDefinitionHolder beanHolder : beanDefinitionHolders) {
         String beanName = beanHolder.getBeanName();
-        beanName = beanName.substring(0, 1).toUpperCase() + beanName.substring(1);
         if (!registry.containsBeanDefinition(beanName)) {
           registry.registerBeanDefinition(beanName, beanHolder.getBeanDefinition());
           Class<?> beanType = applicationContext.getType(beanName);
@@ -166,44 +168,49 @@ public class FlowerBeanRegistryPostProcessor implements BeanDefinitionRegistryPo
     this.applicationContext = applicationContext;
   }
 
-  protected Class<?> generateControllerClass(BeanDefinitionHolder beanHolder) {
-    Class<?> originClass = null;
-    try {
-      originClass = Class.forName(beanHolder.getBeanDefinition().getBeanClassName());
-    } catch (ClassNotFoundException e1) {
-      e1.printStackTrace();
-    }
-    ClassGenerator cg = ClassGenerator.newInstance();
-    cg.setClassName(beanHolder.getBeanDefinition().getBeanClassName() + "Controller");
-
-    BindController bindController = originClass.getAnnotation(BindController.class);
-    Map<String, Object> controllerMap = new HashMap<>();
-    if (bindController != null) {
-      logger.info("添加注解: " + bindController);
-      controllerMap.put("value", bindController.path());
-      controllerMap.put("method", bindController.method());
-    }
-    cg.addAnnotation(RestController.class.getName(), controllerMap);
-
-    cg.addField("public " + originClass.getName() + " target;");
-    cg.addMethod("public void setTarget(" + originClass.getName() + " target){this.target = $1;}");
-
-    try {
-      for (Method m : originClass.getDeclaredMethods()) {
-        logger.info("添加方法:{}, originClass: {}", m, originClass);
-        // cg.addMethod(m, m.getAnnotations());
-      }
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    cg.addDefaultConstructor();
-    // cg.addAnnotation(FlowerService.class.getName(), null);
-
-
-    Class<?> cl = cg.toClass();
-    return cl;
-  }
+  // protected Class<?> generateControllerClass(BeanDefinitionHolder beanHolder)
+  // {
+  // Class<?> originClass = null;
+  // try {
+  // originClass =
+  // Class.forName(beanHolder.getBeanDefinition().getBeanClassName());
+  // } catch (ClassNotFoundException e1) {
+  // e1.printStackTrace();
+  // }
+  // ClassGenerator cg = ClassGenerator.newInstance();
+  // cg.setClassName(beanHolder.getBeanDefinition().getBeanClassName() +
+  // "Controller");
+  //
+  // BindController bindController =
+  // originClass.getAnnotation(BindController.class);
+  // Map<String, Object> controllerMap = new HashMap<>();
+  // if (bindController != null) {
+  // logger.info("添加注解: " + bindController);
+  // controllerMap.put("value", bindController.path());
+  // controllerMap.put("method", bindController.method());
+  // }
+  // cg.addAnnotation(RestController.class.getName(), controllerMap);
+  //
+  // cg.addField("public " + originClass.getName() + " target;");
+  // cg.addMethod("public void setTarget(" + originClass.getName() + "
+  // target){this.target = $1;}");
+  //
+  // try {
+  // for (Method m : originClass.getDeclaredMethods()) {
+  // logger.info("添加方法:{}, originClass: {}", m, originClass);
+  // // cg.addMethod(m, m.getAnnotations());
+  // }
+  //
+  // } catch (Exception e) {
+  // e.printStackTrace();
+  // }
+  // cg.addDefaultConstructor();
+  // // cg.addAnnotation(FlowerService.class.getName(), null);
+  //
+  //
+  // Class<?> cl = cg.toClass();
+  // return cl;
+  // }
 
   @Override
   public void afterPropertiesSet() throws Exception {}

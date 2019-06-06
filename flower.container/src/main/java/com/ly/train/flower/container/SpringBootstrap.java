@@ -15,19 +15,25 @@
  */
 package com.ly.train.flower.container;
 
-import com.ly.train.flower.logging.Logger;
-import com.ly.train.flower.logging.LoggerFactory;
+import java.lang.reflect.Method;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class SpringBootstrap extends Bootstrap {
   protected static final Logger logger = LoggerFactory.getLogger(SpringBootstrap.class);
 
   @Override
-  public void doStartup() {
+  public void doStartup(String configLocation) throws Throwable {
+    Class<?> applicationContextClazz =
+        Class.forName("org.springframework.context.support.ClassPathXmlApplicationContext", true, getClassLoader());
+    Object flowerFactory = applicationContextClazz.getConstructor(String.class).newInstance(configLocation);
+    Method startMethod = applicationContextClazz.getMethod("start");
+    startMethod.invoke(flowerFactory);
 
+    logger.info("spring初始化完成");
   }
-
 }

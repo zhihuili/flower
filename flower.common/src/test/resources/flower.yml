@@ -1,9 +1,7 @@
 name: "LocalFlower"
 host: "127.0.0.1"
 port: 25005
-registry:
-  - url: 
-      - "flower://127.0.0.1:8096"
-  - url:
-     - "flower://127.0.0.1:8096"
 basePackage: com.ly.train.flower
+parallelismMin: 8
+parallelismMax: 256
+parallelismFactor: 8

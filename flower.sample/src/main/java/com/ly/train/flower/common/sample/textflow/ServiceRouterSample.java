@@ -16,7 +16,7 @@
 package com.ly.train.flower.common.sample.textflow;
 
 import org.junit.Test;
-import com.ly.train.flower.common.akka.FlowRouter;
+import com.ly.train.flower.common.akka.router.FlowRouter;
 import com.ly.train.flower.common.sample.TestBase;
 import com.ly.train.flower.common.sample.textflow.model.Message1;
 import com.ly.train.flower.common.sample.textflow.model.Message2;
@@ -49,7 +49,7 @@ public class ServiceRouterSample extends TestBase {
     for (int i = 0; i < loopNumber; i++) {
       serviceFacade.asyncCallService(flowName, m1);
     }
-    System.out.println("single flow cost time (ms): " + (System.currentTimeMillis() - begin) );
+    System.out.println("single flow cost time (ms): " + (System.currentTimeMillis() - begin));
   }
 
 }

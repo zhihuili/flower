@@ -22,7 +22,6 @@ import com.ly.train.flower.common.service.container.ServiceContext;
 import com.ly.train.flower.common.service.message.ReturnMessage;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
-
 import java.util.List;
 
 public class Service4 implements Service<List<Object>, Message1>, ReturnMessage {

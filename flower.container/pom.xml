@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
@@ -15,21 +16,23 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>com.ly.train</groupId>
-		<artifactId>flower</artifactId>
-		<version>0.1.2</version>
-	</parent>
-	<artifactId>flower.container</artifactId>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.ly.train</groupId>
+        <artifactId>flower</artifactId>
+        <version>0.1.4</version>
+    </parent>
+    <artifactId>flower.container</artifactId>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.ly.train</groupId>
-			<artifactId>flower.common</artifactId>
-		</dependency>
-	</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+    </dependencies>
 </project>

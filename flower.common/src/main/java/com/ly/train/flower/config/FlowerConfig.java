@@ -20,12 +20,13 @@ package com.ly.train.flower.config;
 
 import java.io.Serializable;
 import java.util.Set;
+import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.registry.config.RegistryConfig;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class FlowerConfig implements Serializable {
   private static final long serialVersionUID = 1L;
@@ -35,6 +36,21 @@ public class FlowerConfig implements Serializable {
   private int port = 25001;
   private Set<RegistryConfig> registry;
   private String basePackage;
+
+  /**
+   * 最小并行度
+   */
+  private int parallelismMin = 8;
+
+  /**
+   * 最大并行度
+   */
+  private int parallelismMax = 128;
+
+  /**
+   * 并行度因子
+   */
+  private int parallelismFactor = 16;
 
   public Set<RegistryConfig> getRegistry() {
     return registry;
@@ -47,9 +63,11 @@ public class FlowerConfig implements Serializable {
   public String getName() {
     return name;
   }
-  
+
   public URL toURL() {
-    return new URL("", host, port);
+    URL url = new URL("", host, port);
+    url.addParam(Constant.applicationName, this.getName());
+    return url;
   }
 
   public void setName(String name) {
@@ -84,11 +102,41 @@ public class FlowerConfig implements Serializable {
     this.basePackage = basePackage;
   }
 
+  public int getParallelismMin() {
+    return parallelismMin;
+  }
+
+  public void setParallelismMin(int parallelismMin) {
+    this.parallelismMin = parallelismMin;
+  }
+
+  public int getParallelismMax() {
+    return parallelismMax;
+  }
+
+  public void setParallelismMax(int parallelismMax) {
+    this.parallelismMax = parallelismMax;
+  }
+
+  public int getParallelismFactor() {
+    return parallelismFactor;
+  }
+
+  public void setParallelismFactor(int parallelismFactor) {
+    this.parallelismFactor = parallelismFactor;
+  }
+
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
     builder.append("FlowerConfig [name=");
     builder.append(name);
+    builder.append(", host=");
+    builder.append(host);
+    builder.append(", port=");
+    builder.append(port);
+    builder.append(", basePackage=");
+    builder.append(basePackage);
     builder.append(", registry=");
     builder.append(registry);
     builder.append("]");

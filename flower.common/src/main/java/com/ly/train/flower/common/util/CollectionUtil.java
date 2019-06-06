@@ -31,7 +31,7 @@ import java.util.SortedSet;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class CollectionUtil {
 
@@ -120,7 +120,6 @@ public class CollectionUtil {
   }
 
   @SuppressWarnings("unchecked")
-
   public static <E> E findFirstMatch(Collection<?> source, Collection<E> candidates) {
     if (isEmpty(source) || isEmpty(candidates)) {
       return null;
@@ -134,7 +133,6 @@ public class CollectionUtil {
   }
 
   @SuppressWarnings("unchecked")
-
   public static <T> T findValueOfType(Collection<?> collection, Class<T> type) {
     if (isEmpty(collection)) {
       return null;

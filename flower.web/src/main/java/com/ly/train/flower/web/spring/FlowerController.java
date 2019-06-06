@@ -23,7 +23,7 @@ import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.ly.train.flower.common.akka.FlowRouter;
+import com.ly.train.flower.common.akka.router.FlowRouter;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
@@ -36,7 +36,7 @@ import com.ly.train.flower.logging.LoggerFactory;
  */
 public abstract class FlowerController implements InitializingBean {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
-  private FlowRouter serviceRouter;
+  private FlowRouter flowRouter;
   private String flowerName;
   private String serviceName;
   private int flowerNumber;
@@ -50,28 +50,28 @@ public abstract class FlowerController implements InitializingBean {
     if (req != null) {
       context = req.startAsync();
     }
-    serviceRouter.asyncCallService(param, context);
+    flowRouter.asyncCallService(param, context);
   }
 
   @Override
   public void afterPropertiesSet() throws Exception {
     getFlowName();
     buildFlower();
-    this.serviceRouter = initServiceRouter();
+    this.flowRouter = initFlowRouter();
   }
 
   /**
    * 初始化路由
    * 
-   * @see com.ly.train.flower.common.actor.ServiceFacade#buildServiceRouter
+   * @see com.ly.train.flower.common.actor.ServiceFacade#buildFlowRouter
    * @return {@code ServiceRouter}
    */
-  private FlowRouter initServiceRouter() {
+  private FlowRouter initFlowRouter() {
     return flowerFactory.getServiceFacade().buildFlowRouter(getFlowName(), getFlowerNumber());
   }
 
   /**
-   * 定义数据处理流
+   * 定义数据处理流程
    * 
    * @see ServiceFlow
    */
@@ -82,7 +82,7 @@ public abstract class FlowerController implements InitializingBean {
   }
 
   /**
-   * 获取流名称
+   * 获取流程名称
    * 
    * @return flowName
    */

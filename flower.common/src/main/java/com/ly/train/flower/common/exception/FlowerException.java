@@ -20,7 +20,7 @@ package com.ly.train.flower.common.exception;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class FlowerException extends RuntimeException {
 
@@ -40,5 +40,11 @@ public class FlowerException extends RuntimeException {
 
   public FlowerException(Throwable cause) {
     super(cause);
+  }
+
+  @Override
+  public void printStackTrace() {
+    // TODO Auto-generated method stub
+    super.printStackTrace();
   }
 }

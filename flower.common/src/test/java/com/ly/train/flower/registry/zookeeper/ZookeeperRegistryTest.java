@@ -21,7 +21,7 @@ package com.ly.train.flower.registry.zookeeper;
 import java.util.Date;
 import java.util.List;
 import org.junit.Test;
-import com.ly.train.flower.base.service.ServiceA;
+import com.ly.train.flower.base.service.user.UserServiceA;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.registry.Registry;
 import com.ly.train.flower.registry.RegistryFactory;
@@ -29,7 +29,7 @@ import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ZookeeperRegistryTest {
 
@@ -42,9 +42,8 @@ public class ZookeeperRegistryTest {
 
 
     ServiceInfo serviceInfo = new ServiceInfo();
-    serviceInfo.setClassName(ServiceA.class.getName());
-    serviceInfo.addAddress(new URL("", "127.0.0.1", 12001));
-    serviceInfo.addAddress(new URL("", "127.0.0.1", 12002));
+    serviceInfo.setClassName(UserServiceA.class.getName());
+    serviceInfo.setAddress(new URL("", "127.0.0.1", 12001));
     serviceInfo.setCreateTime(new Date());
     registry.register(serviceInfo);
   }
@@ -57,9 +56,8 @@ public class ZookeeperRegistryTest {
 
 
     ServiceInfo serviceInfo = new ServiceInfo();
-    serviceInfo.setClassName(ServiceA.class.getName());
-    serviceInfo.addAddress(new URL("", "127.0.0.1", 12001));
-    serviceInfo.addAddress(new URL("", "127.0.0.1", 12002));
+    serviceInfo.setClassName(UserServiceA.class.getName());
+    serviceInfo.setAddress(new URL("", "127.0.0.1", 12001));
     serviceInfo.setCreateTime(new Date());
     List<ServiceInfo> serviceInfos = registry.getProvider(serviceInfo);
     System.out.println("请求结果:" + serviceInfos);

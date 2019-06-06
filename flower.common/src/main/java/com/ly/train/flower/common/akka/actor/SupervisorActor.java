@@ -16,6 +16,11 @@
 package com.ly.train.flower.common.akka.actor;
 
 import java.util.concurrent.TimeUnit;
+import com.ly.train.flower.common.akka.ServiceActorFactory;
+import com.ly.train.flower.common.akka.actor.command.CreateCommand;
+import com.ly.train.flower.common.akka.actor.command.GetContextCommand;
+import com.ly.train.flower.common.akka.actor.command.Type;
+import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import akka.actor.OneForOneStrategy;
 import akka.actor.Props;
@@ -27,12 +32,32 @@ public class SupervisorActor extends AbstractFlowerActor {
   private static SupervisorStrategy DEFAULT_STRATEGY = new OneForOneStrategy(10, Duration.create(1, TimeUnit.MINUTES),
       DeciderBuilder.match(ArithmeticException.class, e -> SupervisorStrategy.resume())
           .match(NullPointerException.class, e -> SupervisorStrategy.restart())
-          .match(IllegalArgumentException.class, e -> SupervisorStrategy.stop()).matchAny(o -> SupervisorStrategy.resume()).build());
+          .match(IllegalArgumentException.class, e -> SupervisorStrategy.stop())
+          .matchAny(o -> SupervisorStrategy.resume()).build());
+
+  public static Props props(ServiceActorFactory serviceActorFactory) {
+    return Props.create(SupervisorActor.class, serviceActorFactory);
+  }
+
+  private ServiceActorFactory serviceActorFactory;
+
+  public SupervisorActor(ServiceActorFactory serviceActorFactory) {
+    this.serviceActorFactory = serviceActorFactory;
+  }
 
   @Override
   public Receive createReceive() {
-    return receiveBuilder().match(GetActorContext.class, msg -> {
+    return receiveBuilder().match(GetContextCommand.class, msg -> {
       getSender().tell(getContext(), getSelf());
+    }).match(CreateCommand.class, command -> {
+      ServiceConfig serviceConfig = new ServiceConfig();
+      serviceConfig.setServiceName(command.getServiceName());
+      serviceConfig.setLocal(true);
+      serviceActorFactory.buildServiceActor(serviceConfig, command.getIndex());
+      command.setType(Type.RESPONSE);
+      command.setData("PONG");
+
+      getSender().tell(command, getSender());
     }).matchAny(message -> {
       unhandled(message);
     }).build();
@@ -50,10 +75,4 @@ public class SupervisorActor extends AbstractFlowerActor {
     return DEFAULT_STRATEGY;
   }
 
-  public static Props props() {
-    return Props.create(SupervisorActor.class);
-  }
-
-  public static class GetActorContext {
-  }
 }

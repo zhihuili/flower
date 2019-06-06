@@ -16,6 +16,7 @@
 /** */
 package com.ly.train.flower.config.parser;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import org.yaml.snakeyaml.Yaml;
@@ -40,6 +41,7 @@ public class FlowerConfigParser implements ConfigParser<FlowerConfig> {
 
   @Override
   public FlowerConfig parse() {
+    FlowerConfig config = null;
     InputStream is = null;
     try {
       logger.info("parse FlowerConfig, configLocation : {}", configLocation);
@@ -48,16 +50,21 @@ public class FlowerConfigParser implements ConfigParser<FlowerConfig> {
         is = getClass().getResourceAsStream("/" + configLocation);
       }
       if (is == null) {
-        is = new FileInputStream(ResourceUtil.getFile(configLocation));
+        File file = ResourceUtil.getFile(configLocation);
+        if (file.exists())
+          is = new FileInputStream(file);
       }
       if (is != null) {
-        return new Yaml().loadAs(is, FlowerConfig.class);
+        config = new Yaml().loadAs(is, FlowerConfig.class);
+        logger.info("flowerConfig : {}", config);
+        return config;
       }
     } catch (Exception e) {
       logger.error("fail to parse : " + configLocation, e);
     } finally {
       IOUtil.close(is);
     }
-    return new FlowerConfig();
+    config = new FlowerConfig();
+    return config;
   }
 }

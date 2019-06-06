@@ -30,11 +30,11 @@ import com.ly.train.flower.web.spring.FlowerController;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @RestController
 @RequestMapping("/order/")
-@Flower(value = "createOrderFlow", serviceName = "createOrder", flowNumber = 32)
+@Flower(value = "createOrderFlow", flowNumber = 32)
 public class CreateOrderController extends FlowerController {
 
   @RequestMapping(value = "createOrder")
@@ -44,8 +44,8 @@ public class CreateOrderController extends FlowerController {
 
   @Override
   public void buildFlower() {
-    getServiceFlow().buildFlow(StartService.class,
-        Arrays.asList(CreateOrderService.class, CreateOrderExtService.class));
+    getServiceFlow()
+        .buildFlow(StartService.class, Arrays.asList(CreateOrderService.class, CreateOrderExtService.class));
     getServiceFlow().buildFlow(Arrays.asList(CreateOrderService.class, CreateOrderExtService.class), EndService.class);
     getServiceFlow().build();
   }

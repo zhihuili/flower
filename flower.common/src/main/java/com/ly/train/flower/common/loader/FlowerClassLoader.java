@@ -25,7 +25,7 @@ import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class FlowerClassLoader extends URLClassLoader {
   static final Logger logger = LoggerFactory.getLogger(FlowerClassLoader.class);

@@ -58,7 +58,7 @@ import com.ly.train.flower.registry.Registry;
  * 
  * @author zhihui.li
  * @author leeyazhou
- *
+ * 
  */
 public final class ServiceFlow {
   private static final Logger logger = LoggerFactory.getLogger(ServiceFlow.class);
@@ -200,7 +200,7 @@ public final class ServiceFlow {
   public ServiceFlow build() {
     logger.info(" build {} success. \n {}", flowName, this);
     logger.info("start register ServiceConfig : {}", header);
-    flowerFactory.getServiceActorFactory().buildFlowRouter(flowName, 1);
+    flowerFactory.getActorFactory().buildFlowRouter(flowName, 1);
     String json = JSONObject.toJSONString(header);
     ServiceConfig config = JSONObject.parseObject(json, ServiceConfig.class);
     Set<Registry> registries = flowerFactory.getRegistry();
@@ -233,7 +233,7 @@ public final class ServiceFlow {
       Set<ServiceConfig> previousServiceConfigs = findPreviousServiceConfig(header, nextConfig, null);
       if (previousServiceConfigs != null) {
         for (ServiceConfig item : previousServiceConfigs) {
-          if (serviceLoader.loadServiceMeta(item.getServiceName()).isInnerAggregateService()) {
+          if (serviceFactory.loadServiceMeta(item).isInnerAggregateService()) {
             serviceConfig = item;
             break;
           }
@@ -363,11 +363,14 @@ public final class ServiceFlow {
     ServiceConfig serviceConfig = serviceConfigsCache.get(serviceName);
     if (serviceConfig == null) {
       serviceConfig = new ServiceConfig();
+      serviceConfig.setApplication(flowerFactory.getFlowerConfig().getName());
+      serviceConfig.addAddress(flowerFactory.getFlowerConfig().toURL());
       serviceConfig.setFlowName(flowName);
       serviceConfig.setServiceName(serviceName);
       serviceConfig.setIndex(index.getAndIncrement());
       serviceConfig.setServiceMeta(serviceFactory.loadServiceMeta(serviceConfig));
       serviceConfigsCache.putIfAbsent(serviceName, serviceConfig);
+      serviceConfig = serviceConfigsCache.get(serviceName);
     }
     return serviceConfig;
   }

@@ -19,6 +19,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.AccessControlContext;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -34,7 +37,7 @@ import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ExtensionLoader<T> {
 
@@ -48,7 +51,7 @@ public class ExtensionLoader<T> {
   private final ClassLoader classLoader;
   private final Map<String, Class<T>> extensionClassCache = new HashMap<String, Class<T>>();
   private final Map<String, T> extensionInstanceCache = new HashMap<String, T>();
-
+  private final AccessControlContext acc;
   /*
    * 默认实现
    */
@@ -61,10 +64,11 @@ public class ExtensionLoader<T> {
   private ExtensionLoader(Class<T> extensionType, ClassLoader classLoader) {
     this.extensionType = extensionType;
     if (classLoader == null) {
-      this.classLoader = getClass().getClassLoader();
+      this.classLoader = Thread.currentThread().getContextClassLoader();
     } else {
       this.classLoader = classLoader;
     }
+    acc = (System.getSecurityManager() != null) ? AccessController.getContext() : null;
     loadClasses();
   }
 
@@ -152,21 +156,28 @@ public class ExtensionLoader<T> {
 
     String className = extensionType.getName();
     String path = PREFIX + className;
-
-    Set<String> loadedUrls = new HashSet<String>();
-    try {
-      Enumeration<java.net.URL> urls = classLoader.getResources(path);
-      while (urls.hasMoreElements()) {
-        java.net.URL url = urls.nextElement();
-        if (loadedUrls.contains(url.toString())) {
-          continue;
+    PrivilegedAction<Void> action = new PrivilegedAction<Void>() {
+      public Void run() {
+        Set<String> loadedUrls = new HashSet<String>();
+        try {
+          Enumeration<java.net.URL> urls = classLoader.getResources(path);
+          while (urls.hasMoreElements()) {
+            java.net.URL url = urls.nextElement();
+            logger.info("url : " + url);
+            if (loadedUrls.contains(url.toString())) {
+              continue;
+            }
+            load(url);
+            loadedUrls.add(url.toString());
+          }
+        } catch (IOException ex) {
+          // skip
         }
-        load(url);
-        loadedUrls.add(url.toString());
+        return null;
       }
-    } catch (IOException ex) {
-      // skip
-    }
+    };
+    AccessController.doPrivileged(action, acc);
+
   }
 
   public void load(java.net.URL url) throws IOException {

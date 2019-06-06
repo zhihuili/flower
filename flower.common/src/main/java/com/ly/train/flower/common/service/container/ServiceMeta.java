@@ -24,14 +24,14 @@ import com.ly.train.flower.common.service.impl.AggregateService;
 /**
  * 
  * @author leeyazhou
- *
+ * 
  */
 public class ServiceMeta implements Serializable {
   private static final long serialVersionUID = 1L;
   private String serviceName;
+  private String serviceClassName;
   private String paramType;
   private String resultType;
-  private String serviceClassName;
   private boolean local = true;
   private List<String> configs = new ArrayList<>();
   private boolean aggregateService;
@@ -128,8 +128,7 @@ public class ServiceMeta implements Serializable {
    * 
    * @return
    * @see FlowerType#AGGREGATE
-   * @see FlowerType#COMMON
-   * return true/false
+   * @see FlowerType#COMMON return true/false
    */
   public boolean isAggregateService() {
     return aggregateService;

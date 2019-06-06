@@ -20,9 +20,11 @@ package com.ly.train.flower.common.service.container.simple;
 
 import java.util.HashSet;
 import java.util.Set;
+import com.ly.train.flower.common.akka.ActorFactory;
 import com.ly.train.flower.common.akka.ServiceActorFactory;
 import com.ly.train.flower.common.akka.ServiceFacade;
-import com.ly.train.flower.common.exception.ExceptionHandler;
+import com.ly.train.flower.common.exception.handler.ExceptionHandler;
+import com.ly.train.flower.common.exception.handler.ExceptionHandlerManager;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFactory;
 import com.ly.train.flower.common.service.container.lifecyle.AbstractLifecycle;
@@ -39,7 +41,7 @@ import com.ly.train.flower.registry.simple.SimpleRegistry;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFactory {
   private static final Logger logger = LoggerFactory.getLogger(SimpleFlowerFactory.class);
@@ -47,11 +49,11 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
   private static volatile FlowerFactory instance;
   private FlowerConfig flowerConfig;
   private volatile Set<Registry> registries;
-  private ExceptionHandler exceptionHandler;
   private volatile ServiceActorFactory serviceActorFactory;
   private volatile ServiceFactory serviceFactory;
   private volatile ServiceFacade serviceFacade;
   private String configLocation = "flower.yml";
+  private ExceptionHandlerManager exceptionHandlerManager = ExceptionHandlerManager.getInstance();
 
   public SimpleFlowerFactory() {
     this(null);
@@ -79,7 +81,7 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
   @Override
   protected void doInit() {
     getServiceFactory().init();
-    getServiceActorFactory().init();
+    getActorFactory().init();
   }
 
   private Set<Registry> initRegistryFactories() {
@@ -91,7 +93,7 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
     for (RegistryConfig config : registryConfigs) {
       RegistryFactory registryFactory = ExtensionLoader.load(RegistryFactory.class).load(config.getProtocol());
       if (registryFactory != null) {
-        URL url = new URL(config.getProtocol(), config.getHost(), config.getPort());
+        URL url = config.toURL();
         Registry registry = registryFactory.createRegistry(url);
         if (registry instanceof SimpleRegistry) {
           ((SimpleRegistry) registry).setFlowerFactory(this);
@@ -123,15 +125,7 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
   }
 
   @Override
-  public ExceptionHandler getExceptionHandler() {
-    if (this.exceptionHandler == null) {
-      this.exceptionHandler = new ExceptionHandler();
-    }
-    return exceptionHandler;
-  }
-
-  @Override
-  public ServiceActorFactory getServiceActorFactory() {
+  public ActorFactory getActorFactory() {
     if (serviceActorFactory == null) {
       synchronized (this) {
         this.serviceActorFactory = new ServiceActorFactory(this);
@@ -144,7 +138,7 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
   @Override
   public void doStart() {
     logger.info("start FlowerFactory");
-    getServiceActorFactory().start();
+    getActorFactory().start();
   }
 
   @Override
@@ -174,5 +168,15 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
       }
     }
     return serviceFacade;
+  }
+
+  @Override
+  public void registerExceptionHandler(Class<? extends Throwable> exceptionClass, ExceptionHandler exceptionHandler) {
+    exceptionHandlerManager.registerHandler(exceptionClass, exceptionHandler);
+  }
+
+  @Override
+  public void setDefaultExceptionHandler(ExceptionHandler defaultExceptionHandler) {
+    exceptionHandlerManager.setDefaultExceptionHandler(defaultExceptionHandler);
   }
 }

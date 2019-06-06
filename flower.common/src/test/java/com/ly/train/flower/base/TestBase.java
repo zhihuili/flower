@@ -20,11 +20,12 @@ package com.ly.train.flower.base;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import com.ly.train.flower.base.service.ServiceA;
-import com.ly.train.flower.base.service.ServiceB;
-import com.ly.train.flower.base.service.ServiceC1;
-import com.ly.train.flower.base.service.ServiceC2;
-import com.ly.train.flower.base.service.ServiceD;
+import com.ly.train.flower.base.service.ExceptionService;
+import com.ly.train.flower.base.service.user.UserServiceA;
+import com.ly.train.flower.base.service.user.UserServiceB;
+import com.ly.train.flower.base.service.user.UserServiceC1;
+import com.ly.train.flower.base.service.user.UserServiceC2;
+import com.ly.train.flower.base.service.user.UserServiceD;
 import com.ly.train.flower.common.akka.ServiceFacade;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFactory;
@@ -33,7 +34,7 @@ import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class TestBase {
   protected static final String flowName = "sample";
@@ -42,23 +43,25 @@ public class TestBase {
   protected static ServiceLoader serviceLoader;
   protected static ServiceFacade serviceFacade;
 
+
   @BeforeClass
   public static void before() {
     flowerFactory = new SimpleFlowerFactory();
-//    flowerFactory.start();
     serviceFactory = flowerFactory.getServiceFactory();
     serviceLoader = serviceFactory.getServiceLoader();
     serviceFacade = flowerFactory.getServiceFacade();
 
-    serviceFactory.registerService(ServiceA.class.getSimpleName(), ServiceA.class);
-    serviceFactory.registerService(ServiceB.class.getSimpleName(), ServiceB.class);
-    serviceFactory.registerService(ServiceC1.class.getSimpleName(), ServiceC1.class);
-    serviceFactory.registerService(ServiceC2.class.getSimpleName(), ServiceC2.class);
-    serviceFactory.registerService(ServiceD.class.getSimpleName(), ServiceD.class);
+    serviceFactory.registerService(UserServiceA.class.getSimpleName(), UserServiceA.class);
+    serviceFactory.registerService(UserServiceB.class.getSimpleName(), UserServiceB.class);
+    serviceFactory.registerService(UserServiceC1.class.getSimpleName(), UserServiceC1.class);
+    serviceFactory.registerService(UserServiceC2.class.getSimpleName(), UserServiceC2.class);
+    serviceFactory.registerService(UserServiceD.class.getSimpleName(), UserServiceD.class);
+    serviceFactory.registerService(ExceptionService.class.getSimpleName(), ExceptionService.class);
   }
 
   @AfterClass
-  public static void stop() {
+  public static void stop() throws InterruptedException {
+    Thread.sleep(2000);
     flowerFactory.stop();
   }
 }

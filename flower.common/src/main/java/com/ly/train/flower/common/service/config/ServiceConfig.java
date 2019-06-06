@@ -27,16 +27,17 @@ import com.ly.train.flower.common.util.URL;
  * 流程服务节点配置
  * 
  * @author leeyazhou
- *
+ * 
  */
 public class ServiceConfig implements Serializable {
 
   private static final long serialVersionUID = 1L;
   private String flowName;
+  private String application;
   private String serviceName;
   private ServiceMeta serviceMeta;
   private Set<ServiceConfig> nextServiceConfigs;
-  private final AtomicInteger jointSourceNumber = new AtomicInteger(0);
+  private AtomicInteger jointSourceNumber = new AtomicInteger(0);
   private int index;
   private boolean local = true;
   private Set<URL> addresses;
@@ -47,9 +48,14 @@ public class ServiceConfig implements Serializable {
     this.flowName = flowName;
   }
 
-  public int getJointSourceNumber() {
-    return jointSourceNumber.get();
+  public AtomicInteger getJointSourceNumber() {
+    return jointSourceNumber;
   }
+
+  public void setJointSourceNumber(AtomicInteger jointSourceNumber) {
+    this.jointSourceNumber = jointSourceNumber;
+  }
+
 
   public int jointSourceNumberPlus() {
     return this.jointSourceNumber.incrementAndGet();
@@ -162,11 +168,22 @@ public class ServiceConfig implements Serializable {
   }
 
   public int getTimeout() {
-    int timeout = 3000;
+    int timeout = -1;
     if (serviceMeta != null) {
       timeout = serviceMeta.getTimeout();
     }
+    if (timeout <= 0) {
+      timeout = 3000;
+    }
     return timeout;
+  }
+
+  public void setApplication(String application) {
+    this.application = application;
+  }
+
+  public String getApplication() {
+    return application;
   }
 
   /**

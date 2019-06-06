@@ -18,11 +18,13 @@
  */
 package com.ly.train.flower.base.model;
 
+import java.io.Serializable;
+
 /**
  * @author leeyazhou
- *
+ * 
  */
-public class User {
+public class User implements Serializable {
 
   private String name;
   private String desc = "";

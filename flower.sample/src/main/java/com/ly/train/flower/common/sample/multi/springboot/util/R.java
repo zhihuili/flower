@@ -20,7 +20,7 @@ package com.ly.train.flower.common.sample.multi.springboot.util;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class R {
 

@@ -15,7 +15,11 @@
  */
 package com.ly.train.flower.common.service.message;
 
-public class DefaultMessage {
+import com.ly.train.flower.common.akka.actor.message.Message;
+
+public class DefaultMessage implements Message {
+  private static final long serialVersionUID = 1L;
+
   private DefaultMessage() {}
 
   private static DefaultMessage defaultMessage = new DefaultMessage();

@@ -20,7 +20,7 @@ import com.ly.train.flower.common.service.container.AbstractInit;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public abstract class AbstractLifecycle extends AbstractInit implements Lifecycle {
 
@@ -48,8 +48,7 @@ public abstract class AbstractLifecycle extends AbstractInit implements Lifecycl
   }
 
   @Override
-  protected void doInit() {
-  }
+  protected void doInit() {}
 
   protected abstract void doStart();
 

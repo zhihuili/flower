@@ -15,25 +15,26 @@
  */
 package com.ly.train.flower.common.service.message;
 
-import java.io.Serializable;
-import java.util.UUID;
+import com.ly.train.flower.common.akka.actor.message.Message;
+import com.ly.train.flower.common.serializer.Codec;
+import com.ly.train.flower.common.util.StringUtil;
 
-public class FlowMessage implements Serializable {
+public class FlowMessage implements Message {
   private static final long serialVersionUID = 1L;
-  private String transactionId;
-  private String serviceName;
-  /**
-   * 流程索引
-   */
-  private int index;
-  private Object message;
+  private String transactionId = StringUtil.uuid();
+  private byte[] message;
+  private String messageType;
+  private int codec = Codec.Hessian.getCode();
+  private boolean error;
+
+  private String exception;
 
   public FlowMessage() {
-    this.transactionId = UUID.randomUUID().toString().replaceAll("-", "");
+    this(null);
   }
 
-  public FlowMessage(Object message) {
-    this();
+
+  public FlowMessage(byte[] message) {
     this.message = message;
   }
 
@@ -41,32 +42,50 @@ public class FlowMessage implements Serializable {
     return transactionId;
   }
 
-  public Object getMessage() {
+  public byte[] getMessage() {
     return message;
   }
 
-  public void setMessage(Object message) {
-    this.message = message;
+  public void setMessage(byte[] result) {
+    this.message = result;
   }
 
   public void setTransactionId(String transactionId) {
     this.transactionId = transactionId;
   }
 
-  public String getServiceName() {
-    return serviceName;
+  public boolean isError() {
+    return error;
   }
 
-  public void setServiceName(String serviceName) {
-    this.serviceName = serviceName;
+  public void setError(boolean error) {
+    this.error = error;
   }
 
-  public int getIndex() {
-    return index;
+  public String getException() {
+    return exception;
   }
 
-  public void setIndex(int index) {
-    this.index = index;
+  public void setException(String exception) {
+    this.error = Boolean.TRUE;
+    this.exception = exception;
+  }
+
+  public String getMessageType() {
+    return messageType;
+  }
+
+
+  public void setMessageType(String messageType) {
+    this.messageType = messageType;
+  }
+
+  public void setCodec(int codec) {
+    this.codec = codec;
+  }
+
+  public int getCodec() {
+    return codec;
   }
 
   public static long getSerialversionuid() {

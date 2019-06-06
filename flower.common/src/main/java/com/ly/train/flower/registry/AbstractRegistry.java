@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.common.util.concurrent.NamedThreadFactory;
@@ -36,17 +35,18 @@ import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public abstract class AbstractRegistry implements Registry {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
   protected final ConcurrentMap<String, ServiceInfo> serviceInfoCache = new ConcurrentHashMap<>();
   protected final ConcurrentMap<String, ServiceConfig> serviceConfigCache = new ConcurrentHashMap<>();
-  private static final ScheduledExecutorService executorService =
-      Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("registry"));
+  private static final ScheduledExecutorService executorService = Executors
+      .newSingleThreadScheduledExecutor(new NamedThreadFactory("flower-registry"));
+
+  protected final String infoRoot = "flower:info";
+  protected final String configRoot = "flower:config";
   protected final URL url;
-  private AtomicBoolean serviceInfoInit = new AtomicBoolean();
-  private AtomicBoolean serviceConfigInit = new AtomicBoolean();
 
   public AbstractRegistry(URL url) {
     this.url = url;
@@ -84,12 +84,10 @@ public abstract class AbstractRegistry implements Registry {
 
   @Override
   public List<ServiceInfo> getProvider(ServiceInfo serviceInfo) {
-    if (serviceInfoInit.compareAndSet(false, true)) {
-      List<ServiceInfo> ret = doGetProvider(serviceInfo);
-      if (ret != null) {
-        for (ServiceInfo i : ret) {
-          serviceInfoCache.put(i.getClassName(), i);
-        }
+    List<ServiceInfo> ret = doGetProvider(serviceInfo);
+    if (ret != null) {
+      for (ServiceInfo i : ret) {
+        serviceInfoCache.put(i.getClassName(), i);
       }
     }
     return new ArrayList<ServiceInfo>(serviceInfoCache.values());
@@ -115,15 +113,11 @@ public abstract class AbstractRegistry implements Registry {
 
   @Override
   public List<ServiceConfig> getServiceConfig(ServiceConfig serviceConfig) {
-    if (serviceConfigInit.compareAndSet(false, true)) {
-
-      List<ServiceConfig> ret = doGetServiceConfig(serviceConfig);
-      if (ret != null) {
-        for (ServiceConfig i : ret) {
-          serviceConfigCache.put(i.getFlowName(), i);
-        }
+    List<ServiceConfig> ret = doGetServiceConfig(serviceConfig);
+    if (ret != null) {
+      for (ServiceConfig i : ret) {
+        serviceConfigCache.put(i.getFlowName(), i);
       }
-
     }
     return new ArrayList<ServiceConfig>(serviceConfigCache.values());
   }

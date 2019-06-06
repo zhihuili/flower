@@ -25,7 +25,7 @@ import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public interface Registry {
 
@@ -46,7 +46,7 @@ public interface Registry {
    * @return {@link ServiceInfo}
    */
   List<ServiceInfo> getProvider(ServiceInfo serviceInfo);
-  
+
   List<ServiceConfig> getServiceConfig(ServiceConfig serviceConfig);
 
   URL getUrl();

@@ -16,20 +16,34 @@
 package com.ly.train.flower.web.spring.context;
 
 import static org.springframework.context.annotation.AnnotationConfigUtils.registerAnnotationConfigProcessors;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanNameGenerator;
+import org.springframework.context.annotation.AnnotationBeanNameGenerator;
+import org.springframework.context.annotation.AnnotationConfigUtils;
+import org.springframework.context.annotation.AnnotationScopeMetadataResolver;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
+import org.springframework.context.annotation.ScopeMetadata;
+import org.springframework.context.annotation.ScopeMetadataResolver;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.Assert;
 
 /**
  * 
  * @author leeyazhou
- *
+ * 
  */
 public class FlowerClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionScanner {
 
+  private BeanNameGenerator beanNameGenerator = new AnnotationBeanNameGenerator();
+
+  private ScopeMetadataResolver scopeMetadataResolver = new AnnotationScopeMetadataResolver();
 
   public FlowerClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry, boolean useDefaultFilters,
       Environment environment, ResourceLoader resourceLoader) {
@@ -52,8 +66,27 @@ public class FlowerClassPathBeanDefinitionScanner extends ClassPathBeanDefinitio
   }
 
   public Set<BeanDefinitionHolder> doScan(String... basePackages) {
-    return super.doScan(basePackages);
+    Assert.notEmpty(basePackages, "At least one base package must be specified");
+    Set<BeanDefinitionHolder> beanDefinitions = new LinkedHashSet<>();
+    for (String basePackage : basePackages) {
+      Set<BeanDefinition> candidates = findCandidateComponents(basePackage);
+      for (BeanDefinition candidate : candidates) {
+        ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(candidate);
+        candidate.setScope(scopeMetadata.getScopeName());
+        String beanName = this.beanNameGenerator.generateBeanName(candidate, this.getRegistry());
+        if (candidate instanceof AbstractBeanDefinition) {
+          postProcessBeanDefinition((AbstractBeanDefinition) candidate, beanName);
+        }
+        if (candidate instanceof AnnotatedBeanDefinition) {
+          AnnotationConfigUtils.processCommonDefinitionAnnotations((AnnotatedBeanDefinition) candidate);
+        }
+        if (checkCandidate(beanName, candidate)) {
+          BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(candidate, beanName);
+          beanDefinitions.add(definitionHolder);
+        }
+      }
+    }
+    return beanDefinitions;
   }
-
 
 }

@@ -19,9 +19,9 @@
 package com.ly.train.flower.common.service.container;
 
 import java.util.Set;
-import com.ly.train.flower.common.akka.ServiceActorFactory;
+import com.ly.train.flower.common.akka.ActorFactory;
 import com.ly.train.flower.common.akka.ServiceFacade;
-import com.ly.train.flower.common.exception.ExceptionHandler;
+import com.ly.train.flower.common.exception.handler.ExceptionHandler;
 import com.ly.train.flower.common.service.Service;
 import com.ly.train.flower.common.service.container.lifecyle.Lifecycle;
 import com.ly.train.flower.config.FlowerConfig;
@@ -29,7 +29,7 @@ import com.ly.train.flower.registry.Registry;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public interface FlowerFactory extends Lifecycle {
 
@@ -49,18 +49,26 @@ public interface FlowerFactory extends Lifecycle {
   Set<Registry> getRegistry();
 
   /**
-   * 异常处理器
+   * 注册异常处理器
    * 
-   * @return {@link ExceptionHandler}
+   * @param exceptionClass exception Class
+   * @param exceptionHandler {@link ExceptionHandler}
    */
-  ExceptionHandler getExceptionHandler();
+  void registerExceptionHandler(Class<? extends Throwable> exceptionClass, ExceptionHandler exceptionHandler);
+
+  /**
+   * 设置默认异常处理器
+   * 
+   * @param exceptionHandler {@link ExceptionHandler}
+   */
+  void setDefaultExceptionHandler(ExceptionHandler exceptionHandler);
 
   /**
    * akka Actor 工厂
    * 
-   * @return {@link ServiceActorFactory}
+   * @return {@link ActorFactory}
    */
-  ServiceActorFactory getServiceActorFactory();
+  ActorFactory getActorFactory();
 
   /**
    * {@link Service}工厂
@@ -69,6 +77,11 @@ public interface FlowerFactory extends Lifecycle {
    */
   ServiceFactory getServiceFactory();
 
+  /**
+   * service facade
+   * 
+   * @return {@link ServiceFacade}
+   */
   ServiceFacade getServiceFacade();
 
 }

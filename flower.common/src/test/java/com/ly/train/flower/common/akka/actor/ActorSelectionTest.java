@@ -20,19 +20,19 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import com.ly.train.flower.base.model.User;
-import com.ly.train.flower.base.service.ServiceA;
-import com.ly.train.flower.base.service.ServiceB;
-import com.ly.train.flower.base.service.ServiceC1;
-import com.ly.train.flower.base.service.ServiceC2;
-import com.ly.train.flower.base.service.ServiceD;
-import com.ly.train.flower.common.akka.FlowRouter;
+import com.ly.train.flower.base.service.user.UserServiceA;
+import com.ly.train.flower.base.service.user.UserServiceB;
+import com.ly.train.flower.base.service.user.UserServiceC1;
+import com.ly.train.flower.base.service.user.UserServiceC2;
+import com.ly.train.flower.base.service.user.UserServiceD;
+import com.ly.train.flower.common.akka.router.FlowRouter;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ActorSelectionTest {
 
@@ -43,30 +43,30 @@ public class ActorSelectionTest {
   public static void before() {
     String configLocation4 =
         Thread.currentThread().getContextClassLoader().getResource("conf/flower_25004.yml").getPath();
-    String configLocation3 =
-        Thread.currentThread().getContextClassLoader().getResource("conf/flower_25003.yml").getPath();
     flowerFactory2 = new SimpleFlowerFactory(configLocation4);
-    flowerFactory2.init();
+    flowerFactory2.start();
     // flowerFactory2.getServiceFactory().registerService(ServiceA.class.getSimpleName(),
     // ServiceA.class);
-    flowerFactory2.getServiceFactory().registerService(ServiceB.class.getSimpleName(), ServiceB.class);
-    flowerFactory2.getServiceFactory().registerService(ServiceC1.class.getSimpleName(), ServiceC1.class);
-    flowerFactory2.getServiceFactory().registerService(ServiceC2.class.getSimpleName(), ServiceC2.class);
-    flowerFactory2.getServiceFactory().registerService(ServiceD.class.getSimpleName(), ServiceD.class);
+    flowerFactory2.getServiceFactory().registerService(UserServiceB.class.getSimpleName(), UserServiceB.class);
+    flowerFactory2.getServiceFactory().registerService(UserServiceC1.class.getSimpleName(), UserServiceC1.class);
+    flowerFactory2.getServiceFactory().registerService(UserServiceC2.class.getSimpleName(), UserServiceC2.class);
+    flowerFactory2.getServiceFactory().registerService(UserServiceD.class.getSimpleName(), UserServiceD.class);
 
 
 
     System.out.println("初始化服务2完成，开始初始化服务1");
     System.out.println("初始化服务2完成，开始初始化服务1");
+    String configLocation3 =
+        Thread.currentThread().getContextClassLoader().getResource("conf/flower_25003.yml").getPath();
     flowerFactory1 = new SimpleFlowerFactory(configLocation3);
-    flowerFactory1.init();
-    flowerFactory1.getServiceFactory().registerService(ServiceA.class.getSimpleName(), ServiceA.class);
+    flowerFactory1.start();
+    flowerFactory1.getServiceFactory().registerService(UserServiceA.class.getSimpleName(), UserServiceA.class);
   }
 
   @AfterClass
   public static void after() {
-    flowerFactory1.stop();
     flowerFactory2.stop();
+    flowerFactory1.stop();
   }
 
   @Test
@@ -77,15 +77,18 @@ public class ActorSelectionTest {
     final String flowName = "actorSelection";
 
     ServiceFlow serviceFlow = flowerFactory1.getServiceFactory().getOrCreateServiceFlow(flowName);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
-    serviceFlow.buildFlow(Arrays.asList(ServiceC1.class, ServiceC2.class), ServiceD.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC2.class);
+    serviceFlow.buildFlow(Arrays.asList(UserServiceC1.class, UserServiceC2.class), UserServiceD.class);
     serviceFlow.build();
 
-    Object ret = flowerFactory1.getServiceFacade().syncCallService(flowName, message);
-    System.out.println("返回结果：" + ret);
-    Thread.sleep(3000);
+    try {
+      Object ret = flowerFactory1.getServiceFacade().syncCallService(flowName, message);
+      System.out.println("返回结果：" + ret);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   @Test
@@ -95,12 +98,12 @@ public class ActorSelectionTest {
     message.setName("A");
     final String flowName = "actorSelection";
     ServiceFlow serviceFlow = flowerFactory1.getServiceFactory().getOrCreateServiceFlow(flowName);
-    serviceFlow.buildFlow(ServiceA.class, ServiceB.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC1.class);
-    serviceFlow.buildFlow(ServiceB.class, ServiceC2.class);
-    serviceFlow.buildFlow(Arrays.asList(ServiceC1.class, ServiceC2.class), ServiceD.class);
+    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
+    serviceFlow.buildFlow(UserServiceB.class, UserServiceC2.class);
+    serviceFlow.buildFlow(Arrays.asList(UserServiceC1.class, UserServiceC2.class), UserServiceD.class);
     serviceFlow.build();
-    FlowRouter flowRouter = flowerFactory1.getServiceActorFactory().buildFlowRouter(flowName, 1);
+    FlowRouter flowRouter = flowerFactory1.getActorFactory().buildFlowRouter(flowName, 8);
     flowRouter.asyncCallService(message);
     Thread.sleep(3000);
   }

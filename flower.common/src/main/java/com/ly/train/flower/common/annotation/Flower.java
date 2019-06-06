@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -40,8 +40,20 @@ public @interface Flower {
    */
   String value();
 
-  String serviceName();
+  /**
+   * servcieName
+   * 
+   * @deprecated 流程定义不需要设置header节点
+   * @return
+   */
+  @Deprecated
+  String serviceName() default "";
 
+  /**
+   * 定义流程数量
+   * 
+   * @return int 默认128
+   */
   int flowNumber() default 128;
 
 }

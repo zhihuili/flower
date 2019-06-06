@@ -24,7 +24,7 @@ import com.ly.train.flower.registry.RegistryFactory;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class SimpleRegistryFactory implements RegistryFactory {
 

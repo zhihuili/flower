@@ -19,11 +19,14 @@
 package com.ly.train.flower.registry.config;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import com.ly.train.flower.common.util.StringUtil;
+import com.ly.train.flower.common.util.URL;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class RegistryConfig implements Serializable {
 
@@ -32,8 +35,7 @@ public class RegistryConfig implements Serializable {
   private String protocol;
   private String host;
   private Integer port;
-
-
+  private Map<String, String> params = new HashMap<>();
 
   public String getProtocol() {
     return protocol;
@@ -63,18 +65,42 @@ public class RegistryConfig implements Serializable {
     return url;
   }
 
+  public URL toURL() {
+    URL ret = new URL(protocol, host, port);
+    ret.setParams(params);
+    return ret;
+  }
+
   public void setUrl(String url) {
     if (StringUtil.isNotBlank(url)) {
-      String temp = url.replace("/", "");
+      String[] tm = url.split("\\?");
+      String temp = tm[0].replace("/", "");
       String[] t = temp.split(":");
       if (t.length == 3) {
         this.protocol = t[0];
         this.host = t[1];
         this.port = Integer.parseInt(t[2]);
       }
+
+      if (tm.length == 2) {
+        String[] params = tm[1].split("&");
+        for (String it : params) {
+          if (StringUtil.isNotBlank(it)) {
+            String[] kv = it.split("=");
+            if (kv != null && kv.length == 2) {
+              this.params.put(kv[0], kv[1]);
+            }
+          }
+        }
+      }
+
     }
 
     this.url = url;
+  }
+
+  public Map<String, String> getParams() {
+    return params;
   }
 
   @Override
@@ -88,6 +114,8 @@ public class RegistryConfig implements Serializable {
     builder.append(host);
     builder.append(", port=");
     builder.append(port);
+    builder.append(", params=");
+    builder.append(params);
     builder.append("]");
     return builder.toString();
   }

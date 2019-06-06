@@ -20,15 +20,13 @@ package com.ly.train.flower.registry.config;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import com.ly.train.flower.common.service.container.ServiceMeta;
 import com.ly.train.flower.common.util.URL;
 
 /**
  * @author leeyazhou
- *
+ * 
  */
 public class ServiceInfo implements Serializable {
 
@@ -36,11 +34,13 @@ public class ServiceInfo implements Serializable {
   private String application;
   private String className;
   private String serviceName;
-  private Set<URL> addresses = new HashSet<URL>();
+  private URL address;
   private Date createTime;
   // <host, number>
   private Map<String, Integer> number;
   private ServiceMeta serviceMeta;
+
+  public ServiceInfo() {}
 
   public Map<String, Integer> getNumber() {
     return number;
@@ -51,7 +51,7 @@ public class ServiceInfo implements Serializable {
   }
 
   public String toParam() {
-    return String.format("className=%s&address=%s&createTime=%s", className, addresses, createTime);
+    return String.format("className=%s&address=%s&createTime=%s", className, address, createTime);
   }
 
   public String getClassName() {
@@ -62,13 +62,7 @@ public class ServiceInfo implements Serializable {
     this.className = className;
   }
 
-  public void addAddress(URL address) {
-    this.addresses.add(address);
-  }
 
-  public Set<URL> getAddresses() {
-    return addresses;
-  }
 
   public Date getCreateTime() {
     return createTime;
@@ -78,16 +72,10 @@ public class ServiceInfo implements Serializable {
     this.createTime = createTime;
   }
 
-  /**
-   * @param application the application to set
-   */
   public void setApplication(String application) {
     this.application = application;
   }
 
-  /**
-   * @return the application
-   */
   public String getApplication() {
     return application;
   }
@@ -108,13 +96,25 @@ public class ServiceInfo implements Serializable {
     this.serviceName = serviceName;
   }
 
+  public URL getAddress() {
+    return address;
+  }
+
+  public void setAddress(URL address) {
+    this.address = address;
+  }
+
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("ServiceInfo [className=");
+    builder.append("ServiceInfo [application=");
+    builder.append(application);
+    builder.append(", className=");
     builder.append(className);
-    builder.append(", addresses=");
-    builder.append(addresses);
+    builder.append(", serviceName=");
+    builder.append(serviceName);
+    builder.append(", address=");
+    builder.append(address);
     builder.append(", createTime=");
     builder.append(createTime);
     builder.append("]");

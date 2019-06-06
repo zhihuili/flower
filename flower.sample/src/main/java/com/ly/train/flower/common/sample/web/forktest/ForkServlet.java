@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import com.ly.train.flower.common.akka.FlowRouter;
+import com.ly.train.flower.common.akka.router.FlowRouter;
 import com.ly.train.flower.common.sample.web.FlowerHttpServlet;
 import com.ly.train.flower.common.service.FlowerService;
 import com.ly.train.flower.common.service.container.ServiceFlow;
@@ -40,7 +40,7 @@ public class ForkServlet extends FlowerHttpServlet {
   public void init() {
     context = new ClassPathXmlApplicationContext("spring-mybatis.xml");
     buildServiceEnv();
-    sr = flowerFactory.getServiceActorFactory().buildFlowRouter("fork", 400);
+    sr = flowerFactory.getActorFactory().buildFlowRouter("fork", 400);
   }
 
   @Override
@@ -61,12 +61,16 @@ public class ForkServlet extends FlowerHttpServlet {
   }
 
   private void buildServiceEnv() {
-    serviceFactory.registerService("serviceBegin", "com.ly.train.flower.common.sample.web.forktest.service.BeginService");
-    serviceFactory.registerService("GoodsService", "com.ly.train.flower.common.sample.web.forktest.service.GoodsService");
-    serviceFactory.registerService("OrderService", "com.ly.train.flower.common.sample.web.forktest.service.OrderService");
+    serviceFactory.registerService("serviceBegin",
+        "com.ly.train.flower.common.sample.web.forktest.service.BeginService");
+    serviceFactory.registerService("GoodsService",
+        "com.ly.train.flower.common.sample.web.forktest.service.GoodsService");
+    serviceFactory.registerService("OrderService",
+        "com.ly.train.flower.common.sample.web.forktest.service.OrderService");
     serviceFactory.registerService("UserService", "com.ly.train.flower.common.sample.web.forktest.service.UserService");
     serviceFactory.registerService("AggregateService", "com.ly.train.flower.common.service.AggregateService");
-    serviceFactory.registerService("serviceReturn", "com.ly.train.flower.common.sample.web.forktest.service.ReturnService");
+    serviceFactory.registerService("serviceReturn",
+        "com.ly.train.flower.common.sample.web.forktest.service.ReturnService");
 
     // 缺少该语句，会导致spring注入失败
     serviceFactory.registerFlowerService("GoodsService", (FlowerService) context.getBean("GoodsService"));
