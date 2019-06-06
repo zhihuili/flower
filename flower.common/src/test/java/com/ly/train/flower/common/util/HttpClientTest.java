@@ -28,12 +28,12 @@ public class HttpClientTest {
   @Test
   public void testGet() {
     String ret = HttpClient.builder().setUrl("https://www.baidu.com").build().get();
-    System.out.println(ret);
+    Assert.notNull(ret, "success");
   }
 
   @Test
   public void testPost() {
     String ret = HttpClient.builder().setUrl("https://www.baidu.com").setParam("name=liyazhou").build().post();
-    System.out.println(ret);
+    Assert.notNull(ret, "success");
   }
 }
