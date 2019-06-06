@@ -23,7 +23,6 @@ import com.ly.train.flower.common.akka.actor.ServiceFacadeTest;
 import com.ly.train.flower.common.akka.actor.ServiceRouterTest;
 import com.ly.train.flower.common.bytecode.ClassGeneratorTest;
 import com.ly.train.flower.common.service.ServiceFlowTest;
-import com.ly.train.flower.common.util.EnvBuilderTest;
 import com.ly.train.flower.common.util.HttpClientTest;
 import com.ly.train.flower.registry.simple.SimpleRegistryTest;
 import com.ly.train.flower.registry.zookeeper.ZookeeperRegistryTest;
@@ -34,7 +33,7 @@ import com.ly.train.flower.registry.zookeeper.ZookeeperRegistryTest;
  */
 @RunWith(Suite.class)
 @SuiteClasses({ActorSelectionTest.class, ServiceFacadeTest.class, ServiceRouterTest.class, ClassGeneratorTest.class,
-    ServiceFlowTest.class, EnvBuilderTest.class, HttpClientTest.class, SimpleRegistryTest.class,
+    ServiceFlowTest.class, HttpClientTest.class, SimpleRegistryTest.class,
     ZookeeperRegistryTest.class})
 public class AllTests {
 
