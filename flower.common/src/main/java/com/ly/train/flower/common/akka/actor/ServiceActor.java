@@ -107,26 +107,36 @@ public class ServiceActor extends AbstractFlowerActor {
       // logger.info("服务参数类型 {} : {}", pType, getService(serviceContext));
       result = ((Service) getService(serviceContext)).process(param, serviceContext);
     } catch (Throwable e) {
-      Web web = serviceContext.getWeb();
-      if (web != null) {
-        web.complete();
-      }
-
-      Exception e2 = new ServiceException(
-          "invoke service " + serviceContext.getCurrentServiceName() + " : " + service + "\r\n, param : " + param, e);
-      if (serviceContext.isSync()) {
-        handleSyncResult(serviceContext, ExceptionUtil.getErrorMessage(e2), true);
-      } else {
-        throw e2;
-      }
+      handleException(serviceContext, e, param);
     }
     if (result != null && result instanceof CompletableFuture) {
-      ((CompletableFuture) result).whenComplete((r, e) -> {
+      final Object tempParam = param;
+      ((CompletableFuture<Object>) result).whenComplete((r, e) -> {
+        if (e != null) {
+          handleException(serviceContext, e, tempParam);
+          return;
+        }
         handleNextServices(serviceContext, r, flowMessage.getTransactionId());
       });
     } else {
       handleNextServices(serviceContext, result, flowMessage.getTransactionId());
     }
+  }
+
+  private void handleException(ServiceContext serviceContext, Throwable e, Object param) {
+    Web web = serviceContext.getWeb();
+    if (web != null) {
+      web.complete();
+    }
+
+    ServiceException e2 = new ServiceException(
+        "invoke service " + serviceContext.getCurrentServiceName() + " : " + service + "\r\n, param : " + param, e);
+    if (serviceContext.isSync()) {
+      handleSyncResult(serviceContext, ExceptionUtil.getErrorMessage(e2), true);
+    } else {
+      throw e2;
+    }
+
   }
 
   /**
@@ -162,6 +172,14 @@ public class ServiceActor extends AbstractFlowerActor {
     }
   }
 
+  private void handleNextServices(ServiceContext serviceContext, Object result, final String oldTransactionId) {
+    try {
+      doHandleNextServices(serviceContext, result, oldTransactionId);
+    } catch (Exception e) {
+      logger.error("fail to handle next services ", e);
+    }
+  }
+
   /**
    * 处理当前服务的下行服务节点
    * 
@@ -169,7 +187,7 @@ public class ServiceActor extends AbstractFlowerActor {
    * @param result 消息内容
    * @param oldTransactionId oldTransactionId 聚合服务时会用到
    */
-  private void handleNextServices(ServiceContext serviceContext, Object result, final String oldTransactionId) {
+  private void doHandleNextServices(ServiceContext serviceContext, Object result, final String oldTransactionId) {
     Set<RefType> nextActorRef = getNextServiceActors(serviceContext);
     if (serviceContext.isSync() && CollectionUtil.isEmpty(nextActorRef)) {
       handleSyncResult(serviceContext, result, false);
@@ -239,9 +257,8 @@ public class ServiceActor extends AbstractFlowerActor {
       ServiceMeta serviceMeta = flowerFactory.getServiceFactory().getServiceLoader().loadServiceMeta(serviceName);
       this.paramType = serviceMeta.getParamType();
       if (service instanceof Aggregate) {
-        int num =
-            flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
-                .getServiceConfig(serviceName).getJointSourceNumber().get();
+        int num = flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
+            .getServiceConfig(serviceName).getJointSourceNumber().get();
         ((AggregateService) service).setSourceNumber(num);
       }
     }
@@ -297,9 +314,8 @@ public class ServiceActor extends AbstractFlowerActor {
     Set<RefType> nextServiceActors = nextServiceActorCache.get(cacheKey);
     if (nextServiceActors == null && StringUtil.isNotBlank(serviceContext.getFlowName())) {
       nextServiceActors = new HashSet<>();
-      Set<ServiceConfig> serviceConfigs =
-          flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
-              .getNextFlow(serviceContext.getCurrentServiceName());
+      Set<ServiceConfig> serviceConfigs = flowerFactory.getServiceFactory()
+          .getOrCreateServiceFlow(serviceContext.getFlowName()).getNextFlow(serviceContext.getCurrentServiceName());
       if (serviceConfigs != null) {
         for (ServiceConfig serviceConfig : serviceConfigs) {
           flowerFactory.getServiceFactory().loadServiceMeta(serviceConfig);// 内部对serviceConfig的数据进行填充
