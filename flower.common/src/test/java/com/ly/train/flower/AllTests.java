@@ -33,8 +33,7 @@ import com.ly.train.flower.registry.zookeeper.ZookeeperRegistryTest;
  */
 @RunWith(Suite.class)
 @SuiteClasses({ActorSelectionTest.class, ServiceFacadeTest.class, ServiceRouterTest.class, ClassGeneratorTest.class,
-    ServiceFlowTest.class, HttpClientTest.class, SimpleRegistryTest.class,
-    ZookeeperRegistryTest.class})
+    ServiceFlowTest.class, HttpClientTest.class, SimpleRegistryTest.class, ZookeeperRegistryTest.class})
 public class AllTests {
 
 }
