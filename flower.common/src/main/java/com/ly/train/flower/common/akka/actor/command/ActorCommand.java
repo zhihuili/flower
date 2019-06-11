@@ -20,17 +20,17 @@ import java.io.Serializable;
 /**
  * @author leeyazhou
  */
-public class CreateCommand implements Command, Serializable {
+public class ActorCommand implements Command, Serializable {
 
   private static final long serialVersionUID = 1L;
   private String serviceName;
   private int index;
 
   private CommandType commandType = CommandType.CREATE_ACTOR;
-  private Type type = Type.REQUEST;
+  private MessageType messageType = MessageType.REQUEST;
   private String data = "PING";
 
-  public CreateCommand(String serviceName, int index) {
+  public ActorCommand(String serviceName, int index) {
     this.serviceName = serviceName;
     this.index = index;
   }
@@ -61,12 +61,15 @@ public class CreateCommand implements Command, Serializable {
   }
 
   @Override
-  public Type getType() {
-    return type;
+  public MessageType getMessageType() {
+    return messageType;
   }
 
-  public void setType(Type type) {
-    this.type = type;
+  /**
+   * @param messageType the messageType to set
+   */
+  public void setMessageType(MessageType messageType) {
+    this.messageType = messageType;
   }
 
   public String getData() {

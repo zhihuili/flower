@@ -58,7 +58,7 @@ public abstract class AbstractService<P, R> implements Service<P, R> {
    * @param message 参数
    * @param context 上下文
    * @return 返回结果
-   * @throws any exception
+   * @throws Throwable any exception
    */
   public abstract R doProcess(P message, ServiceContext context) throws Throwable;
 }

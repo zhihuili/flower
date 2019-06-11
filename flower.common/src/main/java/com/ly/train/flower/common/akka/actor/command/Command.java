@@ -25,5 +25,5 @@ public interface Command extends Message {
   CommandType getCommandType();
 
 
-  Type getType();
+  MessageType getMessageType();
 }

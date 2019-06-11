@@ -16,21 +16,23 @@
 package com.ly.train.flower.common.akka.actor.command;
 
 /**
+ * 请求/响应
+ * 
  * @author leeyazhou
  */
-public class GetContextCommand implements Command {
+public enum MessageType {
 
-  private static final long serialVersionUID = 1L;
-  private CommandType commandType = CommandType.GET_CONTEXT;
-  private Type type = Type.REQUEST;
+  REQUEST(0),
 
-  @Override
-  public CommandType getCommandType() {
-    return commandType;
+  RESPONSE(1);
+
+  private int code;
+
+  private MessageType(int code) {
+    this.code = code;
   }
 
-  @Override
-  public Type getType() {
-    return type;
+  public int getCode() {
+    return code;
   }
 }

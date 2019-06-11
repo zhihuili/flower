@@ -28,7 +28,9 @@ public enum CommandType {
   /**
    * 获取ActorContext
    */
-  GET_CONTEXT(1, "获取ActorContext");
+  GET_CONTEXT(1, "获取ActorContext"),
+
+  HEART_BEAT(2, "心跳");
 
   private int code;
   private String description;

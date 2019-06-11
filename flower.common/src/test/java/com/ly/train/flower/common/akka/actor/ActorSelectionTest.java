@@ -64,7 +64,10 @@ public class ActorSelectionTest {
   }
 
   @AfterClass
-  public static void after() {
+  public static void after() throws InterruptedException {
+    long sleep = 2000;
+    System.out.println("休眠" + sleep + "ms后关闭系统");
+    Thread.sleep(sleep);
     flowerFactory2.stop();
     flowerFactory1.stop();
   }

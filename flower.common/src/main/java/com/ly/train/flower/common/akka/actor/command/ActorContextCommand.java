@@ -16,23 +16,21 @@
 package com.ly.train.flower.common.akka.actor.command;
 
 /**
- * 请求/响应
- * 
  * @author leeyazhou
  */
-public enum Type {
+public class ActorContextCommand implements Command {
 
-  REQUEST(0),
+  private static final long serialVersionUID = 1L;
+  private CommandType commandType = CommandType.GET_CONTEXT;
+  private MessageType messagetype = MessageType.REQUEST;
 
-  RESPONSE(1);
-
-  private int code;
-
-  private Type(int code) {
-    this.code = code;
+  @Override
+  public CommandType getCommandType() {
+    return commandType;
   }
 
-  public int getCode() {
-    return code;
+  @Override
+  public MessageType getMessageType() {
+    return messagetype;
   }
 }

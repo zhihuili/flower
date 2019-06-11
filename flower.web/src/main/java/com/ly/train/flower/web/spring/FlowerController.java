@@ -1,12 +1,12 @@
 /**
  * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 /**
- * 
+ *
  */
 package com.ly.train.flower.web.spring;
 
-import java.io.IOException;
-import javax.servlet.AsyncContext;
-import javax.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.ly.train.flower.common.akka.router.FlowRouter;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.service.container.FlowerFactory;
 import com.ly.train.flower.common.service.container.ServiceFlow;
 import com.ly.train.flower.logging.Logger;
 import com.ly.train.flower.logging.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.AsyncContext;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
- * 
+ *
  * @author leeyazhou
  */
 public abstract class FlowerController implements InitializingBean {
@@ -62,8 +63,8 @@ public abstract class FlowerController implements InitializingBean {
 
   /**
    * 初始化路由
-   * 
-   * @see com.ly.train.flower.common.actor.ServiceFacade#buildFlowRouter
+   *
+   * @see com.ly.train.flower.common.akka.ServiceFacade#buildFlowRouter(String, int)
    * @return {@code ServiceRouter}
    */
   private FlowRouter initFlowRouter() {
@@ -72,7 +73,7 @@ public abstract class FlowerController implements InitializingBean {
 
   /**
    * 定义数据处理流程
-   * 
+   *
    * @see ServiceFlow
    */
   public abstract void buildFlower();
@@ -83,7 +84,7 @@ public abstract class FlowerController implements InitializingBean {
 
   /**
    * 获取流程名称
-   * 
+   *
    * @return flowName
    */
   public String getFlowName() {

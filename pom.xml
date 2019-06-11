@@ -16,7 +16,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.ly.train</groupId>
@@ -558,7 +559,7 @@
                         <format>html</format>
                         <format>xml</format>
                     </formats>
-                    <check />
+                    <check/>
                 </configuration>
             </plugin>
             <plugin>
@@ -566,7 +567,7 @@
                 <artifactId>maven-java-formatter-plugin</artifactId>
                 <configuration>
                     <configFile>${user.dir}/conf/FlowerFormatter.xml</configFile>
-                    <encoding>${project.encoding}</encoding>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
                 <executions>
                     <execution>
@@ -610,6 +611,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
+                <configuration>
+                    <rules>
+                        <dependencyConvergence/>
+                        <requireJavaVersion>
+                            <version>[${java.version},)</version>
+                        </requireJavaVersion>
+                        <requireMavenVersion>
+                            <version>[${maven.version},)</version>
+                        </requireMavenVersion>
+                    </rules>
+                </configuration>
                 <executions>
                     <execution>
                         <id>enforce</id>
@@ -618,17 +630,6 @@
                             <goal>display-info</goal>
                         </goals>
                         <phase>compile</phase>
-                        <configuration>
-                            <rules>
-                                <dependencyConvergence />
-                                <requireJavaVersion>
-                                    <version>[${java.version},)</version>
-                                </requireJavaVersion>
-                                <requireMavenVersion>
-                                    <version>[${maven.version},)</version>
-                                </requireMavenVersion>
-                            </rules>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

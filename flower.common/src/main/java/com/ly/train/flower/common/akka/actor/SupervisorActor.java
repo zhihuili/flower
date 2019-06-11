@@ -17,9 +17,10 @@ package com.ly.train.flower.common.akka.actor;
 
 import java.util.concurrent.TimeUnit;
 import com.ly.train.flower.common.akka.ServiceActorFactory;
-import com.ly.train.flower.common.akka.actor.command.CreateCommand;
-import com.ly.train.flower.common.akka.actor.command.GetContextCommand;
-import com.ly.train.flower.common.akka.actor.command.Type;
+import com.ly.train.flower.common.akka.actor.command.ActorCommand;
+import com.ly.train.flower.common.akka.actor.command.ActorContextCommand;
+import com.ly.train.flower.common.akka.actor.command.MessageType;
+import com.ly.train.flower.common.akka.actor.command.PingCommand;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.ServiceContext;
 import akka.actor.OneForOneStrategy;
@@ -47,17 +48,21 @@ public class SupervisorActor extends AbstractFlowerActor {
 
   @Override
   public Receive createReceive() {
-    return receiveBuilder().match(GetContextCommand.class, msg -> {
+    return receiveBuilder().match(ActorContextCommand.class, msg -> {
       getSender().tell(getContext(), getSelf());
-    }).match(CreateCommand.class, command -> {
+    }).match(ActorCommand.class, command -> {
       ServiceConfig serviceConfig = new ServiceConfig();
       serviceConfig.setServiceName(command.getServiceName());
       serviceConfig.setLocal(true);
       serviceActorFactory.buildServiceActor(serviceConfig, command.getIndex());
-      command.setType(Type.RESPONSE);
+      command.setMessageType(MessageType.RESPONSE);
       command.setData("PONG");
 
       getSender().tell(command, getSender());
+    }).match(PingCommand.class, ping -> {
+      ping.setText("PONG");
+      ping.setMessageType(MessageType.RESPONSE);
+      getSender().tell(ping, getSender());
     }).matchAny(message -> {
       unhandled(message);
     }).build();
