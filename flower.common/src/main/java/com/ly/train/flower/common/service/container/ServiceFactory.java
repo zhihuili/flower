@@ -15,6 +15,7 @@
  */
 package com.ly.train.flower.common.service.container;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -55,9 +56,8 @@ public class ServiceFactory extends AbstractInit {
       return;
     }
 
-    Set<Class<?>> flowers =
-        DefaultClassScanner.getInstance().getClassListByAnnotation(basePackage,
-            com.ly.train.flower.common.annotation.FlowerService.class);
+    Set<Class<?>> flowers = DefaultClassScanner.getInstance().getClassListByAnnotation(basePackage,
+        com.ly.train.flower.common.annotation.FlowerService.class);
     logger.info("scan flowerService, basePackage : {}, find flowerService : {}", basePackage, flowers.size());
     for (Class<?> clazz : flowers) {
       serviceLoader.registerServiceType(FlowerServiceUtil.getServiceName(clazz), clazz);
@@ -77,8 +77,7 @@ public class ServiceFactory extends AbstractInit {
     serviceConfig.setServiceName(serviceName);
     serviceConfig.setServiceMeta(serviceMeta);
     serviceConfig.setApplication(flowerConfig.getName());
-    // flowerFactory.getServiceActorFactory().buildServiceActor(serviceConfig);
-    flowerFactory.getActorFactory().buildServiceRouter(serviceConfig, -1);
+    // flowerFactory.getActorFactory().buildServiceRouter(serviceConfig, -1);
 
     Set<Registry> registries = flowerFactory.getRegistry();
     // logger.info("注册中心 {} : {}", serviceName, registries.size());
@@ -93,10 +92,7 @@ public class ServiceFactory extends AbstractInit {
     serviceInfo.setApplication(flowerConfig.getName());
     serviceInfo.setAddress(flowerConfig.toURL());
     serviceInfo.setCreateTime(new Date());
-    serviceInfo.setClassName(serviceClassName);
     serviceInfo.setServiceMeta(serviceMeta);
-    serviceInfo.setServiceName(serviceName);
-    serviceInfo.setApplication(flowerConfig.getName());
     for (Registry registry : registries) {
       registry.register(serviceInfo);
     }
@@ -169,46 +165,53 @@ public class ServiceFactory extends AbstractInit {
     ServiceMeta serviceMeta = serviceLoader.loadServiceMeta(serviceConfig.getServiceName());
     if (serviceMeta != null) {
       serviceConfig.setLocal(true);
-      serviceMeta.setLocal(true);
       return serviceMeta;
     }
 
-    ServiceInfo serviceInfo = this.loadServiceInfoFromRegistrry(serviceConfig);
-    serviceConfig.addAddress(serviceInfo.getAddress());
-    serviceConfig.setApplication(serviceInfo.getApplication());
-    serviceMeta = serviceInfo.getServiceMeta();
+    List<ServiceInfo> serviceInfos = this.loadServiceInfoFromRegistrry(serviceConfig);
+    for(ServiceInfo serviceInfo : serviceInfos) {
+      serviceConfig.addAddress(serviceInfo.getAddress());
+      serviceConfig.setApplication(serviceInfo.getApplication());
+      serviceMeta = serviceInfo.getServiceMeta();
+    }
+    
     if (serviceMeta != null) {
       serviceConfig.setServiceMeta(serviceMeta);
       serviceConfig.setLocal(false);
-      serviceMeta.setLocal(false);
       return serviceMeta;
     }
-    throw new ServiceNotFoundException("serviceName : " + serviceConfig.getServiceName() + ", serviceConfig : "
-        + serviceConfig);
+    throw new ServiceNotFoundException(
+        "serviceName : " + serviceConfig.getServiceName() + ", serviceConfig : " + serviceConfig);
   }
 
-  public ServiceInfo loadServiceInfoFromRegistrry(ServiceConfig serviceConfig) {
+  public List<ServiceInfo> loadServiceInfoFromRegistrry(ServiceConfig serviceConfig) {
     Set<Registry> registries = flowerFactory.getRegistry();
     if (registries == null || registries.isEmpty()) {
       return null;
     }
     ServiceInfo queryInfo = new ServiceInfo();
-    queryInfo.setServiceName(serviceConfig.getServiceName());
+    ServiceMeta queryMeta = new ServiceMeta();
+    queryMeta.setServiceName(serviceConfig.getServiceName());
+    queryInfo.setServiceMeta(queryMeta);
     queryInfo.setApplication(serviceConfig.getApplication());
+    List<ServiceInfo> ret = new ArrayList<ServiceInfo>();
     for (Registry registry : registries) {
       List<ServiceInfo> serviceInfos = registry.getProvider(queryInfo);
       if (serviceInfos != null) {
         for (ServiceInfo serviceInfo : serviceInfos) {
-          // logger.info("注册中心获取连接: {}", serviceInfo);
-          if (serviceInfo.getServiceName().equals(serviceConfig.getServiceName())) {
+          logger.info("注册中心获取连接 {} : {}", serviceConfig.getServiceName(), serviceInfo.getServiceMeta());
+          if (serviceInfo.getServiceMeta().getServiceName().equals(serviceConfig.getServiceName())) {
             // add service address
-            return serviceInfo;
+            ret.add(serviceInfo);
           }
         }
       }
     }
+    if (ret.isEmpty()) {
+      throw new ServiceNotFoundException(serviceConfig.getServiceName() + " not found.");
+    }
 
-    return null;
+    return ret;
   }
 
   private ServiceFlow getServiceFlowFromRegistry(String flowName) {

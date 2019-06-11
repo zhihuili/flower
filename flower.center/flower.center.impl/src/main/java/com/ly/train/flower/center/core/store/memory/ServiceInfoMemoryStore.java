@@ -33,8 +33,8 @@ public class ServiceInfoMemoryStore implements ServiceInfoStore {
   private CacheManager cacheManager = CacheManager.get("flower_center_info");
 
 
-  public boolean addServiceInfo(ServiceInfo serviceInfo) {
-    final String cacheKey = serviceInfo.getApplication() + "_" + serviceInfo.getServiceName();
+  public synchronized boolean addServiceInfo(ServiceInfo serviceInfo) {
+    final String cacheKey = serviceInfo.getApplication() + "_" + serviceInfo.getServiceMeta().getServiceName();
     Cache<Set<ServiceInfo>> cache = cacheManager.getCache(cacheKey);
     if (cache == null) {
       Set<ServiceInfo> c = new HashSet<ServiceInfo>();
@@ -43,14 +43,14 @@ public class ServiceInfoMemoryStore implements ServiceInfoStore {
       cache = cacheManager.getCache(cacheKey);
     } else {
       cache.getValue().add(serviceInfo);
-      cache.setTimeToLive(6000);
+      cache.setTimeToLive(6000L);
     }
     return true;
   }
 
   @Override
   public Set<ServiceInfo> getServiceInfo(ServiceInfo serviceInfo) {
-    final String cacheKey = serviceInfo.getApplication() + "_" + serviceInfo.getServiceName();
+    final String cacheKey = serviceInfo.getApplication() + "_" + serviceInfo.getServiceMeta().getServiceName();
     Cache<Object> cache = cacheManager.getCache(cacheKey);
     if (cache == null) {
       return null;

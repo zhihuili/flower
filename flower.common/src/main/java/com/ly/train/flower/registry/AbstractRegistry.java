@@ -41,8 +41,8 @@ public abstract class AbstractRegistry implements Registry {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
   protected final ConcurrentMap<String, ServiceInfo> serviceInfoCache = new ConcurrentHashMap<>();
   protected final ConcurrentMap<String, ServiceConfig> serviceConfigCache = new ConcurrentHashMap<>();
-  private static final ScheduledExecutorService executorService = Executors
-      .newSingleThreadScheduledExecutor(new NamedThreadFactory("flower-registry"));
+  private static final ScheduledExecutorService executorService =
+      Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("flower-registry"));
 
   protected final String infoRoot = "flower:info";
   protected final String configRoot = "flower:config";
@@ -59,7 +59,7 @@ public abstract class AbstractRegistry implements Registry {
           List<ServiceInfo> t = doGetProvider(null);
           if (t != null && !t.isEmpty()) {
             for (ServiceInfo info : t) {
-              serviceInfoCache.put(info.getClassName(), info);
+              serviceInfoCache.put(info.getServiceMeta().getServiceClassName(), info);
             }
           }
           List<ServiceConfig> t2 = doGetServiceConfig(null);
@@ -78,7 +78,7 @@ public abstract class AbstractRegistry implements Registry {
 
   @Override
   public boolean register(ServiceInfo serviceInfo) {
-    serviceInfoCache.putIfAbsent(serviceInfo.getClassName(), serviceInfo);
+    serviceInfoCache.putIfAbsent(serviceInfo.getServiceMeta().getServiceClassName(), serviceInfo);
     return doRegister(serviceInfo);
   }
 
@@ -87,7 +87,7 @@ public abstract class AbstractRegistry implements Registry {
     List<ServiceInfo> ret = doGetProvider(serviceInfo);
     if (ret != null) {
       for (ServiceInfo i : ret) {
-        serviceInfoCache.put(i.getClassName(), i);
+        serviceInfoCache.put(i.getServiceMeta().getServiceClassName(), i);
       }
     }
     return new ArrayList<ServiceInfo>(serviceInfoCache.values());

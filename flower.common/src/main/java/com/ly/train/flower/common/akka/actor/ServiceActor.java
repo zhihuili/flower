@@ -318,7 +318,7 @@ public class ServiceActor extends AbstractFlowerActor {
       nextServiceActors = new HashSet<>();
       Set<ServiceConfig> serviceConfigs =
           flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
-              .getNextFlow(serviceContext.getCurrentServiceName());
+              .getNextServiceConfig(serviceContext.getCurrentServiceName());
       if (serviceConfigs != null) {
         for (ServiceConfig serviceConfig : serviceConfigs) {
           flowerFactory.getServiceFactory().loadServiceMeta(serviceConfig);// 内部对serviceConfig的数据进行填充

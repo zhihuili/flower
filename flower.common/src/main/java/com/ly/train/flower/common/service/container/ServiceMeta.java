@@ -32,7 +32,6 @@ public class ServiceMeta implements Serializable {
   private String serviceClassName;
   private String paramType;
   private String resultType;
-  private boolean local = true;
   private List<String> configs = new ArrayList<>();
   private boolean aggregateService;
   private boolean innerAggregateService;
@@ -73,25 +72,6 @@ public class ServiceMeta implements Serializable {
 
   public void setResultType(String resultType) {
     this.resultType = resultType;
-  }
-
-  /**
-   * true: local Service <br/>
-   * false : remote Service
-   * 
-   * @return true / false
-   */
-  public boolean isLocal() {
-    return local;
-  }
-
-  /**
-   * set local
-   * 
-   * @param local true: local Service, false : remote Service
-   */
-  public void setLocal(boolean local) {
-    this.local = local;
   }
 
   public String getServiceClassName() {
@@ -174,8 +154,6 @@ public class ServiceMeta implements Serializable {
     builder.append(resultType);
     builder.append(", serviceClassName=");
     builder.append(serviceClassName);
-    builder.append(", local=");
-    builder.append(local);
     builder.append(", configs=");
     builder.append(configs);
     builder.append("]");

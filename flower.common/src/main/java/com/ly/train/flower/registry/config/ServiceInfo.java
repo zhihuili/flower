@@ -20,7 +20,6 @@ package com.ly.train.flower.registry.config;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Map;
 import com.ly.train.flower.common.service.container.ServiceMeta;
 import com.ly.train.flower.common.util.URL;
 
@@ -32,36 +31,16 @@ public class ServiceInfo implements Serializable {
 
   private static final long serialVersionUID = 1L;
   private String application;
-  private String className;
-  private String serviceName;
   private URL address;
   private Date createTime;
-  // <host, number>
-  private Map<String, Integer> number;
   private ServiceMeta serviceMeta;
 
   public ServiceInfo() {}
 
-  public Map<String, Integer> getNumber() {
-    return number;
-  }
-
-  public void setNumber(Map<String, Integer> number) {
-    this.number = number;
-  }
-
   public String toParam() {
-    return String.format("className=%s&address=%s&createTime=%s", className, address, createTime);
+    return String.format("className=%s&address=%s&createTime=%s", getServiceMeta().getServiceClassName(), address,
+        createTime);
   }
-
-  public String getClassName() {
-    return className;
-  }
-
-  public void setClassName(String className) {
-    this.className = className;
-  }
-
 
 
   public Date getCreateTime() {
@@ -88,13 +67,6 @@ public class ServiceInfo implements Serializable {
     this.serviceMeta = serviceMeta;
   }
 
-  public String getServiceName() {
-    return serviceName;
-  }
-
-  public void setServiceName(String serviceName) {
-    this.serviceName = serviceName;
-  }
 
   public URL getAddress() {
     return address;
@@ -109,10 +81,6 @@ public class ServiceInfo implements Serializable {
     StringBuilder builder = new StringBuilder();
     builder.append("ServiceInfo [application=");
     builder.append(application);
-    builder.append(", className=");
-    builder.append(className);
-    builder.append(", serviceName=");
-    builder.append(serviceName);
     builder.append(", address=");
     builder.append(address);
     builder.append(", createTime=");

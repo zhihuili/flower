@@ -28,6 +28,7 @@ import com.ly.train.flower.base.service.user.UserServiceB;
 import com.ly.train.flower.base.service.user.UserServiceC1;
 import com.ly.train.flower.common.service.config.ServiceConfig;
 import com.ly.train.flower.common.service.container.ServiceFlow;
+import com.ly.train.flower.common.service.container.ServiceMeta;
 import com.ly.train.flower.common.util.ExtensionLoader;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.registry.Registry;
@@ -51,8 +52,9 @@ public class SimpleRegistryTest extends TestBase {
 
     ServiceInfo serviceInfo = new ServiceInfo();
     serviceInfo.setApplication(flowerFactory.getFlowerConfig().getName());
-    serviceInfo.setClassName(UserServiceA.class.getName());
-    serviceInfo.setServiceName(UserServiceA.class.getName());
+    ServiceMeta meta = new ServiceMeta(UserServiceA.class.getName());
+    meta.setServiceName(UserServiceA.class.getName());
+    serviceInfo.setServiceMeta(meta);
     serviceInfo.setAddress(flowerFactory.getFlowerConfig().toURL());
     serviceInfo.setCreateTime(new Date());
     registry.register(serviceInfo);
@@ -70,7 +72,9 @@ public class SimpleRegistryTest extends TestBase {
 
     ServiceInfo serviceInfo = new ServiceInfo();
     serviceInfo.setApplication(flowerFactory.getFlowerConfig().getName());
-    serviceInfo.setClassName(UserServiceA.class.getName());
+    ServiceMeta meta = new ServiceMeta(UserServiceA.class.getName());
+    meta.setServiceName(UserServiceA.class.getName());
+    serviceInfo.setServiceMeta(meta);
     serviceInfo.setCreateTime(new Date());
     List<ServiceInfo> serviceInfos = registry.getProvider(serviceInfo);
     System.out.println("请求结果:" + serviceInfos);

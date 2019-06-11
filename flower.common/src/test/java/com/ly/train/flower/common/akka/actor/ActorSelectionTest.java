@@ -40,7 +40,7 @@ public class ActorSelectionTest {
   private static FlowerFactory flowerFactory2;
 
   @BeforeClass
-  public static void before() {
+  public static void before() throws InterruptedException {
     String configLocation4 =
         Thread.currentThread().getContextClassLoader().getResource("conf/flower_25004.yml").getPath();
     flowerFactory2 = new SimpleFlowerFactory(configLocation4);
@@ -61,6 +61,7 @@ public class ActorSelectionTest {
     flowerFactory1 = new SimpleFlowerFactory(configLocation3);
     flowerFactory1.start();
     flowerFactory1.getServiceFactory().registerService(UserServiceA.class.getSimpleName(), UserServiceA.class);
+    Thread.sleep(1000);
   }
 
   @AfterClass
@@ -82,13 +83,14 @@ public class ActorSelectionTest {
     ServiceFlow serviceFlow = flowerFactory1.getServiceFactory().getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
-    serviceFlow.buildFlow(UserServiceB.class, UserServiceC2.class);
-    serviceFlow.buildFlow(Arrays.asList(UserServiceC1.class, UserServiceC2.class), UserServiceD.class);
+    serviceFlow.buildFlow(UserServiceC1.class, UserServiceC2.class);
     serviceFlow.build();
 
     try {
       Object ret = flowerFactory1.getServiceFacade().syncCallService(flowName, message);
       System.out.println("返回结果：" + ret);
+      final String expectDesc = " --> UserServiceA --> UserServiceB --> UserServiceC1 --> UserServiceC2";
+      org.junit.Assert.assertEquals(expectDesc, ((User) ret).getDesc());
     } catch (Exception e) {
       e.printStackTrace();
     }

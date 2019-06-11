@@ -131,19 +131,6 @@ public final class ServiceFlow {
    * 2. 不存在指定 flowName 的流程，则新建一个流程对象并缓存
    * 
    * @param flowName 流程名称
-   * @return {@code ServiceFlow}
-   * @see FlowerFactory#getOrCreateServiceFlow(String)
-   */
-  // private static ServiceFlow getOrCreate(String flowName) {
-  // return
-  // SimpleFlowerFactory.get().getServiceFactory().getOrCreateServiceFlow(flowName);
-  // }
-
-  /**
-   * 1. 已经存在指定 flowName 的流程，则返回原有流程对象<br/>
-   * 2. 不存在指定 flowName 的流程，则新建一个流程对象并缓存
-   * 
-   * @param flowName 流程名称
    * @param serviceFactory {@code ServiceFactory}
    * @return {@code ServiceFlow}
    * @see ServiceFactory#getOrCreateServiceFlow(String)
@@ -381,7 +368,7 @@ public final class ServiceFlow {
    * @param serviceName 服务节点名称
    * @return {@link ServiceConfig}
    */
-  public Set<ServiceConfig> getNextFlow(String serviceName) {
+  public Set<ServiceConfig> getNextServiceConfig(String serviceName) {
     if (header == null || StringUtil.isBlank(serviceName)) {
       return null;
     }

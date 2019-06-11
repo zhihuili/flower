@@ -35,7 +35,7 @@ import com.ly.train.flower.registry.config.ServiceInfo;
  */
 @RestController
 @RequestMapping("/service/")
-@Flower(value = "listServiceInfo")
+@Flower(value = "service_info_list")
 public class ServiceInfoListController extends BaseController {
 
   @RequestMapping("list")
