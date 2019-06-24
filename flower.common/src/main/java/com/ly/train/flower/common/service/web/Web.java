@@ -104,13 +104,13 @@ public class Web {
       throw new UnsupportedEncodingException("UnsupportedEncoding");
     }
   }
-  
+
   public ServletRequest getServletRequest() {
     return servletRequest;
   }
-  
+
   public ServletResponse getServletResponse() {
     return servletResponse;
   }
-  
+
 }

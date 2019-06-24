@@ -41,8 +41,8 @@ public abstract class AbstractRegistry implements Registry {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
   protected final ConcurrentMap<String, ServiceInfo> serviceInfoCache = new ConcurrentHashMap<>();
   protected final ConcurrentMap<String, ServiceConfig> serviceConfigCache = new ConcurrentHashMap<>();
-  private static final ScheduledExecutorService executorService =
-      Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("flower-registry"));
+  private static final ScheduledExecutorService executorService = Executors
+      .newSingleThreadScheduledExecutor(new NamedThreadFactory("flower-registry"));
 
   protected final String infoRoot = "flower:info";
   protected final String configRoot = "flower:config";
