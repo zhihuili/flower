@@ -198,9 +198,9 @@ service5 -> service4
 这里的service5就是一个消息聚合服务，负责聚合并行的service2和service3产生的消息，并把聚合后的Set消息发送给service4.
 服务配置如下，service5配置为框架内置服务AggregateService。
 ```
-service2 = com.ly.train.flower.common.sample.textflow.Service2
-service3 = com.ly.train.flower.common.sample.textflow.Service3
-service4 = com.ly.train.flower.common.sample.textflow.Service4
+service2 = com.ly.train.flower.sample.textflow.Service2
+service3 = com.ly.train.flower.sample.textflow.Service3
+service4 = com.ly.train.flower.sample.textflow.Service4
 service5 = com.ly.train.flower.common.service.AggregateService
 ```
 service4负责接收处理聚合后的消息，从Set中取出各个消息，分别处理。

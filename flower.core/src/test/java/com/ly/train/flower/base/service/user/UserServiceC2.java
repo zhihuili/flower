@@ -19,10 +19,10 @@
 package com.ly.train.flower.base.service.user;
 
 import com.ly.train.flower.base.model.User;
+import com.ly.train.flower.common.core.service.Service;
+import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
-import com.ly.train.flower.core.service.Service;
-import com.ly.train.flower.core.service.container.ServiceContext;
 
 /**
  * @author leeyazhou

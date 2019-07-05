@@ -17,7 +17,8 @@ package com.ly.train.flower.core.akka.serializer.hessian;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.ly.train.flower.core.serializer.Codec;
+import com.ly.train.flower.common.util.ExtensionLoader;
+import com.ly.train.flower.serializer.Serializer;
 import akka.actor.Extension;
 import akka.serialization.JSerializer;
 
@@ -27,6 +28,7 @@ import akka.serialization.JSerializer;
  */
 public class HessianSerializer extends JSerializer implements Extension {
   static final Logger logger = LoggerFactory.getLogger(HessianSerializer.class);
+  private static final Serializer hessianSerializer = ExtensionLoader.load(Serializer.class).load("hessian");
 
   @Override
   public int identifier() {
@@ -42,13 +44,13 @@ public class HessianSerializer extends JSerializer implements Extension {
   public byte[] toBinary(Object data) {
     // logger.info("序列化: {}", data);
 
-    return Codec.Hessian.getSerializer().encode(data);
+    return hessianSerializer.encode(data);
   }
 
   @Override
   public Object fromBinaryJava(byte[] data, Class<?> clazz) {
     // logger.info("反序列化 {}: {}", clazz, data);
-    return Codec.Hessian.getSerializer().decode(data, clazz.getName());
+    return hessianSerializer.decode(data, clazz.getName());
   }
 
 

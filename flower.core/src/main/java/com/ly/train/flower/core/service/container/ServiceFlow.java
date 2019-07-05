@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import com.alibaba.fastjson.JSONObject;
 import com.ly.train.flower.common.annotation.FlowerServiceUtil;
+import com.ly.train.flower.common.exception.FlowException;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.AnnotationUtil;
@@ -34,7 +35,6 @@ import com.ly.train.flower.common.util.ClassUtil;
 import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.Pair;
 import com.ly.train.flower.common.util.StringUtil;
-import com.ly.train.flower.core.exception.FlowerException;
 import com.ly.train.flower.core.service.config.ServiceConfig;
 import com.ly.train.flower.core.service.impl.AggregateService;
 import com.ly.train.flower.registry.Registry;
@@ -429,12 +429,12 @@ public final class ServiceFlow {
     Class<?> nextParamType = ClassUtil.forName(nextServiceMata.getParamType());
 
     if (preReturnType == null || nextParamType == null) {
-      throw new FlowerException(preServiceMata.getServiceClassName() + "->preReturnType : " + preReturnType + ", "
+      throw new FlowException(preServiceMata.getServiceClassName() + "->preReturnType : " + preReturnType + ", "
           + nextServiceMata.getServiceClassName() + "-> nextParamType : " + nextParamType);
     }
 
     if (!nextParamType.isAssignableFrom(preReturnType)) {
-      throw new FlowerException("build flower error, because " + preServiceMata.getServiceClassName() + " ("
+      throw new FlowException("build flower error, because " + preServiceMata.getServiceClassName() + " ("
           + preReturnType.getSimpleName() + ") is not compatible for " + nextServiceMata.getServiceClassName() + "("
           + nextParamType.getSimpleName() + ")");
     }

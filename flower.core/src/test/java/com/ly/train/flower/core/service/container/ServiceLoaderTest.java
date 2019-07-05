@@ -17,8 +17,8 @@ package com.ly.train.flower.core.service.container;
 
 import org.junit.Assert;
 import org.junit.Test;
-import com.ly.train.flower.core.service.Service;
-import com.ly.train.flower.core.service.container.ServiceContext;
+import com.ly.train.flower.common.core.service.Service;
+import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.core.service.container.ServiceLoader;
 import com.ly.train.flower.core.service.container.ServiceMeta;
 import com.ly.train.flower.core.service.impl.AbstractService;

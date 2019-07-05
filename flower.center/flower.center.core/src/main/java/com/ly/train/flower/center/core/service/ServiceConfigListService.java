@@ -21,9 +21,9 @@ package com.ly.train.flower.center.core.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.ly.train.flower.center.core.store.ServiceConfigStore;
 import com.ly.train.flower.common.annotation.FlowerService;
-import com.ly.train.flower.core.service.Service;
+import com.ly.train.flower.common.core.service.Service;
+import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.core.service.config.ServiceConfig;
-import com.ly.train.flower.core.service.container.ServiceContext;
 
 /**
  * @author leeyazhou

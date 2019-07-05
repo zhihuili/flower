@@ -46,8 +46,8 @@ public class FlowerApplicationListener implements ApplicationListener<ContextRef
     for (String beanName : beanNames) {
       Class<?> beanType = applicationContext.getType(beanName);
       if (isFlowerService(beanType)) {
-        com.ly.train.flower.core.service.FlowerService flowerService =
-            (com.ly.train.flower.core.service.FlowerService) applicationContext.getBean(beanName);
+        com.ly.train.flower.common.core.service.FlowerService flowerService =
+            (com.ly.train.flower.common.core.service.FlowerService) applicationContext.getBean(beanName);
         FlowerService flowerService2 = beanType.getAnnotation(FlowerService.class);
         String serviceName = beanType.getSimpleName();
         if (flowerService2 != null && StringUtil.isNotBlank(flowerService2.value())) {

@@ -15,6 +15,8 @@
  */
 package com.ly.train.flower.core.service.message;
 
+import com.ly.train.flower.common.core.message.FlowMessage;
+
 public class TimerMessage extends FlowMessage {
 
   private static final long serialVersionUID = 1L;

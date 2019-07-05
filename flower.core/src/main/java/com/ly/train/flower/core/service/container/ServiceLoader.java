@@ -23,19 +23,20 @@ import java.util.concurrent.ConcurrentMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.annotation.FlowerServiceUtil;
+import com.ly.train.flower.common.core.service.FlowerService;
+import com.ly.train.flower.common.exception.FlowException;
+import com.ly.train.flower.common.exception.ServiceNotFoundException;
 import com.ly.train.flower.common.io.resource.Resource;
 import com.ly.train.flower.common.io.resource.ResourceLoader;
+import com.ly.train.flower.common.lifecyle.AbstractInit;
 import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.FileUtil;
 import com.ly.train.flower.common.util.Pair;
 import com.ly.train.flower.common.util.StringUtil;
-import com.ly.train.flower.core.exception.FlowerException;
-import com.ly.train.flower.core.exception.ServiceNotFoundException;
-import com.ly.train.flower.core.service.FlowerService;
+import com.ly.train.flower.common.util.TypeParameterUtil;
 import com.ly.train.flower.core.service.impl.AggregateService;
 import com.ly.train.flower.core.service.impl.ConditionService;
 import com.ly.train.flower.core.service.impl.NothingService;
-import com.ly.train.flower.core.util.TypeParameterUtil;
 
 public class ServiceLoader extends AbstractInit {
   private static final Logger logger = LoggerFactory.getLogger(ServiceLoader.class);
@@ -95,7 +96,7 @@ public class ServiceLoader extends AbstractInit {
             logger.info("load flower service --> {} : {}", serviceName, service);
             servicesCache.put(serviceName, service);
           } catch (Exception e) {
-            throw new FlowerException("fail to load service : " + serviceName, e);
+            throw new FlowException("fail to load service : " + serviceName, e);
           }
         }
       }

@@ -1,8 +1,8 @@
-service1 = com.ly.train.flower.common.sample.textflow.service.Service1
-service2 = com.ly.train.flower.common.sample.textflow.service.Service2
-service3 = com.ly.train.flower.common.sample.textflow.service.Service3
-service4 = com.ly.train.flower.common.sample.textflow.service.Service4
-service5 = com.ly.train.flower.common.service.impl.AggregateService
-service6 = com.ly.train.flower.common.service.impl.AggregateService
-service7 = com.ly.train.flower.common.service.impl.AggregateService
+service1 = com.ly.train.flower.sample.textflow.service.Service1
+service2 = com.ly.train.flower.sample.textflow.service.Service2
+service3 = com.ly.train.flower.sample.textflow.service.Service3
+service4 = com.ly.train.flower.sample.textflow.service.Service4
+service5 = com.ly.train.flower.core.service.impl.AggregateService
+service6 = com.ly.train.flower.core.service.impl.AggregateService
+service7 = com.ly.train.flower.core.service.impl.AggregateService
 

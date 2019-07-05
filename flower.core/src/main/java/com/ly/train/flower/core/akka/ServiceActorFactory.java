@@ -23,6 +23,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import com.ly.train.flower.common.exception.FlowException;
+import com.ly.train.flower.common.exception.FlowNotFoundException;
+import com.ly.train.flower.common.lifecyle.AbstractLifecycle;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.StringUtil;
@@ -39,12 +42,9 @@ import com.ly.train.flower.core.akka.actor.wrapper.ActorSelectionWrapper;
 import com.ly.train.flower.core.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.core.akka.router.FlowRouter;
 import com.ly.train.flower.core.akka.router.ServiceRouter;
-import com.ly.train.flower.core.exception.FlowNotFoundException;
-import com.ly.train.flower.core.exception.FlowerException;
 import com.ly.train.flower.core.service.config.ServiceConfig;
 import com.ly.train.flower.core.service.container.FlowerFactory;
 import com.ly.train.flower.core.service.container.ServiceFactory;
-import com.ly.train.flower.core.service.container.lifecyle.AbstractLifecycle;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import akka.actor.ActorContext;
@@ -147,7 +147,7 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
         serviceActorCache.put(cacheKey, actorWrapper);
       }
     } catch (Exception e) {
-      throw new FlowerException("fail to create flowerService, flowName : " + serviceConfig.getFlowName()
+      throw new FlowException("fail to create flowerService, flowName : " + serviceConfig.getFlowName()
           + ", serviceName : " + serviceName + ", serviceClassName : "
           + serviceConfig.getServiceMeta().getServiceClassName(), e);
     } finally {
@@ -239,7 +239,7 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
     } catch (Exception e) {
       logger.error("fail to start flower", e);
       stop();
-      throw new FlowerException("", e);
+      throw new FlowException("", e);
     }
   }
 

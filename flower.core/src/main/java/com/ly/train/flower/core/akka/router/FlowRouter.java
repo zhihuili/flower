@@ -17,15 +17,15 @@ package com.ly.train.flower.core.akka.router;
 
 import java.util.concurrent.TimeoutException;
 import javax.servlet.AsyncContext;
+import com.ly.train.flower.common.core.service.ServiceContext;
+import com.ly.train.flower.common.core.web.Web;
+import com.ly.train.flower.common.lifecyle.AbstractInit;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.core.akka.ServiceFacade;
 import com.ly.train.flower.core.service.config.ServiceConfig;
-import com.ly.train.flower.core.service.container.AbstractInit;
 import com.ly.train.flower.core.service.container.FlowerFactory;
-import com.ly.train.flower.core.service.container.ServiceContext;
 import com.ly.train.flower.core.service.container.util.ServiceContextUtil;
-import com.ly.train.flower.core.service.web.Web;
 import akka.actor.ActorRef;
 
 /**
@@ -67,10 +67,10 @@ public class FlowRouter extends AbstractInit implements Router {
     ServiceContext serviceContext = null;
     if (ctx != null) {
       Web web = new Web(ctx);
-      serviceContext = ServiceContext.context(message, web);
+      serviceContext = ServiceContextUtil.context(message, web);
       ServiceContextUtil.record(serviceContext);
     } else {
-      serviceContext = ServiceContext.context(message);
+      serviceContext = ServiceContextUtil.context(message);
     }
     serviceContext.setFlowName(flowName);
     if (StringUtil.isBlank(serviceContext.getCurrentServiceName())) {
@@ -90,7 +90,7 @@ public class FlowRouter extends AbstractInit implements Router {
    */
   @SuppressWarnings("unchecked")
   public <P, R> R syncCallService(P message) throws TimeoutException {
-    ServiceContext serviceContext = ServiceContext.context(message);
+    ServiceContext serviceContext = ServiceContextUtil.context(message);
     serviceContext.setFlowName(flowName);
     serviceContext.setCurrentServiceName(headerServiceConfig.getServiceName());
     serviceContext.setSync(true);

@@ -21,6 +21,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import com.ly.train.flower.common.core.message.FlowMessage;
+import com.ly.train.flower.common.core.service.FlowerService;
+import com.ly.train.flower.common.core.service.Service;
+import com.ly.train.flower.common.core.service.ServiceContext;
+import com.ly.train.flower.common.core.web.Web;
+import com.ly.train.flower.common.exception.ServiceException;
 import com.ly.train.flower.common.util.ClassUtil;
 import com.ly.train.flower.common.util.CollectionUtil;
 import com.ly.train.flower.common.util.ExceptionUtil;
@@ -29,24 +35,18 @@ import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.common.util.cache.Cache;
 import com.ly.train.flower.common.util.cache.CacheManager;
 import com.ly.train.flower.core.akka.actor.wrapper.ActorWrapper;
-import com.ly.train.flower.core.exception.ServiceException;
-import com.ly.train.flower.core.serializer.Codec;
 import com.ly.train.flower.core.service.Aggregate;
 import com.ly.train.flower.core.service.Complete;
-import com.ly.train.flower.core.service.FlowerService;
-import com.ly.train.flower.core.service.Service;
 import com.ly.train.flower.core.service.config.ServiceConfig;
 import com.ly.train.flower.core.service.container.FlowerFactory;
-import com.ly.train.flower.core.service.container.ServiceContext;
 import com.ly.train.flower.core.service.container.ServiceMeta;
 import com.ly.train.flower.core.service.container.util.ServiceContextUtil;
 import com.ly.train.flower.core.service.impl.AggregateService;
 import com.ly.train.flower.core.service.message.Condition;
-import com.ly.train.flower.core.service.message.FlowMessage;
 import com.ly.train.flower.core.service.web.Flush;
 import com.ly.train.flower.core.service.web.HttpComplete;
-import com.ly.train.flower.core.service.web.Web;
 import com.ly.train.flower.filter.Filter;
+import com.ly.train.flower.serializer.Serializer;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 
@@ -90,6 +90,7 @@ public class ServiceActor extends AbstractFlowerActor {
       CacheManager.get(serviceActorCachePrefix + serviceContext.getFlowName()).add(serviceContext.getId(), getSender(),
           defaultTimeToLive);
     }
+    Serializer serializer = ExtensionLoader.load(Serializer.class).load(serviceContext.getCodec());
 
     Object result = null;
     Object param = null;
@@ -99,31 +100,30 @@ public class ServiceActor extends AbstractFlowerActor {
       if (flowMessage.getMessage() != null && ClassUtil.exists(flowMessage.getMessageType())) {
         pType = flowMessage.getMessageType();
       }
-
-      param = Codec.valueOf(flowMessage.getCodec()).decode(flowMessage.getMessage(), pType);
+      param = serializer.decode(flowMessage.getMessage(), pType);
       if (getFilter(serviceContext) != null) {
         getFilter(serviceContext).filter(param, serviceContext);
       }
       // logger.info("服务参数类型 {} : {}", pType, getService(serviceContext));
       result = ((Service) getService(serviceContext)).process(param, serviceContext);
     } catch (Throwable e) {
-      handleException(serviceContext, e, param);
+      handleException(serviceContext, e, param, serializer);
     }
     if (result != null && result instanceof CompletableFuture) {
       final Object tempParam = param;
       ((CompletableFuture<Object>) result).whenComplete((r, e) -> {
         if (e != null) {
-          handleException(serviceContext, e, tempParam);
+          handleException(serviceContext, e, tempParam, serializer);
           return;
         }
-        handleNextServices(serviceContext, r, flowMessage.getTransactionId());
+        handleNextServices(serviceContext, r, flowMessage.getTransactionId(), serializer);
       });
     } else {
-      handleNextServices(serviceContext, result, flowMessage.getTransactionId());
+      handleNextServices(serviceContext, result, flowMessage.getTransactionId(), serializer);
     }
   }
 
-  private void handleException(ServiceContext serviceContext, Throwable e, Object param) {
+  private void handleException(ServiceContext serviceContext, Throwable e, Object param, Serializer serializer) {
     Web web = serviceContext.getWeb();
     if (web != null) {
       web.complete();
@@ -133,7 +133,7 @@ public class ServiceActor extends AbstractFlowerActor {
         new ServiceException("invoke service " + serviceContext.getCurrentServiceName() + " : " + service
             + "\r\n, param : " + param, e);
     if (serviceContext.isSync()) {
-      handleSyncResult(serviceContext, ExceptionUtil.getErrorMessage(e2), true);
+      handleSyncResult(serviceContext, ExceptionUtil.getErrorMessage(e2), true, serializer);
     } else {
       throw e2;
     }
@@ -146,7 +146,7 @@ public class ServiceActor extends AbstractFlowerActor {
    * @param serviceContext 上下文 {@link ServiceContext}
    * @param result 消息内容
    */
-  private void handleSyncResult(ServiceContext serviceContext, Object result, boolean error) {
+  private void handleSyncResult(ServiceContext serviceContext, Object result, boolean error, Serializer serializer) {
     CacheManager cacheManager = CacheManager.get(serviceActorCachePrefix + serviceContext.getFlowName());
     Cache<ActorRef> cache = cacheManager.getCache(serviceContext.getId());
     if (cache == null) {
@@ -156,15 +156,13 @@ public class ServiceActor extends AbstractFlowerActor {
     ActorRef actor = cache.getValue();
     if (actor != null) {
       FlowMessage resultMessage = new FlowMessage();
-      Codec codec = Codec.Hessian;
-      resultMessage.setCodec(codec.getCode());
       if (result != null) {
         resultMessage.setMessageType(result.getClass().getName());
       }
       if (error) {
         resultMessage.setException((String) result);
       } else {
-        resultMessage.setMessage(codec.encode(result));
+        resultMessage.setMessage(serializer.encode(result));
       }
 
 
@@ -173,9 +171,10 @@ public class ServiceActor extends AbstractFlowerActor {
     }
   }
 
-  private void handleNextServices(ServiceContext serviceContext, Object result, final String oldTransactionId) {
+  private void handleNextServices(ServiceContext serviceContext, Object result, final String oldTransactionId,
+      Serializer serializer) {
     try {
-      doHandleNextServices(serviceContext, result, oldTransactionId);
+      doHandleNextServices(serviceContext, result, oldTransactionId, serializer);
     } catch (Exception e) {
       logger.error("fail to handle next services ", e);
     }
@@ -188,10 +187,11 @@ public class ServiceActor extends AbstractFlowerActor {
    * @param result 消息内容
    * @param oldTransactionId oldTransactionId 聚合服务时会用到
    */
-  private void doHandleNextServices(ServiceContext serviceContext, Object result, final String oldTransactionId) {
+  private void doHandleNextServices(ServiceContext serviceContext, Object result, final String oldTransactionId,
+      Serializer serializer) {
     Set<RefType> nextActorRef = getNextServiceActors(serviceContext);
     if (serviceContext.isSync() && CollectionUtil.isEmpty(nextActorRef)) {
-      handleSyncResult(serviceContext, result, false);
+      handleSyncResult(serviceContext, result, false, serializer);
       return;
     }
 
@@ -234,9 +234,8 @@ public class ServiceActor extends AbstractFlowerActor {
 
       if (flag) {
         FlowMessage resultMessage = new FlowMessage();
-        resultMessage.setMessage(Codec.Hessian.encode(result));
+        resultMessage.setMessage(serializer.encode(result));
         resultMessage.setMessageType(result.getClass().getName());
-        resultMessage.setCodec(Codec.Hessian.getCode());
         resultMessage.setTransactionId(oldTransactionId);
 
         ServiceContext context = serviceContext.newInstance();

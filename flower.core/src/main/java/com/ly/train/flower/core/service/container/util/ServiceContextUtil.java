@@ -15,11 +15,14 @@
  */
 package com.ly.train.flower.core.service.container.util;
 
+import com.ly.train.flower.common.core.message.FlowMessage;
+import com.ly.train.flower.common.core.service.ServiceContext;
+import com.ly.train.flower.common.core.web.Web;
+import com.ly.train.flower.common.util.ExtensionLoader;
 import com.ly.train.flower.common.util.cache.Cache;
 import com.ly.train.flower.common.util.cache.CacheManager;
 import com.ly.train.flower.core.akka.actor.ServiceActor;
-import com.ly.train.flower.core.service.container.ServiceContext;
-import com.ly.train.flower.core.service.web.Web;
+import com.ly.train.flower.serializer.Serializer;
 
 /**
  * @author leeyazhou
@@ -44,6 +47,24 @@ public class ServiceContextUtil {
 
   public static void cleanServiceContext(ServiceContext serviceContext) {
     serviceContext.setWeb(null);
+  }
+
+
+  public static <T> ServiceContext context(T message, Web web) {
+    ServiceContext context = new ServiceContext();
+    FlowMessage flowMessage = new FlowMessage();
+    if (message != null) {
+      Serializer codec = ExtensionLoader.load(Serializer.class).load();
+      flowMessage.setMessageType(message.getClass().getName());
+      flowMessage.setMessage(codec.encode(message));
+    }
+    context.setFlowMessage(flowMessage);
+    context.setWeb(web);
+    return context;
+  }
+
+  public static <T> ServiceContext context(T message) {
+    return context(message, null);
   }
 
 }

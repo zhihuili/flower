@@ -23,13 +23,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
+import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.core.akka.router.ServiceRouter;
 import com.ly.train.flower.core.service.config.ServiceConfig;
 import com.ly.train.flower.core.service.container.FlowerFactory;
-import com.ly.train.flower.core.service.container.ServiceContext;
 import com.ly.train.flower.core.service.container.ServiceMeta;
+import com.ly.train.flower.core.service.container.util.ServiceContextUtil;
 import com.ly.train.flower.registry.AbstractRegistry;
 import com.ly.train.flower.registry.config.ServiceInfo;
 
@@ -77,7 +78,7 @@ public class SimpleRegistry extends AbstractRegistry {
   }
 
   private ServiceContext makeServiceContext(Object message) {
-    ServiceContext context = ServiceContext.context(message);
+    ServiceContext context = ServiceContextUtil.context(message);
     return context;
   }
 

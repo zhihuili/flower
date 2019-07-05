@@ -15,7 +15,7 @@
  */
 package com.ly.train.flower.core.akka.actor.command;
 
-import com.ly.train.flower.core.akka.actor.message.Message;
+import com.ly.train.flower.common.core.message.Message;
 
 /**
  * @author leeyazhou

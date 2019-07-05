@@ -38,7 +38,6 @@ public abstract class FlowerController implements InitializingBean {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
   private FlowRouter flowRouter;
   private String flowerName;
-  private String serviceName;
   private int flowerNumber;
 
 
@@ -106,11 +105,4 @@ public abstract class FlowerController implements InitializingBean {
     return flowerNumber;
   }
 
-  public String getServiceName() {
-    if (serviceName == null) {
-      Flower bindController = this.getClass().getAnnotation(Flower.class);
-      this.serviceName = bindController.serviceName();
-    }
-    return serviceName;
-  }
 }

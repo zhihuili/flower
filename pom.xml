@@ -46,6 +46,7 @@
         <module>flower.all</module>
         <module>flower.filter</module>
         <module>flower.core</module>
+        <module>flower.serializer</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:${github.org}/${github.repo}.git</connection>
@@ -376,6 +377,13 @@
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+    </dependencies>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -468,7 +476,7 @@
                         <goals>
                             <goal>jar-no-fork</goal>
                         </goals>
-                        <phase>install</phase>
+                        <phase>deploy</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -511,7 +519,7 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                        <phase>install</phase>
+                        <phase>deploy</phase>
                         <configuration>
                             <aggregate>true</aggregate>
                             <charset>${project.build.sourceEncoding}</charset>

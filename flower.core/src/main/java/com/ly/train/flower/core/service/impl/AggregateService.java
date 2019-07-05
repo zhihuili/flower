@@ -20,17 +20,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import com.ly.train.flower.common.annotation.Scope;
+import com.ly.train.flower.common.core.message.FlowMessage;
+import com.ly.train.flower.common.core.service.Service;
+import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.Assert;
 import com.ly.train.flower.common.util.Constant;
+import com.ly.train.flower.common.util.ExtensionLoader;
 import com.ly.train.flower.common.util.cache.Cache;
 import com.ly.train.flower.common.util.cache.CacheManager;
-import com.ly.train.flower.core.serializer.Codec;
 import com.ly.train.flower.core.service.Aggregate;
-import com.ly.train.flower.core.service.Service;
-import com.ly.train.flower.core.service.container.ServiceContext;
-import com.ly.train.flower.core.service.message.FlowMessage;
+import com.ly.train.flower.serializer.Serializer;
 
 @Scope(scopeName = Constant.SCOPE_REQUEST)
 public class AggregateService implements Service<Object, List<Object>>, Aggregate {
@@ -58,7 +59,7 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
     AggregateInfo aggregateInfo = getAndCacheResult(context.getFlowName(), transactionId, flowMessage);
     if (aggregateInfo.getResultNum().get() <= 0) {
       clear(context.getFlowName(), transactionId);
-      return buildMessage(aggregateInfo.getResults());
+      return buildMessage(aggregateInfo.getResults(), context);
     }
     return null;
   }
@@ -100,13 +101,15 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
    * subclass should override the method.
    * 
    * @param messages Set<Message>
+   * @param context
    * @return Object
    */
-  public List<Object> buildMessage(List<FlowMessage> messages) {
+  public List<Object> buildMessage(List<FlowMessage> messages, ServiceContext context) {
     List<Object> ret = new ArrayList<Object>();
     for (FlowMessage message : messages) {
       try {
-        ret.add(Codec.Hessian.decode(message.getMessage(), message.getMessageType()));
+        Serializer codec = ExtensionLoader.load(Serializer.class).load(context.getCodec());
+        ret.add(codec.decode(message.getMessage(), message.getMessageType()));
       } catch (Exception e) {
         logger.error("序列化异常 : ", e);
         ret.add(1);

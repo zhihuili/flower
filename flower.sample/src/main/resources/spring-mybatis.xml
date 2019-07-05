@@ -9,7 +9,7 @@
                         http://www.springframework.org/schema/mvc  
                         http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
 	<!-- 自动扫描 -->
-	<context:component-scan base-package="com.ly.train.flower.common.sample.web" />
+	<context:component-scan base-package="com.ly.train.flower.sample.web" />
 
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
 		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
@@ -32,7 +32,7 @@
 
 	<!-- DAO接口所在包名，Spring会自动查找其下的类 ,包下的类需要使用@MapperScan注解,否则容器注入会失败 -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.ly.train.flower.common.sample.web.dao" />
+		<property name="basePackage" value="com.ly.train.flower.sample.web.dao" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
 

@@ -18,11 +18,11 @@ package com.ly.train.flower.core.util;
 import java.util.concurrent.CompletableFuture;
 import org.junit.Test;
 import com.ly.train.flower.base.model.User;
+import com.ly.train.flower.common.core.service.Service;
+import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.util.Pair;
-import com.ly.train.flower.core.service.Service;
-import com.ly.train.flower.core.service.container.ServiceContext;
+import com.ly.train.flower.common.util.TypeParameterUtil;
 import com.ly.train.flower.core.service.impl.AbstractService;
-import com.ly.train.flower.core.util.TypeParameterUtil;
 
 /**
  * @author leeyazhou

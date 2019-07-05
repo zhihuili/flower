@@ -18,7 +18,6 @@
  */
 package com.ly.train.flower.core.akka.actor;
 
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,10 +28,11 @@ import com.ly.train.flower.base.service.user.UserServiceB;
 import com.ly.train.flower.base.service.user.UserServiceC1;
 import com.ly.train.flower.base.service.user.UserServiceC2;
 import com.ly.train.flower.common.annotation.FlowerServiceUtil;
+import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.core.akka.router.ServiceRouter;
 import com.ly.train.flower.core.service.config.ServiceConfig;
-import com.ly.train.flower.core.service.container.ServiceContext;
 import com.ly.train.flower.core.service.container.ServiceFlow;
+import com.ly.train.flower.core.service.container.util.ServiceContextUtil;
 
 /**
  * @author leeyazhou
@@ -69,7 +69,7 @@ public class ServiceRouterTest extends TestBase {
     user.setName("响应式编程 ");
     user.setAge(2);
 
-    ServiceContext serviceContext = ServiceContext.context(user);
+    ServiceContext serviceContext = ServiceContextUtil.context(user);
     serviceContext.setFlowName(flowName);
     serviceContext.setCurrentServiceName(FlowerServiceUtil.getServiceName(UserServiceA.class));
     Object o = getServiceRouter().syncCallService(serviceContext);
@@ -87,7 +87,7 @@ public class ServiceRouterTest extends TestBase {
     User user = new User();
     user.setName("响应式编程 ");
     user.setAge(2);
-    ServiceContext serviceContext = ServiceContext.context(user);
+    ServiceContext serviceContext = ServiceContextUtil.context(user);
     serviceContext.setFlowName(flowName);
     serviceContext.setCurrentServiceName(FlowerServiceUtil.getServiceName(UserServiceA.class));
     getServiceRouter().asyncCallService(serviceContext);
@@ -112,7 +112,7 @@ public class ServiceRouterTest extends TestBase {
           user.setName(name);
           user.setAge(2);
           try {
-            ServiceContext serviceContext = ServiceContext.context(user);
+            ServiceContext serviceContext = ServiceContextUtil.context(user);
             serviceContext.setCurrentServiceName(FlowerServiceUtil.getServiceName(UserServiceA.class));
             serviceContext.setFlowName(flowName);
             User o = (User) getServiceRouter().syncCallService(serviceContext);
@@ -143,7 +143,7 @@ public class ServiceRouterTest extends TestBase {
           user.setName("响应式编程 - " + j);
           user.setAge(2);
           try {
-            ServiceContext serviceContext = ServiceContext.context(user);
+            ServiceContext serviceContext = ServiceContextUtil.context(user);
             serviceContext.setFlowName(flowName);
             serviceContext.setCurrentServiceName(FlowerServiceUtil.getServiceName(UserServiceA.class));
             getServiceRouter().asyncCallService(serviceContext);

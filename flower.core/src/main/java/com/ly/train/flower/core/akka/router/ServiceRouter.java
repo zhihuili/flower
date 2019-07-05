@@ -19,20 +19,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import com.ly.train.flower.common.core.message.FlowMessage;
+import com.ly.train.flower.common.core.service.ServiceContext;
+import com.ly.train.flower.common.exception.FlowException;
+import com.ly.train.flower.common.lifecyle.AbstractInit;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.ExtensionLoader;
 import com.ly.train.flower.core.akka.actor.wrapper.ActorRefWrapper;
 import com.ly.train.flower.core.akka.actor.wrapper.ActorSelectionWrapper;
 import com.ly.train.flower.core.akka.actor.wrapper.ActorWrapper;
-import com.ly.train.flower.core.exception.FlowerException;
 import com.ly.train.flower.core.loadbalance.LoadBalance;
-import com.ly.train.flower.core.serializer.Codec;
 import com.ly.train.flower.core.service.config.ServiceConfig;
-import com.ly.train.flower.core.service.container.AbstractInit;
 import com.ly.train.flower.core.service.container.FlowerFactory;
-import com.ly.train.flower.core.service.container.ServiceContext;
-import com.ly.train.flower.core.service.message.FlowMessage;
+import com.ly.train.flower.serializer.Serializer;
 import akka.actor.ActorRef;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
@@ -84,16 +84,17 @@ public class ServiceRouter extends AbstractInit implements Router {
       Duration duration = Duration.create(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
       FlowMessage response = (FlowMessage) Await.result(future, duration);
       if (response.isError()) {
-        throw new FlowerException("fail to invoke \r\nCaused by: " + response.getException());
+        throw new FlowException("fail to invoke \r\nCaused by: " + response.getException());
       }
       byte[] messageByte = response.getMessage();
-      return Codec.Hessian.decode(messageByte, null);
-    } catch (FlowerException e) {
+      Serializer serializer = ExtensionLoader.load(Serializer.class).load(serviceContext.getCodec());
+      return serializer.decode(messageByte, null);
+    } catch (FlowException e) {
       throw e;
     } catch (TimeoutException e) {
       throw e;
     } catch (Exception e) {
-      throw new FlowerException(returnType + ", serviceContext : " + serviceContext, e);
+      throw new FlowException(returnType + ", serviceContext : " + serviceContext, e);
     }
   }
 

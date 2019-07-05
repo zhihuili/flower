@@ -15,7 +15,7 @@
  */
 package com.ly.train.flower.test.service;
 
-import com.ly.train.flower.core.service.container.ServiceContext;
+import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.core.service.impl.AbstractService;
 
 /**

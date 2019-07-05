@@ -30,7 +30,7 @@ import com.ly.train.flower.base.service.user.UserServiceB;
 import com.ly.train.flower.base.service.user.UserServiceC1;
 import com.ly.train.flower.base.service.user.UserServiceC2;
 import com.ly.train.flower.base.service.user.UserServiceD;
-import com.ly.train.flower.core.exception.FlowerException;
+import com.ly.train.flower.common.exception.FlowException;
 import com.ly.train.flower.core.service.container.ServiceFlow;
 
 /**
@@ -81,7 +81,7 @@ public class ServiceFacadeTest extends TestBase {
     Thread.sleep(TimeUnit.SECONDS.toMillis(2));
   }
 
-  @Test(expected = FlowerException.class)
+  @Test(expected = FlowException.class)
   public void testSyncException() throws TimeoutException {
 
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
