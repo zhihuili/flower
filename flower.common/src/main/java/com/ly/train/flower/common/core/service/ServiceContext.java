@@ -21,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.ly.train.flower.common.core.message.FlowMessage;
 import com.ly.train.flower.common.core.message.Message;
 import com.ly.train.flower.common.core.web.Web;
-import com.ly.train.flower.common.util.CloneUtil;
 import com.ly.train.flower.common.util.StringUtil;
 
 public class ServiceContext implements Message, Serializable {
@@ -48,15 +47,16 @@ public class ServiceContext implements Message, Serializable {
    * 
    * @return {@link ServiceContext}
    */
-  public ServiceContext newInstance() {
+  public ServiceContext newContext() {
     ServiceContext serviceContext = new ServiceContext();
-    serviceContext.setWeb(this.getWeb());
-    serviceContext.attachments = attachments;
     serviceContext.id = this.id;
     serviceContext.setCodec(this.codec);
-    serviceContext.setFlowMessage(CloneUtil.clone(flowMessage));
-    serviceContext.setSync(this.sync);
+    serviceContext.attachments = attachments;
     serviceContext.setFlowName(this.flowName);
+    serviceContext.setCurrentServiceName(currentServiceName);
+    serviceContext.setSync(this.sync);
+    serviceContext.setWeb(this.getWeb());
+    // serviceContext.setFlowMessage(CloneUtil.clone(flowMessage));
     return serviceContext;
   }
 

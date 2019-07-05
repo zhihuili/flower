@@ -34,15 +34,12 @@ public class ActorRefWrapper implements ActorWrapper {
   }
 
   public void tell(Message message) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("流转Local消息. serviceName : {}, actor : {}, message : {}", serviceName, actorRef, message);
-    }
-    actorRef.tell(message, actorRef);
+    actorRef.tell(message, ActorRef.noSender());
   }
 
   public void tell(Message message, ActorRef sender) {
     if (logger.isDebugEnabled()) {
-      logger.debug("流转Local消息. serviceName : {}, actor : {}, message : {}, sender : {}", serviceName, actorRef,
+      logger.debug("Local message. serviceName : {}, actor : {}, message : {}, sender : {}", serviceName, actorRef,
           message, sender);
     }
     if (sender == null) {

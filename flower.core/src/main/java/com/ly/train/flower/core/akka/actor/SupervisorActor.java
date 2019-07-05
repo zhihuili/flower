@@ -17,6 +17,7 @@ package com.ly.train.flower.core.akka.actor;
 
 import java.util.concurrent.TimeUnit;
 import com.ly.train.flower.common.core.service.ServiceContext;
+import com.ly.train.flower.core.akka.ActorFactory;
 import com.ly.train.flower.core.akka.ServiceActorFactory;
 import com.ly.train.flower.core.akka.actor.command.ActorCommand;
 import com.ly.train.flower.core.akka.actor.command.ActorContextCommand;
@@ -36,14 +37,14 @@ public class SupervisorActor extends AbstractFlowerActor {
           .match(IllegalArgumentException.class, e -> SupervisorStrategy.stop())
           .matchAny(o -> SupervisorStrategy.resume()).build());
 
-  public static Props props(ServiceActorFactory serviceActorFactory) {
-    return Props.create(SupervisorActor.class, serviceActorFactory);
+  public static Props props(ActorFactory actorFactory) {
+    return Props.create(SupervisorActor.class, actorFactory);
   }
 
-  private ServiceActorFactory serviceActorFactory;
+  private ActorFactory actorFactory;
 
   public SupervisorActor(ServiceActorFactory serviceActorFactory) {
-    this.serviceActorFactory = serviceActorFactory;
+    this.actorFactory = serviceActorFactory;
   }
 
   @Override
@@ -54,7 +55,7 @@ public class SupervisorActor extends AbstractFlowerActor {
       ServiceConfig serviceConfig = new ServiceConfig();
       serviceConfig.setServiceName(command.getServiceName());
       serviceConfig.setLocal(true);
-      serviceActorFactory.buildServiceActor(serviceConfig, command.getIndex());
+      actorFactory.buildServiceActor(serviceConfig, command.getIndex());
       command.setMessageType(MessageType.RESPONSE);
       command.setData("PONG");
 

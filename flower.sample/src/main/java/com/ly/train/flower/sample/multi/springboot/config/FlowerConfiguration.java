@@ -21,7 +21,7 @@ import com.ly.train.flower.core.service.container.FlowerFactory;
 import com.ly.train.flower.sample.multi.springboot.service.CreateOrderExtService;
 import com.ly.train.flower.sample.multi.springboot.service.EndService;
 import com.ly.train.flower.sample.multi.springboot.service.StartService;
-import com.ly.train.flower.service.container.SpringFlowerFactory;
+import com.ly.train.flower.web.spring.container.SpringFlowerFactory;
 
 /**
  * @author leeyazhou

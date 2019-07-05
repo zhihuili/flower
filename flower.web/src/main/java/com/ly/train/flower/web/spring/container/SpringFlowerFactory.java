@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.service.container;
+package com.ly.train.flower.web.spring.container;
 
 import org.springframework.beans.factory.InitializingBean;
 import com.ly.train.flower.core.service.container.simple.SimpleFlowerFactory;

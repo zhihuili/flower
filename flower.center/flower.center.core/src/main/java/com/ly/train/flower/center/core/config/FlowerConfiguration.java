@@ -18,7 +18,7 @@ package com.ly.train.flower.center.core.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import com.ly.train.flower.core.service.container.FlowerFactory;
-import com.ly.train.flower.service.container.SpringFlowerFactory;
+import com.ly.train.flower.web.spring.container.SpringFlowerFactory;
 
 /**
  * @author leeyazhou

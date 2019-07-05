@@ -238,7 +238,7 @@ public class ServiceActor extends AbstractFlowerActor {
         resultMessage.setMessageType(result.getClass().getName());
         resultMessage.setTransactionId(oldTransactionId);
 
-        ServiceContext context = serviceContext.newInstance();
+        ServiceContext context = serviceContext.newContext();
         context.setFlowMessage(resultMessage);
         context.setCurrentServiceName(refType.getServiceName());
         refType.getActorWrapper().tell(context, getSelf());

@@ -22,7 +22,7 @@ import com.ly.train.flower.common.core.web.Web;
 import com.ly.train.flower.common.lifecyle.AbstractInit;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.StringUtil;
-import com.ly.train.flower.core.akka.ServiceFacade;
+import com.ly.train.flower.core.akka.ActorFactory;
 import com.ly.train.flower.core.service.config.ServiceConfig;
 import com.ly.train.flower.core.service.container.FlowerFactory;
 import com.ly.train.flower.core.service.container.util.ServiceContextUtil;
@@ -34,19 +34,20 @@ import akka.actor.ActorRef;
  */
 public class FlowRouter extends AbstractInit implements Router {
   static final com.ly.train.flower.common.logging.Logger logger = LoggerFactory.getLogger(FlowRouter.class);
-  private int flowerNumber = 2 << 6;
+  private int flowerNumber = -1;
   private final ServiceConfig headerServiceConfig;
-  private final String flowName;
-  private ServiceFacade serviceFacade;
+  private final ActorFactory actorFactory;
+
+  public FlowRouter(ServiceConfig headerServiceConfig, FlowerFactory flowerFactory) {
+    this.headerServiceConfig = headerServiceConfig;
+    this.actorFactory = flowerFactory.getActorFactory();
+  }
 
   public FlowRouter(ServiceConfig headerServiceConfig, int flowerNumber, FlowerFactory flowerFactory) {
-    this.flowName = headerServiceConfig.getFlowName();
-    this.headerServiceConfig = headerServiceConfig;
-    this.serviceFacade = flowerFactory.getServiceFacade();
-    if (flowerNumber > 0) {
-      this.flowerNumber = flowerNumber;
-    }
+    this(headerServiceConfig, flowerFactory);
+    this.flowerNumber = flowerNumber;
   }
+
 
   @Override
   protected void doInit() {
@@ -72,7 +73,7 @@ public class FlowRouter extends AbstractInit implements Router {
     } else {
       serviceContext = ServiceContextUtil.context(message);
     }
-    serviceContext.setFlowName(flowName);
+    serviceContext.setFlowName(headerServiceConfig.getFlowName());
     if (StringUtil.isBlank(serviceContext.getCurrentServiceName())) {
       serviceContext.setCurrentServiceName(headerServiceConfig.getServiceName());
     }
@@ -91,14 +92,14 @@ public class FlowRouter extends AbstractInit implements Router {
   @SuppressWarnings("unchecked")
   public <P, R> R syncCallService(P message) throws TimeoutException {
     ServiceContext serviceContext = ServiceContextUtil.context(message);
-    serviceContext.setFlowName(flowName);
+    serviceContext.setFlowName(headerServiceConfig.getFlowName());
     serviceContext.setCurrentServiceName(headerServiceConfig.getServiceName());
     serviceContext.setSync(true);
     return (R) getServiceRouter().syncCallService(serviceContext);
   }
 
   private ServiceRouter getServiceRouter() {
-    return serviceFacade.buildServiceRouter(headerServiceConfig, flowerNumber);
+    return actorFactory.buildServiceRouter(headerServiceConfig, flowerNumber);
   }
 
   public ServiceConfig getServiceConfig() {

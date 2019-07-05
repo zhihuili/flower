@@ -40,17 +40,14 @@ public class ActorSelectionWrapper implements ActorWrapper {
 
   @Override
   public void tell(Message message) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("流转Remote消息. serviceName : {}, actor : {}, message : {}", serviceName, actorSelection, message);
-    }
     tell(message, ActorRef.noSender());
   }
 
   @Override
   public void tell(Message message, ActorRef sender) {
     if (logger.isDebugEnabled()) {
-      logger.debug("流转Remote消息. serviceName : {}, actor : {}, message : {}, sender : {}", serviceName, actorSelection,
-          message, sender);
+      logger.debug("Remote message. serviceName : {}, actor : {}, message : {}, sender : {}", serviceName,
+          actorSelection, message, sender);
     }
     if (sender == null) {
       sender = ActorRef.noSender();

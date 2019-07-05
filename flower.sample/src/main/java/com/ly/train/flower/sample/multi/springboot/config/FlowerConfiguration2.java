@@ -19,7 +19,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import com.ly.train.flower.core.service.container.FlowerFactory;
 import com.ly.train.flower.sample.multi.springboot.service.CreateOrderService;
-import com.ly.train.flower.service.container.SpringFlowerFactory;
+import com.ly.train.flower.web.spring.container.SpringFlowerFactory;
 
 /**
  * @author leeyazhou
