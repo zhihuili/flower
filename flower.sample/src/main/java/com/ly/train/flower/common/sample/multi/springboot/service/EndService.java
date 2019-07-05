@@ -18,11 +18,11 @@ package com.ly.train.flower.common.sample.multi.springboot.service;
 import java.util.List;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.annotation.FlowerType;
-import com.ly.train.flower.common.service.Complete;
-import com.ly.train.flower.common.service.container.ServiceContext;
-import com.ly.train.flower.common.service.impl.AbstractService;
-import com.ly.train.flower.common.service.web.Flush;
-import com.ly.train.flower.common.service.web.HttpComplete;
+import com.ly.train.flower.core.service.Complete;
+import com.ly.train.flower.core.service.container.ServiceContext;
+import com.ly.train.flower.core.service.impl.AbstractService;
+import com.ly.train.flower.core.service.web.Flush;
+import com.ly.train.flower.core.service.web.HttpComplete;
 
 /**
  * @author leeyazhou

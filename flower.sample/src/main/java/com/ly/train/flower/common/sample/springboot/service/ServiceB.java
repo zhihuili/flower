@@ -16,10 +16,10 @@
 package com.ly.train.flower.common.sample.springboot.service;
 
 import com.ly.train.flower.common.annotation.FlowerService;
-import com.ly.train.flower.common.service.Complete;
-import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.container.ServiceContext;
-import com.ly.train.flower.common.service.web.Flush;
+import com.ly.train.flower.core.service.Complete;
+import com.ly.train.flower.core.service.Service;
+import com.ly.train.flower.core.service.container.ServiceContext;
+import com.ly.train.flower.core.service.web.Flush;
 
 @FlowerService
 public class ServiceB implements Service<Integer, Object>, Flush, Complete {

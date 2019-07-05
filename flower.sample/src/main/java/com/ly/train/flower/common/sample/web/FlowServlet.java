@@ -21,7 +21,7 @@ import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.ly.train.flower.common.akka.router.FlowRouter;
+import com.ly.train.flower.core.akka.router.FlowRouter;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;

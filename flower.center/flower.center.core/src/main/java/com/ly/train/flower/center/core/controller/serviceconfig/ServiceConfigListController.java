@@ -27,7 +27,7 @@ import com.ly.train.flower.center.core.controller.BaseController;
 import com.ly.train.flower.center.core.service.ReturnService;
 import com.ly.train.flower.center.core.service.ServiceConfigListService;
 import com.ly.train.flower.common.annotation.Flower;
-import com.ly.train.flower.common.service.config.ServiceConfig;
+import com.ly.train.flower.core.service.config.ServiceConfig;
 
 /**
  * @author leeyazhou

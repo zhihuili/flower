@@ -24,9 +24,9 @@ import com.ly.train.flower.common.sample.condition.service.ServiceD;
 import com.ly.train.flower.common.sample.condition.service.ServiceE;
 import com.ly.train.flower.common.sample.condition.service.ServiceF;
 import com.ly.train.flower.common.sample.condition.service.ServiceG;
-import com.ly.train.flower.common.service.container.FlowerFactory;
-import com.ly.train.flower.common.service.container.ServiceFactory;
-import com.ly.train.flower.common.service.container.ServiceFlow;
+import com.ly.train.flower.core.service.container.FlowerFactory;
+import com.ly.train.flower.core.service.container.ServiceFactory;
+import com.ly.train.flower.core.service.container.ServiceFlow;
 
 public class CondtionServiceSample extends TestBase {
 

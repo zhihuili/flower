@@ -20,14 +20,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ly.train.flower.common.sample.web.dao.GoodsDao;
-import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.core.service.container.ServiceContext;
 
 /**
  * @author fengyu.zhang
  * @date 2019/2/24 17:16
  */
 @Service("GoodsService")
-public class GoodsService implements com.ly.train.flower.common.service.Service<Integer, List<Integer>> {
+public class GoodsService implements com.ly.train.flower.core.service.Service<Integer, List<Integer>> {
   @Autowired
   private GoodsDao goodsDao;
 

@@ -16,8 +16,8 @@
 package com.ly.train.flower.common.sample.textflow.model;
 
 import java.io.Serializable;
-import com.ly.train.flower.common.service.message.FirstMessage;
-import com.ly.train.flower.common.service.message.ReturnMessage;
+import com.ly.train.flower.core.service.message.FirstMessage;
+import com.ly.train.flower.core.service.message.ReturnMessage;
 
 public class Message1 implements FirstMessage, ReturnMessage, Serializable {
   /**

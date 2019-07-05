@@ -15,8 +15,8 @@
  */
 package com.ly.train.flower.test.service;
 
-import com.ly.train.flower.common.service.container.ServiceContext;
-import com.ly.train.flower.common.service.impl.AbstractService;
+import com.ly.train.flower.core.service.container.ServiceContext;
+import com.ly.train.flower.core.service.impl.AbstractService;
 
 /**
  * @author leeyazhou

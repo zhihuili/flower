@@ -21,8 +21,8 @@ package com.ly.train.flower.springboot.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.annotation.FlowerService;
-import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.core.service.Service;
+import com.ly.train.flower.core.service.container.ServiceContext;
 import com.ly.train.flower.springboot.model.User;
 
 /**

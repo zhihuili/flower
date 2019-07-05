@@ -20,7 +20,7 @@ import com.ly.train.flower.common.sample.TestBase;
 import com.ly.train.flower.common.sample.programflow.service.ServiceA;
 import com.ly.train.flower.common.sample.programflow.service.ServiceB;
 import com.ly.train.flower.common.sample.programflow.service.ServiceC;
-import com.ly.train.flower.common.service.container.ServiceFlow;
+import com.ly.train.flower.core.service.container.ServiceFlow;
 
 public class Sample extends TestBase {
   private static final String flowName = "programFlow";

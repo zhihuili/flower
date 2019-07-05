@@ -16,10 +16,10 @@
 package com.ly.train.flower.common.sample.textflow;
 
 import org.junit.Test;
-import com.ly.train.flower.common.akka.router.FlowRouter;
 import com.ly.train.flower.common.sample.TestBase;
 import com.ly.train.flower.common.sample.textflow.model.Message1;
 import com.ly.train.flower.common.sample.textflow.model.Message2;
+import com.ly.train.flower.core.akka.router.FlowRouter;
 
 public class ServiceRouterSample extends TestBase {
 

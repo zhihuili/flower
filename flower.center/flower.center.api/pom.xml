@@ -21,14 +21,14 @@
     <parent>
         <groupId>com.ly.train</groupId>
         <artifactId>flower.center</artifactId>
-        <version>0.1.5</version>
+        <version>1.0.0</version>
     </parent>
     <artifactId>flower.center.api</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.ly.train</groupId>
-            <artifactId>flower.common</artifactId>
+            <artifactId>flower.core</artifactId>
         </dependency>
     </dependencies>
 </project>

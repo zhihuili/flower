@@ -15,8 +15,8 @@
  */
 package com.ly.train.flower.common.sample.web.forktest.service;
 
-import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.core.service.Service;
+import com.ly.train.flower.core.service.container.ServiceContext;
 
 /**
  * @author fengyu.zhang

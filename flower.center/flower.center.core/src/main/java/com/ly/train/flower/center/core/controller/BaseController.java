@@ -20,8 +20,8 @@ package com.ly.train.flower.center.core.controller;
 
 import com.ly.train.flower.center.core.util.R;
 import com.ly.train.flower.center.core.util.Response;
-import com.ly.train.flower.logging.Logger;
-import com.ly.train.flower.logging.LoggerFactory;
+import com.ly.train.flower.common.logging.Logger;
+import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.web.spring.FlowerController;
 
 /**

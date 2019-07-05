@@ -16,7 +16,7 @@
 package com.ly.train.flower.common.sample.supervisor.model;
 
 import java.io.Serializable;
-import com.ly.train.flower.common.service.message.ReturnMessage;
+import com.ly.train.flower.core.service.message.ReturnMessage;
 
 public class Message3 implements ReturnMessage, Serializable {
   /**

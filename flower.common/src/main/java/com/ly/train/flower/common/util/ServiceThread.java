@@ -18,8 +18,8 @@ package com.ly.train.flower.common.util;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import com.ly.train.flower.logging.Logger;
-import com.ly.train.flower.logging.LoggerFactory;
+import com.ly.train.flower.common.logging.Logger;
+import com.ly.train.flower.common.logging.LoggerFactory;
 
 public abstract class ServiceThread implements Runnable {
   private static final Logger log = LoggerFactory.getLogger(ServiceThread.class);

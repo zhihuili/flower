@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ly.train.flower.common.sample.web.dao.UserDao;
 import com.ly.train.flower.common.sample.web.mode.User;
-import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.core.service.container.ServiceContext;
 
 /**
  * @author fengyu.zhang
@@ -27,7 +27,7 @@ import com.ly.train.flower.common.service.container.ServiceContext;
  */
 
 @Service("UserService")
-public class UserService implements com.ly.train.flower.common.service.Service<Integer, User> {
+public class UserService implements com.ly.train.flower.core.service.Service<Integer, User> {
   @Autowired
   private UserDao userDao;
 

@@ -21,8 +21,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import com.ly.train.flower.logging.Logger;
-import com.ly.train.flower.logging.LoggerFactory;
+import com.ly.train.flower.common.logging.Logger;
+import com.ly.train.flower.common.logging.LoggerFactory;
 
 public class HttpClient {
   static final Logger logger = LoggerFactory.getLogger(HttpClient.class);

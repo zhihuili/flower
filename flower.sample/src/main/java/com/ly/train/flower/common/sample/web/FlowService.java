@@ -15,11 +15,11 @@
  */
 package com.ly.train.flower.common.sample.web;
 
-import com.ly.train.flower.common.service.Complete;
-import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.container.ServiceContext;
-import com.ly.train.flower.common.service.web.Flush;
-import com.ly.train.flower.common.service.web.HttpComplete;
+import com.ly.train.flower.core.service.Complete;
+import com.ly.train.flower.core.service.Service;
+import com.ly.train.flower.core.service.container.ServiceContext;
+import com.ly.train.flower.core.service.web.Flush;
+import com.ly.train.flower.core.service.web.HttpComplete;
 
 public class FlowService implements Service, HttpComplete, Flush, Complete {
 

@@ -17,8 +17,8 @@ package com.ly.train.flower.common.sample.aggregate.service;
 
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.sample.aggregate.dao.UserDao;
-import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.core.service.Service;
+import com.ly.train.flower.core.service.container.ServiceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

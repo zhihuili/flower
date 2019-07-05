@@ -18,8 +18,8 @@ package com.ly.train.flower.common.sample.condition.service;
 import com.ly.train.flower.common.sample.condition.model.Message;
 import com.ly.train.flower.common.sample.condition.model.MessageB;
 import com.ly.train.flower.common.sample.condition.model.MessageC;
-import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.core.service.Service;
+import com.ly.train.flower.core.service.container.ServiceContext;
 
 public class ServiceA implements Service<String, Message> {
 

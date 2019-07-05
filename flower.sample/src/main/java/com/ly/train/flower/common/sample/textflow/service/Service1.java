@@ -15,12 +15,12 @@
  */
 package com.ly.train.flower.common.sample.textflow.service;
 
+import com.ly.train.flower.common.logging.Logger;
+import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.sample.textflow.model.Message1;
 import com.ly.train.flower.common.sample.textflow.model.Message2;
-import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.container.ServiceContext;
-import com.ly.train.flower.logging.Logger;
-import com.ly.train.flower.logging.LoggerFactory;
+import com.ly.train.flower.core.service.Service;
+import com.ly.train.flower.core.service.container.ServiceContext;
 
 public class Service1 implements Service<Message1, Message2> {
   static final Logger logger = LoggerFactory.getLogger(Service1.class);

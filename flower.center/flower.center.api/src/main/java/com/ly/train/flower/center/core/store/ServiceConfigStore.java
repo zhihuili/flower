@@ -15,7 +15,7 @@
  */
 package com.ly.train.flower.center.core.store;
 
-import com.ly.train.flower.common.service.config.ServiceConfig;
+import com.ly.train.flower.core.service.config.ServiceConfig;
 
 /**
  * @author leeyazhou

@@ -1,0 +1,3 @@
+jdk=com.ly.train.flower.core.serializer.jdk.JdkSerializer
+kryo=com.ly.train.flower.core.serializer.kryo.KryoSerializer
+protostuff=com.ly.train.flower.core.serializer.protostuff.ProtostuffSerializer

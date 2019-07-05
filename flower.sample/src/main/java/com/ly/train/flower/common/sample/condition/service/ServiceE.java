@@ -16,8 +16,8 @@
 package com.ly.train.flower.common.sample.condition.service;
 
 import com.ly.train.flower.common.sample.condition.model.MessageX;
-import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.core.service.Service;
+import com.ly.train.flower.core.service.container.ServiceContext;
 
 public class ServiceE implements Service<Object, MessageX> {
 

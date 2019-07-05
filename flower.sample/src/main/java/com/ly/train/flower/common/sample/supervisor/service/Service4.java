@@ -17,8 +17,8 @@ package com.ly.train.flower.common.sample.supervisor.service;
 
 import com.ly.train.flower.common.sample.supervisor.model.Message1;
 import com.ly.train.flower.common.sample.supervisor.model.Message2;
-import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.core.service.Service;
+import com.ly.train.flower.core.service.container.ServiceContext;
 import java.util.List;
 
 public class Service4 implements Service<List<Object>, Message1> {

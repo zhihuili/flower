@@ -16,7 +16,7 @@
 package com.ly.train.flower.service.container;
 
 import org.springframework.beans.factory.InitializingBean;
-import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
+import com.ly.train.flower.core.service.container.simple.SimpleFlowerFactory;
 
 /**
  * @author leeyazhou

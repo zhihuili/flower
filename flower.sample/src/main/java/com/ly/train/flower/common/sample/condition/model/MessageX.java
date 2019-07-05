@@ -15,7 +15,7 @@
  */
 package com.ly.train.flower.common.sample.condition.model;
 
-import com.ly.train.flower.common.service.message.Condition;
+import com.ly.train.flower.core.service.message.Condition;
 
 public class MessageX implements Condition {
 

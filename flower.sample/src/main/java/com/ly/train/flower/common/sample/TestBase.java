@@ -16,11 +16,11 @@
 package com.ly.train.flower.common.sample;
 
 import org.junit.BeforeClass;
-import com.ly.train.flower.common.akka.ServiceFacade;
-import com.ly.train.flower.common.service.container.FlowerFactory;
-import com.ly.train.flower.common.service.container.ServiceFactory;
-import com.ly.train.flower.common.service.container.ServiceLoader;
-import com.ly.train.flower.common.service.container.simple.SimpleFlowerFactory;
+import com.ly.train.flower.core.akka.ServiceFacade;
+import com.ly.train.flower.core.service.container.FlowerFactory;
+import com.ly.train.flower.core.service.container.ServiceFactory;
+import com.ly.train.flower.core.service.container.ServiceLoader;
+import com.ly.train.flower.core.service.container.simple.SimpleFlowerFactory;
 
 /**
  * @author leeyazhou

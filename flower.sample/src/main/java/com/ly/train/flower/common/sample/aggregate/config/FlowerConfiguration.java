@@ -15,7 +15,7 @@
  */
 package com.ly.train.flower.common.sample.aggregate.config;
 
-import com.ly.train.flower.common.service.container.FlowerFactory;
+import com.ly.train.flower.core.service.container.FlowerFactory;
 import com.ly.train.flower.service.container.SpringFlowerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -17,8 +17,8 @@ package com.ly.train.flower.common.sample.aggregate.service;
 
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.annotation.FlowerType;
-import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.core.service.Service;
+import com.ly.train.flower.core.service.container.ServiceContext;
 import java.util.List;
 
 /**
@@ -33,7 +33,7 @@ public class ServiceReceiveA implements Service<List<Object>, Integer> {
    * 用于处理服务分叉聚合之后的消息
    * 
    * @param message 需要处理的消息，这里使用List接收, 默认返回的是List<Object>
-   *        {@link com.ly.train.flower.common.service.impl.AggregateService#process(Object, ServiceContext)}
+   *        {@link com.ly.train.flower.core.service.impl.AggregateService#process(Object, ServiceContext)}
    *        也可以使用Object接收
    * @param context 服务上下文
    */

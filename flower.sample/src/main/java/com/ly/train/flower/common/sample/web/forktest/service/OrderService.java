@@ -21,14 +21,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ly.train.flower.common.sample.web.dao.OrderDao;
 import com.ly.train.flower.common.sample.web.mode.Order;
-import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.core.service.container.ServiceContext;
 
 /**
  * @author fengyu.zhang
  * @date 2019/2/24 17:16
  */
 @Service("OrderService")
-public class OrderService implements com.ly.train.flower.common.service.Service<Integer, List<Order>> {
+public class OrderService implements com.ly.train.flower.core.service.Service<Integer, List<Order>> {
   @Autowired
   private OrderDao orderDao;
 

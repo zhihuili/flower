@@ -18,10 +18,6 @@
  */
 package com.ly.train.flower.common.util;
 
-import java.util.concurrent.TimeUnit;
-import scala.concurrent.duration.Duration;
-import scala.concurrent.duration.FiniteDuration;
-
 /**
  * @author leeyazhou
  * 
@@ -43,12 +39,6 @@ public class Constant {
   public static final String springConfigLocationKey = "spring.config.location";
   public static final String flowerHome = "flower.home";
 
-  /**
-   * 默认超时时间3秒
-   */
-  public static final FiniteDuration defaultTimeout_3S = Duration.create(3, TimeUnit.SECONDS);
-  public static final FiniteDuration defaultTimeout_5S = Duration.create(5, TimeUnit.SECONDS);
-  public static final FiniteDuration defaultTimeout_10S = Duration.create(10, TimeUnit.SECONDS);
 
   public static final String SCOPE_SINGLETON = "singleton";
   public static final String SCOPE_REQUEST = "request";
