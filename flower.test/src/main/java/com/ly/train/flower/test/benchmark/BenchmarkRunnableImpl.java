@@ -61,14 +61,13 @@ public class BenchmarkRunnableImpl extends BenchmarkRunnable {
       try {
         String flag = (String) flowRouter.syncCallService(message);
         if (logger.isInfoEnabled()) {
-          logger.info("sayWord result : " + flag);
+          logger.info(" result : " + flag);
         }
       } catch (Exception e) {
-        e.printStackTrace();
+        logger.error("", e);
         errorRequest++;
       }
-      long costTime = System.currentTimeMillis() - start;
-      sumResponseTimeSpread(costTime);
+      sumResponseTimeSpread(System.currentTimeMillis() - start);
     }
     countDownLatch.countDown();
   }

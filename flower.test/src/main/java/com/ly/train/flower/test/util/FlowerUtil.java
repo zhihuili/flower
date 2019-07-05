@@ -48,7 +48,7 @@ public class FlowerUtil {
     // serviceFlow.buildFlow(StartService.class, EndService.class);
     serviceFlow.buildFlow(StartService.class, BusinessService.class);
     serviceFlow.buildFlow(BusinessService.class, EmailService.class);
-    serviceFlow.buildFlow(BusinessService.class, EndService.class);
+    serviceFlow.buildFlow(EmailService.class, EndService.class);
     return flowerFactory.getActorFactory().buildFlowRouter(flowName, threadNum);
   }
 
