@@ -48,6 +48,7 @@
         <module>flower.core</module>
         <module>flower.serializer</module>
         <module>flower.registry</module>
+        <module>flower.tools</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:${github.org}/${github.repo}.git</connection>
