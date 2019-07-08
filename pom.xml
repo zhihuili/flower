@@ -21,7 +21,7 @@
 
     <groupId>com.ly.train</groupId>
     <artifactId>flower</artifactId>
-    <version>0.1.5</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <name>flower</name>
@@ -46,6 +46,9 @@
         <module>flower.all</module>
         <module>flower.filter</module>
         <module>flower.core</module>
+        <module>flower.serializer</module>
+        <module>flower.registry</module>
+        <module>flower.tools</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:${github.org}/${github.repo}.git</connection>
@@ -376,6 +379,13 @@
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+    </dependencies>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -511,7 +521,7 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                        <phase>install</phase>
+                        <phase>deploy</phase>
                         <configuration>
                             <aggregate>true</aggregate>
                             <charset>${project.build.sourceEncoding}</charset>

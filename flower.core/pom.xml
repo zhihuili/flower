@@ -21,22 +21,68 @@
     <parent>
         <groupId>com.ly.train</groupId>
         <artifactId>flower</artifactId>
-        <version>0.1.5</version>
+        <version>1.0.0</version>
     </parent>
     <artifactId>flower.core</artifactId>
 
     <dependencies>
         <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ly.train</groupId>
+            <artifactId>flower.common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ly.train</groupId>
+            <artifactId>flower.filter.api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ly.train</groupId>
+            <artifactId>flower.registry.api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ly.train</groupId>
+            <artifactId>flower.serializer.hessian</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor_2.12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-remote_2.12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-slf4j_2.12</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

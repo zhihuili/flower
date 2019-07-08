@@ -20,8 +20,8 @@ package com.ly.train.flower.common.loader;
 
 import java.net.URL;
 import java.net.URLClassLoader;
-import com.ly.train.flower.logging.Logger;
-import com.ly.train.flower.logging.LoggerFactory;
+import com.ly.train.flower.common.logging.Logger;
+import com.ly.train.flower.common.logging.LoggerFactory;
 
 /**
  * @author leeyazhou

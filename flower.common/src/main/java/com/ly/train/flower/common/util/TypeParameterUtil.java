@@ -18,7 +18,7 @@ package com.ly.train.flower.common.util;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.concurrent.CompletableFuture;
-import com.ly.train.flower.common.service.Service;
+import com.ly.train.flower.common.core.service.Service;
 
 /**
  * @author leeyazhou

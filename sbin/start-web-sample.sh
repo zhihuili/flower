@@ -19,4 +19,4 @@ sbin="`dirname "$0"`"
 sbin="`cd "$sbin"; pwd`"
 . ${sbin}/conf.sh
 
-${sbin}/daemon.sh start com.ly.train.flower.common.sample.web.WebServer
+${sbin}/daemon.sh start com.ly.train.flower.sample.web.WebServer

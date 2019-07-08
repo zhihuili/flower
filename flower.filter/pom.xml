@@ -21,26 +21,12 @@
     <parent>
         <groupId>com.ly.train</groupId>
         <artifactId>flower</artifactId>
-        <version>0.1.5</version>
+        <version>1.0.0</version>
     </parent>
     <artifactId>flower.filter</artifactId>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.ly.train</groupId>
-            <artifactId>flower.common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.opentracing</groupId>
-            <artifactId>opentracing-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.opentracing.brave</groupId>
-            <artifactId>brave-opentracing</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.zipkin.reporter2</groupId>
-            <artifactId>zipkin-sender-okhttp3</artifactId>
-        </dependency>
-    </dependencies>
+    <packaging>pom</packaging>
+    <modules>
+        <module>flower.filter.api</module>
+        <module>flower.filter.opentracing</module>
+    </modules>
 </project>

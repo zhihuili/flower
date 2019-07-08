@@ -18,9 +18,9 @@ package com.ly.train.flower.test.benchmark;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import com.ly.train.flower.common.akka.router.FlowRouter;
-import com.ly.train.flower.logging.Logger;
-import com.ly.train.flower.logging.LoggerFactory;
+import com.ly.train.flower.common.logging.Logger;
+import com.ly.train.flower.common.logging.LoggerFactory;
+import com.ly.train.flower.core.akka.router.FlowRouter;
 
 public class BenchmarkRunnableImpl extends BenchmarkRunnable {
   private static final Logger logger = LoggerFactory.getLogger(BenchmarkRunnableImpl.class);
@@ -61,14 +61,13 @@ public class BenchmarkRunnableImpl extends BenchmarkRunnable {
       try {
         String flag = (String) flowRouter.syncCallService(message);
         if (logger.isInfoEnabled()) {
-          logger.info("sayWord result : " + flag);
+          logger.info(" result : " + flag);
         }
       } catch (Exception e) {
-        e.printStackTrace();
+        logger.error("", e);
         errorRequest++;
       }
-      long costTime = System.currentTimeMillis() - start;
-      sumResponseTimeSpread(costTime);
+      sumResponseTimeSpread(System.currentTimeMillis() - start);
     }
     countDownLatch.countDown();
   }
