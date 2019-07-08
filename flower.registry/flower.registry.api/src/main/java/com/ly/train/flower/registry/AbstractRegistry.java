@@ -26,11 +26,11 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.common.util.concurrent.NamedThreadFactory;
-import com.ly.train.flower.core.service.config.ServiceConfig;
 import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**

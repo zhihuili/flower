@@ -21,9 +21,8 @@ package com.ly.train.flower.registry.zookeeper;
 import java.util.Date;
 import java.util.List;
 import org.junit.Test;
-import com.ly.train.flower.base.service.user.UserServiceA;
+import com.ly.train.flower.common.core.config.ServiceMeta;
 import com.ly.train.flower.common.util.URL;
-import com.ly.train.flower.core.service.container.ServiceMeta;
 import com.ly.train.flower.registry.Registry;
 import com.ly.train.flower.registry.RegistryFactory;
 import com.ly.train.flower.registry.config.ServiceInfo;
@@ -43,7 +42,7 @@ public class ZookeeperRegistryTest {
 
 
     ServiceInfo serviceInfo = new ServiceInfo();
-    ServiceMeta meta = new ServiceMeta(UserServiceA.class.getName());
+    ServiceMeta meta = new ServiceMeta("UserServiceA");
     serviceInfo.setServiceMeta(meta);
     serviceInfo.setAddress(new URL("", "127.0.0.1", 12001));
     serviceInfo.setCreateTime(new Date());
@@ -58,7 +57,7 @@ public class ZookeeperRegistryTest {
 
 
     ServiceInfo serviceInfo = new ServiceInfo();
-    ServiceMeta meta = new ServiceMeta(UserServiceA.class.getName());
+    ServiceMeta meta = new ServiceMeta("UserServiceA");
     serviceInfo.setServiceMeta(meta);
     serviceInfo.setAddress(new URL("", "127.0.0.1", 12001));
     serviceInfo.setCreateTime(new Date());

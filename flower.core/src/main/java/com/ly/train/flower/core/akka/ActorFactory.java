@@ -15,11 +15,11 @@
  */
 package com.ly.train.flower.core.akka;
 
+import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.lifecyle.Lifecycle;
 import com.ly.train.flower.core.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.core.akka.router.FlowRouter;
 import com.ly.train.flower.core.akka.router.ServiceRouter;
-import com.ly.train.flower.core.service.config.ServiceConfig;
 
 /**
  * Actor 工厂

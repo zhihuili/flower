@@ -20,8 +20,8 @@ package com.ly.train.flower.registry.config;
 
 import java.io.Serializable;
 import java.util.Date;
+import com.ly.train.flower.common.core.config.ServiceMeta;
 import com.ly.train.flower.common.util.URL;
-import com.ly.train.flower.core.service.container.ServiceMeta;
 
 /**
  * @author leeyazhou

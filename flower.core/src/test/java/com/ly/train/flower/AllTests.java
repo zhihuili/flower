@@ -25,7 +25,6 @@ import com.ly.train.flower.core.bytecode.ClassGeneratorTest;
 import com.ly.train.flower.core.service.ServiceFlowTest;
 import com.ly.train.flower.core.util.HttpClientTest;
 import com.ly.train.flower.registry.simple.SimpleRegistryTest;
-import com.ly.train.flower.registry.zookeeper.ZookeeperRegistryTest;
 
 /**
  * @author leeyazhou
@@ -33,7 +32,7 @@ import com.ly.train.flower.registry.zookeeper.ZookeeperRegistryTest;
  */
 @RunWith(Suite.class)
 @SuiteClasses({ActorSelectionTest.class, ServiceFacadeTest.class, ServiceRouterTest.class, ClassGeneratorTest.class,
-    ServiceFlowTest.class, HttpClientTest.class, SimpleRegistryTest.class, ZookeeperRegistryTest.class})
+    ServiceFlowTest.class, HttpClientTest.class, SimpleRegistryTest.class})
 public class AllTests {
 
 }

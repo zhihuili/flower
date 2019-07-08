@@ -40,6 +40,10 @@
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
+            <artifactId>flower.registry.api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ly.train</groupId>
             <artifactId>flower.serializer.hessian</artifactId>
         </dependency>
         <dependency>

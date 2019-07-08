@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.core.service.container;
+package com.ly.train.flower.common.core.config;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import com.ly.train.flower.common.annotation.FlowerType;
-import com.ly.train.flower.core.service.impl.AggregateService;
 
 /**
  * 
@@ -118,8 +117,9 @@ public class ServiceMeta implements Serializable {
     this.aggregateService = aggregateService;
   }
 
+//  {@link AggregateService}
   /**
-   * 指服务是否是聚合类型{@link AggregateService}
+   * 指服务是否是聚合类型
    * 
    * @return true / false
    */

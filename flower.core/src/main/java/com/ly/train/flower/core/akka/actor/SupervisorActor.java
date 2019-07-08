@@ -16,13 +16,13 @@
 package com.ly.train.flower.core.akka.actor;
 
 import java.util.concurrent.TimeUnit;
+import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.core.akka.ActorFactory;
 import com.ly.train.flower.core.akka.actor.command.ActorCommand;
 import com.ly.train.flower.core.akka.actor.command.ActorContextCommand;
 import com.ly.train.flower.core.akka.actor.command.MessageType;
 import com.ly.train.flower.core.akka.actor.command.PingCommand;
-import com.ly.train.flower.core.service.config.ServiceConfig;
 import akka.actor.OneForOneStrategy;
 import akka.actor.Props;
 import akka.actor.SupervisorStrategy;

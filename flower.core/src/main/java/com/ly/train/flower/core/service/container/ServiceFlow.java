@@ -26,6 +26,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import com.alibaba.fastjson.JSONObject;
 import com.ly.train.flower.common.annotation.FlowerServiceUtil;
+import com.ly.train.flower.common.core.config.ServiceConfig;
+import com.ly.train.flower.common.core.config.ServiceMeta;
 import com.ly.train.flower.common.exception.FlowException;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
@@ -35,7 +37,6 @@ import com.ly.train.flower.common.util.ClassUtil;
 import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.Pair;
 import com.ly.train.flower.common.util.StringUtil;
-import com.ly.train.flower.core.service.config.ServiceConfig;
 import com.ly.train.flower.core.service.impl.AggregateService;
 import com.ly.train.flower.registry.Registry;
 

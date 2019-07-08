@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.annotation.FlowerServiceUtil;
+import com.ly.train.flower.common.core.config.ServiceMeta;
 import com.ly.train.flower.common.core.service.FlowerService;
 import com.ly.train.flower.common.exception.FlowException;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;

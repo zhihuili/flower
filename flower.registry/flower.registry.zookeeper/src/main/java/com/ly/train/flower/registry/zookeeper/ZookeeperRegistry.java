@@ -16,38 +16,43 @@
 /**
  * 
  */
-package com.ly.train.flower.registry;
+package com.ly.train.flower.registry.zookeeper;
 
 import java.util.List;
+import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.util.URL;
-import com.ly.train.flower.core.service.config.ServiceConfig;
+import com.ly.train.flower.registry.AbstractRegistry;
 import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou
  * 
  */
-public interface Registry {
+public class ZookeeperRegistry extends AbstractRegistry {
 
-  /**
-   * 注册服务
-   * 
-   * @param serviceInfo {@link ServiceInfo}
-   * @return true / false
-   */
-  boolean register(ServiceInfo serviceInfo);
 
-  boolean registerServiceConfig(ServiceConfig serviceConfig);
+  public ZookeeperRegistry(URL url) {
+    super(url);
+  }
 
-  /**
-   * 查询服务提供者
-   * 
-   * @param serviceInfo {@link ServiceInfo}
-   * @return {@link ServiceInfo}
-   */
-  List<ServiceInfo> getProvider(ServiceInfo serviceInfo);
+  @Override
+  public boolean doRegister(ServiceInfo serviceInfo) {
+    return false;
+  }
 
-  List<ServiceConfig> getServiceConfig(ServiceConfig serviceConfig);
+  @Override
+  public List<ServiceInfo> doGetProvider(ServiceInfo serviceInfo) {
+    return null;
+  }
 
-  URL getUrl();
+  @Override
+  public boolean doRegisterServiceConfig(ServiceConfig serviceConfig) {
+    return false;
+  }
+
+  @Override
+  public List<ServiceConfig> doGetServiceConfig(ServiceConfig serviceConfig) {
+    return null;
+  }
+
 }

@@ -84,6 +84,11 @@
                 <artifactId>flower.serializer.hessian</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>com.ly.train</groupId>
+                <artifactId>flower.registry.api</artifactId>
+                <version>${revision}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>

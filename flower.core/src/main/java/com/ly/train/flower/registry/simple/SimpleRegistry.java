@@ -23,13 +23,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
+import com.ly.train.flower.common.core.config.ServiceConfig;
+import com.ly.train.flower.common.core.config.ServiceMeta;
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.core.akka.router.ServiceRouter;
-import com.ly.train.flower.core.service.config.ServiceConfig;
 import com.ly.train.flower.core.service.container.FlowerFactory;
-import com.ly.train.flower.core.service.container.ServiceMeta;
 import com.ly.train.flower.core.service.container.util.ServiceContextUtil;
 import com.ly.train.flower.registry.AbstractRegistry;
 import com.ly.train.flower.registry.config.ServiceInfo;
@@ -110,7 +110,7 @@ public class SimpleRegistry extends AbstractRegistry {
     try {
       o = serviceInfoListRouter.syncCallService(serviceContext);
     } catch (TimeoutException e) {
-      e.printStackTrace();
+      logger.error("", e);
     }
     List<ServiceInfo> ret2 = new ArrayList<ServiceInfo>();
     if (o != null) {
@@ -131,7 +131,7 @@ public class SimpleRegistry extends AbstractRegistry {
     try {
       o = serviceConfigListRouter.syncCallService(serviceContext);
     } catch (TimeoutException e) {
-      e.printStackTrace();
+      logger.error("", e);
     }
     List<ServiceConfig> ret2 = new ArrayList<ServiceConfig>();
     if (o != null) {
