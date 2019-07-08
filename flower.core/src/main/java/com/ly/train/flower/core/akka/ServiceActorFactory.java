@@ -75,8 +75,8 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
   private volatile Lock actorLock = new ReentrantLock();
   private volatile Lock flowRouterLock = new ReentrantLock();
   private volatile Lock serviceRouterLock = new ReentrantLock();
-  private ScheduledExecutorService executorService =
-      Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
+  private ScheduledExecutorService executorService = Executors.newScheduledThreadPool(Runtime.getRuntime()
+      .availableProcessors());
   private final FlowerActorSystem flowerActorSystem;
 
   public ServiceActorFactory(FlowerFactory flowerFactory) {
@@ -115,8 +115,9 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
       actorWrapper = serviceRouterActorsCache.get(cacheKey);
       if (actorWrapper == null) {
         if (serviceConfig.isLocal()) {
-          ActorRef actorRef = flowerActorSystem.getActorContext()
-              .actorOf(ServiceActor.props(serviceName, flowerFactory, index).withDispatcher("dispatcher"), cacheKey);
+          ActorRef actorRef =
+              flowerActorSystem.getActorContext().actorOf(
+                  ServiceActor.props(serviceName, flowerFactory, index).withDispatcher("dispatcher"), cacheKey);
           actorWrapper = new ActorRefWrapper(actorRef).setServiceName(serviceName);
         } else {
           // "akka.tcp://flower@127.0.0.1:2551/user/$a"
@@ -133,10 +134,9 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
         serviceRouterActorsCache.put(cacheKey, actorWrapper);
       }
     } catch (Exception e) {
-      throw new FlowException(
-          "fail to create flowerService, flowName : " + serviceConfig.getFlowName() + ", serviceName : " + serviceName
-              + ", serviceClassName : " + serviceConfig.getServiceMeta().getServiceClassName(),
-          e);
+      throw new FlowException("fail to create flowerService, flowName : " + serviceConfig.getFlowName()
+          + ", serviceName : " + serviceName + ", serviceClassName : "
+          + serviceConfig.getServiceMeta().getServiceClassName(), e);
     } finally {
       actorLock.unlock();
     }

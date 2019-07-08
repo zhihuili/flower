@@ -23,7 +23,15 @@ public interface HttpFactory {
   CompletableFuture<String> delete(RequestContext requestContext);
 
 
+
+  /**
+   * 基于OKHttp
+   */
   HttpFactory okHttpFactory = OKHttpFactoryHodler.FACTORY;
+  
+  /**
+   * 基于Apache HttpClient
+   */
   HttpFactory httpClientFactory = HttpClientFactoryHodler.FACTORY;
 
 

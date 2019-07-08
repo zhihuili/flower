@@ -27,11 +27,11 @@
     <dependencies>
         <dependency>
             <groupId>com.ly.train</groupId>
-            <artifactId>flower.common</artifactId>
+            <artifactId>flower.container</artifactId>
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
-            <artifactId>flower.container</artifactId>
+            <artifactId>flower.core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
@@ -69,7 +69,7 @@
 
                             <artifactSet>
                                 <includes>
-                                    <include>com.ly.train:flower.common</include>
+                                    <include>com.ly.train:flower.core</include>
                                     <include>com.ly.train:flower.web</include>
                                     <include>com.ly.train:flower.container</include>
                                 </includes>

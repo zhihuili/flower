@@ -117,7 +117,7 @@ public class ServiceMeta implements Serializable {
     this.aggregateService = aggregateService;
   }
 
-//  {@link AggregateService}
+  // {@link AggregateService}
   /**
    * 指服务是否是聚合类型
    * 
