@@ -1,3 +1,18 @@
+/**
+ * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ly.train.flower.tools.http.factory.okhttp;
 
 import java.util.Map;
@@ -45,8 +60,9 @@ public class OKHttpFactory implements HttpFactory {
     builder.writeTimeout(httpConfig.getWriteTimeout(), TimeUnit.MILLISECONDS);
     builder.readTimeout(httpConfig.getReadTimeout(), TimeUnit.MILLISECONDS);
 
-    ExecutorService executorService = new ThreadPoolExecutor(0, Runtime.getRuntime().availableProcessors() * 8, 60,
-        TimeUnit.SECONDS, new SynchronousQueue<>(), Util.threadFactory("flower-http-async", false));
+    ExecutorService executorService =
+        new ThreadPoolExecutor(0, Runtime.getRuntime().availableProcessors() * 8, 60, TimeUnit.SECONDS,
+            new SynchronousQueue<>(), Util.threadFactory("flower-http-async", false));
 
     Dispatcher dispatcher = new Dispatcher(executorService);
     dispatcher.setMaxRequests(256);
@@ -136,13 +152,15 @@ public class OKHttpFactory implements HttpFactory {
   }
 
   private OkHttpClient getOrCreateClient(RequestContext requestContext) {
-    final String key = requestContext.getConnectTimeout() + "_" + requestContext.getWriteTimeout() + "_"
-        + requestContext.getReadTimeout();
+    final String key =
+        requestContext.getConnectTimeout() + "_" + requestContext.getWriteTimeout() + "_"
+            + requestContext.getReadTimeout();
     OkHttpClient httpClient = okHttpClientCache.get(key);
     if (httpClient == null) {
-      httpClient = template.newBuilder().connectTimeout(httpConfig.getConnectTimeout(), TimeUnit.MILLISECONDS)
-          .writeTimeout(httpConfig.getWriteTimeout(), TimeUnit.MILLISECONDS)
-          .readTimeout(httpConfig.getReadTimeout(), TimeUnit.MILLISECONDS).build();
+      httpClient =
+          template.newBuilder().connectTimeout(httpConfig.getConnectTimeout(), TimeUnit.MILLISECONDS)
+              .writeTimeout(httpConfig.getWriteTimeout(), TimeUnit.MILLISECONDS)
+              .readTimeout(httpConfig.getReadTimeout(), TimeUnit.MILLISECONDS).build();
       OkHttpClient a = okHttpClientCache.putIfAbsent(key, httpClient);
       if (a != null) {
         httpClient = a;
