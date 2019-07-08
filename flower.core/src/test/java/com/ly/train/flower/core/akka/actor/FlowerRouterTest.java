@@ -84,14 +84,15 @@ public class FlowerRouterTest extends TestBase {
 
   @Test
   public void testSyncCallServiceMutliThread() throws Exception {
+    sleep = 5000;
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC2.class);
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 4);
 
-    final int threadNum = 200;
-    final int numPerThread = 10000;
+    final int threadNum = 4;
+    final int numPerThread = 10;
     for (int i = 0; i < threadNum; i++) {
       new Thread(() -> {
 
@@ -109,18 +110,18 @@ public class FlowerRouterTest extends TestBase {
         }
       }, "test-" + i).start();
     }
-    Thread.sleep(TimeUnit.SECONDS.toMillis(50000000));
   }
 
   @Test
   public void testAsyncCallServiceMutliThread() throws Exception {
+    sleep = 5000;
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC2.class);
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 4);
 
-    final int threadNum = 10;
+    final int threadNum = 4;
     final int numPerThread = 10;
     for (int i = 0; i < threadNum; i++) {
       new Thread(() -> {
@@ -137,6 +138,5 @@ public class FlowerRouterTest extends TestBase {
         }
       }).start();
     }
-    Thread.sleep(TimeUnit.SECONDS.toMillis(5));
   }
 }

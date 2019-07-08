@@ -19,7 +19,6 @@
 package com.ly.train.flower.core.akka.actor;
 
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.junit.Test;
 import com.ly.train.flower.base.TestBase;
@@ -78,7 +77,6 @@ public class ServiceFacadeTest extends TestBase {
     user.setName("响应式编程");
     user.setAge(2);
     serviceFacade.asyncCallService(flowName, user);
-    Thread.sleep(TimeUnit.SECONDS.toMillis(2));
   }
 
   @Test(expected = FlowException.class)

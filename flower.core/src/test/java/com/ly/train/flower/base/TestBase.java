@@ -45,7 +45,7 @@ public class TestBase {
 
 
   @BeforeClass
-  public static void before() {
+  public static void beforeClass() {
     flowerFactory = new SimpleFlowerFactory();
     serviceFactory = flowerFactory.getServiceFactory();
     serviceLoader = serviceFactory.getServiceLoader();
@@ -59,9 +59,12 @@ public class TestBase {
     serviceFactory.registerService(ExceptionService.class.getSimpleName(), ExceptionService.class);
   }
 
+  public static int sleep = 2000;
+
   @AfterClass
-  public static void stop() throws InterruptedException {
-    Thread.sleep(2000);
+  public static void afterClass() throws InterruptedException {
+    System.out.println("休眠" + sleep + "ms后stopFlower。");
+    Thread.sleep(sleep);
     flowerFactory.stop();
   }
 }

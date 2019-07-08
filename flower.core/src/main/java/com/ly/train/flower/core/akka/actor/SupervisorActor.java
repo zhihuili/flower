@@ -18,7 +18,6 @@ package com.ly.train.flower.core.akka.actor;
 import java.util.concurrent.TimeUnit;
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.core.akka.ActorFactory;
-import com.ly.train.flower.core.akka.ServiceActorFactory;
 import com.ly.train.flower.core.akka.actor.command.ActorCommand;
 import com.ly.train.flower.core.akka.actor.command.ActorContextCommand;
 import com.ly.train.flower.core.akka.actor.command.MessageType;
@@ -43,8 +42,8 @@ public class SupervisorActor extends AbstractFlowerActor {
 
   private ActorFactory actorFactory;
 
-  public SupervisorActor(ServiceActorFactory serviceActorFactory) {
-    this.actorFactory = serviceActorFactory;
+  public SupervisorActor(ActorFactory actorFactory) {
+    this.actorFactory = actorFactory;
   }
 
   @Override
