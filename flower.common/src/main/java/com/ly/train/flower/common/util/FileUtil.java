@@ -27,7 +27,6 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.io.resource.Resource;
 
 public class FileUtil {
@@ -87,7 +86,7 @@ public class FileUtil {
         }
         String[] kv = sl.split("=");
         if (kv == null || kv.length != 2) {
-          throw new FlowerException("Illegal flow config:" + resource);
+          throw new Exception("Illegal flow config:" + resource);
         }
         result.add(new Pair<String, String>(kv[0].trim(), kv[1].trim()));
       }

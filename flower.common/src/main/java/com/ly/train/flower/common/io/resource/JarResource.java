@@ -20,9 +20,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+import com.ly.train.flower.common.logging.Logger;
+import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.IOUtil;
-import com.ly.train.flower.logging.Logger;
-import com.ly.train.flower.logging.LoggerFactory;
 
 /**
  * @author leeyazhou

@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 /**
- * 
+ *
  */
 package com.ly.train.flower.web.spring;
 
-import java.io.IOException;
-import javax.servlet.AsyncContext;
-import javax.servlet.http.HttpServletRequest;
+import com.ly.train.flower.common.annotation.Flower;
+import com.ly.train.flower.common.logging.Logger;
+import com.ly.train.flower.common.logging.LoggerFactory;
+import com.ly.train.flower.core.akka.router.FlowRouter;
+import com.ly.train.flower.core.service.container.FlowerFactory;
+import com.ly.train.flower.core.service.container.ServiceFlow;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.ly.train.flower.common.akka.router.FlowRouter;
-import com.ly.train.flower.common.annotation.Flower;
-import com.ly.train.flower.common.service.container.FlowerFactory;
-import com.ly.train.flower.common.service.container.ServiceFlow;
-import com.ly.train.flower.logging.Logger;
-import com.ly.train.flower.logging.LoggerFactory;
+import javax.servlet.AsyncContext;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * 
@@ -38,7 +38,6 @@ public abstract class FlowerController implements InitializingBean {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
   private FlowRouter flowRouter;
   private String flowerName;
-  private String serviceName;
   private int flowerNumber;
 
 
@@ -63,7 +62,8 @@ public abstract class FlowerController implements InitializingBean {
   /**
    * 初始化路由
    * 
-   * @see com.ly.train.flower.common.actor.ServiceFacade#buildFlowRouter
+   * @see com.ly.train.flower.core.akka.ServiceFacade#buildFlowRouter(String,
+   *      int)
    * @return {@code ServiceRouter}
    */
   private FlowRouter initFlowRouter() {
@@ -105,11 +105,4 @@ public abstract class FlowerController implements InitializingBean {
     return flowerNumber;
   }
 
-  public String getServiceName() {
-    if (serviceName == null) {
-      Flower bindController = this.getClass().getAnnotation(Flower.class);
-      this.serviceName = bindController.serviceName();
-    }
-    return serviceName;
-  }
 }

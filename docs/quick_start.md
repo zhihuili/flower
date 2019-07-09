@@ -52,10 +52,10 @@ service4 -> service1
 
 流程文件*.flow中根据service别名进行流程编排，service别名定义在src/main/resources下的*.services文件
 ```
-service1 = com.ly.train.flower.common.sample.one.Service1
-service2 = com.ly.train.flower.common.sample.one.Service2
-service3 = com.ly.train.flower.common.sample.one.Service3
-service4 = com.ly.train.flower.common.sample.one.Service4
+service1 = com.ly.train.flower.sample.one.Service1
+service2 = com.ly.train.flower.sample.one.Service2
+service3 = com.ly.train.flower.sample.one.Service3
+service4 = com.ly.train.flower.sample.one.Service4
 service5 = com.ly.train.flower.common.service.JointService
 ```
 ### 调用流程

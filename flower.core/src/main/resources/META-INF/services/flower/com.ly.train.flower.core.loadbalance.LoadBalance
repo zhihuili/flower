@@ -1,0 +1,2 @@
+random = com.ly.train.flower.core.loadbalance.RandomLoadBalance
+round = com.ly.train.flower.core.loadbalance.RoundLoadBalance
