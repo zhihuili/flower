@@ -13,33 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.web.spring.container;
+package com.ly.train.flower.web.spring.boot.autoconfigure;
 
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import com.ly.train.flower.config.FlowerConfig;
-import com.ly.train.flower.core.service.container.simple.SimpleFlowerFactory;
 
 /**
  * @author leeyazhou
- * 
  */
-public class SpringFlowerFactory extends SimpleFlowerFactory implements InitializingBean {
+@ConfigurationProperties(prefix = "spring.flower", ignoreUnknownFields = true)
+public class FlowerProperties {
 
-  public SpringFlowerFactory() {
-    super();
+  @NestedConfigurationProperty
+  private FlowerConfig config = new FlowerConfig();
+
+  public FlowerProperties() {}
+
+  public FlowerConfig getConfig() {
+    return config;
   }
 
-  public SpringFlowerFactory(String configLocation) {
-    super(configLocation);
-  }
-
-  public SpringFlowerFactory(FlowerConfig flowerConfig) {
-    super(flowerConfig);
-  }
-
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    init();
+  public void setConfig(FlowerConfig config) {
+    this.config = config;
   }
 
 }

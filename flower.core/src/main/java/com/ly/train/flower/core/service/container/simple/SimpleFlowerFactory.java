@@ -56,12 +56,17 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
   private ExceptionHandlerManager exceptionHandlerManager = ExceptionHandlerManager.getInstance();
 
   public SimpleFlowerFactory() {
-    this(null);
+    this((String) null);
   }
 
   public SimpleFlowerFactory(String configLocation) {
     this.configLocation = configLocation;
     this.flowerConfig = new FlowerConfigParser(this.configLocation).parse();
+    this.start();
+  }
+
+  public SimpleFlowerFactory(FlowerConfig flowerConfig) {
+    this.flowerConfig = flowerConfig;
     this.start();
   }
 

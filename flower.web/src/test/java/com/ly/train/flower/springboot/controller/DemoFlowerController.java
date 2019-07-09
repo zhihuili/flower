@@ -16,7 +16,7 @@
 /**
  * 
  */
-package com.ly.train.flower.springboot.flower;
+package com.ly.train.flower.springboot.controller;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.core.service.container.ServiceFlow;
-import com.ly.train.flower.core.service.impl.AggregateService;
 import com.ly.train.flower.springboot.model.User;
+import com.ly.train.flower.springboot.service.AggregateUserService;
 import com.ly.train.flower.springboot.service.EndService;
 import com.ly.train.flower.springboot.service.HeadService;
 import com.ly.train.flower.springboot.service.UserService;
@@ -39,7 +39,7 @@ import com.ly.train.flower.web.spring.FlowerController;
 @Flower(value = "flower", serviceName = "HeadService")
 @RequestMapping("/flower/")
 @RestController
-public class DemoFlower extends FlowerController {
+public class DemoFlowerController extends FlowerController {
 
 
   @RequestMapping("test")
@@ -54,9 +54,10 @@ public class DemoFlower extends FlowerController {
 
     serviceFlow.buildFlow(HeadService.class, UserService.class);
     serviceFlow.buildFlow(HeadService.class, UserService2.class);
-    serviceFlow.buildFlow(UserService.class, AggregateService.class);
-    serviceFlow.buildFlow(UserService2.class, AggregateService.class);
-    serviceFlow.buildFlow(AggregateService.class, EndService.class);
+    serviceFlow.buildFlow(UserService.class, AggregateUserService.class);
+    serviceFlow.buildFlow(UserService2.class, AggregateUserService.class);
+    serviceFlow.buildFlow(AggregateUserService.class, EndService.class);
+    getServiceFlow().build();
   }
 
 }

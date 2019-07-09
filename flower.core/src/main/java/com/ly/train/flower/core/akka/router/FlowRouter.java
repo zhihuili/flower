@@ -21,6 +21,7 @@ import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.core.web.Web;
 import com.ly.train.flower.common.lifecyle.AbstractInit;
+import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.core.akka.ActorFactory;
@@ -33,7 +34,7 @@ import akka.actor.ActorRef;
  * 
  */
 public class FlowRouter extends AbstractInit implements Router {
-  static final com.ly.train.flower.common.logging.Logger logger = LoggerFactory.getLogger(FlowRouter.class);
+  static final Logger logger = LoggerFactory.getLogger(FlowRouter.class);
   private int flowerNumber = -1;
   private final ServiceConfig headerServiceConfig;
   private final ActorFactory actorFactory;

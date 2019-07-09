@@ -43,19 +43,21 @@ import scala.concurrent.duration.Duration;
 public class ServiceRouter extends AbstractInit implements Router {
   protected static final Logger logger = LoggerFactory.getLogger(ServiceRouter.class);
   private final LoadBalance loadBalance = ExtensionLoader.load(LoadBalance.class).load();
-  private int actorNumber = 2 << 6;
+  private int actorNumber = 1 << 7;
   private volatile List<ActorWrapper> actors = new ArrayList<>();
   private final ServiceConfig serviceConfig;
   private final FlowerFactory flowerFactory;
   private final String returnType;
 
-  public ServiceRouter(ServiceConfig serviceConfig, FlowerFactory flowerFactory, int actorNumber) {
+  public ServiceRouter(ServiceConfig serviceConfig, FlowerFactory flowerFactory) {
     this.serviceConfig = serviceConfig;
     this.flowerFactory = flowerFactory;
     this.returnType = serviceConfig.getServiceMeta().getResultType();
-    if (actorNumber > 0) {
-      this.actorNumber = actorNumber;
-    }
+  }
+
+  public ServiceRouter(ServiceConfig serviceConfig, FlowerFactory flowerFactory, int actorNumber) {
+    this(serviceConfig, flowerFactory);
+    this.actorNumber = actorNumber;
   }
 
   @Override

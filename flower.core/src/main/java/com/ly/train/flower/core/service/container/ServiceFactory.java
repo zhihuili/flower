@@ -190,7 +190,7 @@ public class ServiceFactory extends AbstractInit {
   public List<ServiceInfo> loadServiceInfoFromRegistrry(ServiceConfig serviceConfig) {
     Set<Registry> registries = flowerFactory.getRegistry();
     if (registries == null || registries.isEmpty()) {
-      return null;
+      return new ArrayList<>();
     }
     ServiceInfo queryInfo = new ServiceInfo();
     ServiceMeta queryMeta = new ServiceMeta();

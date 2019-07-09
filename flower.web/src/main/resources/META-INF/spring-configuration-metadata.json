@@ -1,0 +1,37 @@
+{
+	"groups": [
+		{
+			"sourceType": "com.ly.train.flower.web.spring.boot.autoconfigure.FlowerProperties",
+			"name": "spring.flower",
+			"type": "com.ly.train.flower.web.spring.boot.autoconfigure.FlowerProperties"
+		},
+		{
+			"sourceType": "com.ly.train.flower.web.spring.boot.autoconfigure.FlowerProperties",
+			"name": "spring.flower.config",
+			"type": "com.ly.train.flower.config.FlowerConfig",
+			"sourceMethod": "getConfig()"
+		}
+	],
+	"properties": [
+		{
+			"sourceType": "com.ly.train.flower.config.FlowerConfig",
+			"name": "spring.flower.config.name",
+			"type": "java.lang.String",
+			"description": "flower configuration name",
+			"defaultValue": "SET_YOUR_OWN_APPLICATION_NAME"
+		},
+		{
+			"sourceType": "com.ly.train.flower.config.FlowerConfig",
+			"name": "spring.flower.config.host",
+			"type": "java.lang.String",
+			"description": "flower listen host"
+		},
+		{
+			"sourceType": "com.ly.train.flower.web.spring.boot.autoconfigure.FlowerProperties",
+			"name": "spring.flower.config.port",
+			"type": "java.lang.Integer",
+			"description": "flower listen port."
+		}
+	],
+	"hints": []
+}
