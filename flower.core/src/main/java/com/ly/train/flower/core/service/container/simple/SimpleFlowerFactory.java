@@ -28,6 +28,7 @@ import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.ExtensionLoader;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.config.FlowerConfig;
+import com.ly.train.flower.config.RegistryConfig;
 import com.ly.train.flower.config.parser.FlowerConfigParser;
 import com.ly.train.flower.core.akka.ActorFactory;
 import com.ly.train.flower.core.akka.ServiceActorFactory;
@@ -36,7 +37,6 @@ import com.ly.train.flower.core.service.container.FlowerFactory;
 import com.ly.train.flower.core.service.container.ServiceFactory;
 import com.ly.train.flower.registry.Registry;
 import com.ly.train.flower.registry.RegistryFactory;
-import com.ly.train.flower.registry.config.RegistryConfig;
 import com.ly.train.flower.registry.simple.SimpleRegistry;
 
 /**

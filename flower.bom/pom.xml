@@ -99,6 +99,11 @@
                 <artifactId>flower.tools.http</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>com.ly.train</groupId>
+                <artifactId>flower.config</artifactId>
+                <version>${revision}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>

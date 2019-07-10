@@ -22,7 +22,6 @@ import java.io.Serializable;
 import java.util.Set;
 import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.URL;
-import com.ly.train.flower.registry.config.RegistryConfig;
 
 /**
  * @author leeyazhou
