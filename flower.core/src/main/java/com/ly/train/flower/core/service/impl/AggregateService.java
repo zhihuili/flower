@@ -19,21 +19,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import com.ly.train.flower.common.annotation.Scope;
 import com.ly.train.flower.common.core.message.FlowMessage;
 import com.ly.train.flower.common.core.service.Service;
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.Assert;
-import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.ExtensionLoader;
 import com.ly.train.flower.common.util.cache.Cache;
 import com.ly.train.flower.common.util.cache.CacheManager;
 import com.ly.train.flower.core.service.Aggregate;
 import com.ly.train.flower.serializer.Serializer;
 
-@Scope(scopeName = Constant.SCOPE_REQUEST)
 public class AggregateService implements Service<Object, List<Object>>, Aggregate {
   static final Logger logger = LoggerFactory.getLogger(AggregateService.class);
   private static final Long DefaultTimeOutMilliseconds = 60000L;

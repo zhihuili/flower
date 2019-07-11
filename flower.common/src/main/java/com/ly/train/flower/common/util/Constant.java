@@ -40,8 +40,8 @@ public class Constant {
   public static final String flowerHome = "flower.home";
 
 
-  public static final String SCOPE_SINGLETON = "singleton";
-  public static final String SCOPE_REQUEST = "request";
+  // public static final String SCOPE_SINGLETON = "singleton";
+  // public static final String SCOPE_REQUEST = "request";
 
 
   public static final String applicationName = "application";

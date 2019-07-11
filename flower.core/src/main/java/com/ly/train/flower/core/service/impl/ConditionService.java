@@ -15,13 +15,10 @@
  */
 package com.ly.train.flower.core.service.impl;
 
-import com.ly.train.flower.common.annotation.Scope;
 import com.ly.train.flower.common.core.service.Service;
 import com.ly.train.flower.common.core.service.ServiceContext;
-import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.core.service.message.Condition;
 
-@Scope(scopeName = Constant.SCOPE_REQUEST)
 public class ConditionService implements Service<Condition, Condition> {
 
   private String[] condition;
