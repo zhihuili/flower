@@ -1,12 +1,10 @@
----
-name: pull request
-about: pull request
-title: "[pull request]"
-labels: 'pull request'
-assignees: ''
+## 简述
+（简明扼要描述一下PR做了什么？）
 
----
+## 功能列表
 
-## 更新内容
+- ......
+- ......
+- ......
 
 
