@@ -33,6 +33,7 @@ import com.ly.train.flower.config.parser.FlowerConfigParser;
 import com.ly.train.flower.core.akka.ActorFactory;
 import com.ly.train.flower.core.akka.ServiceActorFactory;
 import com.ly.train.flower.core.akka.ServiceFacade;
+import com.ly.train.flower.core.akka.router.FlowRouter;
 import com.ly.train.flower.core.service.container.FlowerFactory;
 import com.ly.train.flower.core.service.container.ServiceFactory;
 import com.ly.train.flower.registry.Registry;
@@ -183,5 +184,10 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
   @Override
   public void setDefaultExceptionHandler(ExceptionHandler defaultExceptionHandler) {
     exceptionHandlerManager.setDefaultExceptionHandler(defaultExceptionHandler);
+  }
+  
+  @Override
+  public FlowRouter buildFlowRouter(String flowName, int flowNumber) {
+    return getActorFactory().buildFlowRouter(flowName, flowNumber);
   }
 }
