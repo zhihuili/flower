@@ -37,10 +37,14 @@ public class ServiceConfigListService implements Service<ServiceConfig, ServiceC
 
   @Override
   public ServiceConfig process(ServiceConfig message, ServiceContext context) throws Throwable {
-    if (message == null) {
-      return null;
+    ServiceConfig result = null;
+    if (message != null) {
+      result = serviceConfigStore.getServiceConfig(message);
     }
-    return serviceConfigStore.getServiceConfig(message);
+    if (result == null) {
+      return new ServiceConfig();
+    }
+    return result;
   }
 
 }

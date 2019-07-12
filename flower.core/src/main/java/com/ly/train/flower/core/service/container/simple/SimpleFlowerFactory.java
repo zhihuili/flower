@@ -75,7 +75,7 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
     if (instance == null) {
       synchronized (logger) {
         if (instance == null) {
-          SimpleFlowerFactory temp = new SimpleFlowerFactory();
+          FlowerFactory temp = new SimpleFlowerFactory();
           temp.start();
           SimpleFlowerFactory.instance = temp;
         }
@@ -185,7 +185,7 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
   public void setDefaultExceptionHandler(ExceptionHandler defaultExceptionHandler) {
     exceptionHandlerManager.setDefaultExceptionHandler(defaultExceptionHandler);
   }
-  
+
   @Override
   public FlowRouter buildFlowRouter(String flowName, int flowNumber) {
     return getActorFactory().buildFlowRouter(flowName, flowNumber);

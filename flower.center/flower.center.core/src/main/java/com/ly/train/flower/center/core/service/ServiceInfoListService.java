@@ -18,6 +18,7 @@
  */
 package com.ly.train.flower.center.core.service;
 
+import java.util.HashSet;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.ly.train.flower.center.core.store.ServiceInfoStore;
@@ -39,7 +40,7 @@ public class ServiceInfoListService implements Service<ServiceInfo, Set<ServiceI
   @Override
   public Set<ServiceInfo> process(ServiceInfo message, ServiceContext context) throws Throwable {
     if (message == null) {
-      return null;
+      return new HashSet<>();
     }
     return serviceInfoStore.getServiceInfo(message);
   }
