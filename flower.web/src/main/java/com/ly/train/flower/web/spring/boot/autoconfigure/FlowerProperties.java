@@ -15,6 +15,8 @@
  */
 package com.ly.train.flower.web.spring.boot.autoconfigure;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import com.ly.train.flower.config.FlowerConfig;
@@ -28,6 +30,9 @@ public class FlowerProperties {
   @NestedConfigurationProperty
   private FlowerConfig config = new FlowerConfig();
 
+  @NestedConfigurationProperty
+  private Set<String> registry = new HashSet<>();
+
   public FlowerProperties() {}
 
   public FlowerConfig getConfig() {
@@ -36,6 +41,14 @@ public class FlowerProperties {
 
   public void setConfig(FlowerConfig config) {
     this.config = config;
+  }
+
+  public Set<String> getRegistry() {
+    return registry;
+  }
+
+  public void setRegistry(Set<String> registry) {
+    this.registry = registry;
   }
 
 }
