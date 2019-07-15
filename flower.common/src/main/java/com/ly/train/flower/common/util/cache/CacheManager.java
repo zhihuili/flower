@@ -101,6 +101,12 @@ public class CacheManager {
 
   }
 
+  public static void stop() {
+    if (executorService != null) {
+      executorService.shutdown();
+    }
+  }
+
   /**
    * returns cache item from hashmap
    * 
