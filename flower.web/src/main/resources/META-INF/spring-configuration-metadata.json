@@ -31,6 +31,12 @@
 			"name": "spring.flower.config.port",
 			"type": "java.lang.Integer",
 			"description": "flower listen port."
+		},
+		{
+			"sourceType": "com.ly.train.flower.web.spring.boot.autoconfigure.FlowerProperties",
+			"name": "spring.flower.config.basePackage",
+			"type": "java.lang.String",
+			"description": "flower basePackage."
 		}
 	],
 	"hints": []
