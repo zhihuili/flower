@@ -50,7 +50,7 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
   private static volatile FlowerFactory instance;
   private FlowerConfig flowerConfig;
   private volatile Set<Registry> registries;
-  private volatile ServiceActorFactory serviceActorFactory;
+  private volatile ActorFactory actorFactory;
   private volatile ServiceFactory serviceFactory;
   private volatile ServiceFacade serviceFacade;
   private String configLocation = "flower.yml";
@@ -132,13 +132,13 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
 
   @Override
   public ActorFactory getActorFactory() {
-    if (serviceActorFactory == null) {
+    if (actorFactory == null) {
       synchronized (this) {
-        this.serviceActorFactory = new ServiceActorFactory(this);
-        this.serviceActorFactory.start();
+        this.actorFactory = new ServiceActorFactory(this);
+        this.actorFactory.start();
       }
     }
-    return serviceActorFactory;
+    return actorFactory;
   }
 
   @Override
@@ -150,7 +150,7 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
   @Override
   public void doStop() {
     logger.info("stop FlowerFactory");
-    serviceActorFactory.stop();
+    getActorFactory().stop();
   }
 
   @Override

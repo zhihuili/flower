@@ -43,7 +43,6 @@
         <module>flower.bom</module>
         <module>flower.container</module>
         <module>flower.test</module>
-        <module>flower.all</module>
         <module>flower.filter</module>
         <module>flower.core</module>
         <module>flower.serializer</module>
@@ -566,7 +565,7 @@
                     <check />
                 </configuration>
             </plugin>
-            <plugin>
+           <!--  <plugin>
                 <groupId>com.googlecode.maven-java-formatter-plugin</groupId>
                 <artifactId>maven-java-formatter-plugin</artifactId>
                 <configuration>
@@ -580,7 +579,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
             <plugin>
                 <groupId>com.github.ekryd.sortpom</groupId>
                 <artifactId>sortpom-maven-plugin</artifactId>

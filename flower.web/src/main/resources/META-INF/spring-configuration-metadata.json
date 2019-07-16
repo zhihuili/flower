@@ -1,36 +1,72 @@
 {
 	"groups": [
 		{
-			"sourceType": "com.ly.train.flower.web.spring.boot.autoconfigure.FlowerProperties",
 			"name": "spring.flower",
-			"type": "com.ly.train.flower.web.spring.boot.autoconfigure.FlowerProperties"
+			"type": "com.ly.train.flower.web.spring.boot.autoconfigure.FlowerProperties",
+			"sourceType": "com.ly.train.flower.web.spring.boot.autoconfigure.FlowerProperties"
 		},
 		{
-			"sourceType": "com.ly.train.flower.web.spring.boot.autoconfigure.FlowerProperties",
 			"name": "spring.flower.config",
 			"type": "com.ly.train.flower.config.FlowerConfig",
+			"sourceType": "com.ly.train.flower.web.spring.boot.autoconfigure.FlowerProperties",
 			"sourceMethod": "getConfig()"
+		},
+		{
+			"name": "spring.flower.registry",
+			"type": "java.util.Set",
+			"sourceType": "com.ly.train.flower.web.spring.boot.autoconfigure.FlowerProperties",
+			"sourceMethod": "getRegistry()"
 		}
 	],
 	"properties": [
 		{
-			"sourceType": "com.ly.train.flower.config.FlowerConfig",
-			"name": "spring.flower.config.name",
+			"name": "spring.flower.config.base-package",
 			"type": "java.lang.String",
-			"description": "flower configuration name",
-			"defaultValue": "SET_YOUR_OWN_APPLICATION_NAME"
+			"sourceType": "com.ly.train.flower.config.FlowerConfig"
 		},
 		{
-			"sourceType": "com.ly.train.flower.config.FlowerConfig",
 			"name": "spring.flower.config.host",
 			"type": "java.lang.String",
-			"description": "flower listen host"
+			"sourceType": "com.ly.train.flower.config.FlowerConfig",
+			"defaultValue": ""
 		},
 		{
-			"sourceType": "com.ly.train.flower.web.spring.boot.autoconfigure.FlowerProperties",
+			"name": "spring.flower.config.name",
+			"type": "java.lang.String",
+			"sourceType": "com.ly.train.flower.config.FlowerConfig",
+			"defaultValue": "SET_YOUR_OWN_APPLICATON_NAME"
+		},
+		{
+			"name": "spring.flower.config.parallelism-factor",
+			"type": "java.lang.Integer",
+			"description": "并行度因子",
+			"sourceType": "com.ly.train.flower.config.FlowerConfig",
+			"defaultValue": 16
+		},
+		{
+			"name": "spring.flower.config.parallelism-max",
+			"type": "java.lang.Integer",
+			"description": "最大并行度",
+			"sourceType": "com.ly.train.flower.config.FlowerConfig",
+			"defaultValue": 128
+		},
+		{
+			"name": "spring.flower.config.parallelism-min",
+			"type": "java.lang.Integer",
+			"description": "最小并行度",
+			"sourceType": "com.ly.train.flower.config.FlowerConfig",
+			"defaultValue": 8
+		},
+		{
 			"name": "spring.flower.config.port",
 			"type": "java.lang.Integer",
-			"description": "flower listen port."
+			"sourceType": "com.ly.train.flower.config.FlowerConfig",
+			"defaultValue": 25001
+		},
+		{
+			"name": "spring.flower.config.registry",
+			"type": "java.util.Set<com.ly.train.flower.config.RegistryConfig>",
+			"sourceType": "com.ly.train.flower.config.FlowerConfig"
 		}
 	],
 	"hints": []

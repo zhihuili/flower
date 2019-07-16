@@ -15,12 +15,16 @@
  */
 package com.ly.train.flower.web.spring.boot.autoconfigure;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
+import com.ly.train.flower.config.FlowerConfig;
+import com.ly.train.flower.config.RegistryConfig;
 import com.ly.train.flower.core.service.container.FlowerFactory;
 import com.ly.train.flower.web.spring.container.SpringFlowerFactory;
 
@@ -37,8 +41,23 @@ public class FlowerAutoConfiguration {
   @ConditionalOnMissingBean
   public FlowerFactory flowerFactory(FlowerProperties flowerProperties) {
     logger.info("flower auto configure.");
-    FlowerFactory factory = new SpringFlowerFactory(flowerProperties.getConfig());
+    FlowerConfig flowerConfig = flowerProperties.getConfig();
+    Set<RegistryConfig> registry = buildRegistryConfig(flowerProperties.getRegistry());
+    flowerConfig.setRegistry(registry);
+    FlowerFactory factory = new SpringFlowerFactory(flowerConfig);
     return factory;
+  }
+
+  private Set<RegistryConfig> buildRegistryConfig(Set<String> registryStr) {
+    Set<RegistryConfig> ret = new HashSet<>();
+    if (registryStr != null) {
+      for (String registry : registryStr) {
+        RegistryConfig item = new RegistryConfig();
+        item.setUrl(registry);
+        ret.add(item);
+      }
+    }
+    return ret;
   }
 
 }

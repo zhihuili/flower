@@ -30,6 +30,7 @@ import com.ly.train.flower.common.lifecyle.AbstractLifecycle;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.URL;
+import com.ly.train.flower.common.util.cache.CacheManager;
 import com.ly.train.flower.config.FlowerConfig;
 import com.ly.train.flower.core.akka.actor.ServiceActor;
 import com.ly.train.flower.core.akka.actor.command.ActorCommand;
@@ -227,6 +228,8 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
   @Override
   protected void doStop() {
     flowerActorSystem.stop();
+    executorService.shutdown();
+    CacheManager.stop();
   }
 
 }
