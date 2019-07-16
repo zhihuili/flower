@@ -60,9 +60,8 @@ public class OKHttpFactory implements HttpFactory {
     builder.writeTimeout(httpConfig.getWriteTimeout(), TimeUnit.MILLISECONDS);
     builder.readTimeout(httpConfig.getReadTimeout(), TimeUnit.MILLISECONDS);
 
-    ExecutorService executorService =
-        new ThreadPoolExecutor(0, Runtime.getRuntime().availableProcessors() * 8, 60, TimeUnit.SECONDS,
-            new SynchronousQueue<>(), Util.threadFactory("flower-http-async", false));
+    ExecutorService executorService = new ThreadPoolExecutor(8, Runtime.getRuntime().availableProcessors() * 8, 60,
+        TimeUnit.SECONDS, new SynchronousQueue<>(), Util.threadFactory("flower-http-async", false));
 
     Dispatcher dispatcher = new Dispatcher(executorService);
     dispatcher.setMaxRequests(256);
@@ -152,15 +151,14 @@ public class OKHttpFactory implements HttpFactory {
   }
 
   private OkHttpClient getOrCreateClient(RequestContext requestContext) {
-    final String key =
-        requestContext.getConnectTimeout() + "_" + requestContext.getWriteTimeout() + "_"
-            + requestContext.getReadTimeout();
+    final String key = requestContext.getConnectTimeout() + "_" + requestContext.getWriteTimeout() + "_"
+        + requestContext.getReadTimeout();
     OkHttpClient httpClient = okHttpClientCache.get(key);
     if (httpClient == null) {
-      httpClient =
-          template.newBuilder().connectTimeout(httpConfig.getConnectTimeout(), TimeUnit.MILLISECONDS)
-              .writeTimeout(httpConfig.getWriteTimeout(), TimeUnit.MILLISECONDS)
-              .readTimeout(httpConfig.getReadTimeout(), TimeUnit.MILLISECONDS).build();
+      httpClient = template.newBuilder().connectTimeout(requestContext.getConnectTimeout(), TimeUnit.MILLISECONDS)
+          .writeTimeout(requestContext.getWriteTimeout(), TimeUnit.MILLISECONDS)
+//          .callTimeout(60, TimeUnit.SECONDS)
+          .readTimeout(requestContext.getReadTimeout(), TimeUnit.MILLISECONDS).build();
       OkHttpClient a = okHttpClientCache.putIfAbsent(key, httpClient);
       if (a != null) {
         httpClient = a;
