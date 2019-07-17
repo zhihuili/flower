@@ -17,7 +17,7 @@ package com.ly.train.flower.tools.http;
 
 import java.util.concurrent.CompletableFuture;
 import com.ly.train.flower.tools.http.config.RequestContext;
-import com.ly.train.flower.tools.http.factory.httpclient.HttpClientFactory;
+import com.ly.train.flower.tools.http.factory.httpasyncclient.HttpAsyncClientFactory;
 import com.ly.train.flower.tools.http.factory.okhttp.OKHttpFactory;
 
 /**
@@ -47,14 +47,14 @@ public interface HttpFactory {
   /**
    * 基于Apache HttpClient
    */
-  HttpFactory httpClientFactory = HttpClientFactoryHodler.FACTORY;
+  HttpFactory httpAsyncClientFactory = HttpClientFactoryHodler.FACTORY;
 
 
   static class OKHttpFactoryHodler {
     private static final HttpFactory FACTORY = new OKHttpFactory();
   }
   static class HttpClientFactoryHodler {
-    private static final HttpFactory FACTORY = new HttpClientFactory();
+    private static final HttpFactory FACTORY = new HttpAsyncClientFactory();
   }
 
 }

@@ -27,8 +27,8 @@ import com.ly.train.flower.common.lifecyle.AbstractInit;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.ExtensionLoader;
-import com.ly.train.flower.core.akka.actor.wrapper.ActorRefWrapper;
-import com.ly.train.flower.core.akka.actor.wrapper.ActorSelectionWrapper;
+import com.ly.train.flower.core.akka.actor.wrapper.ActorLocalWrapper;
+import com.ly.train.flower.core.akka.actor.wrapper.ActorRemoteWrapper;
 import com.ly.train.flower.core.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.core.loadbalance.LoadBalance;
 import com.ly.train.flower.core.service.container.FlowerFactory;
@@ -77,10 +77,10 @@ public class ServiceRouter extends AbstractInit implements Router {
     ActorWrapper actorRef = chooseOne(serviceContext);
     Timeout timeout = new Timeout(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
     Future<Object> future = null;
-    if (actorRef instanceof ActorRefWrapper) {
-      future = Patterns.ask(((ActorRefWrapper) actorRef).getActorRef(), serviceContext, timeout);
+    if (actorRef instanceof ActorLocalWrapper) {
+      future = Patterns.ask(((ActorLocalWrapper) actorRef).getActorRef(), serviceContext, timeout);
     } else {
-      future = Patterns.ask(((ActorSelectionWrapper) actorRef).getActorSelection(), serviceContext, timeout);
+      future = Patterns.ask(((ActorRemoteWrapper) actorRef).getActorRef(), serviceContext, timeout);
     }
     try {
       Duration duration = Duration.create(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);

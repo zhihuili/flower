@@ -22,17 +22,22 @@ import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.config.FlowerConfig;
+import com.ly.train.flower.core.akka.actor.ServiceActor;
 import com.ly.train.flower.core.akka.actor.SupervisorActor;
 import com.ly.train.flower.core.akka.actor.command.ActorContextCommand;
+import com.ly.train.flower.core.service.container.FlowerFactory;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import akka.actor.AbstractActor.ActorContext;
 import akka.actor.ActorRef;
+import akka.actor.ActorSelection;
 import akka.actor.ActorSystem;
+import akka.actor.Props;
 import akka.pattern.Patterns;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
+import scala.concurrent.duration.FiniteDuration;
 
 /**
  * @author leeyazhou
@@ -48,12 +53,14 @@ public class FlowerActorSystem extends AbstractLifecycle {
   private volatile ActorSystem actorSystem;
   private volatile ActorRef supervierActor;
   private volatile ActorContext actorContext;
+  private volatile FlowerFactory flowerFactory;
 
-  public FlowerActorSystem(FlowerConfig flowerConfig, ActorFactory actorFactory) {
+  public FlowerActorSystem(FlowerConfig flowerConfig, ActorFactory actorFactory, FlowerFactory flowerFactory) {
     this.flowerConfig = flowerConfig;
     this.actorFactory = actorFactory;
     this.actorSystem = initActorSystem();
     initActorContext();
+    this.flowerFactory = flowerFactory;
   }
 
   private ActorSystem initActorSystem() {
@@ -101,12 +108,25 @@ public class FlowerActorSystem extends AbstractLifecycle {
     }
   }
 
-  /**
-   * @return the actorContext
-   */
-  public ActorContext getActorContext() {
-    return actorContext;
+  protected ActorRef createLocalActor(String serviceName, int index, String cacheKey) {
+    Props props = ServiceActor.props(serviceName, flowerFactory, index).withDispatcher("dispatcher");
+    ActorRef actorRef = actorContext.actorOf(props, cacheKey);
+    actorContext.watch(actorRef);
+    return actorRef;
   }
+
+  protected ActorRef createRemoteActor(String actorPath) {
+    try {
+      ActorSelection actorSelection = actorContext.actorSelection(actorPath);
+      ActorRef actorRef = Await.result(actorSelection.resolveOne(new FiniteDuration(3, TimeUnit.SECONDS)),
+          Duration.create(3, TimeUnit.SECONDS));
+      return actorRef;
+    } catch (Exception e) {
+      logger.error("", e);
+    }
+    return null;
+  }
+
 
   @Override
   protected void doStart() {}

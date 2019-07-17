@@ -24,12 +24,12 @@ import akka.actor.ActorRef;
  * @author leeyazhou
  * 
  */
-public class ActorRefWrapper implements ActorWrapper {
-  private static final Logger logger = LoggerFactory.getLogger(ActorRefWrapper.class);
+public class ActorLocalWrapper implements ActorWrapper {
+  private static final Logger logger = LoggerFactory.getLogger(ActorLocalWrapper.class);
   private String serviceName;
   private final ActorRef actorRef;
 
-  public ActorRefWrapper(ActorRef actorRef) {
+  public ActorLocalWrapper(ActorRef actorRef) {
     this.actorRef = actorRef;
   }
 
@@ -60,7 +60,7 @@ public class ActorRefWrapper implements ActorWrapper {
     return actorRef;
   }
 
-  public ActorRefWrapper setServiceName(String serviceName) {
+  public ActorLocalWrapper setServiceName(String serviceName) {
     this.serviceName = serviceName;
     return this;
   }
