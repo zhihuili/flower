@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.tools.http.factory.httpclient;
+package com.ly.train.flower.tools.http.factory.httpasyncclient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,17 +44,18 @@ import com.ly.train.flower.tools.http.HttpFactory;
 import com.ly.train.flower.tools.http.config.FlowerHttpConfig;
 import com.ly.train.flower.tools.http.config.RequestContext;
 import com.ly.train.flower.tools.http.enums.RequestMethod;
+import com.ly.train.flower.tools.http.util.NamedThreadFactory;
 
 /**
  * @author leeyazhou
  */
-public class HttpClientFactory implements HttpFactory {
-  private static final Logger logger = LoggerFactory.getLogger(HttpClientFactory.class);
+public class HttpAsyncClientFactory implements HttpFactory {
+  private static final Logger logger = LoggerFactory.getLogger(HttpAsyncClientFactory.class);
   private FlowerHttpConfig httpConfig = new FlowerHttpConfig();
   private PoolingNHttpClientConnectionManager connectionManager;
   private CloseableHttpAsyncClient asyncHttpClient = null;
 
-  public HttpClientFactory() {
+  public HttpAsyncClientFactory() {
     try {
       initHttpClient();
     } catch (Exception e) {
@@ -69,10 +70,11 @@ public class HttpClientFactory implements HttpFactory {
         IOReactorConfig.custom().setIoThreadCount(Runtime.getRuntime().availableProcessors() * 8)
             .setConnectTimeout(httpConfig.getConnectTimeout()).setSoTimeout(httpConfig.getReadTimeout()).build();
 
-    ConnectingIOReactor ioReactor = new DefaultConnectingIOReactor(ioReactorConfig);
+    ConnectingIOReactor ioReactor =
+        new DefaultConnectingIOReactor(ioReactorConfig, new NamedThreadFactory("flower.http"));
     this.connectionManager = new PoolingNHttpClientConnectionManager(ioReactor);
-    connectionManager.setMaxTotal(256);
-    connectionManager.setDefaultMaxPerRoute(Math.max(32, Runtime.getRuntime().availableProcessors() * 8));
+    this.connectionManager.setMaxTotal(256);
+    this.connectionManager.setDefaultMaxPerRoute(Math.max(32, Runtime.getRuntime().availableProcessors() * 8));
     this.asyncHttpClient = HttpAsyncClients.custom().setConnectionManager(connectionManager).build();
     this.asyncHttpClient.start();
   }
@@ -125,10 +127,9 @@ public class HttpClientFactory implements HttpFactory {
   }
 
   private HttpRequestBase buildRequest(RequestContext requestContext) {
-    RequestConfig config =
-        RequestConfig.custom().setConnectionRequestTimeout(requestContext.getConnectTimeout())
-            .setConnectTimeout(requestContext.getConnectTimeout()).setSocketTimeout(requestContext.getReadTimeout())
-            .build();
+    RequestConfig config = RequestConfig.custom().setConnectionRequestTimeout(requestContext.getConnectTimeout())
+        .setConnectTimeout(requestContext.getConnectTimeout()).setSocketTimeout(requestContext.getReadTimeout())
+        .build();
     HttpRequestBase request = new HttpPost(requestContext.getUrl());
     switch (requestContext.getMethod()) {
       case GET:

@@ -15,27 +15,31 @@
  */
 package com.ly.train.flower.core.akka.actor.wrapper;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import com.ly.train.flower.common.core.message.Message;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import akka.actor.ActorRef;
-import akka.actor.ActorSelection;
 
 /**
  * @author leeyazhou
  * 
  */
-public class ActorSelectionWrapper implements ActorWrapper {
-  private static final Logger logger = LoggerFactory.getLogger(ActorSelectionWrapper.class);
-  private final ActorSelection actorSelection;
+public class ActorRemoteWrapper implements ActorWrapper {
+  private static final Logger logger = LoggerFactory.getLogger(ActorRemoteWrapper.class);
+  private AtomicInteger index = new AtomicInteger(0);
+  private final ActorRef actorRef;
   private String serviceName;
 
-  public ActorSelectionWrapper(ActorSelection actorSelection) {
-    this.actorSelection = actorSelection;
+  public ActorRemoteWrapper(ActorRef actorRef) {
+    this.actorRef = actorRef;
   }
 
-  public ActorSelection getActorSelection() {
-    return actorSelection;
+  /**
+   * @return the actorRef
+   */
+  public ActorRef getActorRef() {
+    return actorRef;
   }
 
   @Override
@@ -46,13 +50,13 @@ public class ActorSelectionWrapper implements ActorWrapper {
   @Override
   public void tell(Message message, ActorRef sender) {
     if (logger.isDebugEnabled()) {
-      logger.debug("Remote message. serviceName : {}, actor : {}, message : {}, sender : {}", serviceName,
-          actorSelection, message, sender);
+      logger.debug("Remote message. serviceName : {}, actor : {}, message : {}, sender : {}", serviceName, actorRef,
+          message, sender);
     }
     if (sender == null) {
       sender = ActorRef.noSender();
     }
-    actorSelection.tell(message, sender);
+    actorRef.tell(message, sender);
   }
 
 
@@ -61,7 +65,7 @@ public class ActorSelectionWrapper implements ActorWrapper {
     return serviceName;
   }
 
-  public ActorSelectionWrapper setServiceName(String serviceName) {
+  public ActorRemoteWrapper setServiceName(String serviceName) {
     this.serviceName = serviceName;
     return this;
   }
@@ -69,8 +73,8 @@ public class ActorSelectionWrapper implements ActorWrapper {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("ActorSelectWrapper [actorSelection=");
-    builder.append(actorSelection);
+    builder.append("ActorSelectWrapper [actorRef=");
+    builder.append(actorRef);
     builder.append(", serviceName=");
     builder.append(serviceName);
     builder.append("]");
