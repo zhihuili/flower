@@ -18,11 +18,14 @@ package com.ly.train.flower.core.akka.actor;
 import java.util.concurrent.TimeUnit;
 import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.core.service.ServiceContext;
+import com.ly.train.flower.common.logging.Logger;
+import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.core.akka.ActorFactory;
 import com.ly.train.flower.core.akka.actor.command.ActorCommand;
 import com.ly.train.flower.core.akka.actor.command.ActorContextCommand;
 import com.ly.train.flower.core.akka.actor.command.MessageType;
 import com.ly.train.flower.core.akka.actor.command.PingCommand;
+import com.ly.train.flower.core.akka.actor.wrapper.ActorLocalWrapper;
 import akka.actor.OneForOneStrategy;
 import akka.actor.Props;
 import akka.actor.SupervisorStrategy;
@@ -35,6 +38,7 @@ public class SupervisorActor extends AbstractFlowerActor {
           .match(NullPointerException.class, e -> SupervisorStrategy.restart())
           .match(IllegalArgumentException.class, e -> SupervisorStrategy.stop())
           .matchAny(o -> SupervisorStrategy.resume()).build());
+  static final Logger logger = LoggerFactory.getLogger(SupervisorActor.class);
 
   public static Props props(ActorFactory actorFactory) {
     return Props.create(SupervisorActor.class, actorFactory);
@@ -51,14 +55,18 @@ public class SupervisorActor extends AbstractFlowerActor {
     return receiveBuilder().match(ActorContextCommand.class, msg -> {
       getSender().tell(getContext(), getSelf());
     }).match(ActorCommand.class, command -> {
-      ServiceConfig serviceConfig = new ServiceConfig();
-      serviceConfig.setServiceName(command.getServiceName());
-      serviceConfig.setLocal(true);
-      actorFactory.buildServiceActor(serviceConfig, command.getIndex());
-      command.setMessageType(MessageType.RESPONSE);
-      command.setData("PONG");
+      try {
+        ServiceConfig serviceConfig = new ServiceConfig();
+        serviceConfig.setServiceName(command.getServiceName());
+        serviceConfig.setLocal(true);
+        actorFactory.buildServiceActor(serviceConfig, command.getIndex());
+        command.setMessageType(MessageType.RESPONSE);
+        command.setData("PONG");
 
-      getSender().tell(command, getSender());
+        getSender().tell(command, getSelf());
+      } catch (Throwable e) {
+        logger.error("create remote actor, command : " + command, e);
+      }
     }).match(PingCommand.class, ping -> {
       ping.setText("PONG");
       ping.setMessageType(MessageType.RESPONSE);

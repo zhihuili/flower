@@ -45,13 +45,12 @@ import scala.concurrent.duration.FiniteDuration;
 public class FlowerActorSystem extends AbstractLifecycle {
   private static final Logger logger = LoggerFactory.getLogger(FlowerActorSystem.class);
 
-  public static final Long DEFAULT_TIMEOUT = 5000L;
+  public static final Long DEFAULT_TIMEOUT = 3000L;
   public static final Duration timeout = Duration.create(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
 
   private final FlowerConfig flowerConfig;
   private final ActorFactory actorFactory;
   private volatile ActorSystem actorSystem;
-  private volatile ActorRef supervierActor;
   private volatile ActorContext actorContext;
   private volatile FlowerFactory flowerFactory;
 
@@ -100,8 +99,8 @@ public class FlowerActorSystem extends AbstractLifecycle {
 
   private void initActorContext() {
     try {
-      this.supervierActor = actorSystem.actorOf(SupervisorActor.props(actorFactory), "flower");
-      Future<Object> future = Patterns.ask(this.supervierActor, new ActorContextCommand(), DEFAULT_TIMEOUT - 1);
+      ActorRef supervierActor = actorSystem.actorOf(SupervisorActor.props(actorFactory).withDispatcher("dispatcher"), "flower");
+      Future<Object> future = Patterns.ask(supervierActor, new ActorContextCommand(), DEFAULT_TIMEOUT - 1);
       this.actorContext = (ActorContext) Await.result(future, timeout);
     } catch (Exception e) {
       throw new FlowException("fail to start flower", e);
@@ -120,6 +119,7 @@ public class FlowerActorSystem extends AbstractLifecycle {
       ActorSelection actorSelection = actorContext.actorSelection(actorPath);
       ActorRef actorRef = Await.result(actorSelection.resolveOne(new FiniteDuration(3, TimeUnit.SECONDS)),
           Duration.create(3, TimeUnit.SECONDS));
+      actorContext.watch(actorRef);
       return actorRef;
     } catch (Exception e) {
       logger.error("", e);

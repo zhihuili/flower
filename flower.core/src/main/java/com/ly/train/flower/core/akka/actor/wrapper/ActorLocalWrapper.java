@@ -68,7 +68,7 @@ public class ActorLocalWrapper implements ActorWrapper {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("ActorRefWrapper [serviceName=");
+    builder.append("ActorLocalWrapper [serviceName=");
     builder.append(serviceName);
     builder.append(", actorRef=");
     builder.append(actorRef);

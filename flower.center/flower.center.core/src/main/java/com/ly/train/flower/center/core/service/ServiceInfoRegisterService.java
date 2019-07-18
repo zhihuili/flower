@@ -23,6 +23,8 @@ import com.ly.train.flower.center.core.store.ServiceInfoStore;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.core.service.Service;
 import com.ly.train.flower.common.core.service.ServiceContext;
+import com.ly.train.flower.common.logging.Logger;
+import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
@@ -31,12 +33,13 @@ import com.ly.train.flower.registry.config.ServiceInfo;
  */
 @FlowerService
 public class ServiceInfoRegisterService implements Service<ServiceInfo, Boolean> {
-
+  static final Logger logger = LoggerFactory.getLogger(ServiceInfoRegisterService.class);
   @Autowired
   protected ServiceInfoStore serviceInfoStore;
 
   @Override
   public Boolean process(ServiceInfo message, ServiceContext context) throws Throwable {
+    logger.info("注册服务：{}", message);
     serviceInfoStore.addServiceInfo(message);
     return Boolean.TRUE;
   }

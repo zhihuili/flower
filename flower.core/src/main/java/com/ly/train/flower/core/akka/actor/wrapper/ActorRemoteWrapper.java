@@ -15,10 +15,10 @@
  */
 package com.ly.train.flower.core.akka.actor.wrapper;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import com.ly.train.flower.common.core.message.Message;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
+import com.ly.train.flower.common.util.URL;
 import akka.actor.ActorRef;
 
 /**
@@ -27,9 +27,9 @@ import akka.actor.ActorRef;
  */
 public class ActorRemoteWrapper implements ActorWrapper {
   private static final Logger logger = LoggerFactory.getLogger(ActorRemoteWrapper.class);
-  private AtomicInteger index = new AtomicInteger(0);
   private final ActorRef actorRef;
   private String serviceName;
+  private URL url;
 
   public ActorRemoteWrapper(ActorRef actorRef) {
     this.actorRef = actorRef;
@@ -70,10 +70,25 @@ public class ActorRemoteWrapper implements ActorWrapper {
     return this;
   }
 
+  /**
+   * @param url the url to set
+   */
+  public ActorRemoteWrapper setUrl(URL url) {
+    this.url = url;
+    return this;
+  }
+
+  /**
+   * @return the url
+   */
+  public URL getUrl() {
+    return url;
+  }
+
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("ActorSelectWrapper [actorRef=");
+    builder.append("ActorRemoteWrapper [actorRef=");
     builder.append(actorRef);
     builder.append(", serviceName=");
     builder.append(serviceName);

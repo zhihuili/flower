@@ -45,4 +45,7 @@ public class Constant {
 
 
   public static final String applicationName = "application";
+
+
+  public static final String ServiceContextOriginURL = "originURL";
 }

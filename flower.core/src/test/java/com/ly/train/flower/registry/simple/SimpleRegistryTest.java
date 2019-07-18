@@ -58,7 +58,7 @@ public class SimpleRegistryTest extends TestBase {
     serviceInfo.setAddress(flowerFactory.getFlowerConfig().toURL());
     serviceInfo.setCreateTime(new Date());
     registry.register(serviceInfo);
-    Thread.sleep(2000);
+    sleep = 10000;
   }
 
   @Test

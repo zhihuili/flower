@@ -28,6 +28,7 @@ import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.ExtensionLoader;
 import com.ly.train.flower.core.akka.actor.wrapper.ActorLocalWrapper;
+import com.ly.train.flower.core.akka.actor.wrapper.ActorRemoteRouterWrapper;
 import com.ly.train.flower.core.akka.actor.wrapper.ActorRemoteWrapper;
 import com.ly.train.flower.core.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.core.loadbalance.LoadBalance;
@@ -74,13 +75,13 @@ public class ServiceRouter extends AbstractInit implements Router {
    */
   public Object syncCallService(ServiceContext serviceContext) throws TimeoutException {
     serviceContext.setSync(true);
-    ActorWrapper actorRef = chooseOne(serviceContext);
+    ActorWrapper actorRefWrapper = chooseOne(serviceContext);
     Timeout timeout = new Timeout(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
     Future<Object> future = null;
-    if (actorRef instanceof ActorLocalWrapper) {
-      future = Patterns.ask(((ActorLocalWrapper) actorRef).getActorRef(), serviceContext, timeout);
+    if (actorRefWrapper instanceof ActorLocalWrapper) {
+      future = Patterns.ask(((ActorLocalWrapper) actorRefWrapper).getActorRef(), serviceContext, timeout);
     } else {
-      future = Patterns.ask(((ActorRemoteWrapper) actorRef).getActorRef(), serviceContext, timeout);
+      future = Patterns.ask(((ActorRemoteWrapper) actorRefWrapper).getActorRef(), serviceContext, timeout);
     }
     try {
       Duration duration = Duration.create(serviceConfig.getTimeout(), TimeUnit.MILLISECONDS);
@@ -125,7 +126,11 @@ public class ServiceRouter extends AbstractInit implements Router {
   }
 
   private ActorWrapper chooseOne(ServiceContext serviceContext) {
-    return loadBalance.choose(getServiceActor(), serviceContext);
+    ActorWrapper actorWrapper = loadBalance.choose(getServiceActor(), serviceContext);
+    if (actorWrapper instanceof ActorRemoteRouterWrapper) {
+      actorWrapper = ((ActorRemoteRouterWrapper) actorWrapper).chooseOne(serviceContext);
+    }
+    return actorWrapper;
   }
 
   public ServiceConfig getServiceConfig() {

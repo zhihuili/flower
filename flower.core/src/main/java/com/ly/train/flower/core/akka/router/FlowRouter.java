@@ -23,6 +23,7 @@ import com.ly.train.flower.common.core.web.Web;
 import com.ly.train.flower.common.lifecyle.AbstractInit;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
+import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.core.akka.ActorFactory;
 import com.ly.train.flower.core.service.container.FlowerFactory;
@@ -78,6 +79,8 @@ public class FlowRouter extends AbstractInit implements Router {
     if (StringUtil.isBlank(serviceContext.getCurrentServiceName())) {
       serviceContext.setCurrentServiceName(headerServiceConfig.getServiceName());
     }
+    serviceContext.addAttachment(Constant.ServiceContextOriginURL,
+        headerServiceConfig.getAddresses().iterator().next());
     getServiceRouter().asyncCallService(serviceContext, ActorRef.noSender());
   }
 
@@ -96,6 +99,8 @@ public class FlowRouter extends AbstractInit implements Router {
     serviceContext.setFlowName(headerServiceConfig.getFlowName());
     serviceContext.setCurrentServiceName(headerServiceConfig.getServiceName());
     serviceContext.setSync(true);
+    serviceContext.addAttachment(Constant.ServiceContextOriginURL,
+        headerServiceConfig.getAddresses().iterator().next());
     return (R) getServiceRouter().syncCallService(serviceContext);
   }
 

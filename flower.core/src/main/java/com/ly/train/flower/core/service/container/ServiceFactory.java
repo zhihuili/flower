@@ -172,6 +172,9 @@ public class ServiceFactory extends AbstractInit {
     }
 
     List<ServiceInfo> serviceInfos = this.loadServiceInfoFromRegistrry(serviceConfig);
+    if(serviceInfos!=null &&serviceInfos.size()>0) {
+      serviceConfig.getAddresses().clear();
+    }
     for (ServiceInfo serviceInfo : serviceInfos) {
       serviceConfig.addAddress(serviceInfo.getAddress());
       serviceConfig.setApplication(serviceInfo.getApplication());
