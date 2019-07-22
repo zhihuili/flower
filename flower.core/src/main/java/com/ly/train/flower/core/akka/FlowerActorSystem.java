@@ -44,6 +44,17 @@ import scala.concurrent.duration.FiniteDuration;
  */
 public class FlowerActorSystem extends AbstractLifecycle {
   private static final Logger logger = LoggerFactory.getLogger(FlowerActorSystem.class);
+  private static final String actorSystemName = "flower";
+  private static final String supervisorPathName = "flower";
+  private static final String dispatcherName = "dispatcher";
+  /**
+   * for example : akka.tcp://flower@127.0.0.1:2551/user/flower
+   */
+  public static final String actorPathFormat = "akka.tcp://%s@%s:%s/user/flower/%s_%s";
+  /**
+   * for example : akka.tcp://flower@127.0.0.1:2551/user/flower
+   */
+  public static final String supervisorActorPathFormat = "akka.tcp://%s@%s:%s/user/flower";
 
   public static final Long DEFAULT_TIMEOUT = 3000L;
   public static final Duration timeout = Duration.create(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -79,7 +90,7 @@ public class FlowerActorSystem extends AbstractLifecycle {
     // @formatter:on
     logger.info("akka config ：{}", configBuilder.toString());
     Config config = ConfigFactory.parseString(configBuilder.toString()).withFallback(ConfigFactory.load());
-    ActorSystem actorSystem = ActorSystem.create("flower", config);
+    ActorSystem actorSystem = ActorSystem.create(actorSystemName, config);
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override
       public void run() {
@@ -99,7 +110,8 @@ public class FlowerActorSystem extends AbstractLifecycle {
 
   private void initActorContext() {
     try {
-      ActorRef supervierActor = actorSystem.actorOf(SupervisorActor.props(actorFactory).withDispatcher("dispatcher"), "flower");
+      Props props = SupervisorActor.props(actorFactory).withDispatcher(dispatcherName);
+      ActorRef supervierActor = actorSystem.actorOf(props, supervisorPathName);
       Future<Object> future = Patterns.ask(supervierActor, new ActorContextCommand(), DEFAULT_TIMEOUT - 1);
       this.actorContext = (ActorContext) Await.result(future, timeout);
     } catch (Exception e) {
@@ -107,11 +119,17 @@ public class FlowerActorSystem extends AbstractLifecycle {
     }
   }
 
-  protected ActorRef createLocalActor(String serviceName, int index, String cacheKey) {
-    Props props = ServiceActor.props(serviceName, flowerFactory, index).withDispatcher("dispatcher");
+  protected ActorRef createLocalActor(String serviceName, int index) {
+    final String cacheKey = serviceName + "_" + index;
+    Props props = ServiceActor.props(serviceName, flowerFactory, index).withDispatcher(dispatcherName);
     ActorRef actorRef = actorContext.actorOf(props, cacheKey);
     actorContext.watch(actorRef);
     return actorRef;
+  }
+
+  protected ActorRef createRemoteActor(String host, int port, String serviceName, int index) {
+    final String actorPath = String.format(actorPathFormat, actorSystemName, host, port, serviceName, index);
+    return createRemoteActor(actorPath);
   }
 
   protected ActorRef createRemoteActor(String actorPath) {
@@ -122,11 +140,18 @@ public class FlowerActorSystem extends AbstractLifecycle {
       actorContext.watch(actorRef);
       return actorRef;
     } catch (Exception e) {
-      logger.error("", e);
+      logger.error("fail to create remote actor, actor path : " + actorPath, e);
     }
     return null;
   }
 
+  public String getActorPath(String host, int port, String serviceName, int index) {
+    return String.format(actorPathFormat, actorSystemName, host, port, serviceName, index);
+  }
+
+  public String getSupervisorActorPath(String host, int port) {
+    return String.format(supervisorActorPathFormat, actorSystemName, host, port);
+  }
 
   @Override
   protected void doStart() {}

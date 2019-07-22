@@ -47,16 +47,6 @@ import scala.concurrent.Future;
 
 public class ServiceActorFactory extends AbstractLifecycle implements ActorFactory {
   private static final Logger logger = LoggerFactory.getLogger(ServiceActorFactory.class);
-  /**
-   * for example : akka.tcp://flower@127.0.0.1:2551/user/flower
-   */
-  public static final String actorPathFormat = "akka.tcp://flower@%s:%s/user/flower/%s_%s";
-  /**
-   * for example : akka.tcp://flower@127.0.0.1:2551/user/flower
-   */
-  public static final String superActorPathFormat = "akka.tcp://flower@%s:%s/user/flower";
-
-
   private final ConcurrentMap<String, FlowRouter> flowRoutersCache = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, ServiceRouter> serviceRoutersCache = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, ActorWrapper> serviceRouterActorsCache = new ConcurrentHashMap<>();
@@ -98,7 +88,7 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
       actorWrapper = serviceRouterActorsCache.get(cacheKey);
       if (actorWrapper == null) {
         if (serviceConfig.isLocal()) {
-          ActorRef actorRef = flowerActorSystem.createLocalActor(serviceName, index, cacheKey);
+          ActorRef actorRef = flowerActorSystem.createLocalActor(serviceName, index);
           actorWrapper = new ActorLocalWrapper(actorRef).setServiceName(serviceName);
         } else {
           List<ActorWrapper> actorRemoteWrappers = new ArrayList<>();
@@ -107,7 +97,7 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
             URL url = it.next();
             ActorRemoteWrapper item = createRemoteActor(url, new ActorCommand(serviceName, index));
             actorRemoteWrappers.add(item);
-//            break;
+            // break;
           }
           actorWrapper = new ActorRemoteRouterWrapper(actorRemoteWrappers).setServiceName(serviceName);
         }
@@ -132,9 +122,8 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
     // superActor.tell(command);
     Future<Object> future = Patterns.ask(superActor.getActorRef(), command, FlowerActorSystem.DEFAULT_TIMEOUT - 1);
     Await.result(future, FlowerActorSystem.timeout);
-    String actorPath =
-        String.format(actorPathFormat, url.getHost(), url.getPort(), command.getServiceName(), command.getIndex());
-    ActorRef remoteActor = flowerActorSystem.createRemoteActor(actorPath);
+    ActorRef remoteActor =
+        flowerActorSystem.createRemoteActor(url.getHost(), url.getPort(), command.getServiceName(), command.getIndex());
     return new ActorRemoteWrapper(remoteActor).setServiceName(command.getServiceName()).setUrl(url);
   }
 
@@ -142,7 +131,7 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
     final String cacheKey = host + ":" + port;
     ActorRemoteWrapper result = remoteSupervisorActorsCache.get(cacheKey);
     if (result == null) {
-      String actorPath = String.format(superActorPathFormat, host, port);
+      String actorPath = flowerActorSystem.getSupervisorActorPath(host, port);
       ActorRef actorRef = flowerActorSystem.createRemoteActor(actorPath);
       result = new ActorRemoteWrapper(actorRef);
       remoteSupervisorActorsCache.putIfAbsent(cacheKey, result);

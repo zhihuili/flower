@@ -61,7 +61,9 @@ public class ActorRemoteRouterWrapper implements ActorWrapper {
   }
 
   /**
-   * DO NOT CALL THIS
+   * WARN: DO NOT CALL THIS
+   * 
+   * @see #chooseOne(ServiceContext)
    */
   @Override
   public void tell(Message message) {
@@ -70,7 +72,9 @@ public class ActorRemoteRouterWrapper implements ActorWrapper {
   }
 
   /**
-   * DO NOT CALL THIS
+   * WARN: DO NOT CALL THIS
+   * 
+   * @see #chooseOne(ServiceContext)
    */
   @Override
   public void tell(Message message, ActorRef sender) {

@@ -25,10 +25,10 @@ import com.ly.train.flower.core.akka.actor.command.ActorCommand;
 import com.ly.train.flower.core.akka.actor.command.ActorContextCommand;
 import com.ly.train.flower.core.akka.actor.command.MessageType;
 import com.ly.train.flower.core.akka.actor.command.PingCommand;
-import com.ly.train.flower.core.akka.actor.wrapper.ActorLocalWrapper;
 import akka.actor.OneForOneStrategy;
 import akka.actor.Props;
 import akka.actor.SupervisorStrategy;
+import akka.actor.Terminated;
 import akka.japi.pf.DeciderBuilder;
 import scala.concurrent.duration.Duration;
 
@@ -71,6 +71,8 @@ public class SupervisorActor extends AbstractFlowerActor {
       ping.setText("PONG");
       ping.setMessageType(MessageType.RESPONSE);
       getSender().tell(ping, getSender());
+    }).match(Terminated.class, message -> {
+      
     }).matchAny(message -> {
       unhandled(message);
     }).build();
