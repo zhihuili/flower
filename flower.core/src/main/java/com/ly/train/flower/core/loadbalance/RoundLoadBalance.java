@@ -16,6 +16,7 @@
 package com.ly.train.flower.core.loadbalance;
 
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import com.ly.train.flower.common.core.service.ServiceContext;
@@ -35,7 +36,7 @@ public class RoundLoadBalance extends AbstractLoadBalance {
   public ActorWrapper doChooseOne(List<ActorWrapper> actorRefs, ServiceContext serviceContext) {
     AtomicPositiveInteger counter = cache.get(serviceContext.getCurrentServiceName());
     if (counter == null) {
-      counter = new AtomicPositiveInteger();
+      counter = new AtomicPositiveInteger(new Random().nextInt(100));
       cache.put(serviceContext.getCurrentServiceName(), counter);
     }
     int index = counter.incrementAndGet() % actorRefs.size();

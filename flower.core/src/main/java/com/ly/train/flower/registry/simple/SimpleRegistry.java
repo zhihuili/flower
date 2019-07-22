@@ -84,7 +84,7 @@ public class SimpleRegistry extends AbstractRegistry {
 
   @Override
   public boolean doRegister(ServiceInfo serviceInfo) {
-    // logger.info("register serviceInfo : {}", serviceInfo);
+     logger.info("register serviceInfo : {}", serviceInfo);
     ServiceContext serviceContext = makeServiceContext(serviceInfo);
     serviceContext.setCurrentServiceName("ServiceInfoRegisterService");
     serviceContext.setSync(false);

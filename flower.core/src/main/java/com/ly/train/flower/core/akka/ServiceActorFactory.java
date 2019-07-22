@@ -15,6 +15,9 @@
  */
 package com.ly.train.flower.core.akka;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
@@ -29,8 +32,8 @@ import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.common.util.cache.CacheManager;
 import com.ly.train.flower.config.FlowerConfig;
 import com.ly.train.flower.core.akka.actor.command.ActorCommand;
-import com.ly.train.flower.core.akka.actor.command.Command;
 import com.ly.train.flower.core.akka.actor.wrapper.ActorLocalWrapper;
+import com.ly.train.flower.core.akka.actor.wrapper.ActorRemoteRouterWrapper;
 import com.ly.train.flower.core.akka.actor.wrapper.ActorRemoteWrapper;
 import com.ly.train.flower.core.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.core.akka.router.FlowRouter;
@@ -44,16 +47,6 @@ import scala.concurrent.Future;
 
 public class ServiceActorFactory extends AbstractLifecycle implements ActorFactory {
   private static final Logger logger = LoggerFactory.getLogger(ServiceActorFactory.class);
-  /**
-   * for example : akka.tcp://flower@127.0.0.1:2551/user/flower
-   */
-  public static final String actorPathFormat = "akka.tcp://flower@%s:%s/user/flower/%s_%s";
-  /**
-   * for example : akka.tcp://flower@127.0.0.1:2551/user/flower/userserivce_1
-   */
-  public static final String superActorPathFormat = "akka.tcp://flower@%s:%s/user/flower";
-
-
   private final ConcurrentMap<String, FlowRouter> flowRoutersCache = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, ServiceRouter> serviceRoutersCache = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, ActorWrapper> serviceRouterActorsCache = new ConcurrentHashMap<>();
@@ -95,17 +88,19 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
       actorWrapper = serviceRouterActorsCache.get(cacheKey);
       if (actorWrapper == null) {
         if (serviceConfig.isLocal()) {
-          ActorRef actorRef = flowerActorSystem.createLocalActor(serviceName, index, cacheKey);
+          ActorRef actorRef = flowerActorSystem.createLocalActor(serviceName, index);
           actorWrapper = new ActorLocalWrapper(actorRef).setServiceName(serviceName);
         } else {
-          // "akka.tcp://flower@127.0.0.1:2551/user/$a"
-          URL url = serviceConfig.getAddresses().iterator().next();
-          createRemoteActor(url, new ActorCommand(serviceName, index));
-          String actorPath = String.format(actorPathFormat, url.getHost(), url.getPort(), serviceName, index);
-          ActorRef actorSelection = flowerActorSystem.createRemoteActor(actorPath);
-          actorWrapper = new ActorRemoteWrapper(actorSelection).setServiceName(serviceName);
+          List<ActorWrapper> actorRemoteWrappers = new ArrayList<>();
+          Iterator<URL> it = serviceConfig.getAddresses().iterator();
+          while (it.hasNext()) {
+            URL url = it.next();
+            ActorRemoteWrapper item = createRemoteActor(url, new ActorCommand(serviceName, index));
+            actorRemoteWrappers.add(item);
+            // break;
+          }
+          actorWrapper = new ActorRemoteRouterWrapper(actorRemoteWrappers).setServiceName(serviceName);
         }
-        // logger.info("创建Actor {} : {}", serviceName, flowerConfig.getPort());
         if (logger.isTraceEnabled()) {
           logger.trace("create actor {} ： {}", serviceName, actorWrapper);
         }
@@ -122,19 +117,26 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
     return actorWrapper;
   }
 
-  private void createRemoteActor(URL url, Command command) throws Exception {
+  private ActorRemoteWrapper createRemoteActor(URL url, ActorCommand command) throws Exception {
     ActorRemoteWrapper superActor = getOrCreateRemoteSupervisorActor(url.getHost(), url.getPort());
+    // superActor.tell(command);
     Future<Object> future = Patterns.ask(superActor.getActorRef(), command, FlowerActorSystem.DEFAULT_TIMEOUT - 1);
     Await.result(future, FlowerActorSystem.timeout);
+    ActorRef remoteActor =
+        flowerActorSystem.createRemoteActor(url.getHost(), url.getPort(), command.getServiceName(), command.getIndex());
+    return new ActorRemoteWrapper(remoteActor).setServiceName(command.getServiceName()).setUrl(url);
   }
 
   private ActorRemoteWrapper getOrCreateRemoteSupervisorActor(String host, int port) {
     final String cacheKey = host + ":" + port;
-    return remoteSupervisorActorsCache.computeIfAbsent(cacheKey, a -> {
-      String actorPath = String.format(superActorPathFormat, host, port);
+    ActorRemoteWrapper result = remoteSupervisorActorsCache.get(cacheKey);
+    if (result == null) {
+      String actorPath = flowerActorSystem.getSupervisorActorPath(host, port);
       ActorRef actorRef = flowerActorSystem.createRemoteActor(actorPath);
-      return new ActorRemoteWrapper(actorRef);
-    });
+      result = new ActorRemoteWrapper(actorRef);
+      remoteSupervisorActorsCache.putIfAbsent(cacheKey, result);
+    }
+    return result;
   }
 
 

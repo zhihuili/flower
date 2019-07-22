@@ -2,8 +2,7 @@
 
 spring:
    flower:
-      name: lasldf
       config:
          name: testflower
          host: 127.0.0.1
-         port: 1250111
+         port: 12501

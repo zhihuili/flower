@@ -36,6 +36,7 @@ import com.ly.train.flower.common.util.ExtensionLoader;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.common.util.cache.Cache;
 import com.ly.train.flower.common.util.cache.CacheManager;
+import com.ly.train.flower.core.akka.actor.wrapper.ActorRemoteRouterWrapper;
 import com.ly.train.flower.core.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.core.service.Aggregate;
 import com.ly.train.flower.core.service.Complete;
@@ -129,9 +130,8 @@ public class ServiceActor extends AbstractFlowerActor {
       web.complete();
     }
 
-    ServiceException e2 =
-        new ServiceException("invoke service " + serviceContext.getCurrentServiceName() + " : " + service
-            + "\r\n, param : " + param, e);
+    ServiceException e2 = new ServiceException(
+        "invoke service " + serviceContext.getCurrentServiceName() + " : " + service + "\r\n, param : " + param, e);
     if (serviceContext.isSync()) {
       handleSyncResult(serviceContext, ExceptionUtil.getErrorMessage(e2), true, serializer);
     } else {
@@ -241,7 +241,7 @@ public class ServiceActor extends AbstractFlowerActor {
         ServiceContext context = serviceContext.newContext();
         context.setFlowMessage(resultMessage);
         context.setCurrentServiceName(refType.getServiceName());
-        refType.getActorWrapper().tell(context, getSelf());
+        refType.getActorWrapper(serviceContext).tell(context, getSelf());
       }
     }
   }
@@ -257,9 +257,8 @@ public class ServiceActor extends AbstractFlowerActor {
       ServiceMeta serviceMeta = flowerFactory.getServiceFactory().getServiceLoader().loadServiceMeta(serviceName);
       this.paramType = serviceMeta.getParamType();
       if (service instanceof Aggregate) {
-        int num =
-            flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
-                .getServiceConfig(serviceName).getJointSourceNumber().get();
+        int num = flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
+            .getServiceConfig(serviceName).getJointSourceNumber().get();
         ((AggregateService) service).setSourceNumber(num);
       }
     }
@@ -350,8 +349,12 @@ public class ServiceActor extends AbstractFlowerActor {
       this.index = index;
     }
 
-    public ActorWrapper getActorWrapper() {
-      return flowerFactory.getActorFactory().buildServiceActor(serviceConfig, index);
+    public ActorWrapper getActorWrapper(ServiceContext serviceContext) {
+      ActorWrapper actorWrapper = flowerFactory.getActorFactory().buildServiceActor(serviceConfig, index);
+      if (actorWrapper instanceof ActorRemoteRouterWrapper) {
+        return ((ActorRemoteRouterWrapper) actorWrapper).chooseOne(serviceContext);
+      }
+      return actorWrapper;
     }
 
     public Class<?> getMessageType() {

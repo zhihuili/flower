@@ -17,6 +17,7 @@ package com.ly.train.flower.core.akka.actor;
 
 import java.util.Arrays;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import com.ly.train.flower.base.model.User;
@@ -90,9 +91,11 @@ public class ActorSelectionTest {
       Object ret = flowerFactory1.getServiceFacade().syncCallService(flowName, message);
       System.out.println("返回结果：" + ret);
       final String expectDesc = " --> UserServiceA --> UserServiceB --> UserServiceC1 --> UserServiceC2";
-      org.junit.Assert.assertEquals(expectDesc, ((User) ret).getDesc());
+      Assert.assertEquals(expectDesc, ((User) ret).getDesc());
     } catch (Exception e) {
+      System.err.println(e.getMessage());
       e.printStackTrace();
+
     }
   }
 

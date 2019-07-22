@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
+import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.common.util.concurrent.NamedThreadFactory;
 import com.ly.train.flower.registry.config.ServiceInfo;
@@ -41,8 +42,8 @@ public abstract class AbstractRegistry implements Registry {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
   protected final ConcurrentMap<String, ServiceInfo> serviceInfoCache = new ConcurrentHashMap<>();
   protected final ConcurrentMap<String, ServiceConfig> serviceConfigCache = new ConcurrentHashMap<>();
-  private static final ScheduledExecutorService executorService = Executors
-      .newSingleThreadScheduledExecutor(new NamedThreadFactory("flower-registry"));
+  private static final ScheduledExecutorService executorService =
+      Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("flower-registry"));
 
   protected final String infoRoot = "flower:info";
   protected final String configRoot = "flower:config";
@@ -65,7 +66,8 @@ public abstract class AbstractRegistry implements Registry {
           List<ServiceConfig> t2 = doGetServiceConfig(null);
           if (t2 != null && !t2.isEmpty()) {
             for (ServiceConfig info : t2) {
-              serviceConfigCache.put(info.getFlowName(), info);
+              if (StringUtil.isNotBlank(info.getFlowName()))
+                serviceConfigCache.put(info.getFlowName(), info);
             }
           }
         } catch (Exception e) {
@@ -116,7 +118,8 @@ public abstract class AbstractRegistry implements Registry {
     List<ServiceConfig> ret = doGetServiceConfig(serviceConfig);
     if (ret != null) {
       for (ServiceConfig i : ret) {
-        serviceConfigCache.put(i.getFlowName(), i);
+        if (StringUtil.isNotBlank(i.getFlowName()))
+          serviceConfigCache.put(i.getFlowName(), i);
       }
     }
     return new ArrayList<ServiceConfig>(serviceConfigCache.values());

@@ -51,8 +51,19 @@ public abstract class AbstractFlowerActor extends AbstractActor {
     super.preStart();
   }
 
+  /**
+   * receive {@link ServiceContext} message
+   * 
+   * @param context {@link ServiceContext}
+   * @throws Throwable exception
+   */
   public abstract void onServiceContextReceived(ServiceContext context) throws Throwable;
 
+  /**
+   * handle exception
+   * @param throwable exception
+   * @param context {@link ServiceContext}
+   */
   public void onException(Throwable throwable, ServiceContext context) {
     ExceptionHandlerManager.getInstance().getExceptionHandler(throwable.getClass()).handle(context, throwable);
   }

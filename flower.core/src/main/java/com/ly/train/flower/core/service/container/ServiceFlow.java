@@ -191,6 +191,8 @@ public final class ServiceFlow {
     flowerFactory.getActorFactory().buildFlowRouter(flowName, 1);
     String json = JSONObject.toJSONString(header);
     ServiceConfig config = JSONObject.parseObject(json, ServiceConfig.class);
+    config.getAddresses().clear();
+    config.addAddress(flowerFactory.getFlowerConfig().toURL());
     Set<Registry> registries = flowerFactory.getRegistry();
     for (Registry registry : registries) {
       registry.registerServiceConfig(config);
