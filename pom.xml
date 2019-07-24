@@ -32,9 +32,9 @@
         <url>www.ly.com</url>
     </organization>
 
-    <prerequisites>
+    <!-- <prerequisites>
         <maven>${maven.version}</maven>
-    </prerequisites>
+    </prerequisites> -->
     <modules>
         <module>flower.common</module>
         <module>flower.center</module>
