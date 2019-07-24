@@ -36,6 +36,7 @@ service1 -> service3
 service1是前序服务，service2和service3是后继服务。
 如果service2和service3的class定义中，实现Service<T>接口的声明中指定了泛型<T>，则泛型类型必须是service1的输出类型或者其父类。
 
+Service1
 ```
 public class Service1 implements Service {
 
@@ -44,7 +45,10 @@ public class Service1 implements Service {
     return new Message2();
   }
 }
+```
 
+Service2
+```
 // Service2声明类型为Service1的输出类型
 public class Service2 implements Service<Message2> {
 
@@ -53,7 +57,10 @@ public class Service2 implements Service<Message2> {
     return message.getAge() + 1;
   }
 }
+```
 
+Service3
+```
 // Service3声明类型为Service1的输出类型
 public class Service3 implements Service<Message2> {
 
@@ -71,12 +78,16 @@ public class Service3 implements Service<Message2> {
 
 ##### 根据泛型进行分发
 后续服务实现接口的时候声明不同的泛型类型，前序服务根据业务逻辑构建不同的消息类型，Flower会根据消息类型匹配对应的服务，只有成功匹配，消息才发送给过去。比如：
+
+构建流程
 ```
 //构建流程，ServiceB和ServiceC为ServiceA的后续流程
-    ServiceFlow.buildFlow("sample", "serviceA", "serviceB");
-    ServiceFlow.buildFlow("sample", "serviceA", "serviceC");
+  ServiceFlow.buildFlow("sample", "serviceA", "serviceB");
+  ServiceFlow.buildFlow("sample", "serviceA", "serviceC");
+```
 
-//声明ServiceB接受的消息类型为MessageB
+声明ServiceB接受的消息类型为MessageB
+```
 public class ServiceB implements Service<MessageB> {
 
   @Override
@@ -85,8 +96,10 @@ public class ServiceB implements Service<MessageB> {
     return null;
   }
 }
+```
 
-//声明ServiceC接受的消息类型为MessageC
+声明ServiceC接受的消息类型为MessageC
+```
 public class ServiceC implements Service<MessageC> {
 
   @Override
@@ -97,7 +110,10 @@ public class ServiceC implements Service<MessageC> {
     return mx;
   }
 }
+```
 
+ServiceA
+```
 public class ServiceA implements Service<String> {
 
   @Override
@@ -198,9 +214,9 @@ service5 -> service4
 这里的service5就是一个消息聚合服务，负责聚合并行的service2和service3产生的消息，并把聚合后的Set消息发送给service4.
 服务配置如下，service5配置为框架内置服务AggregateService。
 ```
-service2 = com.ly.train.flower.common.sample.textflow.Service2
-service3 = com.ly.train.flower.common.sample.textflow.Service3
-service4 = com.ly.train.flower.common.sample.textflow.Service4
+service2 = com.ly.train.flower.sample.textflow.Service2
+service3 = com.ly.train.flower.sample.textflow.Service3
+service4 = com.ly.train.flower.sample.textflow.Service4
 service5 = com.ly.train.flower.common.service.AggregateService
 ```
 service4负责接收处理聚合后的消息，从Set中取出各个消息，分别处理。

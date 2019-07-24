@@ -58,7 +58,7 @@ public class CloneUtil {
   /**
    * 尝试创建新对象
    * 
-   * @param c 原始对象
+   * @param value 原始对象
    * @return 新的对象
    * @throws IllegalAccessException
    */

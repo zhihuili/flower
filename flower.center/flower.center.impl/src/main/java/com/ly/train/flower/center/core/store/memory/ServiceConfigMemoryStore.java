@@ -15,12 +15,15 @@
  */
 package com.ly.train.flower.center.core.store.memory;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ly.train.flower.center.core.store.ServiceConfigStore;
-import com.ly.train.flower.common.service.config.ServiceConfig;
+import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.util.cache.Cache;
 import com.ly.train.flower.common.util.cache.CacheManager;
+import com.ly.train.flower.registry.config.ServiceInfo;
 
 /**
  * @author leeyazhou
@@ -35,8 +38,14 @@ public class ServiceConfigMemoryStore implements ServiceConfigStore {
 
 
   public boolean addServiceConfig(ServiceConfig serviceConfig) {
-    String key = serviceConfig.getApplication() + "_" + serviceConfig.getFlowName();
-    cacheManager.add(key, serviceConfig, 6000);
+    String cacheKey = serviceConfig.getApplication() + "_" + serviceConfig.getFlowName();
+    Cache<ServiceConfig> cache = cacheManager.getCache(cacheKey);
+    if (cache == null) {
+      cacheManager.add(cacheKey, serviceConfig, 6000L);
+    } else {
+      cache.setTimeToLive(6000L);
+      cache.setValue(serviceConfig);
+    }
     return true;
   }
 

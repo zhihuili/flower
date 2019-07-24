@@ -20,8 +20,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.ly.train</groupId>
-        <artifactId>flower</artifactId>
-        <version>0.1.4</version>
+        <artifactId>flower.parent</artifactId>
+        <version>1.0.0</version>
         <relativePath>..</relativePath>
     </parent>
     <artifactId>flower.center</artifactId>

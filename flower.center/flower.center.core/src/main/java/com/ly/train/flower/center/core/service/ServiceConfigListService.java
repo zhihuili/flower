@@ -21,9 +21,9 @@ package com.ly.train.flower.center.core.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.ly.train.flower.center.core.store.ServiceConfigStore;
 import com.ly.train.flower.common.annotation.FlowerService;
-import com.ly.train.flower.common.service.Service;
-import com.ly.train.flower.common.service.config.ServiceConfig;
-import com.ly.train.flower.common.service.container.ServiceContext;
+import com.ly.train.flower.common.core.config.ServiceConfig;
+import com.ly.train.flower.common.core.service.Service;
+import com.ly.train.flower.common.core.service.ServiceContext;
 
 /**
  * @author leeyazhou
@@ -37,10 +37,14 @@ public class ServiceConfigListService implements Service<ServiceConfig, ServiceC
 
   @Override
   public ServiceConfig process(ServiceConfig message, ServiceContext context) throws Throwable {
-    if (message == null) {
-      return null;
+    ServiceConfig result = null;
+    if (message != null) {
+      result = serviceConfigStore.getServiceConfig(message);
     }
-    return serviceConfigStore.getServiceConfig(message);
+    if (result == null) {
+      return new ServiceConfig();
+    }
+    return result;
   }
 
 }

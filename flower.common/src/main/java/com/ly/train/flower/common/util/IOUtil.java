@@ -21,8 +21,8 @@ package com.ly.train.flower.common.util;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import com.ly.train.flower.logging.Logger;
-import com.ly.train.flower.logging.LoggerFactory;
+import com.ly.train.flower.common.logging.Logger;
+import com.ly.train.flower.common.logging.LoggerFactory;
 
 /**
  * @author leeyazhou

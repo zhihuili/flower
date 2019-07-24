@@ -46,7 +46,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.annotation.FlowerServiceUtil;
-import com.ly.train.flower.common.service.container.FlowerFactory;
+import com.ly.train.flower.core.service.container.FlowerFactory;
 
 /**
  * @author leeyazhou

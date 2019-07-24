@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Bean;
 import com.ly.train.flower.web.spring.context.FlowerComponentScan;
 
 @SpringBootApplication
-@FlowerComponentScan("com.ly.train.flower.springboot")
+@FlowerComponentScan("com.ly.train.flower")
 public class Application {
   private static final Logger logger = LoggerFactory.getLogger(Application.class);
 

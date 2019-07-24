@@ -1,0 +1,6 @@
+name: "LocalFlower"
+host: "127.0.0.1"
+port: 25006
+registry:
+  - url: "redis://10.100.216.147:6399?password=flowerpassword"
+basePackage: com.ly.train.flower
