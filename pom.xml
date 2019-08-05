@@ -32,9 +32,9 @@
         <url>www.ly.com</url>
     </organization>
 
-    <prerequisites>
+    <!-- <prerequisites>
         <maven>${maven.version}</maven>
-    </prerequisites>
+    </prerequisites> -->
     <modules>
         <module>flower.common</module>
         <module>flower.center</module>
@@ -70,7 +70,7 @@
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <commons-io.version>2.6</commons-io.version>
         <druid.version>1.0.12</druid.version>
-        <fastjson.version>1.2.54</fastjson.version>
+        <fastjson.version>1.2.58</fastjson.version>
         <findbugs-maven-plugin.version>3.0.4</findbugs-maven-plugin.version>
         <gatling-charts-highcharts.version>3.0.3</gatling-charts-highcharts.version>
 
@@ -90,6 +90,7 @@
         <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
         <maven-shade-plugin.version>3.2.0</maven-shade-plugin.version>
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
+        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
         <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <maven.compiler.source>1.8</maven.compiler.source>

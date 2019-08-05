@@ -26,6 +26,7 @@ import com.ly.train.flower.common.lifecyle.AbstractLifecycle;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.ExtensionLoader;
+import com.ly.train.flower.common.util.FlowerVersion;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.config.FlowerConfig;
 import com.ly.train.flower.config.RegistryConfig;
@@ -62,6 +63,7 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
 
   public SimpleFlowerFactory(String configLocation) {
     this.configLocation = configLocation;
+    FlowerVersion.logVersionInfo();
     this.flowerConfig = new FlowerConfigParser(this.configLocation).parse();
     this.start();
   }
