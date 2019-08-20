@@ -97,11 +97,7 @@ public class ServiceActor extends AbstractFlowerActor {
     Object param = null;
     try {
       ServiceContextUtil.fillServiceContext(serviceContext);
-      String pType = getParamType(serviceContext);
-      if (flowMessage.getMessage() != null && ClassUtil.exists(flowMessage.getMessageType())) {
-        pType = flowMessage.getMessageType();
-      }
-      param = serializer.decode(flowMessage.getMessage(), pType);
+      param = getAndDecodeParam(serviceContext);
       if (getFilter(serviceContext) != null) {
         getFilter(serviceContext).filter(param, serviceContext);
       }
@@ -298,6 +294,16 @@ public class ServiceActor extends AbstractFlowerActor {
     this.filter = ret;
 
     return filter;
+  }
+
+  private Object getAndDecodeParam(ServiceContext serviceContext) {
+    FlowMessage flowMessage = serviceContext.getFlowMessage();
+    Serializer serializer = ExtensionLoader.load(Serializer.class).load(serviceContext.getCodec());
+    String pType = getParamType(serviceContext);
+    if (flowMessage.getMessage() != null && ClassUtil.exists(flowMessage.getMessageType())) {
+      pType = flowMessage.getMessageType();
+    }
+    return serializer.decode(flowMessage.getMessage(), pType);
   }
 
   private String getParamType(ServiceContext serviceContext) {
