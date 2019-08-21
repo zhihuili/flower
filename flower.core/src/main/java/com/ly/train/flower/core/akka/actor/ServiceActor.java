@@ -122,14 +122,16 @@ public class ServiceActor extends AbstractFlowerActor {
     }
   }
 
-  private void handleException(ServiceContext serviceContext, Throwable e, Object param, Serializer serializer) {
+  private void handleException(ServiceContext serviceContext, Throwable throwable, Object param,
+      Serializer serializer) {
     Web web = serviceContext.getWeb();
     if (web != null) {
       web.complete();
     }
 
     ServiceException e2 = new ServiceException(
-        "invoke service " + serviceContext.getCurrentServiceName() + " : " + service + "\r\n, param : " + param, e);
+        "invoke service " + serviceContext.getCurrentServiceName() + " : " + service + "\r\n, param : " + param,
+        throwable);
     if (serviceContext.isSync()) {
       handleSyncResult(serviceContext, ExceptionUtil.getErrorMessage(e2), true, serializer);
     } else {

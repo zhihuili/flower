@@ -30,9 +30,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({com.ly.train.flower.sample.condition.CondtionServiceSample.class,
     com.ly.train.flower.sample.programflow.Sample.class, com.ly.train.flower.sample.supervisor.Sample.class,
     com.ly.train.flower.sample.supervisor.BatchSample.class, com.ly.train.flower.sample.textflow.BatchSample.class,
-    com.ly.train.flower.sample.textflow.Sample.class, com.ly.train.flower.sample.textflow.ServiceRouterSample.class
-
-})
+    com.ly.train.flower.sample.textflow.Sample.class, com.ly.train.flower.sample.textflow.ServiceRouterSample.class})
 public class AllTests {
 
 }

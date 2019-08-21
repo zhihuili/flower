@@ -53,6 +53,7 @@ public interface HttpFactory {
   static class OKHttpFactoryHodler {
     private static final HttpFactory FACTORY = new OKHttpFactory();
   }
+
   static class HttpClientFactoryHodler {
     private static final HttpFactory FACTORY = new HttpAsyncClientFactory();
   }

@@ -63,8 +63,8 @@ public class Slf4jImpl implements Logger {
   }
 
   @Override
-  public void trace(String msg, Throwable t) {
-    logger.trace(msg, t);
+  public void trace(String msg, Throwable throwable) {
+    logger.trace(msg, throwable);
   }
 
   @Override
@@ -94,8 +94,8 @@ public class Slf4jImpl implements Logger {
   }
 
   @Override
-  public void trace(Marker marker, String msg, Throwable t) {
-    logger.trace(marker, msg, t);
+  public void trace(Marker marker, String msg, Throwable throwable) {
+    logger.trace(marker, msg, throwable);
   }
 
   @Override
@@ -124,8 +124,8 @@ public class Slf4jImpl implements Logger {
   }
 
   @Override
-  public void debug(String msg, Throwable t) {
-    logger.debug(msg, t);
+  public void debug(String msg, Throwable throwable) {
+    logger.debug(msg, throwable);
   }
 
   @Override
@@ -154,8 +154,8 @@ public class Slf4jImpl implements Logger {
   }
 
   @Override
-  public void debug(Marker marker, String msg, Throwable t) {
-    logger.debug(marker, msg, t);
+  public void debug(Marker marker, String msg, Throwable throwable) {
+    logger.debug(marker, msg, throwable);
   }
 
   @Override
@@ -184,8 +184,8 @@ public class Slf4jImpl implements Logger {
   }
 
   @Override
-  public void info(String msg, Throwable t) {
-    logger.info(msg, t);
+  public void info(String msg, Throwable throwable) {
+    logger.info(msg, throwable);
   }
 
   @Override
@@ -214,8 +214,8 @@ public class Slf4jImpl implements Logger {
   }
 
   @Override
-  public void info(Marker marker, String msg, Throwable t) {
-    logger.info(marker, msg, t);
+  public void info(Marker marker, String msg, Throwable throwable) {
+    logger.info(marker, msg, throwable);
   }
 
   @Override
@@ -244,8 +244,8 @@ public class Slf4jImpl implements Logger {
   }
 
   @Override
-  public void warn(String msg, Throwable t) {
-    logger.warn(msg, t);
+  public void warn(String msg, Throwable throwable) {
+    logger.warn(msg, throwable);
   }
 
   @Override
@@ -274,8 +274,8 @@ public class Slf4jImpl implements Logger {
   }
 
   @Override
-  public void warn(Marker marker, String msg, Throwable t) {
-    logger.warn(marker, msg, t);
+  public void warn(Marker marker, String msg, Throwable throwable) {
+    logger.warn(marker, msg, throwable);
   }
 
   @Override
@@ -304,8 +304,8 @@ public class Slf4jImpl implements Logger {
   }
 
   @Override
-  public void error(String msg, Throwable t) {
-    logger.error(msg, t);
+  public void error(String msg, Throwable throwable) {
+    logger.error(msg, throwable);
   }
 
   @Override
@@ -334,8 +334,8 @@ public class Slf4jImpl implements Logger {
   }
 
   @Override
-  public void error(Marker marker, String msg, Throwable t) {
-    logger.error(marker, msg, t);
+  public void error(Marker marker, String msg, Throwable throwable) {
+    logger.error(marker, msg, throwable);
   }
 
 }

@@ -180,8 +180,9 @@ public abstract class ObjectUtil {
   // ---------------------------------------------------------------------
 
   /**
-   * Determine if the given objects are equal, returning {@code true} if both
-   * are {@code null} or {@code false} if only one is {@code null}.
+   * Determine if the given objects are equal, returning {@code true} if both are
+   * {@code null} or {@code false} if only one is {@code null}.
+   * 
    * <p>
    * Compares arrays with {@code Arrays.equals}, performing an equality check
    * based on the array elements rather than the array reference.
@@ -405,8 +406,7 @@ public abstract class ObjectUtil {
   /**
    * Return the same value as {@link Boolean#hashCode(boolean)} .
    * 
-   * @deprecated as of Spring Framework 5.0, in favor of the native JDK 8
-   *             variant
+   * @deprecated as of Spring Framework 5.0, in favor of the native JDK 8 variant
    */
   @Deprecated
   public static int hashCode(boolean bool) {
@@ -416,8 +416,7 @@ public abstract class ObjectUtil {
   /**
    * Return the same value as {@link Double#hashCode(double)} .
    * 
-   * @deprecated as of Spring Framework 5.0, in favor of the native JDK 8
-   *             variant
+   * @deprecated as of Spring Framework 5.0, in favor of the native JDK 8 variant
    */
   @Deprecated
   public static int hashCode(double dbl) {
@@ -427,8 +426,7 @@ public abstract class ObjectUtil {
   /**
    * Return the same value as {@link Float#hashCode(float)} .
    * 
-   * @deprecated as of Spring Framework 5.0, in favor of the native JDK 8
-   *             variant
+   * @deprecated as of Spring Framework 5.0, in favor of the native JDK 8 variant
    */
   @Deprecated
   public static int hashCode(float flt) {
@@ -438,8 +436,7 @@ public abstract class ObjectUtil {
   /**
    * Return the same value as {@link Long#hashCode(long)} .
    * 
-   * @deprecated as of Spring Framework 5.0, in favor of the native JDK 8
-   *             variant
+   * @deprecated as of Spring Framework 5.0, in favor of the native JDK 8 variant
    */
   @Deprecated
   public static int hashCode(long lng) {
@@ -455,8 +452,8 @@ public abstract class ObjectUtil {
    * Return a String representation of an object's overall identity.
    * 
    * @param obj the object (may be {@code null})
-   * @return the object's identity as String representation, or an empty String
-   *         if the object was {@code null}
+   * @return the object's identity as String representation, or an empty String if
+   *         the object was {@code null}
    */
   public static String identityToString(Object obj) {
     if (obj == null) {
@@ -525,6 +522,7 @@ public abstract class ObjectUtil {
 
   /**
    * Return a String representation of the contents of the specified array.
+   * 
    * <p>
    * The String representation consists of a list of the array's elements,
    * enclosed in curly braces ({@code " "}). Adjacent elements are separated by
@@ -600,6 +598,7 @@ public abstract class ObjectUtil {
 
   /**
    * Return a String representation of the contents of the specified array.
+   * 
    * <p>
    * The String representation consists of a list of the array's elements,
    * enclosed in curly braces ({@code " "}). Adjacent elements are separated by
@@ -676,6 +675,7 @@ public abstract class ObjectUtil {
 
   /**
    * Return a String representation of the contents of the specified array.
+   * 
    * <p>
    * The String representation consists of a list of the array's elements,
    * enclosed in curly braces ({@code " "}). Adjacent elements are separated by
@@ -708,6 +708,7 @@ public abstract class ObjectUtil {
 
   /**
    * Return a String representation of the contents of the specified array.
+   * 
    * <p>
    * The String representation consists of a list of the array's elements,
    * enclosed in curly braces ({@code " "}). Adjacent elements are separated by

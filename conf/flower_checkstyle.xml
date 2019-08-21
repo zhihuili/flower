@@ -35,7 +35,7 @@
         </module>
         <module name="LineLength">
             <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://" />
-            <property name="max" value="200" />
+            <property name="max" value="120" />
         </module>
         <module name="AvoidStarImport" />
         <module name="OneTopLevelClass" />
@@ -51,8 +51,7 @@
         <module name="RightCurly" />
         <module name="RightCurly">
             <property name="option" value="alone" />
-            <property name="tokens"
-                value="CLASS_DEF, METHOD_DEF, CTOR_DEF, LITERAL_FOR, LITERAL_WHILE, LITERAL_DO, STATIC_INIT, INSTANCE_INIT" />
+            <property name="tokens" value="CLASS_DEF, METHOD_DEF, CTOR_DEF, LITERAL_FOR, LITERAL_WHILE, LITERAL_DO, STATIC_INIT, INSTANCE_INIT" />
         </module>
         <module name="WhitespaceAround">
             <property name="allowEmptyConstructors" value="true" />
@@ -60,8 +59,7 @@
             <property name="allowEmptyTypes" value="true" />
             <property name="allowEmptyLoops" value="true" />
             <message key="ws.notPreceded" value="WhitespaceAround: ''{0}'' is not preceded with whitespace." />
-            <message key="ws.notFollowed"
-                value="WhitespaceAround: ''{0}'' is not followed by whitespace. Empty blocks may only be represented as '{}' when not part of a multi-block statement (4.1.3)" />
+            <message key="ws.notFollowed" value="WhitespaceAround: ''{0}'' is not followed by whitespace. Empty blocks may only be represented as '{}' when not part of a multi-block statement (4.1.3)" />
         </module>
         <module name="OneStatementPerLine" />
         <module name="MultipleVariableDeclarations" />
@@ -72,6 +70,7 @@
         <module name="ModifierOrder" />
         <module name="EmptyLineSeparator">
             <property name="allowNoEmptyLineBetweenFields" value="true" />
+            <property name="tokens" value="IMPORT, CLASS_DEF, INTERFACE_DEF, ENUM_DEF, STATIC_INIT, INSTANCE_INIT, METHOD_DEF" />
         </module>
         <module name="SeparatorWrap">
             <property name="option" value="nl" />
@@ -144,8 +143,7 @@
         <module name="MethodParamPad" />
         <module name="OperatorWrap">
             <property name="option" value="NL" />
-            <property name="tokens"
-                value="BAND, BOR, BSR, BXOR, DIV, EQUAL, GE, GT, LAND, LE, LITERAL_INSTANCEOF, LOR, LT, MINUS, MOD, NOT_EQUAL, PLUS, QUESTION, SL, SR, STAR " />
+            <property name="tokens" value="BAND, BOR, BSR, BXOR, DIV, EQUAL, GE, GT, LAND, LE, LITERAL_INSTANCEOF, LOR, LT, MINUS, MOD, NOT_EQUAL, PLUS, QUESTION, SL, SR, STAR " />
         </module>
         <module name="AnnotationLocation">
             <property name="tokens" value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF" />
@@ -161,7 +159,9 @@
             <property name="forbiddenSummaryFragments" value="^@return the *|^This method returns |^A [{]@code [a-zA-Z0-9]+[}]( is a )" />
             <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit" />
         </module>
-        <module name="JavadocParagraph" />
+        <module name="JavadocParagraph">
+            <property name="allowNewlineParagraph" value="true" />
+        </module>
         <module name="AtclauseOrder">
             <property name="target" value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF" />
             <property name="tagOrder" value="@param, @return, @throws, @deprecated" />

@@ -75,9 +75,9 @@ public class BenchmarkClient extends AbstractBenchmarkClient {
 
 
   private static void check(FlowRouter flowRouter) {
-    int i = 0;
-    while (i++ < 100) {
-      flowRouter.asyncCallService("-" + i);
+    int num = 0;
+    while (num++ < 100) {
+      flowRouter.asyncCallService("-" + num);
     }
   }
 

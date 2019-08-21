@@ -42,7 +42,6 @@ import com.ly.train.flower.core.service.impl.AggregateService;
 import com.ly.train.flower.registry.Registry;
 
 /**
- * 
  * 服务流程
  * 
  * <p>
@@ -51,6 +50,7 @@ import com.ly.train.flower.registry.Registry;
  *            .buildFlow("serviceA", "serviceB")
  *            .buildFlow("serviceB","serviceC");
  * </code>
+ * 
  * <p>
  * <code>
  * ServiceFlow.getOrCreate("flowSample")
@@ -129,26 +129,15 @@ public final class ServiceFlow {
     return serviceFactory.getOrCreateServiceFlow(flowName);
   }
 
-  /**
-   * 组建流程节点
-   * 
-   * @param preServiceClass 前一个流程服务节点类
-   * @param nextServiceClass 后一个流程服务节点类
-   * @return {@link ServiceFlow}
-   */
-  public ServiceFlow buildFlow(Class<?> preServiceClass, Class<?> nextServiceClass) {
-    String preServiceName = FlowerServiceUtil.getServiceName(preServiceClass);
-    String nextServiceName = FlowerServiceUtil.getServiceName(nextServiceClass);
 
-    return buildFlow(preServiceName, nextServiceName);
-  }
 
   /**
    * 聚合服务节点名称生成
+   * 
    * <p>
    * 对名字进行排序后拼接成字符串：serviceA
    * 
-   * @param serviceNames
+   * @param serviceNames serviceNames
    * @return aggregate service name
    */
   public String generateAggregateServiceName(List<String> serviceNames) {
@@ -190,6 +179,20 @@ public final class ServiceFlow {
     }
 
     return this;
+  }
+
+  /**
+   * 组建流程节点
+   * 
+   * @param preServiceClass 前一个流程服务节点类
+   * @param nextServiceClass 后一个流程服务节点类
+   * @return {@link ServiceFlow}
+   */
+  public ServiceFlow buildFlow(Class<?> preServiceClass, Class<?> nextServiceClass) {
+    String preServiceName = FlowerServiceUtil.getServiceName(preServiceClass);
+    String nextServiceName = FlowerServiceUtil.getServiceName(nextServiceClass);
+
+    return buildFlow(preServiceName, nextServiceName);
   }
 
   /**
@@ -244,26 +247,6 @@ public final class ServiceFlow {
           nextServiceName);
     }
     return this;
-  }
-
-  private Set<ServiceConfig> findPreviousServiceConfig(ServiceConfig header, ServiceConfig serviceConfig,
-      Set<ServiceConfig> preServiceConfigs) {
-    if (preServiceConfigs == null) {
-      preServiceConfigs = new HashSet<ServiceConfig>();
-    }
-
-    Set<ServiceConfig> nexts = header.getNextServiceConfigs();
-    if (nexts != null)
-      for (ServiceConfig item : nexts) {
-        Set<ServiceConfig> temp = item.getNextServiceConfigs();
-        if (temp != null && temp.contains(serviceConfig)) {
-          preServiceConfigs.add(item);
-        } else {
-          findPreviousServiceConfig(item, serviceConfig, preServiceConfigs);
-        }
-      }
-
-    return preServiceConfigs;
   }
 
   /**
@@ -336,6 +319,27 @@ public final class ServiceFlow {
     return this;
   }
 
+  private Set<ServiceConfig> findPreviousServiceConfig(ServiceConfig header, ServiceConfig serviceConfig,
+      Set<ServiceConfig> preServiceConfigs) {
+    if (preServiceConfigs == null) {
+      preServiceConfigs = new HashSet<ServiceConfig>();
+    }
+  
+    Set<ServiceConfig> nexts = header.getNextServiceConfigs();
+    if (nexts != null) {
+      for (ServiceConfig item : nexts) {
+        Set<ServiceConfig> temp = item.getNextServiceConfigs();
+        if (temp != null && temp.contains(serviceConfig)) {
+          preServiceConfigs.add(item);
+        } else {
+          findPreviousServiceConfig(item, serviceConfig, preServiceConfigs);
+        }
+      }
+    }
+  
+    return preServiceConfigs;
+  }
+
   /**
    * 获取 OR 初始化服务节点配置信息
    * 
@@ -374,15 +378,15 @@ public final class ServiceFlow {
     }
     Set<ServiceConfig> temp = flowConfig.getServiceConfig().getNextServiceConfigs();
     while (temp != null) {
-      Set<ServiceConfig> t = new HashSet<ServiceConfig>();
+      Set<ServiceConfig> configs = new HashSet<ServiceConfig>();
       for (ServiceConfig item : temp) {
         if (item.getServiceName().equals(serviceName)) {
           return item.getNextServiceConfigs();
         }
         if (item.getNextServiceConfigs() != null) {
-          t.addAll(item.getNextServiceConfigs());
+          configs.addAll(item.getNextServiceConfigs());
         }
-        temp = t;
+        temp = configs;
       }
     }
 

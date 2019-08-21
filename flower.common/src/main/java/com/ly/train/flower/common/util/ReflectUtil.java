@@ -86,8 +86,7 @@ public class ReflectUtil {
   }
 
   /**
-   * get class desc. boolean[].class => "[Z" Object.class =>
-   * "Ljava/lang/Object;"
+   * get class desc. boolean[].class => "[Z" Object.class => "Ljava/lang/Object;"
    * 
    * @param c class.
    * @return desc.
@@ -103,24 +102,25 @@ public class ReflectUtil {
 
     if (c.isPrimitive()) {
       String t = c.getName();
-      if ("void".equals(t))
+      if ("void".equals(t)) {
         ret.append(JVM_VOID);
-      else if ("boolean".equals(t))
+      } else if ("boolean".equals(t)) {
         ret.append(JVM_BOOLEAN);
-      else if ("byte".equals(t))
+      } else if ("byte".equals(t)) {
         ret.append(JVM_BYTE);
-      else if ("char".equals(t))
+      } else if ("char".equals(t)) {
         ret.append(JVM_CHAR);
-      else if ("double".equals(t))
+      } else if ("double".equals(t)) {
         ret.append(JVM_DOUBLE);
-      else if ("float".equals(t))
+      } else if ("float".equals(t)) {
         ret.append(JVM_FLOAT);
-      else if ("int".equals(t))
+      } else if ("int".equals(t)) {
         ret.append(JVM_INT);
-      else if ("long".equals(t))
+      } else if ("long".equals(t)) {
         ret.append(JVM_LONG);
-      else if ("short".equals(t))
+      } else if ("short".equals(t)) {
         ret.append(JVM_SHORT);
+      }
     } else {
       ret.append('L');
       ret.append(c.getName().replace('.', '/'));
@@ -138,8 +138,9 @@ public class ReflectUtil {
   public static String getDesc(final Constructor<?> c) {
     StringBuilder ret = new StringBuilder("(");
     Class<?>[] parameterTypes = c.getParameterTypes();
-    for (int i = 0; i < parameterTypes.length; i++)
+    for (int i = 0; i < parameterTypes.length; i++) {
       ret.append(getDesc(parameterTypes[i]));
+    }
     ret.append(')').append('V');
     return ret.toString();
   }
@@ -169,8 +170,9 @@ public class ReflectUtil {
     StringBuilder ret = new StringBuilder();
     ret.append('(');
     Class<?>[] parameterTypes = m.getParameterTypes();
-    for (int i = 0; i < parameterTypes.length; i++)
+    for (int i = 0; i < parameterTypes.length; i++) {
       ret.append(getDesc(parameterTypes[i]));
+    }
     ret.append(')').append(getDesc(m.getReturnType()));
     return ret.toString();
   }

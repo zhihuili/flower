@@ -47,7 +47,8 @@ public class OpenTracingFilter extends AbstractFilter {
 
   private static final String endpoint = "http://10.100.216.147:9411/api/v2/spans";
   private static final Tracer tracer =
-      BraveTracer.create(Tracing.newBuilder().spanReporter(AsyncReporter.create(OkHttpSender.create(endpoint)))// .spanReporter(Reporter.CONSOLE)
+      BraveTracer.create(Tracing.newBuilder().spanReporter(AsyncReporter.create(OkHttpSender.create(endpoint)))
+          // .spanReporter(Reporter.CONSOLE)
           .localServiceName("flower-demo").build());
 
   @Override
