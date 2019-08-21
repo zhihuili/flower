@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.exception.FlowException;
+import com.ly.train.flower.common.logging.Logger;
+import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.filter.AbstractFilter;
 import com.ly.train.flower.filter.FilterChain;
 import brave.Tracing;
@@ -44,7 +46,7 @@ import zipkin2.reporter.okhttp3.OkHttpSender;
  * 
  */
 public class OpenTracingFilter extends AbstractFilter {
-
+  private static final Logger logger = LoggerFactory.getLogger(OpenTracingFilter.class);
   private static final String endpoint = "http://10.100.216.147:9411/api/v2/spans";
   private static final Tracer tracer =
       BraveTracer.create(Tracing.newBuilder().spanReporter(AsyncReporter.create(OkHttpSender.create(endpoint)))

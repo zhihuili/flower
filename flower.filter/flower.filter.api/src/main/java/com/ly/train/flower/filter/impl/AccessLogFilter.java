@@ -13,28 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package com.ly.train.flower.filter;
+package com.ly.train.flower.filter.impl;
 
+import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
+import com.ly.train.flower.filter.AbstractFilter;
+import com.ly.train.flower.filter.FilterChain;
 
 /**
  * @author leeyazhou
  * 
  */
-public abstract class AbstractFilter implements Filter {
-  static final Logger logger = LoggerFactory.getLogger(AbstractFilter.class);
+public class AccessLogFilter extends AbstractFilter {
+  private static final Logger logger = LoggerFactory.getLogger(AccessLogFilter.class);
 
   @Override
-  public void init(FilterConfig filterConfig) {}
-
-  @Override
-  public int getOrder() {
-    return 0;
+  public Object doFilter(Object message, ServiceContext context, FilterChain chain) {
+    logger.info("flowName : {}, serviceName : {}, message : {}", context.getFlowName(), context.getCurrentServiceName(),
+        message);
+    return chain.doFilter(message, context);
   }
-
 
 }

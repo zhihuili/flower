@@ -1,1 +1,1 @@
-opentracer=com.ly.train.flower.filter.impl.OpenTracingFilter
+opentracingFilter=com.ly.train.flower.filter.impl.OpenTracingFilter
