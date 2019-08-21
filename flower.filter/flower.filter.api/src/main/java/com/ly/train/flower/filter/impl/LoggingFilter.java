@@ -20,17 +20,18 @@ package com.ly.train.flower.filter.impl;
 
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.filter.AbstractFilter;
+import com.ly.train.flower.filter.FilterChain;
 
 /**
  * @author leeyazhou
  * 
  */
-public class LoggingFilter extends AbstractFilter<Object, Object> {
+public class LoggingFilter extends AbstractFilter {
 
   @Override
-  public Object doFilter(Object message, ServiceContext context) {
+  public Object doFilter(Object message, ServiceContext context, FilterChain chain) {
     logger.info("message : {}, context : {}", message, context);
-    return message;
+    return chain.doFilter(message, context);
   }
 
 

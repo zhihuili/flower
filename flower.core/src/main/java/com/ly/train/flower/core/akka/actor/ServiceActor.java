@@ -15,12 +15,15 @@
  */
 package com.ly.train.flower.core.akka.actor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import com.ly.train.flower.common.core.config.FlowConfig;
 import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.core.config.ServiceMeta;
 import com.ly.train.flower.common.core.message.FlowMessage;
@@ -47,6 +50,8 @@ import com.ly.train.flower.core.service.message.Condition;
 import com.ly.train.flower.core.service.web.Flush;
 import com.ly.train.flower.core.service.web.HttpComplete;
 import com.ly.train.flower.filter.Filter;
+import com.ly.train.flower.filter.FilterChain;
+import com.ly.train.flower.filter.FilterChainApplication;
 import com.ly.train.flower.serializer.Serializer;
 import akka.actor.ActorRef;
 import akka.actor.Props;
@@ -57,16 +62,16 @@ import akka.actor.Props;
  * @author zhihui.li
  * 
  */
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class ServiceActor extends AbstractFlowerActor {
 
   public static final Long defaultTimeToLive = TimeUnit.SECONDS.toMillis(60);
   private static final String serviceActorCachePrefix = "FLOWER_SERVICE_ACTOR_";
   private static final ConcurrentMap<String, Set<RefType>> nextServiceActorCache = new ConcurrentHashMap<>();
-  private FlowerService service;
+  private Service service;
   private String paramType;
   private int index;
   private final FlowerFactory flowerFactory;
-  private Filter<Object, ?> filter;
 
   static public Props props(String serviceName, FlowerFactory flowerFactory, int index) {
     return Props.create(ServiceActor.class, serviceName, flowerFactory, index);
@@ -83,7 +88,6 @@ public class ServiceActor extends AbstractFlowerActor {
     this.flowerFactory = flowerFactory;
   }
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
   @Override
   public void onServiceContextReceived(ServiceContext serviceContext) throws Throwable {
     FlowMessage flowMessage = serviceContext.getFlowMessage();
@@ -98,11 +102,9 @@ public class ServiceActor extends AbstractFlowerActor {
     try {
       ServiceContextUtil.fillServiceContext(serviceContext);
       param = getAndDecodeParam(serviceContext);
-      if (getFilter(serviceContext) != null) {
-        getFilter(serviceContext).filter(param, serviceContext);
-      }
+      FilterChain filterChain = buildFilterChain(serviceContext);
       // logger.info("服务参数类型 {} : {}", pType, getService(serviceContext));
-      result = ((Service) getService(serviceContext)).process(param, serviceContext);
+      result = filterChain.doFilter(param, serviceContext);
     } catch (Throwable e) {
       handleException(serviceContext, e, param, serializer);
     }
@@ -247,9 +249,9 @@ public class ServiceActor extends AbstractFlowerActor {
    * 
    * @return {@link FlowerService}
    */
-  public FlowerService getService(ServiceContext serviceContext) {
+  public Service getService(ServiceContext serviceContext) {
     if (this.service == null) {
-      this.service = flowerFactory.getServiceFactory().getServiceLoader().loadService(serviceName);
+      this.service = (Service) flowerFactory.getServiceFactory().getServiceLoader().loadService(serviceName);
       ServiceMeta serviceMeta = flowerFactory.getServiceFactory().getServiceLoader().loadServiceMeta(serviceName);
       this.paramType = serviceMeta.getParamType();
       if (service instanceof Aggregate) {
@@ -261,39 +263,24 @@ public class ServiceActor extends AbstractFlowerActor {
     return service;
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  public Filter getFilter(ServiceContext serviceContext) {
-    if (this.filter != null) {
-      return filter;
-    }
-    FlowerService service = getService(serviceContext);
-    com.ly.train.flower.common.annotation.FlowerService flowerService =
-        service.getClass().getAnnotation(com.ly.train.flower.common.annotation.FlowerService.class);
-    if (flowerService == null) {
-      return null;
-    }
-    String[] filters = flowerService.filter();
-    if (filters == null) {
-      return null;
-    }
-    Filter ret = null;
-    for (String f : filters) {
-      if (StringUtil.isBlank(f)) {
-        continue;
-      }
-      Filter temp = ExtensionLoader.load(Filter.class).load(f);
-      if (temp == null) {
-        continue;
-      }
-      if (ret == null) {
-        ret = temp;
-      } else {
-        ret.setNext(ret);
+  private FilterChain buildFilterChain(ServiceContext serviceContext) {
+    FlowConfig flowConfig =
+        flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName()).getFlowConfig();
+    Set<String> filterNames = flowConfig.getFilters();
+    List<Filter> filters = new ArrayList<>();
+    if (filterNames != null) {
+      for (String f : filterNames) {
+        if (StringUtil.isBlank(f)) {
+          continue;
+        }
+        Filter temp = ExtensionLoader.load(Filter.class).load(f);
+        if (temp == null) {
+          continue;
+        }
+        filters.add(temp);
       }
     }
-    this.filter = ret;
-
-    return filter;
+    return new FilterChainApplication(filters.toArray(new Filter[filters.size()]), (Service) service);
   }
 
   private Object getAndDecodeParam(ServiceContext serviceContext) {

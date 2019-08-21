@@ -1,0 +1,2 @@
+mockOne=com.ly.train.flower.core.filter.impl.MockOneFilter
+mockTwo=com.ly.train.flower.core.filter.impl.MockTwoFilter

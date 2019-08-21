@@ -18,8 +18,7 @@
  */
 package com.ly.train.flower.filter;
 
-import com.ly.train.flower.common.core.service.Service;
-import com.ly.train.flower.common.core.service.ServiceContext;
+import com.ly.train.flower.common.lifecyle.IInit;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 
@@ -27,43 +26,17 @@ import com.ly.train.flower.common.logging.LoggerFactory;
  * @author leeyazhou
  * 
  */
-public abstract class AbstractFilter<P, R> implements Service<P, R>, Filter<P, R> {
+public abstract class AbstractFilter implements Filter, IInit {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
-  private Filter<P, R> nextFilter;
 
   @Override
   public void init() {}
 
-  @Override
-  public R process(P message, ServiceContext context) throws Throwable {
-    return filter(message, context);
-  }
 
   @Override
-  public R filter(P message, ServiceContext context) throws Throwable {
-    R ret = doFilter(message, context);
-    if (ret != null && nextFilter != null) {
-      return nextFilter.filter(message, context);
-    }
-    return ret;
+  public int getOrder() {
+    return 0;
   }
 
-  @Override
-  public void setNext(Filter<P, R> filter) {
-    if (nextFilter != null) {
-      nextFilter.setNext(filter);
-    } else {
-      this.nextFilter = filter;
-    }
-  }
-
-  /**
-   * 执行职责
-   * 
-   * @param message 参数
-   * @param context 上下文
-   * @return result
-   */
-  public abstract R doFilter(P message, ServiceContext context);
 
 }

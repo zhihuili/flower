@@ -29,7 +29,7 @@ import com.ly.train.flower.common.logging.LoggerFactory;
  * @author leeyazhou
  * 
  */
-@FlowerService(filter = "opentracer")
+@FlowerService
 public class OpenTracerService implements Service<User, User> {
   static final Logger logger = LoggerFactory.getLogger(OpenTracerService.class);
 

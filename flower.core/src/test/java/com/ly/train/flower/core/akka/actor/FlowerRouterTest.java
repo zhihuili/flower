@@ -40,6 +40,7 @@ public class FlowerRouterTest extends TestBase {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
+    serviceFlow.build();
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 3);
 
     User user = new User();
@@ -55,6 +56,7 @@ public class FlowerRouterTest extends TestBase {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
+    serviceFlow.build();
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 3);
     User user = new User();
     String name = "响应式编程 ";
@@ -72,6 +74,7 @@ public class FlowerRouterTest extends TestBase {
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC2.class);
+    serviceFlow.build();
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2);
 
     User user = new User();
@@ -89,6 +92,7 @@ public class FlowerRouterTest extends TestBase {
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC2.class);
+    serviceFlow.build();
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 4);
 
     final int threadNum = 4;
@@ -119,6 +123,7 @@ public class FlowerRouterTest extends TestBase {
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC2.class);
+    serviceFlow.build();
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 4);
 
     final int threadNum = 4;

@@ -68,7 +68,7 @@ public class Assert {
 
   public static void notNull(Object object, String message) {
     if (object == null) {
-      throw new IllegalArgumentException(message);
+      throw new IllegalArgumentException(message +" can not be null.");
     }
   }
 

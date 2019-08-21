@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.core.filter.impl;
+package com.ly.train.flower.core.filter;
 
 import org.junit.Test;
+import org.mockito.internal.util.collections.Sets;
 import com.ly.train.flower.base.TestBase;
 import com.ly.train.flower.base.model.User;
 import com.ly.train.flower.base.service.OpenTracerService;
@@ -36,6 +37,8 @@ public class OpentracingFilterTest extends TestBase {
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
     serviceFlow.buildFlow(UserServiceC1.class, OpenTracerService.class);
+    serviceFlow.setFilters(Sets.newSet("mockOne", "mockTwo"));
+    serviceFlow.build();
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 3);
 
     User user = new User();
@@ -43,7 +46,6 @@ public class OpentracingFilterTest extends TestBase {
     user.setAge(2);
     Object o = router.syncCallService(user);
     System.out.println("响应结果： " + o);
-    Thread.sleep(30000);
   }
 
 }

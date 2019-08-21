@@ -142,7 +142,8 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
 
   @Override
   public FlowRouter buildFlowRouter(String flowName, int flowNumber) {
-    final ServiceConfig serviceConfig = serviceFactory.getOrCreateServiceFlow(flowName).getHeadServiceConfig();
+    final ServiceConfig serviceConfig =
+        serviceFactory.getOrCreateServiceFlow(flowName).getFlowConfig().getServiceConfig();
     if (serviceConfig == null) {
       throw new FlowNotFoundException("flowName : " + flowName + ", flowNumbe : " + flowNumber);
     }
