@@ -29,6 +29,8 @@ import com.ly.train.flower.common.core.service.ServiceContext;
  */
 public interface Filter extends Ordered {
 
+  void init(FilterConfig filterConfig);
+
   /**
    * do filter
    * 

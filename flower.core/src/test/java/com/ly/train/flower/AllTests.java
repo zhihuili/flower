@@ -20,7 +20,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import com.ly.train.flower.core.akka.actor.ActorSelectionTest;
 import com.ly.train.flower.core.akka.actor.ServiceFacadeTest;
-import com.ly.train.flower.core.akka.actor.ServiceRouterTest;
+import com.ly.train.flower.core.akka.router.ServiceRouterTest;
 import com.ly.train.flower.core.bytecode.ClassGeneratorTest;
 import com.ly.train.flower.core.service.ServiceFlowTest;
 import com.ly.train.flower.core.util.HttpClientTest;

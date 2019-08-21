@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
 package com.ly.train.flower.filter.impl;
 
 import com.ly.train.flower.common.core.service.ServiceContext;
+import com.ly.train.flower.common.logging.Logger;
+import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.filter.AbstractFilter;
 import com.ly.train.flower.filter.FilterChain;
 
@@ -26,14 +25,13 @@ import com.ly.train.flower.filter.FilterChain;
  * @author leeyazhou
  * 
  */
-public class LoggingFilter extends AbstractFilter {
+public class LimitRatioFilter extends AbstractFilter {
+  private static final Logger logger = LoggerFactory.getLogger(LimitRatioFilter.class);
 
   @Override
   public Object doFilter(Object message, ServiceContext context, FilterChain chain) {
     logger.info("message : {}, context : {}", message, context);
     return chain.doFilter(message, context);
   }
-
-
 
 }
