@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.ly.train.flower.common.core.message.FlowMessage;
 import com.ly.train.flower.common.core.message.Message;
 import com.ly.train.flower.common.core.web.Web;
-import com.ly.train.flower.common.util.StringUtil;
+import com.ly.train.flower.common.util.IdGenerator;
 
 public class ServiceContext implements Message, Serializable {
 
@@ -30,7 +30,7 @@ public class ServiceContext implements Message, Serializable {
    * 附属参数
    */
   private Map<String, Object> attachments;
-  private String id = StringUtil.uuid();
+  private String id = IdGenerator.getInstance().generateStringId();
   private Web web;
   private boolean sync;
   private String flowName;

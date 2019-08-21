@@ -15,11 +15,11 @@
  */
 package com.ly.train.flower.common.core.message;
 
-import com.ly.train.flower.common.util.StringUtil;
+import com.ly.train.flower.common.util.IdGenerator;
 
 public class FlowMessage implements Message {
   private static final long serialVersionUID = 1L;
-  private String transactionId = StringUtil.uuid();
+  private String transactionId = IdGenerator.getInstance().generateStringId();
   private byte[] message;
   private String messageType;
   private boolean error;
