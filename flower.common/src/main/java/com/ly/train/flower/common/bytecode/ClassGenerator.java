@@ -75,17 +75,17 @@ public final class ClassGenerator {
                                                                                                                // ClassPool
   private ClassPool classPool;
   private CtClass ctClass;
-  private String mClassName;
-  private String mSuperClass;
-  private Set<String> mInterfaces;
-  private List<String> mFields;
-  private List<String> mConstructors;
-  private List<String> mMethods;
-  private Map<String, Method> mCopyMethods; // <method desc,method instance>
-  private Map<String, Constructor<?>> mCopyConstructors; // <constructor
+  private String className;
+  private String superClass;
+  private Set<String> interfaces;
+  private List<String> fields;
+  private List<String> constructors;
+  private List<String> methods;
+  private Map<String, Method> copyMethods; // <method Desk,method instance>
+  private Map<String, Constructor<?>> copyConstructors; // <constructor
                                                          // desc,constructor
                                                          // instance>
-  private boolean mDefaultConstructor = false;
+  private boolean defaultConstructor = false;
 
   // <method desc, <annotation,annotationProps>>
   private Map<String, Map<String, Map<String, Object>>> methodAnnotations;
@@ -147,19 +147,19 @@ public final class ClassGenerator {
   }
 
   public String getClassName() {
-    return mClassName;
+    return className;
   }
 
   public ClassGenerator setClassName(String name) {
-    mClassName = name;
+    className = name;
     return this;
   }
 
   public ClassGenerator addInterface(String cn) {
-    if (mInterfaces == null) {
-      mInterfaces = new HashSet<String>();
+    if (interfaces == null) {
+      interfaces = new HashSet<String>();
     }
-    mInterfaces.add(cn);
+    interfaces.add(cn);
     return this;
   }
 
@@ -168,20 +168,20 @@ public final class ClassGenerator {
   }
 
   public ClassGenerator setSuperClass(String cn) {
-    mSuperClass = cn;
+    superClass = cn;
     return this;
   }
 
   public ClassGenerator setSuperClass(Class<?> cl) {
-    mSuperClass = cl.getName();
+    superClass = cl.getName();
     return this;
   }
 
   public ClassGenerator addField(String code) {
-    if (mFields == null) {
-      mFields = new ArrayList<String>();
+    if (fields == null) {
+      fields = new ArrayList<String>();
     }
-    mFields.add(code);
+    fields.add(code);
     return this;
   }
 
@@ -202,10 +202,10 @@ public final class ClassGenerator {
   }
 
   public ClassGenerator addMethod(String code) {
-    if (mMethods == null) {
-      mMethods = new ArrayList<String>();
+    if (methods == null) {
+      methods = new ArrayList<String>();
     }
-    mMethods.add(code);
+    methods.add(code);
     return this;
   }
 
@@ -274,10 +274,10 @@ public final class ClassGenerator {
   public ClassGenerator addMethod(String name, Method m, Map<String, Map<String, Object>> annotations) {
     String desc = name + ReflectUtil.getDescWithoutMethodName(m);
     addMethod(':' + desc);
-    if (mCopyMethods == null) {
-      mCopyMethods = new ConcurrentHashMap<String, Method>(8);
+    if (copyMethods == null) {
+      copyMethods = new ConcurrentHashMap<String, Method>(8);
     }
-    mCopyMethods.put(desc, m);
+    copyMethods.put(desc, m);
     if (annotations != null) {
       if (methodAnnotations == null) {
         this.methodAnnotations = new HashMap<>();
@@ -289,10 +289,10 @@ public final class ClassGenerator {
   }
 
   public ClassGenerator addConstructor(String code) {
-    if (mConstructors == null) {
-      mConstructors = new LinkedList<String>();
+    if (constructors == null) {
+      constructors = new LinkedList<String>();
     }
-    mConstructors.add(code);
+    constructors.add(code);
     return this;
   }
 
@@ -328,15 +328,15 @@ public final class ClassGenerator {
   public ClassGenerator addConstructor(Constructor<?> c) {
     String desc = ReflectUtil.getDesc(c);
     addConstructor(":" + desc);
-    if (mCopyConstructors == null) {
-      mCopyConstructors = new ConcurrentHashMap<String, Constructor<?>>(4);
+    if (copyConstructors == null) {
+      copyConstructors = new ConcurrentHashMap<String, Constructor<?>>(4);
     }
-    mCopyConstructors.put(desc, c);
+    copyConstructors.put(desc, c);
     return this;
   }
 
   public ClassGenerator addDefaultConstructor() {
-    mDefaultConstructor = true;
+    defaultConstructor = true;
     return this;
   }
 
@@ -354,13 +354,13 @@ public final class ClassGenerator {
     }
     long id = CLASS_NAME_COUNTER.getAndIncrement();
     try {
-      CtClass ctcs = mSuperClass == null ? null : classPool.get(mSuperClass);
-      if (mClassName == null) {
-        mClassName =
-            (mSuperClass == null || javassist.Modifier.isPublic(ctcs.getModifiers()) ? ClassGenerator.class.getName()
-                : mSuperClass + "$sc") + id;
+      CtClass ctcs = superClass == null ? null : classPool.get(superClass);
+      if (className == null) {
+        className =
+            (superClass == null || javassist.Modifier.isPublic(ctcs.getModifiers()) ? ClassGenerator.class.getName()
+                : superClass + "$sc") + id;
       }
-      ctClass = classPool.makeClass(mClassName);
+      ctClass = classPool.makeClass(className);
       ClassFile classFile = ctClass.getClassFile();
       ConstPool constpool = classFile.getConstPool();
       if (annotations != null) {
@@ -384,27 +384,27 @@ public final class ClassGenerator {
         classFile.addAttribute(attr);
       }
 
-      if (mSuperClass != null) {
+      if (superClass != null) {
         ctClass.setSuperclass(ctcs);
       }
       ctClass.addInterface(classPool.get(DC.class.getName())); // add dynamic
                                                                // class tag.
-      if (mInterfaces != null) {
-        for (String cl : mInterfaces) {
+      if (interfaces != null) {
+        for (String cl : interfaces) {
           ctClass.addInterface(classPool.get(cl));
         }
       }
-      if (mFields != null) {
-        for (String code : mFields) {
+      if (fields != null) {
+        for (String code : fields) {
           ctClass.addField(CtField.make(code, ctClass));
         }
       }
-      if (mMethods != null) {
-        for (String code : mMethods) {
+      if (methods != null) {
+        for (String code : methods) {
           CtMethod method = null;
           if (code.charAt(0) == ':') {
             method =
-                CtNewMethod.copy(getCtMethod(mCopyMethods.get(code.substring(1))),
+                CtNewMethod.copy(getCtMethod(copyMethods.get(code.substring(1))),
                     code.substring(1, code.indexOf('(')), ctClass, null);
           } else {
             method = CtNewMethod.make(code, ctClass);
@@ -432,13 +432,13 @@ public final class ClassGenerator {
           ctClass.addMethod(method);
         }
       }
-      if (mDefaultConstructor) {
+      if (defaultConstructor) {
         ctClass.addConstructor(CtNewConstructor.defaultConstructor(ctClass));
       }
-      if (mConstructors != null) {
-        for (String code : mConstructors) {
+      if (constructors != null) {
+        for (String code : constructors) {
           if (code.charAt(0) == ':') {
-            ctClass.addConstructor(CtNewConstructor.copy(getCtConstructor(mCopyConstructors.get(code.substring(1))),
+            ctClass.addConstructor(CtNewConstructor.copy(getCtConstructor(copyConstructors.get(code.substring(1))),
                 ctClass, null));
           } else {
             String[] sn = ctClass.getSimpleName().split("\\$+"); // inner class
@@ -503,23 +503,23 @@ public final class ClassGenerator {
     if (ctClass != null) {
       ctClass.detach();
     }
-    if (mInterfaces != null) {
-      mInterfaces.clear();
+    if (interfaces != null) {
+      interfaces.clear();
     }
-    if (mFields != null) {
-      mFields.clear();
+    if (fields != null) {
+      fields.clear();
     }
-    if (mMethods != null) {
-      mMethods.clear();
+    if (methods != null) {
+      methods.clear();
     }
-    if (mConstructors != null) {
-      mConstructors.clear();
+    if (constructors != null) {
+      constructors.clear();
     }
-    if (mCopyMethods != null) {
-      mCopyMethods.clear();
+    if (copyMethods != null) {
+      copyMethods.clear();
     }
-    if (mCopyConstructors != null) {
-      mCopyConstructors.clear();
+    if (copyConstructors != null) {
+      copyConstructors.clear();
     }
   }
 

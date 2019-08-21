@@ -23,6 +23,7 @@ import java.util.Map;
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.exception.FlowException;
 import com.ly.train.flower.filter.AbstractFilter;
+import com.ly.train.flower.filter.FilterChain;
 import brave.Tracing;
 import brave.opentracing.BraveTracer;
 import io.opentracing.Scope;
@@ -42,15 +43,16 @@ import zipkin2.reporter.okhttp3.OkHttpSender;
  * @author leeyazhou
  * 
  */
-public class OpenTracingFilter extends AbstractFilter<Object, Object> {
+public class OpenTracingFilter extends AbstractFilter {
 
   private static final String endpoint = "http://10.100.216.147:9411/api/v2/spans";
-  private static final Tracer tracer = BraveTracer.create(Tracing.newBuilder()
-      .spanReporter(AsyncReporter.create(OkHttpSender.create(endpoint)))// .spanReporter(Reporter.CONSOLE)
-      .localServiceName("flower-demo").build());
+  private static final Tracer tracer =
+      BraveTracer.create(Tracing.newBuilder().spanReporter(AsyncReporter.create(OkHttpSender.create(endpoint)))
+          // .spanReporter(Reporter.CONSOLE)
+          .localServiceName("flower-demo").build());
 
   @Override
-  public Object doFilter(Object message, ServiceContext context) {
+  public Object doFilter(Object message, ServiceContext context, FilterChain chain) {
     logger.info("分布式调用链追踪start");
     String spanName = context.getFlowName() + "." + context.getCurrentServiceName();
     logger.info("spanName : " + spanName);
@@ -96,7 +98,7 @@ public class OpenTracingFilter extends AbstractFilter<Object, Object> {
       span.finish();
       logger.info("分布式调用链追踪end");
     }
-    return message;
+    return chain.doFilter(message, context);
   }
 
   private Map<String, String> getMap(ServiceContext context) {

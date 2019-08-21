@@ -13,30 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
 package com.ly.train.flower.filter;
 
-import com.ly.train.flower.common.lifecyle.IInit;
-import com.ly.train.flower.common.logging.Logger;
-import com.ly.train.flower.common.logging.LoggerFactory;
+import com.ly.train.flower.common.core.service.ServiceContext;
 
 /**
  * @author leeyazhou
- * 
  */
-public abstract class AbstractFilter implements Filter, IInit {
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+public interface FilterChain {
 
-  @Override
-  public void init() {}
-
-
-  @Override
-  public int getOrder() {
-    return 0;
-  }
-
-
+  Object doFilter(Object message, ServiceContext context);
 }

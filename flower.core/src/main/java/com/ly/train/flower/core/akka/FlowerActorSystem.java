@@ -79,14 +79,20 @@ public class FlowerActorSystem extends AbstractLifecycle {
     final String sepator = "\r\n";
     // @formatter:off
     if (StringUtil.isNotBlank(flowerConfig.getHost())) {
-      configBuilder.append(getFormatString("akka.actor.provider = %s", "remote")).append(sepator);
-      configBuilder.append(getFormatString("akka.remote.enabled-transports = [%s]", "akka.remote.netty.tcp")).append(sepator);
-      configBuilder.append(getFormatString("akka.remote.netty.tcp.hostname = %s", flowerConfig.getHost())).append(sepator);
-      configBuilder.append(getFormatString("akka.remote.netty.tcp.port = %s", flowerConfig.getPort())).append(sepator);
+      configBuilder.append(getFormatString("akka.actor.provider = %s", "remote"));
+      configBuilder.append(sepator);
+      configBuilder.append(getFormatString("akka.remote.enabled-transports = [%s]", "akka.remote.netty.tcp"));
+      configBuilder.append(sepator);
+      configBuilder.append(getFormatString("akka.remote.netty.tcp.hostname = %s", flowerConfig.getHost()));
+      configBuilder.append(sepator);
+      configBuilder.append(getFormatString("akka.remote.netty.tcp.port = %s", flowerConfig.getPort()));
+      configBuilder.append(sepator);
     }
-    configBuilder.append(getFormatString("dispatcher.fork-join-executor.parallelism-min = %s", flowerConfig.getParallelismMin())).append(sepator);
-    configBuilder.append(getFormatString("dispatcher.fork-join-executor.parallelism-max = %s", flowerConfig.getParallelismMax())).append(sepator);
-    configBuilder.append(getFormatString("dispatcher.fork-join-executor.parallelism-factor = %s", flowerConfig.getParallelismFactor())).append(sepator);
+    configBuilder.append(getFormatString("dispatcher.fork-join-executor.parallelism-min = %s", flowerConfig.getParallelismMin()));
+    configBuilder.append(sepator);
+    configBuilder.append(getFormatString("dispatcher.fork-join-executor.parallelism-max = %s", flowerConfig.getParallelismMax()));
+    configBuilder.append(sepator);
+    configBuilder.append(getFormatString("dispatcher.fork-join-executor.parallelism-factor = %s", flowerConfig.getParallelismFactor()));
     // @formatter:on
     logger.info("akka config ：{}", configBuilder.toString());
     Config config = ConfigFactory.parseString(configBuilder.toString()).withFallback(ConfigFactory.load());

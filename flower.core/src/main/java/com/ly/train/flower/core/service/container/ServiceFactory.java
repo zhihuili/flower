@@ -58,9 +58,8 @@ public class ServiceFactory extends AbstractInit {
       return;
     }
 
-    Set<Class<?>> flowers =
-        DefaultClassScanner.getInstance().getClassListByAnnotation(basePackage,
-            com.ly.train.flower.common.annotation.FlowerService.class);
+    Set<Class<?>> flowers = DefaultClassScanner.getInstance().getClassListByAnnotation(basePackage,
+        com.ly.train.flower.common.annotation.FlowerService.class);
     logger.info("scan flowerService, basePackage : {}, find flowerService : {}", basePackage, flowers.size());
     for (Class<?> clazz : flowers) {
       serviceLoader.registerServiceType(FlowerServiceUtil.getServiceName(clazz), clazz);
@@ -172,7 +171,7 @@ public class ServiceFactory extends AbstractInit {
     }
 
     List<ServiceInfo> serviceInfos = this.loadServiceInfoFromRegistrry(serviceConfig);
-    if(serviceInfos!=null &&serviceInfos.size()>0) {
+    if (serviceInfos != null && serviceInfos.size() > 0) {
       serviceConfig.getAddresses().clear();
     }
     for (ServiceInfo serviceInfo : serviceInfos) {
@@ -186,8 +185,8 @@ public class ServiceFactory extends AbstractInit {
       serviceConfig.setLocal(false);
       return serviceMeta;
     }
-    throw new ServiceNotFoundException("serviceName : " + serviceConfig.getServiceName() + ", serviceConfig : "
-        + serviceConfig);
+    throw new ServiceNotFoundException(
+        "serviceName : " + serviceConfig.getServiceName() + ", serviceConfig : " + serviceConfig);
   }
 
   public List<ServiceInfo> loadServiceInfoFromRegistrry(ServiceConfig serviceConfig) {

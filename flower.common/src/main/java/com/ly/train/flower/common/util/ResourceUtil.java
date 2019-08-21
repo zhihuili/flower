@@ -137,8 +137,8 @@ public abstract class ResourceUtil {
       try {
         return new File(resourceLocation).toURI().toURL();
       } catch (MalformedURLException ex2) {
-        throw new FileNotFoundException("Resource location [" + resourceLocation
-            + "] is neither a URL not a well-formed file path");
+        throw new FileNotFoundException(
+            "Resource location [" + resourceLocation + "] is neither a URL not a well-formed file path");
       }
     }
   }
@@ -168,17 +168,18 @@ public abstract class ResourceUtil {
   }
 
   /**
-   * Resolve the given resource location to a {@code java.io.File}, i.e. to a
-   * file in the file system.
+   * Resolve the given resource location to a {@code java.io.File}, i.e. to a file
+   * in the file system.
+   * 
    * <p>
-   * Does not check whether the file actually exists; simply returns the File
-   * that the given location would correspond to.
+   * Does not check whether the file actually exists; simply returns the File that
+   * the given location would correspond to.
    * 
    * @param resourceLocation the resource location to resolve: either a
    *        "classpath:" pseudo URL, a "file:" URL, or a plain file path
    * @return a corresponding File object
-   * @throws FileNotFoundException if the resource cannot be resolved to a file
-   *         in the file system
+   * @throws FileNotFoundException if the resource cannot be resolved to a file in
+   *         the file system
    */
   public static File getFile(String resourceLocation) throws FileNotFoundException {
     Assert.notNull(resourceLocation, "Resource location must not be null");
@@ -188,8 +189,8 @@ public abstract class ResourceUtil {
       ClassLoader cl = getDefaultClassLoader();
       URL url = (cl != null ? cl.getResource(path) : ClassLoader.getSystemResource(path));
       if (url == null) {
-        throw new FileNotFoundException(description
-            + " cannot be resolved to absolute file path because it does not exist");
+        throw new FileNotFoundException(
+            description + " cannot be resolved to absolute file path because it does not exist");
       }
       return getFile(url, description);
     }
@@ -208,8 +209,8 @@ public abstract class ResourceUtil {
    * 
    * @param resourceUrl the resource URL to resolve
    * @return a corresponding File object
-   * @throws FileNotFoundException if the URL cannot be resolved to a file in
-   *         the file system
+   * @throws FileNotFoundException if the URL cannot be resolved to a file in the
+   *         file system
    */
   public static File getFile(URL resourceUrl) throws FileNotFoundException {
     return getFile(resourceUrl, "URL");
@@ -223,8 +224,8 @@ public abstract class ResourceUtil {
    * @param description a description of the original resource that the URL was
    *        created for (for example, a class path location)
    * @return a corresponding File object
-   * @throws FileNotFoundException if the URL cannot be resolved to a file in
-   *         the file system
+   * @throws FileNotFoundException if the URL cannot be resolved to a file in the
+   *         file system
    */
   public static File getFile(URL resourceUrl, String description) throws FileNotFoundException {
     Assert.notNull(resourceUrl, "Resource URL must not be null");
@@ -246,8 +247,8 @@ public abstract class ResourceUtil {
    * 
    * @param resourceUri the resource URI to resolve
    * @return a corresponding File object
-   * @throws FileNotFoundException if the URL cannot be resolved to a file in
-   *         the file system
+   * @throws FileNotFoundException if the URL cannot be resolved to a file in the
+   *         file system
    * @since 2.5
    */
   public static File getFile(URI resourceUri) throws FileNotFoundException {
@@ -262,8 +263,8 @@ public abstract class ResourceUtil {
    * @param description a description of the original resource that the URI was
    *        created for (for example, a class path location)
    * @return a corresponding File object
-   * @throws FileNotFoundException if the URL cannot be resolved to a file in
-   *         the file system
+   * @throws FileNotFoundException if the URL cannot be resolved to a file in the
+   *         file system
    * @since 2.5
    */
   public static File getFile(URI resourceUri, String description) throws FileNotFoundException {
@@ -276,21 +277,21 @@ public abstract class ResourceUtil {
   }
 
   /**
-   * Determine whether the given URL points to a resource in the file system,
-   * i.e. has protocol "file", "vfsfile" or "vfs".
+   * Determine whether the given URL points to a resource in the file system, i.e.
+   * has protocol "file", "vfsfile" or "vfs".
    * 
    * @param url the URL to check
    * @return whether the URL has been identified as a file system URL
    */
   public static boolean isFileURL(URL url) {
     String protocol = url.getProtocol();
-    return (URL_PROTOCOL_FILE.equals(protocol) || URL_PROTOCOL_VFSFILE.equals(protocol) || URL_PROTOCOL_VFS
-        .equals(protocol));
+    return (URL_PROTOCOL_FILE.equals(protocol) || URL_PROTOCOL_VFSFILE.equals(protocol)
+        || URL_PROTOCOL_VFS.equals(protocol));
   }
 
   /**
-   * Determine whether the given URL points to a resource in a jar file. i.e.
-   * has protocol "jar", "war, ""zip", "vfszip" or "wsjar".
+   * Determine whether the given URL points to a resource in a jar file. i.e. has
+   * protocol "jar", "war, ""zip", "vfszip" or "wsjar".
    * 
    * @param url the URL to check
    * @return whether the URL has been identified as a JAR URL
@@ -346,8 +347,8 @@ public abstract class ResourceUtil {
    * Extract the URL for the outermost archive from the given jar/war URL (which
    * may point to a resource in a jar file or to a jar file itself).
    * <p>
-   * In the case of a jar file nested within a war file, this will return a URL
-   * to the war file since that is the one resolvable in the file system.
+   * In the case of a jar file nested within a war file, this will return a URL to
+   * the war file since that is the one resolvable in the file system.
    * 
    * @param jarUrl the original URL
    * @return the URL for the actual jar file
@@ -402,8 +403,8 @@ public abstract class ResourceUtil {
 
   /**
    * Set the {@link URLConnection#setUseCaches "useCaches"} flag on the given
-   * connection, preferring {@code false} but leaving the flag at {@code true}
-   * for JNLP based resources.
+   * connection, preferring {@code false} but leaving the flag at {@code true} for
+   * JNLP based resources.
    * 
    * @param con the URLConnection to set the flag on
    */

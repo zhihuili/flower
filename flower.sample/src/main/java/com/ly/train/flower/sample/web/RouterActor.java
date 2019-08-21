@@ -33,9 +33,9 @@ public class RouterActor extends AbstractActor {
   {
     List<Routee> routees = new ArrayList<Routee>();
     for (int i = 0; i < 400; i++) {
-      ActorRef r = getContext().actorOf(Props.create(MyActor.class));
-      getContext().watch(r);
-      routees.add(new ActorRefRoutee(r));
+      ActorRef ref = getContext().actorOf(Props.create(MyActor.class));
+      getContext().watch(ref);
+      routees.add(new ActorRefRoutee(ref));
     }
     router = new Router(new RoundRobinRoutingLogic(), routees);
   }
@@ -46,9 +46,9 @@ public class RouterActor extends AbstractActor {
       router.route(message, getSender());
     }).match(Terminated.class, message -> {
       router = router.removeRoutee(message.actor());
-      ActorRef r = getContext().actorOf(Props.create(MyActor.class));
-      getContext().watch(r);
-      router = router.addRoutee(new ActorRefRoutee(r));
+      ActorRef ref = getContext().actorOf(Props.create(MyActor.class));
+      getContext().watch(ref);
+      router = router.addRoutee(new ActorRefRoutee(ref));
     }).build();
   }
 }

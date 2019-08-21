@@ -108,7 +108,7 @@ public class ServiceLoader extends AbstractInit {
   /**
    * 获取服务参数类型
    * 
-   * @param serviceName
+   * @param serviceName serviceName
    * @return {@link ServiceMeta}
    */
   public ServiceMeta loadServiceMeta(String serviceName) {

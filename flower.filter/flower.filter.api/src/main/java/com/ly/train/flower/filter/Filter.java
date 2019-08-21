@@ -18,17 +18,26 @@
  */
 package com.ly.train.flower.filter;
 
-import com.ly.train.flower.common.core.service.Service;
+import com.ly.train.flower.common.core.Ordered;
 import com.ly.train.flower.common.core.service.ServiceContext;
-import com.ly.train.flower.common.lifecyle.IInit;
 
 /**
- * @author leeyazhou
  * 
+ * filter
+ * 
+ * @author leeyazhou
  */
-public interface Filter<P, R> extends Service<P, R>, IInit {
+public interface Filter extends Ordered {
 
-  R filter(P message, ServiceContext context) throws Throwable;
+  /**
+   * do filter
+   * 
+   * @param message message
+   * @param context {@link ServiceContext}
+   * @param filterChain {@link FilterChain}
+   * @return result
+   * @throws Throwable any exception
+   */
+  Object doFilter(Object message, ServiceContext context, FilterChain filterChain);
 
-  void setNext(Filter<P, R> filter);
 }

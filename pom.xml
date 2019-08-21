@@ -84,7 +84,7 @@
         <junit.version>4.12</junit.version>
         <license-maven-plugin.version>3.0</license-maven-plugin.version>
         <logback.version>1.2.3</logback.version>
-        <maven-checkstyle-plugin.version>2.15</maven-checkstyle-plugin.version>
+        <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
         <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
         <maven-dependency-plugin.version>2.10</maven-dependency-plugin.version>
         <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
@@ -504,9 +504,22 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <configuration>
-                    <configLocation>/conf/flower_checkstyle.xml</configLocation>
-                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <configLocation>/conf/flower_checkstyle.xml</configLocation>
+                            <encoding>UTF-8</encoding>
+                            <consoleOutput>true</consoleOutput>
+                            <failsOnError>true</failsOnError>
+                            <violationSeverity>error</violationSeverity>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

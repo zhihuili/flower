@@ -99,7 +99,7 @@ public class AbstractBenchmarkClient {
     // > 1000
     long above1000sum = 0;
 
-    long currentRuntime = (System.currentTimeMillis() - start) / 1000;
+    final long currentRuntime = (System.currentTimeMillis() - start) / 1000;
     for (BenchmarkRunnable benchmarkRunnable : benchmarkRunnables) {
       long[] responseSpreads = benchmarkRunnable.getResult().get(0);
       allRequestSum += benchmarkRunnable.getResult().get(1)[0];
@@ -131,9 +131,6 @@ public class AbstractBenchmarkClient {
     System.out.println("allRequestSum \t: " + allRequestSum);
     System.out.println("allErrorRequestSum : " + allErrorRequestSum);
     System.out.println("runtime(second) : " + currentRuntime);
-    if (currentRuntime == 0) {
-      currentRuntime = 1;
-    }
     System.out.println("Average/sec \t: " + allRequestSum / currentRuntime);
     System.out.println("currentTime : " + dateFormat.format(new Date()));
     System.out.println("**********************************************************************\n");
