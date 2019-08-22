@@ -3,7 +3,7 @@ sudo: false
 
 jdk:
   - openjdk8
-  - openjdk11
+#  - openjdk11
 #  - oraclejdk11
 
 cache:
