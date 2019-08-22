@@ -15,6 +15,7 @@
  */
 package com.ly.train.flower.sample.condition;
 
+import com.ly.train.flower.core.service.impl.ConditionService;
 import org.junit.Test;
 import com.ly.train.flower.core.service.container.FlowerFactory;
 import com.ly.train.flower.core.service.container.ServiceFactory;
@@ -28,7 +29,7 @@ import com.ly.train.flower.sample.condition.service.ServiceE;
 import com.ly.train.flower.sample.condition.service.ServiceF;
 import com.ly.train.flower.sample.condition.service.ServiceG;
 
-public class CondtionServiceSample extends TestBase {
+public class ConditionServiceSample extends TestBase {
 
   private String flowName = "conditionSample";
 
@@ -49,7 +50,7 @@ public class CondtionServiceSample extends TestBase {
     serviceFactory.registerService("serviceF", ServiceF.class);
     serviceFactory.registerService("serviceG", ServiceG.class);
     serviceFactory.registerService("serviceCondition",
-        "com.ly.train.flower.common.service.impl.ConditionService;serviceF,serviceG");
+        ConditionService.class.getCanonicalName() + ";serviceF,serviceG");
 
     ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
 
