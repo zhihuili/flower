@@ -30,9 +30,16 @@ public class AccessLogFilter extends AbstractFilter {
 
   @Override
   public Object doFilter(Object message, ServiceContext context, FilterChain chain) {
-    logger.info("flowName : {}, serviceName : {}, message : {}", context.getFlowName(), context.getCurrentServiceName(),
-        message);
-    return chain.doFilter(message, context);
+    long start = System.currentTimeMillis();
+    Object result = null;
+    try {
+      result = chain.doFilter(message, context);
+      return result;
+    } finally {
+      logger.info("flowName : {}, serviceName : {}, invoke time(ms):{}, message : {}, result : {}",
+          context.getFlowName(), (System.currentTimeMillis() - start), context.getCurrentServiceName(), message,
+          result);
+    }
   }
 
 }
