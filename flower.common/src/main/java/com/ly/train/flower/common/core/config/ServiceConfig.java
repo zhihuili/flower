@@ -172,7 +172,7 @@ public class ServiceConfig implements Serializable {
       timeout = serviceMeta.getTimeout();
     }
     if (timeout <= 0) {
-      timeout = 3000;
+      timeout = 10000;
     }
     return timeout;
   }

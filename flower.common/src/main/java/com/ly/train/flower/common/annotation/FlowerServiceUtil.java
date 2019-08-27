@@ -55,7 +55,7 @@ public class FlowerServiceUtil {
   public static int getTimeout(Class<?> clazz) {
     FlowerService flowerService = null;
     if (clazz == null || (flowerService = clazz.getAnnotation(FlowerService.class)) == null) {
-      return 3000;
+      return 10000;
     }
     int timeout = flowerService.timeout();
     return timeout;

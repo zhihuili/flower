@@ -31,8 +31,8 @@
             <artifactId>flower.filter.api</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.opentracing</groupId>
-            <artifactId>opentracing-api</artifactId>
+            <groupId>com.ly.train</groupId>
+            <artifactId>flower.core</artifactId>
         </dependency>
         <dependency>
             <groupId>io.opentracing.brave</groupId>
@@ -42,5 +42,20 @@
             <groupId>io.zipkin.reporter2</groupId>
             <artifactId>zipkin-sender-okhttp3</artifactId>
         </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.opentracing.brave</groupId>
+                <artifactId>brave-opentracing</artifactId>
+                <version>0.34.2</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

@@ -66,12 +66,12 @@ public class OpentracingFilterTest extends TestBase {
   }
 
   @Test
-  public void testMetricsFilter() throws Exception {
+  public void testOpentracingFilter() throws Exception {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
     serviceFlow.buildFlow(UserServiceC1.class, OpenTracerService.class);
-    serviceFlow.setFilters(Sets.newSet("mockOneFilter", "mockTwoFilter", "metricsFilter"));
+    serviceFlow.setFilters(Sets.newSet("mockOneFilter", "mockTwoFilter", "opentracingFilter"));
     serviceFlow.build();
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 3);
 
