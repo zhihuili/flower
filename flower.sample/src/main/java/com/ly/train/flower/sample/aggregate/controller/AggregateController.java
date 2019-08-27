@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
- * @author: fengyu.zhang
+ * @author fengyu.zhang
  */
 @RestController
 @Flower(value = "aggregate", flowNumber = 6)

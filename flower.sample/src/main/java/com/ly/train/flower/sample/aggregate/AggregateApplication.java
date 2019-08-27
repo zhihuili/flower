@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * 本示例兼容2019-4-10日master提交
  * 
- * @author: fengyu.zhang
+ * @author fengyu.zhang
  */
 @SpringBootApplication
 @FlowerComponentScan("com.ly.train.flower.sample.aggregate")

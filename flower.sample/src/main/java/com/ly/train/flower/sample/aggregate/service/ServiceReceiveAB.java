@@ -24,7 +24,7 @@ import com.ly.train.flower.core.service.web.Flush;
 import java.util.List;
 
 /**
- * @author: fengyu.zhang
+ * @author fengyu.zhang
  */
 @FlowerService(type = FlowerType.AGGREGATE)
 public class ServiceReceiveAB implements Service<Object, Void>, Flush, Complete {

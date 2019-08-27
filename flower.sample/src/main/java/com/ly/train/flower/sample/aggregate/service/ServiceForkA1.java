@@ -22,7 +22,7 @@ import com.ly.train.flower.sample.aggregate.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * @author: fengyu.zhang
+ * @author fengyu.zhang
  */
 @FlowerService
 public class ServiceForkA1 implements Service<Integer, Integer> {

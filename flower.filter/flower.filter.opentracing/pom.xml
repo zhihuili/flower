@@ -25,14 +25,24 @@
     </parent>
     <artifactId>flower.filter.opentracing</artifactId>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.opentracing.brave</groupId>
+                <artifactId>brave-opentracing</artifactId>
+                <version>0.34.2</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>com.ly.train</groupId>
-            <artifactId>flower.filter.api</artifactId>
+            <artifactId>flower.core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
-            <artifactId>flower.core</artifactId>
+            <artifactId>flower.filter.api</artifactId>
         </dependency>
         <dependency>
             <groupId>io.opentracing.brave</groupId>
@@ -48,14 +58,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.opentracing.brave</groupId>
-                <artifactId>brave-opentracing</artifactId>
-                <version>0.34.2</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>

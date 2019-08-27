@@ -20,7 +20,7 @@ import com.ly.train.flower.common.core.service.Service;
 import com.ly.train.flower.common.core.service.ServiceContext;
 
 /**
- * @author: fengyu.zhang
+ * @author fengyu.zhang
  */
 @FlowerService
 public class ServiceBegin implements Service<Integer, Integer> {
