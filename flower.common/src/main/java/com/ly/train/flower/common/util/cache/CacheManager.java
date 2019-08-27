@@ -32,7 +32,7 @@ import com.ly.train.flower.common.util.concurrent.NamedThreadFactory;
 public class CacheManager {
   private static final Logger log = LoggerFactory.getLogger(CacheManager.class);
   private static final String defaultCacheManager = "DEFAULT_CACHE_MANAGER";
-  private volatile static ConcurrentMap<String, CacheManager> cacheManagerMap = new ConcurrentHashMap<>();
+  private static volatile ConcurrentMap<String, CacheManager> cacheManagerMap = new ConcurrentHashMap<>();
   private static final AtomicBoolean init = new AtomicBoolean();
   private static ScheduledExecutorService executorService = null;
 
@@ -110,8 +110,8 @@ public class CacheManager {
   /**
    * returns cache item from hashmap
    * 
-   * @param key
-   * @return Cache
+   * @param key key
+   * @return Cache {@link Cache}
    */
   @SuppressWarnings("unchecked")
   private <T> Cache<T> getCacheWithoutValidate(String key) {
@@ -121,8 +121,8 @@ public class CacheManager {
   /**
    * Looks at the hashmap if a cache item exists or not
    * 
-   * @param key
-   * @return Cache
+   * @param key key
+   * @return boolean
    */
   private boolean hasCache(String key) {
     return cacheMap.containsKey(key);
@@ -147,8 +147,8 @@ public class CacheManager {
   /**
    * Adds new item to cache hashmap
    * 
-   * @param key
-   * @return Cache
+   * @param key key
+   * @param object {@link Cache}
    */
   private <T> void putCache(String key, Cache<T> object) {
     cacheMap.put(key, object);
@@ -160,9 +160,25 @@ public class CacheManager {
   }
 
   /**
+   * 
+   * @param key key
+   * @param content content
+   * @param ttl ms 有效时间
+   * @return {@link Cache}
+   */
+  public <T> Cache<T> add(String key, T content, long ttl) {
+    Cache<T> cache = new Cache<>();
+    cache.setKey(key);
+    cache.setValue(content);
+    cache.setTimeToLive(ttl);
+    cache.setExpired(false);
+    return (Cache<T>) add(key, cache);
+  }
+
+  /**
    * Reads a cache item's content
    * 
-   * @param key
+   * @param key key
    * @return {@code Cache}
    */
   public <T> Cache<T> getCache(String key) {
@@ -178,21 +194,7 @@ public class CacheManager {
     }
   }
 
-  /**
-   * 
-   * @param key
-   * @param content
-   * @param ttl ms 有效时间
-   * @return
-   */
-  public <T> Cache<T> add(String key, T content, long ttl) {
-    Cache<T> cache = new Cache<>();
-    cache.setKey(key);
-    cache.setValue(content);
-    cache.setTimeToLive(ttl);
-    cache.setExpired(false);
-    return (Cache<T>) add(key, cache);
-  }
+
 
   public <T> void set(String key, T content, long ttl) {
     Cache<T> cache = new Cache<>();

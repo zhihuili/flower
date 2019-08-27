@@ -29,16 +29,16 @@ public class ConditionService implements Service<Condition, Condition> {
 
   @Override
   public Condition process(Condition message, ServiceContext context) {
-    Object o = message.getCondition();
-    if (o instanceof Boolean) {
-      if ((Boolean) o == true) {
+    Object con = message.getCondition();
+    if (con instanceof Boolean) {
+      if ((Boolean) con == true) {
         message.setCondition(condition[0]);
       } else {
         message.setCondition(condition[1]);
       }
     }
-    if (o instanceof Integer && (Integer) o < condition.length) {
-      message.setCondition(condition[(Integer) o]);
+    if (con instanceof Integer && (Integer) con < condition.length) {
+      message.setCondition(condition[(Integer) con]);
     }
     return message;
   }

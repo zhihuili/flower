@@ -57,17 +57,18 @@ public abstract class AbstractRegistry implements Registry {
       public void run() {
         try {
           doRegisterServiceInfos();
-          List<ServiceInfo> t = doGetProvider(null);
-          if (t != null && !t.isEmpty()) {
-            for (ServiceInfo info : t) {
+          List<ServiceInfo> tt = doGetProvider(null);
+          if (tt != null && !tt.isEmpty()) {
+            for (ServiceInfo info : tt) {
               serviceInfoCache.put(info.getServiceMeta().getServiceClassName(), info);
             }
           }
           List<ServiceConfig> t2 = doGetServiceConfig(null);
           if (t2 != null && !t2.isEmpty()) {
             for (ServiceConfig info : t2) {
-              if (StringUtil.isNotBlank(info.getFlowName()))
+              if (StringUtil.isNotBlank(info.getFlowName())) {
                 serviceConfigCache.put(info.getFlowName(), info);
+              }
             }
           }
         } catch (Exception e) {
@@ -118,8 +119,9 @@ public abstract class AbstractRegistry implements Registry {
     List<ServiceConfig> ret = doGetServiceConfig(serviceConfig);
     if (ret != null) {
       for (ServiceConfig i : ret) {
-        if (StringUtil.isNotBlank(i.getFlowName()))
+        if (StringUtil.isNotBlank(i.getFlowName())) {
           serviceConfigCache.put(i.getFlowName(), i);
+        }
       }
     }
     return new ArrayList<ServiceConfig>(serviceConfigCache.values());

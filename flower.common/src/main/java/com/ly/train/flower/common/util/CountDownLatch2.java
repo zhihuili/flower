@@ -32,8 +32,9 @@ public class CountDownLatch2 {
    * @throws IllegalArgumentException if {@code count} is negative
    */
   public CountDownLatch2(int count) {
-    if (count < 0)
+    if (count < 0) {
       throw new IllegalArgumentException("count < 0");
+    }
     this.sync = new Sync(count);
   }
 
@@ -189,12 +190,14 @@ public class CountDownLatch2 {
     protected boolean tryReleaseShared(int releases) {
       // Decrement count; signal when transition to zero
       for (;;) {
-        int c = getState();
-        if (c == 0)
+        int state = getState();
+        if (state == 0) {
           return false;
-        int nextc = c - 1;
-        if (compareAndSetState(c, nextc))
+        }
+        int nextc = state - 1;
+        if (compareAndSetState(state, nextc)) {
           return nextc == 0;
+        }
       }
     }
 

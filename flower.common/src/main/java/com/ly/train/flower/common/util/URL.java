@@ -41,9 +41,9 @@ public class URL implements Serializable {
   public static URL valueOf(String address) {
     // flower://127.0.0.1:8096?application=LocalFlower
     if (StringUtil.isNotBlank(address)) {
-      String[] t = address.replaceAll("/", "").split(":");
-      if (t.length == 3) {
-        return new URL(t[0], t[1], Integer.parseInt(t[2]));
+      String[] tt = address.replaceAll("/", "").split(":");
+      if (tt.length == 3) {
+        return new URL(tt[0], tt[1], Integer.parseInt(tt[2]));
       }
     }
     return null;
@@ -113,25 +113,33 @@ public class URL implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     URL other = (URL) obj;
     if (host == null) {
-      if (other.host != null)
+      if (other.host != null) {
         return false;
-    } else if (!host.equals(other.host))
+      }
+    } else if (!host.equals(other.host)) {
       return false;
-    if (port != other.port)
+    }
+    if (port != other.port) {
       return false;
+    }
     if (protocol == null) {
-      if (other.protocol != null)
+      if (other.protocol != null) {
         return false;
-    } else if (!protocol.equals(other.protocol))
+      }
+    } else if (!protocol.equals(other.protocol)) {
       return false;
+    }
     return true;
   }
 

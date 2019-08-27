@@ -68,7 +68,13 @@ public class Assert {
 
   public static void notNull(Object object, String message) {
     if (object == null) {
-      throw new IllegalArgumentException(message +" can not be null.");
+      throw new IllegalArgumentException(message + " can not be null.");
+    }
+  }
+
+  public static void notNull(Object object, Supplier<String> messageSupplier) {
+    if (object == null) {
+      throw new IllegalArgumentException(nullSafeGet(messageSupplier));
     }
   }
 
@@ -78,11 +84,7 @@ public class Assert {
     }
   }
 
-  public static void notNull(Object object, Supplier<String> messageSupplier) {
-    if (object == null) {
-      throw new IllegalArgumentException(nullSafeGet(messageSupplier));
-    }
-  }
+
 
   public static void hasLength(String text, String message) {
     if (!StringUtil.hasLength(text)) {
@@ -134,6 +136,30 @@ public class Assert {
     }
   }
 
+  public static void notEmpty(Collection<?> collection, String message) {
+    if (CollectionUtil.isEmpty(collection)) {
+      throw new IllegalArgumentException(message);
+    }
+  }
+
+  public static void notEmpty(Collection<?> collection, Supplier<String> messageSupplier) {
+    if (CollectionUtil.isEmpty(collection)) {
+      throw new IllegalArgumentException(nullSafeGet(messageSupplier));
+    }
+  }
+
+  public static void notEmpty(Map<?, ?> map, String message) {
+    if (CollectionUtil.isEmpty(map)) {
+      throw new IllegalArgumentException(message);
+    }
+  }
+
+  public static void notEmpty(Map<?, ?> map, Supplier<String> messageSupplier) {
+    if (CollectionUtil.isEmpty(map)) {
+      throw new IllegalArgumentException(nullSafeGet(messageSupplier));
+    }
+  }
+
   public static void noNullElements(Object[] array, String message) {
     if (array != null) {
       for (Object element : array) {
@@ -155,30 +181,6 @@ public class Assert {
   }
 
 
-  public static void notEmpty(Collection<?> collection, String message) {
-    if (CollectionUtil.isEmpty(collection)) {
-      throw new IllegalArgumentException(message);
-    }
-  }
-
-  public static void notEmpty(Collection<?> collection, Supplier<String> messageSupplier) {
-    if (CollectionUtil.isEmpty(collection)) {
-      throw new IllegalArgumentException(nullSafeGet(messageSupplier));
-    }
-  }
-
-
-  public static void notEmpty(Map<?, ?> map, String message) {
-    if (CollectionUtil.isEmpty(map)) {
-      throw new IllegalArgumentException(message);
-    }
-  }
-
-  public static void notEmpty(Map<?, ?> map, Supplier<String> messageSupplier) {
-    if (CollectionUtil.isEmpty(map)) {
-      throw new IllegalArgumentException(nullSafeGet(messageSupplier));
-    }
-  }
 
   public static void isInstanceOf(Class<?> type, Object obj, String message) {
     notNull(type, "Type to check against must not be null");

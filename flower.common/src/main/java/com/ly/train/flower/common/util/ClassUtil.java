@@ -26,11 +26,7 @@ import com.ly.train.flower.common.logging.LoggerFactory;
  */
 public class ClassUtil {
   private static final Logger logger = LoggerFactory.getLogger(ClassUtil.class);
-  private static final ConcurrentMap<String, ClassWrapper> cache = new ConcurrentHashMap<String, ClassWrapper>();
-
-  public static Class<?> forName(String className) {
-    return forName(className, ClassUtil.class.getClassLoader(), true);
-  }
+  private static final ConcurrentMap<String, ClassWrapper> cache = new ConcurrentHashMap<>();
 
   public static Class<?> forNameNoException(String className) {
     return forName(className, ClassUtil.class.getClassLoader(), false);
@@ -38,6 +34,10 @@ public class ClassUtil {
 
   public static boolean exists(String className) {
     return forNameNoException(className) != null;
+  }
+
+  public static Class<?> forName(String className) {
+    return forName(className, ClassUtil.class.getClassLoader(), true);
   }
 
   public static Class<?> forName(String className, ClassLoader loader, boolean throwException) {

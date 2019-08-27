@@ -31,8 +31,8 @@ public class TypeParameterUtil {
     if (types != null) {
       for (Type type : types) {
         if (type instanceof ParameterizedType) {
-          Class<?> a = (Class<?>) ((ParameterizedType) type).getRawType();
-          if (Service.class.isAssignableFrom(a)) {
+          Class<?> aa = (Class<?>) ((ParameterizedType) type).getRawType();
+          if (Service.class.isAssignableFrom(aa)) {
             paramTypes = ((ParameterizedType) type).getActualTypeArguments();
             break;
           }

@@ -91,7 +91,7 @@ public class FlowRouter extends AbstractInit implements Router {
    * @param <R> 出参
    * @param message message
    * @return R
-   * @throws TimeoutException
+   * @throws TimeoutException ex
    */
   @SuppressWarnings("unchecked")
   public <P, R> R syncCallService(P message) throws TimeoutException {

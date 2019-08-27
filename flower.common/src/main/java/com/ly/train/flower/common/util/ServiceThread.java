@@ -42,9 +42,6 @@ public abstract class ServiceThread implements Runnable {
     this.thread.start();
   }
 
-  public void shutdown() {
-    this.shutdown(false);
-  }
 
   @Override
   public final void run() {
@@ -56,6 +53,10 @@ public abstract class ServiceThread implements Runnable {
   }
 
   public abstract void doService();
+
+  public void shutdown() {
+    this.shutdown(false);
+  }
 
   public void shutdown(final boolean interrupt) {
     this.stopped = true;

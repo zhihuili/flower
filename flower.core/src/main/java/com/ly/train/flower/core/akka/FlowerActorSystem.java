@@ -77,7 +77,6 @@ public class FlowerActorSystem extends AbstractLifecycle {
     StringBuffer configBuilder = new StringBuffer();
 
     final String sepator = "\r\n";
-    // @formatter:off
     if (StringUtil.isNotBlank(flowerConfig.getHost())) {
       configBuilder.append(getFormatString("akka.actor.provider = %s", "remote"));
       configBuilder.append(sepator);
@@ -88,12 +87,14 @@ public class FlowerActorSystem extends AbstractLifecycle {
       configBuilder.append(getFormatString("akka.remote.netty.tcp.port = %s", flowerConfig.getPort()));
       configBuilder.append(sepator);
     }
-    configBuilder.append(getFormatString("dispatcher.fork-join-executor.parallelism-min = %s", flowerConfig.getParallelismMin()));
+    configBuilder.append(
+        getFormatString("dispatcher.fork-join-executor.parallelism-min = %s", flowerConfig.getParallelismMin()));
     configBuilder.append(sepator);
-    configBuilder.append(getFormatString("dispatcher.fork-join-executor.parallelism-max = %s", flowerConfig.getParallelismMax()));
+    configBuilder.append(
+        getFormatString("dispatcher.fork-join-executor.parallelism-max = %s", flowerConfig.getParallelismMax()));
     configBuilder.append(sepator);
-    configBuilder.append(getFormatString("dispatcher.fork-join-executor.parallelism-factor = %s", flowerConfig.getParallelismFactor()));
-    // @formatter:on
+    configBuilder.append(
+        getFormatString("dispatcher.fork-join-executor.parallelism-factor = %s", flowerConfig.getParallelismFactor()));
     logger.info("akka config ：{}", configBuilder.toString());
     Config config = ConfigFactory.parseString(configBuilder.toString()).withFallback(ConfigFactory.load());
     ActorSystem actorSystem = ActorSystem.create(actorSystemName, config);

@@ -108,6 +108,7 @@ public abstract class ResourceUtil {
 
   /**
    * Resolve the given resource location to a {@code java.net.URL}.
+   * 
    * <p>
    * Does not check whether the URL actually exists; simply returns the URL that
    * the given location would correspond to.
@@ -346,6 +347,7 @@ public abstract class ResourceUtil {
   /**
    * Extract the URL for the outermost archive from the given jar/war URL (which
    * may point to a resource in a jar file or to a jar file itself).
+   * 
    * <p>
    * In the case of a jar file nested within a war file, this will return a URL to
    * the war file since that is the one resolvable in the file system.

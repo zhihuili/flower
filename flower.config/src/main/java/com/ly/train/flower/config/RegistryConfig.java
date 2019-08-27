@@ -72,11 +72,11 @@ public class RegistryConfig implements Serializable {
     if (StringUtil.isNotBlank(url)) {
       String[] tm = url.split("\\?");
       String temp = tm[0].replace("/", "");
-      String[] t = temp.split(":");
-      if (t.length == 3) {
-        this.protocol = t[0];
-        this.host = t[1];
-        this.port = Integer.parseInt(t[2]);
+      String[] tt = temp.split(":");
+      if (tt.length == 3) {
+        this.protocol = tt[0];
+        this.host = tt[1];
+        this.port = Integer.parseInt(tt[2]);
       }
 
       if (tm.length == 2) {

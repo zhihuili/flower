@@ -27,7 +27,10 @@ import com.ly.train.flower.common.util.ResourceUtil;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.config.FlowerConfig;
 
-/** @author leeyazhou */
+/**
+ * 
+ * @author leeyazhou
+ */
 public class FlowerConfigParser implements ConfigParser<FlowerConfig> {
   private static final Logger logger = LoggerFactory.getLogger(FlowerConfigParser.class);
   private static final String defaultConfigLocation = "flower.yml";
@@ -51,8 +54,9 @@ public class FlowerConfigParser implements ConfigParser<FlowerConfig> {
       }
       if (is == null) {
         File file = ResourceUtil.getFile(configLocation);
-        if (file.exists())
+        if (file.exists()) {
           is = new FileInputStream(file);
+        }
       }
       if (is != null) {
         config = new Yaml().loadAs(is, FlowerConfig.class);

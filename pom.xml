@@ -510,7 +510,7 @@
                         </goals>
                         <phase>validate</phase>
                         <configuration>
-                            <configLocation>/conf/flower_checkstyle.xml</configLocation>
+                            <configLocation>conf/flower-checkstyle.xml</configLocation>
                             <encoding>UTF-8</encoding>
                             <consoleOutput>true</consoleOutput>
                             <failsOnError>true</failsOnError>

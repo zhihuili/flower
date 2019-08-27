@@ -41,10 +41,10 @@ public class IOUtil {
     }
   }
 
-  public static void close(Closeable x) {
-    if (x != null) {
+  public static void close(Closeable close) {
+    if (close != null) {
       try {
-        x.close();
+        close.close();
       } catch (Exception e) {
         logger.error("", e);
       }
