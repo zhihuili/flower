@@ -69,11 +69,11 @@ public class FlowerVersion implements Comparable<FlowerVersion> {
   }
 
   public int compareTo(FlowerVersion other) {
-    int c;
-    if ((c = this.major.compareTo(other.getMajor())) != 0) {
-      return c;
-    } else if ((c = this.minor.compareTo(other.getMinor())) != 0) {
-      return c;
+    int com;
+    if ((com = this.major.compareTo(other.getMajor())) != 0) {
+      return com;
+    } else if ((com = this.minor.compareTo(other.getMinor())) != 0) {
+      return com;
     }
     return this.subminor.compareTo(other.getSubminor());
   }

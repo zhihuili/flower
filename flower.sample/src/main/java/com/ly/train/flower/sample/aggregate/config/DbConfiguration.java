@@ -27,7 +27,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import com.alibaba.druid.pool.DruidDataSource;
 
 /**
- * @author: fengyu.zhang
+ * @author fengyu.zhang
  */
 @Configuration
 @MapperScan(basePackages = "com.ly.train.flower.sample.aggregate.dao", sqlSessionFactoryRef = "dbSessionFactory")

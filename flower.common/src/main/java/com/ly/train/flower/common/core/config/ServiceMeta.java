@@ -105,7 +105,7 @@ public class ServiceMeta implements Serializable {
   /**
    * 指服务的类型是否是聚合类型
    * 
-   * @return
+   * @return boolean
    * @see FlowerType#AGGREGATE
    * @see FlowerType#COMMON return true/false
    */

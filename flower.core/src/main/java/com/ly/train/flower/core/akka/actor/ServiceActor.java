@@ -73,7 +73,7 @@ public class ServiceActor extends AbstractFlowerActor {
   private int index;
   private final FlowerFactory flowerFactory;
 
-  static public Props props(String serviceName, FlowerFactory flowerFactory, int index) {
+  public static Props props(String serviceName, FlowerFactory flowerFactory, int index) {
     return Props.create(ServiceActor.class, serviceName, flowerFactory, index);
   }
 
@@ -110,12 +110,12 @@ public class ServiceActor extends AbstractFlowerActor {
     }
     if (result != null && result instanceof CompletableFuture) {
       final Object tempParam = param;
-      ((CompletableFuture<Object>) result).whenComplete((r, e) -> {
-        if (e != null) {
-          handleException(serviceContext, e, tempParam, serializer);
+      ((CompletableFuture<Object>) result).whenComplete((re, ex) -> {
+        if (ex != null) {
+          handleException(serviceContext, ex, tempParam, serializer);
           return;
         }
-        handleNextServices(serviceContext, r, flowMessage.getTransactionId(), serializer);
+        handleNextServices(serviceContext, re, flowMessage.getTransactionId(), serializer);
       });
     } else {
       handleNextServices(serviceContext, result, flowMessage.getTransactionId(), serializer);
@@ -205,7 +205,8 @@ public class ServiceActor extends AbstractFlowerActor {
       }
     }
 
-    if (result == null) {// for joint service
+    if (result == null) {
+      // for joint service
       return;
     }
     Set<RefType> refTypes = getNextServiceActors(serviceContext);
@@ -288,11 +289,11 @@ public class ServiceActor extends AbstractFlowerActor {
   private Object getAndDecodeParam(ServiceContext serviceContext) {
     FlowMessage flowMessage = serviceContext.getFlowMessage();
     Serializer serializer = ExtensionLoader.load(Serializer.class).load(serviceContext.getCodec());
-    String pType = getParamType(serviceContext);
+    String paramType = getParamType(serviceContext);
     if (flowMessage.getMessage() != null && ClassUtil.exists(flowMessage.getMessageType())) {
-      pType = flowMessage.getMessageType();
+      paramType = flowMessage.getMessageType();
     }
-    return serializer.decode(flowMessage.getMessage(), pType);
+    return serializer.decode(flowMessage.getMessage(), paramType);
   }
 
   private String getParamType(ServiceContext serviceContext) {

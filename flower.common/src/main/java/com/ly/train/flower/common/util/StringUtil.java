@@ -121,15 +121,15 @@ public final class StringUtil {
   /**
    * Is String s in String ss?
    * 
-   * @param s "service1"
-   * @param ss “service1,service2”
-   * @return
+   * @param str "service1"
+   * @param strs “service1,service2”
+   * @return boolean
    */
-  public static boolean stringInStrings(String s, String ss) {
-    String[] sa = ss.split(",");
+  public static boolean stringInStrings(String str, String strs) {
+    String[] sa = strs.split(",");
     if (sa != null && sa.length > 0) {
       for (String se : sa) {
-        if (se.equals(s)) {
+        if (se.equals(str)) {
           return true;
         }
       }
@@ -137,11 +137,11 @@ public final class StringUtil {
     return false;
   }
 
-  public static boolean stringNotInStrings(String s, String ss) {
-    String[] sa = ss.split(",");
+  public static boolean stringNotInStrings(String str, String strs) {
+    String[] sa = strs.split(",");
     if (sa != null && sa.length > 0) {
       for (String se : sa) {
-        if (se.equals(s)) {
+        if (se.equals(str)) {
           return false;
         }
       }
@@ -193,9 +193,9 @@ public final class StringUtil {
 
     StringBuilder sb = new StringBuilder(inString.length());
     for (int i = 0; i < inString.length(); i++) {
-      char c = inString.charAt(i);
-      if (charsToDelete.indexOf(c) == -1) {
-        sb.append(c);
+      char ch = inString.charAt(i);
+      if (charsToDelete.indexOf(ch) == -1) {
+        sb.append(ch);
       }
     }
     return sb.toString();

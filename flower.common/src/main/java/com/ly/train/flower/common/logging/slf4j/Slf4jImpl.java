@@ -43,6 +43,11 @@ public class Slf4jImpl implements Logger {
   }
 
   @Override
+  public boolean isTraceEnabled(Marker marker) {
+    return logger.isTraceEnabled(marker);
+  }
+
+  @Override
   public void trace(String msg) {
     logger.trace(msg);
   }
@@ -67,10 +72,7 @@ public class Slf4jImpl implements Logger {
     logger.trace(msg, throwable);
   }
 
-  @Override
-  public boolean isTraceEnabled(Marker marker) {
-    return logger.isTraceEnabled(marker);
-  }
+
 
   @Override
   public void trace(Marker marker, String msg) {
@@ -104,6 +106,11 @@ public class Slf4jImpl implements Logger {
   }
 
   @Override
+  public boolean isDebugEnabled(Marker marker) {
+    return logger.isDebugEnabled(marker);
+  }
+
+  @Override
   public void debug(String msg) {
     logger.debug(msg);
   }
@@ -128,10 +135,7 @@ public class Slf4jImpl implements Logger {
     logger.debug(msg, throwable);
   }
 
-  @Override
-  public boolean isDebugEnabled(Marker marker) {
-    return logger.isDebugEnabled(marker);
-  }
+
 
   @Override
   public void debug(Marker marker, String msg) {
@@ -164,6 +168,11 @@ public class Slf4jImpl implements Logger {
   }
 
   @Override
+  public boolean isInfoEnabled(Marker marker) {
+    return logger.isInfoEnabled(marker);
+  }
+
+  @Override
   public void info(String msg) {
     logger.info(msg);
   }
@@ -188,10 +197,7 @@ public class Slf4jImpl implements Logger {
     logger.info(msg, throwable);
   }
 
-  @Override
-  public boolean isInfoEnabled(Marker marker) {
-    return logger.isInfoEnabled(marker);
-  }
+
 
   @Override
   public void info(Marker marker, String msg) {
@@ -224,6 +230,12 @@ public class Slf4jImpl implements Logger {
   }
 
   @Override
+  public boolean isWarnEnabled(Marker marker) {
+    return logger.isWarnEnabled(marker);
+  }
+
+
+  @Override
   public void warn(String msg) {
     logger.warn(msg);
   }
@@ -248,10 +260,6 @@ public class Slf4jImpl implements Logger {
     logger.warn(msg, throwable);
   }
 
-  @Override
-  public boolean isWarnEnabled(Marker marker) {
-    return logger.isWarnEnabled(marker);
-  }
 
   @Override
   public void warn(Marker marker, String msg) {
@@ -284,6 +292,11 @@ public class Slf4jImpl implements Logger {
   }
 
   @Override
+  public boolean isErrorEnabled(Marker marker) {
+    return logger.isErrorEnabled(marker);
+  }
+
+  @Override
   public void error(String msg) {
     logger.error(msg);
   }
@@ -308,10 +321,7 @@ public class Slf4jImpl implements Logger {
     logger.error(msg, throwable);
   }
 
-  @Override
-  public boolean isErrorEnabled(Marker marker) {
-    return logger.isErrorEnabled(marker);
-  }
+
 
   @Override
   public void error(Marker marker, String msg) {

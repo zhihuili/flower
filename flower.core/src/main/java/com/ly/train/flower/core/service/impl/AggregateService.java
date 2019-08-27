@@ -97,8 +97,8 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
   /**
    * subclass should override the method.
    * 
-   * @param messages Set<Message>
-   * @param context
+   * @param messages Set&lt;Message&gt;
+   * @param context {@link ServiceContext}
    * @return Object
    */
   public List<Object> buildMessage(List<FlowMessage> messages, ServiceContext context) {

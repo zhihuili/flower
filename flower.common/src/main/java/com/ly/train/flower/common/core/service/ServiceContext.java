@@ -51,7 +51,7 @@ public class ServiceContext implements Message, Serializable {
     ServiceContext serviceContext = new ServiceContext();
     serviceContext.id = this.id;
     serviceContext.setCodec(this.codec);
-    serviceContext.attachments = attachments;
+    serviceContext.attachments = new ConcurrentHashMap<>(attachments);
     serviceContext.setFlowName(this.flowName);
     serviceContext.setCurrentServiceName(currentServiceName);
     serviceContext.setSync(this.sync);
@@ -116,7 +116,8 @@ public class ServiceContext implements Message, Serializable {
   /**
    * 同步调用
    * 
-   * @param sync
+   * @param sync sync
+   * @return {@link ServiceContext}
    */
   public ServiceContext setSync(boolean sync) {
     this.sync = sync;

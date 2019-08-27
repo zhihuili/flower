@@ -17,7 +17,7 @@
 
 -->
 <!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.3//EN" "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
-<module name="cbs-checker">
+<module name="flower-checker">
     <property name="severity" value="warning" />
     <property name="charset" value="UTF-8" />
     <!-- <property name="fileExtensions" value="java, properties, xml" /> -->
@@ -160,7 +160,7 @@
             <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit" />
         </module>
         <module name="JavadocParagraph">
-            <property name="allowNewlineParagraph" value="true" />
+            <property name="allowNewlineParagraph" value="false" />
         </module>
         <module name="AtclauseOrder">
             <property name="target" value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF" />
@@ -174,7 +174,7 @@
             <property name="allowThrowsTagsForSubclasses" value="true" />
             <property name="allowMissingParamTags" value="true" />
             <property name="allowMissingThrowsTags" value="true" />
-            <property name="allowMissingReturnTag" value="true" />
+            <property name="allowMissingReturnTag" value="false" />
             <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit" />
         </module>
         <module name="MethodName">
@@ -184,7 +184,7 @@
         <module name="SingleLineJavadoc">
         </module>
         <module name="LineLength">
-            <property name="max" value="200" />
+            <property name="max" value="120" />
         </module>
     </module>
     <module name="FileTabCharacter">

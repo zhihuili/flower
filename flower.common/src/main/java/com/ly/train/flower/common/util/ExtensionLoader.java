@@ -99,15 +99,6 @@ public class ExtensionLoader<T> {
   }
 
   /**
-   * 所有已经加载的扩展
-   * 
-   * @return t
-   */
-  public List<T> loads() {
-    return new ArrayList<T>(extensionInstanceCache.values());
-  }
-
-  /**
    * 加载指定实现
    * 
    * @param name 名称
@@ -133,6 +124,55 @@ public class ExtensionLoader<T> {
     }
     return ret;
   }
+
+  public void load(java.net.URL url) throws IOException {
+    InputStream is = null;
+    BufferedReader reader = null;
+    try {
+      is = url.openStream();
+      reader = new BufferedReader(new InputStreamReader(is, Constant.ENCODING_UTF_8));
+      for (;;) {
+        String line = reader.readLine();
+        if (line == null) {
+          break;
+        }
+
+        int ci = line.indexOf('#');
+        if (ci >= 0) {
+          line = line.substring(0, ci);
+        }
+        line = line.trim();
+        if (line.length() == 0) {
+          continue;
+        }
+
+        String[] kv = line.split("=");
+        if (kv.length <= 1) {
+          logger.warn("Config of ServiceLoader error : + " + line);
+          continue;
+        }
+        @SuppressWarnings("unchecked")
+        Class<T> cl = (Class<T>) Class.forName(kv[1].trim());
+        extensionClassCache.put(kv[0].trim(), cl);
+        // logger.info("load class : " + kv[0] + ", vlaue : " + cl);
+      }
+    } catch (ClassNotFoundException e) {
+      logger.error("", e);
+    } finally {
+      IOUtil.close(reader);
+      IOUtil.close(is);
+    }
+  }
+
+  /**
+   * 所有已经加载的扩展
+   * 
+   * @return t
+   */
+  public List<T> loads() {
+    return new ArrayList<T>(extensionInstanceCache.values());
+  }
+
 
   /**
    * 获取扩展实现类
@@ -180,44 +220,7 @@ public class ExtensionLoader<T> {
 
   }
 
-  public void load(java.net.URL url) throws IOException {
-    InputStream is = null;
-    BufferedReader reader = null;
-    try {
-      is = url.openStream();
-      reader = new BufferedReader(new InputStreamReader(is, Constant.ENCODING_UTF_8));
-      for (;;) {
-        String line = reader.readLine();
-        if (line == null) {
-          break;
-        }
 
-        int ci = line.indexOf('#');
-        if (ci >= 0) {
-          line = line.substring(0, ci);
-        }
-        line = line.trim();
-        if (line.length() == 0) {
-          continue;
-        }
-
-        String[] kv = line.split("=");
-        if (kv.length <= 1) {
-          logger.warn("Config of ServiceLoader error : + " + line);
-          continue;
-        }
-        @SuppressWarnings("unchecked")
-        Class<T> cl = (Class<T>) Class.forName(kv[1].trim());
-        extensionClassCache.put(kv[0].trim(), cl);
-        // logger.info("load class : " + kv[0] + ", vlaue : " + cl);
-      }
-    } catch (ClassNotFoundException e) {
-      logger.error("", e);
-    } finally {
-      IOUtil.close(reader);
-      IOUtil.close(is);
-    }
-  }
 
   @Override
   public String toString() {

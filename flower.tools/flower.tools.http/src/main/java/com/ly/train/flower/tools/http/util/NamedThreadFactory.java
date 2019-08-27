@@ -34,8 +34,8 @@ public class NamedThreadFactory implements ThreadFactory {
     namePrefix = threadPrefixName + "-" + poolNumber.getAndIncrement() + "-";
   }
 
-  public Thread newThread(Runnable r) {
-    Thread thread = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+  public Thread newThread(Runnable run) {
+    Thread thread = new Thread(group, run, namePrefix + threadNumber.getAndIncrement(), 0);
     if (thread.isDaemon()) {
       thread.setDaemon(false);
     }

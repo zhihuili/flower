@@ -22,8 +22,8 @@ import java.util.Map.Entry;
  * 
  * @author leeyazhou
  * 
- * @param <K>
- * @param <V>
+ * @param <K> key
+ * @param <V> value
  */
 public class LRUCache<K, V> extends LinkedHashMap<K, V> {
   private static final long serialVersionUID = 1L;

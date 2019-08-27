@@ -72,7 +72,7 @@
         <commons-io.version>2.6</commons-io.version>
         <druid.version>1.0.12</druid.version>
         <fastjson.version>1.2.58</fastjson.version>
-        <findbugs-maven-plugin.version>3.0.4</findbugs-maven-plugin.version>
+        <findbugs-maven-plugin.version>3.0.5</findbugs-maven-plugin.version>
         <gatling-charts-highcharts.version>3.0.3</gatling-charts-highcharts.version>
 
         <github.org>zhihuili</github.org>
@@ -88,7 +88,8 @@
         <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
         <maven-dependency-plugin.version>2.10</maven-dependency-plugin.version>
         <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
-        <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
+        <maven-pmd-plugin.version>3.12.0</maven-pmd-plugin.version>
         <maven-shade-plugin.version>3.2.0</maven-shade-plugin.version>
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
         <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
@@ -189,16 +190,6 @@
                 <groupId>io.gatling.highcharts</groupId>
                 <artifactId>gatling-charts-highcharts</artifactId>
                 <version>${gatling-charts-highcharts.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.opentracing</groupId>
-                <artifactId>opentracing-api</artifactId>
-                <version>0.31.0</version>
-            </dependency>
-            <dependency>
-                <groupId>io.opentracing.brave</groupId>
-                <artifactId>brave-opentracing</artifactId>
-                <version>0.33.9</version>
             </dependency>
             <dependency>
                 <groupId>io.protostuff</groupId>
@@ -381,18 +372,29 @@
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
         </dependency>
     </dependencies>
 
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jxr-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.7.1</version>
+                </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
@@ -458,9 +460,23 @@
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>${maven-enforcer-plugin.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>${maven-pmd-plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <failOnViolation>false</failOnViolation>
+                    <goal>check</goal>
+                    <printFailingErrors>true</printFailingErrors>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -492,17 +508,17 @@
                 <configuration>
                     <effort>Low</effort>
                     <threshold>Medium</threshold>
-                    <failOnError>true</failOnError>
+                    <failOnError>false</failOnError>
                     <includeTests>true</includeTests>
                 </configuration>
                 <executions>
-                    <!-- <execution>
-						<id>run-findbugs</id>
-						<phase>package</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution> -->
+                    <execution>
+                        <id>run-findbugs</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -512,6 +528,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>conf/flower-checkstyle.xml</configLocation>
+                    <encoding>UTF-8</encoding>
+                </configuration>
                 <executions>
                     <execution>
                         <id>validate</id>
@@ -520,8 +540,6 @@
                         </goals>
                         <phase>validate</phase>
                         <configuration>
-                            <configLocation>/conf/flower_checkstyle.xml</configLocation>
-                            <encoding>UTF-8</encoding>
                             <consoleOutput>true</consoleOutput>
                             <failsOnError>true</failsOnError>
                             <violationSeverity>error</violationSeverity>
@@ -537,14 +555,13 @@
                         <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
+                            <goal>aggregate</goal>
                         </goals>
                         <phase>deploy</phase>
                         <configuration>
-                            <aggregate>true</aggregate>
-                            <charset>${project.build.sourceEncoding}</charset>
-                            <encoding>${project.build.sourceEncoding}</encoding>
-                            <docencoding>${project.build.sourceEncoding}</docencoding>
-                            <additionalparam>-Xdoclint:none</additionalparam>
+                            <doclint>none</doclint>
+                            <failOnError>false</failOnError>
+                            <failOnWarnings>false</failOnWarnings>
                         </configuration>
                     </execution>
                 </executions>
@@ -563,6 +580,7 @@
                         <exclude>**/README</exclude>
                         <exclude>**/*.md</exclude>
                         <exclude>**/*.txt</exclude>
+                        <exclude>**/*.log</exclude>
                         <exclude>src/test/resources/**</exclude>
                         <exclude>src/main/resources/**</exclude>
                     </excludes>

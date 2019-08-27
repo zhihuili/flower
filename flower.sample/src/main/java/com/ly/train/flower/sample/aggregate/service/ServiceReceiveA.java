@@ -25,7 +25,7 @@ import java.util.List;
  * 本Service为分叉集合之后的节点，用于处理服务分叉聚合之后的消息，需注解 @FlowerService(type =
  * FlowerType.AGGREGATE)
  * 
- * @author: fengyu.zhang
+ * @author fengyu.zhang
  */
 @FlowerService(type = FlowerType.AGGREGATE)
 public class ServiceReceiveA implements Service<List<Object>, Integer> {

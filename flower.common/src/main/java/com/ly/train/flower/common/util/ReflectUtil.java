@@ -72,58 +72,58 @@ public class ReflectUtil {
    */
   public static final char JVM_SHORT = 'S';
 
-  public static String getName(Class<?> c) {
-    if (c.isArray()) {
+  public static String getName(Class<?> clazz) {
+    if (clazz.isArray()) {
       StringBuilder sb = new StringBuilder();
       do {
         sb.append("[]");
-        c = c.getComponentType();
-      } while (c.isArray());
+        clazz = clazz.getComponentType();
+      } while (clazz.isArray());
 
-      return c.getName() + sb.toString();
+      return clazz.getName() + sb.toString();
     }
-    return c.getName();
+    return clazz.getName();
   }
 
   /**
    * get class desc. boolean[].class => "[Z" Object.class => "Ljava/lang/Object;"
    * 
-   * @param c class.
+   * @param clazz class.
    * @return desc.
-   * @throws NotFoundException
+   * @throws NotFoundException ex
    */
-  public static String getDesc(Class<?> c) {
+  public static String getDesc(Class<?> clazz) {
     StringBuilder ret = new StringBuilder();
 
-    while (c.isArray()) {
+    while (clazz.isArray()) {
       ret.append('[');
-      c = c.getComponentType();
+      clazz = clazz.getComponentType();
     }
 
-    if (c.isPrimitive()) {
-      String t = c.getName();
-      if ("void".equals(t)) {
+    if (clazz.isPrimitive()) {
+      String clazzName = clazz.getName();
+      if ("void".equals(clazzName)) {
         ret.append(JVM_VOID);
-      } else if ("boolean".equals(t)) {
+      } else if ("boolean".equals(clazzName)) {
         ret.append(JVM_BOOLEAN);
-      } else if ("byte".equals(t)) {
+      } else if ("byte".equals(clazzName)) {
         ret.append(JVM_BYTE);
-      } else if ("char".equals(t)) {
+      } else if ("char".equals(clazzName)) {
         ret.append(JVM_CHAR);
-      } else if ("double".equals(t)) {
+      } else if ("double".equals(clazzName)) {
         ret.append(JVM_DOUBLE);
-      } else if ("float".equals(t)) {
+      } else if ("float".equals(clazzName)) {
         ret.append(JVM_FLOAT);
-      } else if ("int".equals(t)) {
+      } else if ("int".equals(clazzName)) {
         ret.append(JVM_INT);
-      } else if ("long".equals(t)) {
+      } else if ("long".equals(clazzName)) {
         ret.append(JVM_LONG);
-      } else if ("short".equals(t)) {
+      } else if ("short".equals(clazzName)) {
         ret.append(JVM_SHORT);
       }
     } else {
       ret.append('L');
-      ret.append(c.getName().replace('.', '/'));
+      ret.append(clazz.getName().replace('.', '/'));
       ret.append(';');
     }
     return ret.toString();
@@ -132,12 +132,12 @@ public class ReflectUtil {
   /**
    * get constructor desc. "()V", "(Ljava/lang/String;I)V"
    * 
-   * @param c constructor.
+   * @param structor constructor.
    * @return desc
    */
-  public static String getDesc(final Constructor<?> c) {
+  public static String getDesc(final Constructor<?> structor) {
     StringBuilder ret = new StringBuilder("(");
-    Class<?>[] parameterTypes = c.getParameterTypes();
+    Class<?>[] parameterTypes = structor.getParameterTypes();
     for (int i = 0; i < parameterTypes.length; i++) {
       ret.append(getDesc(parameterTypes[i]));
     }
@@ -163,17 +163,17 @@ public class ReflectUtil {
   /**
    * get method desc. "(I)I", "()V", "(Ljava/lang/String;Z)V"
    * 
-   * @param m method.
+   * @param method method.
    * @return desc.
    */
-  public static String getDescWithoutMethodName(Method m) {
+  public static String getDescWithoutMethodName(Method method) {
     StringBuilder ret = new StringBuilder();
     ret.append('(');
-    Class<?>[] parameterTypes = m.getParameterTypes();
+    Class<?>[] parameterTypes = method.getParameterTypes();
     for (int i = 0; i < parameterTypes.length; i++) {
       ret.append(getDesc(parameterTypes[i]));
     }
-    ret.append(')').append(getDesc(m.getReturnType()));
+    ret.append(')').append(getDesc(method.getReturnType()));
     return ret.toString();
   }
 }

@@ -18,6 +18,7 @@
  */
 package com.ly.train.flower.filter.impl;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,6 +35,8 @@ import com.ly.train.flower.filter.FilterChain;
 public class CounterFilter extends AbstractFilter {
   private static final Logger logger = LoggerFactory.getLogger(CounterFilter.class);
   private final ConcurrentMap<String, AtomicInteger> counters = new ConcurrentHashMap<>();
+  private long lastExecuteTime = System.currentTimeMillis();
+  private int defaultIntervalTime = 60 * 1000;
 
   @Override
   public Object doFilter(Object message, ServiceContext context, FilterChain chain) {
@@ -41,11 +44,23 @@ public class CounterFilter extends AbstractFilter {
     AtomicInteger counter = counters.computeIfAbsent(cacheKey, (key) -> {
       return new AtomicInteger();
     });
-    int cou = counter.incrementAndGet();
-    if (cou % 100 == 0) {
-      logger.info("count : {}, flow : {}, service : {}", cou, context.getFlowName(), context.getCurrentServiceName());
+    counter.incrementAndGet();
+    long now = System.currentTimeMillis();
+    if (now - lastExecuteTime >= defaultIntervalTime) {
+      lastExecuteTime = now;
+      printCounters();
     }
     return chain.doFilter(message, context);
+  }
+
+  private void printCounters() {
+    logger.info("start service counter statis.");
+    logger.info("*****************************************************************************");
+    for (Map.Entry<String, AtomicInteger> entry : counters.entrySet()) {
+      logger.info("flow service : {}, count : {}", entry.getKey(), entry.getValue());
+    }
+    logger.info("*****************************************************************************");
+    logger.info("end service counter statis.");
   }
 
 }

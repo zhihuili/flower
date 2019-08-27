@@ -70,9 +70,9 @@ public final class ClassGenerator {
   private static final Logger logger = LoggerFactory.getLogger(ClassGenerator.class);
   private static final AtomicLong CLASS_NAME_COUNTER = new AtomicLong(0);
   private static final String SIMPLE_NAME_TAG = "<init>";
-  private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<ClassLoader, ClassPool>(); // ClassLoader
-                                                                                                               // -
-                                                                                                               // ClassPool
+  private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<>(); // ClassLoader
+                                                                                         // -
+                                                                                         // ClassPool
   private ClassPool classPool;
   private CtClass ctClass;
   private String className;
@@ -83,8 +83,8 @@ public final class ClassGenerator {
   private List<String> methods;
   private Map<String, Method> copyMethods; // <method Desk,method instance>
   private Map<String, Constructor<?>> copyConstructors; // <constructor
-                                                         // desc,constructor
-                                                         // instance>
+                                                        // desc,constructor
+                                                        // instance>
   private boolean defaultConstructor = false;
 
   // <method desc, <annotation,annotationProps>>
@@ -122,6 +122,10 @@ public final class ClassGenerator {
       POOL_MAP.put(loader, pool);
     }
     return pool;
+  }
+
+  public ClassPool getClassPool() {
+    return classPool;
   }
 
   private static String modifier(int mod) {
@@ -238,17 +242,17 @@ public final class ClassGenerator {
     return addMethod(sb.toString());
   }
 
-  public ClassGenerator addMethod(Method m) {
-    addMethod(m.getName(), m, null);
+  public ClassGenerator addMethod(Method method) {
+    addMethod(method.getName(), method, null);
     return this;
   }
 
-  public ClassGenerator addMethod(Method m, Map<String, Map<String, Object>> annotations) {
-    addMethod(m.getName(), m, annotations);
+  public ClassGenerator addMethod(Method method, Map<String, Map<String, Object>> annotations) {
+    addMethod(method.getName(), method, annotations);
     return this;
   }
 
-  public ClassGenerator addMethod(Method m, java.lang.annotation.Annotation[] annotations) {
+  public ClassGenerator addMethod(Method method, java.lang.annotation.Annotation[] annotations) {
     Map<String, Map<String, Object>> anMap = new HashMap<>();
     for (java.lang.annotation.Annotation an : annotations) {
       Map<String, Object> value = new HashMap<>();
@@ -258,8 +262,8 @@ public final class ClassGenerator {
           if ("equals".equals(mm.getName()) || "toString".equals(mm.getName()) || "hashCode".equals(mm.getName())) {
             continue;
           }
-          Object v = mm.invoke(an);
-          value.put(mm.getName(), v);
+          Object ret = mm.invoke(an);
+          value.put(mm.getName(), ret);
         }
       } catch (Exception e) {
         logger.error("", e);
@@ -267,17 +271,17 @@ public final class ClassGenerator {
       anMap.put(an.annotationType().getName(), value);
     }
 
-    addMethod(m.getName(), m, anMap);
+    addMethod(method.getName(), method, anMap);
     return this;
   }
 
-  public ClassGenerator addMethod(String name, Method m, Map<String, Map<String, Object>> annotations) {
-    String desc = name + ReflectUtil.getDescWithoutMethodName(m);
+  public ClassGenerator addMethod(String name, Method method, Map<String, Map<String, Object>> annotations) {
+    String desc = name + ReflectUtil.getDescWithoutMethodName(method);
     addMethod(':' + desc);
     if (copyMethods == null) {
       copyMethods = new ConcurrentHashMap<String, Method>(8);
     }
-    copyMethods.put(desc, m);
+    copyMethods.put(desc, method);
     if (annotations != null) {
       if (methodAnnotations == null) {
         this.methodAnnotations = new HashMap<>();
@@ -325,13 +329,13 @@ public final class ClassGenerator {
     return addConstructor(sb.toString());
   }
 
-  public ClassGenerator addConstructor(Constructor<?> c) {
-    String desc = ReflectUtil.getDesc(c);
+  public ClassGenerator addConstructor(Constructor<?> clazz) {
+    String desc = ReflectUtil.getDesc(clazz);
     addConstructor(":" + desc);
     if (copyConstructors == null) {
       copyConstructors = new ConcurrentHashMap<String, Constructor<?>>(4);
     }
-    copyConstructors.put(desc, c);
+    copyConstructors.put(desc, clazz);
     return this;
   }
 
@@ -340,9 +344,7 @@ public final class ClassGenerator {
     return this;
   }
 
-  public ClassPool getClassPool() {
-    return classPool;
-  }
+
 
   public Class<?> toClass() {
     return toClass(ReflectUtil.getClassLoader(ClassGenerator.class), getClass().getProtectionDomain());
@@ -403,9 +405,8 @@ public final class ClassGenerator {
         for (String code : methods) {
           CtMethod method = null;
           if (code.charAt(0) == ':') {
-            method =
-                CtNewMethod.copy(getCtMethod(copyMethods.get(code.substring(1))),
-                    code.substring(1, code.indexOf('(')), ctClass, null);
+            method = CtNewMethod.copy(getCtMethod(copyMethods.get(code.substring(1))),
+                code.substring(1, code.indexOf('(')), ctClass, null);
           } else {
             method = CtNewMethod.make(code, ctClass);
           }
@@ -438,8 +439,8 @@ public final class ClassGenerator {
       if (constructors != null) {
         for (String code : constructors) {
           if (code.charAt(0) == ':') {
-            ctClass.addConstructor(CtNewConstructor.copy(getCtConstructor(copyConstructors.get(code.substring(1))),
-                ctClass, null));
+            ctClass.addConstructor(
+                CtNewConstructor.copy(getCtConstructor(copyConstructors.get(code.substring(1))), ctClass, null));
           } else {
             String[] sn = ctClass.getSimpleName().split("\\$+"); // inner class
                                                                  // name include
@@ -460,41 +461,41 @@ public final class ClassGenerator {
   }
 
 
-  private MemberValue getMemberValue(Object o, ConstPool cp) {
-    if (o == null) {
+  private MemberValue getMemberValue(Object obj, ConstPool cp) {
+    if (obj == null) {
       return null;
     }
-    if (o instanceof Integer) {
-      return new IntegerMemberValue(cp, (Integer) o);
-    } else if (o instanceof Boolean) {
-      return new BooleanMemberValue((Boolean) o, cp);
-    } else if (o instanceof Double) {
-      return new DoubleMemberValue((Double) o, cp);
-    } else if (o instanceof Float) {
-      return new FloatMemberValue((Float) o, cp);
-    } else if (o instanceof Short) {
-      return new ShortMemberValue((Short) o, cp);
-    } else if (o instanceof String) {
-      return new StringMemberValue((String) o, cp);
-    } else if (o instanceof String[]) {
-      String[] oo = (String[]) o;
+    if (obj instanceof Integer) {
+      return new IntegerMemberValue(cp, (Integer) obj);
+    } else if (obj instanceof Boolean) {
+      return new BooleanMemberValue((Boolean) obj, cp);
+    } else if (obj instanceof Double) {
+      return new DoubleMemberValue((Double) obj, cp);
+    } else if (obj instanceof Float) {
+      return new FloatMemberValue((Float) obj, cp);
+    } else if (obj instanceof Short) {
+      return new ShortMemberValue((Short) obj, cp);
+    } else if (obj instanceof String) {
+      return new StringMemberValue((String) obj, cp);
+    } else if (obj instanceof String[]) {
+      String[] oo = (String[]) obj;
       MemberValue[] memberValues = new MemberValue[oo.length];
-      ArrayMemberValue v = new ArrayMemberValue(cp);
+      ArrayMemberValue value = new ArrayMemberValue(cp);
       for (int i = 0; i < oo.length; i++) {
         memberValues[i] = getMemberValue(oo[i], cp);
       }
-      v.setValue(memberValues);
-      return v;
-    } else if (o instanceof Byte) {
-      return new ByteMemberValue((Byte) o, cp);
-    } else if (o instanceof Annotation) {
-      return new AnnotationMemberValue((Annotation) o, cp);
-    } else if (o instanceof ArrayMemberValue) {
-      return new ArrayMemberValue((MemberValue) o, cp);
-    } else if (o instanceof Character) {
-      return new CharMemberValue((char) o, cp);
-    } else if (o instanceof Long) {
-      return new LongMemberValue((Long) o, cp);
+      value.setValue(memberValues);
+      return value;
+    } else if (obj instanceof Byte) {
+      return new ByteMemberValue((Byte) obj, cp);
+    } else if (obj instanceof Annotation) {
+      return new AnnotationMemberValue((Annotation) obj, cp);
+    } else if (obj instanceof ArrayMemberValue) {
+      return new ArrayMemberValue((MemberValue) obj, cp);
+    } else if (obj instanceof Character) {
+      return new CharMemberValue((char) obj, cp);
+    } else if (obj instanceof Long) {
+      return new LongMemberValue((Long) obj, cp);
     }
     return null;
   }
@@ -523,16 +524,17 @@ public final class ClassGenerator {
     }
   }
 
-  private CtClass getCtClass(Class<?> c) throws NotFoundException {
-    return classPool.get(c.getName());
+  private CtClass getCtClass(Class<?> clazz) throws NotFoundException {
+    return classPool.get(clazz.getName());
   }
 
-  private CtMethod getCtMethod(Method m) throws NotFoundException {
-    return getCtClass(m.getDeclaringClass()).getMethod(m.getName(), ReflectUtil.getDescWithoutMethodName(m));
+  private CtMethod getCtMethod(Method method) throws NotFoundException {
+    return getCtClass(method.getDeclaringClass()).getMethod(method.getName(),
+        ReflectUtil.getDescWithoutMethodName(method));
   }
 
-  private CtConstructor getCtConstructor(Constructor<?> c) throws NotFoundException {
-    return getCtClass(c.getDeclaringClass()).getConstructor(ReflectUtil.getDesc(c));
+  private CtConstructor getCtConstructor(Constructor<?> construct) throws NotFoundException {
+    return getCtClass(construct.getDeclaringClass()).getConstructor(ReflectUtil.getDesc(construct));
   }
 
   public void addAnnotation(String annotation, Map<String, Object> properties) {
