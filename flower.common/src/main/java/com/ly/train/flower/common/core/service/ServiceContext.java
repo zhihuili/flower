@@ -15,13 +15,13 @@
  */
 package com.ly.train.flower.common.core.service;
 
-import java.io.Serializable;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import com.ly.train.flower.common.core.message.FlowMessage;
 import com.ly.train.flower.common.core.message.Message;
 import com.ly.train.flower.common.core.web.Web;
 import com.ly.train.flower.common.util.IdGenerator;
+import java.io.Serializable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ServiceContext implements Message, Serializable {
 
@@ -44,14 +44,16 @@ public class ServiceContext implements Message, Serializable {
 
   /**
    * 从当前对象创建一个副本
-   * 
+   *
    * @return {@link ServiceContext}
    */
   public ServiceContext newContext() {
     ServiceContext serviceContext = new ServiceContext();
     serviceContext.id = this.id;
     serviceContext.setCodec(this.codec);
-    serviceContext.attachments = new ConcurrentHashMap<>(attachments);
+    if (this.attachments != null) {
+      serviceContext.attachments = new ConcurrentHashMap<>(this.attachments);
+    }
     serviceContext.setFlowName(this.flowName);
     serviceContext.setCurrentServiceName(currentServiceName);
     serviceContext.setSync(this.sync);
@@ -90,7 +92,6 @@ public class ServiceContext implements Message, Serializable {
   }
 
 
-
   public FlowMessage getFlowMessage() {
     return flowMessage;
   }
@@ -102,7 +103,7 @@ public class ServiceContext implements Message, Serializable {
 
   /**
    * 服务ID
-   * 
+   *
    * @return string
    */
   public String getId() {
@@ -115,7 +116,7 @@ public class ServiceContext implements Message, Serializable {
 
   /**
    * 同步调用
-   * 
+   *
    * @param sync sync
    * @return {@link ServiceContext}
    */
