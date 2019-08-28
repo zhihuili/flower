@@ -18,7 +18,6 @@
  */
 package com.ly.train.flower.core.akka.router;
 
-import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
 import com.ly.train.flower.base.TestBase;
@@ -30,7 +29,6 @@ import com.ly.train.flower.base.service.user.UserServiceC2;
 import com.ly.train.flower.common.annotation.FlowerServiceUtil;
 import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.core.service.ServiceContext;
-import com.ly.train.flower.core.akka.router.ServiceRouter;
 import com.ly.train.flower.core.service.container.ServiceFlow;
 import com.ly.train.flower.core.service.container.util.ServiceContextUtil;
 
@@ -61,7 +59,6 @@ public class ServiceRouterTest extends TestBase {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
-    serviceFlow.buildFlow(UserServiceB.class, UserServiceC2.class);
     serviceFlow.build();
 
 
@@ -91,7 +88,6 @@ public class ServiceRouterTest extends TestBase {
     serviceContext.setFlowName(flowName);
     serviceContext.setCurrentServiceName(FlowerServiceUtil.getServiceName(UserServiceA.class));
     getServiceRouter().asyncCallService(serviceContext);
-    Thread.sleep(TimeUnit.SECONDS.toMillis(2));
   }
 
 
@@ -124,7 +120,6 @@ public class ServiceRouterTest extends TestBase {
         }
       }).start();
     }
-    Thread.sleep(TimeUnit.SECONDS.toMillis(5));
   }
 
   @Test
@@ -153,6 +148,5 @@ public class ServiceRouterTest extends TestBase {
         }
       }).start();
     }
-    Thread.sleep(TimeUnit.SECONDS.toMillis(5));
   }
 }
