@@ -18,8 +18,10 @@
  */
 package com.ly.train.flower.core.service.container.simple;
 
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
+import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.exception.handler.ExceptionHandler;
 import com.ly.train.flower.common.exception.handler.ExceptionHandlerManager;
 import com.ly.train.flower.common.lifecyle.AbstractLifecycle;
@@ -39,7 +41,6 @@ import com.ly.train.flower.core.service.container.FlowerFactory;
 import com.ly.train.flower.core.service.container.ServiceFactory;
 import com.ly.train.flower.registry.Registry;
 import com.ly.train.flower.registry.RegistryFactory;
-import com.ly.train.flower.registry.simple.SimpleRegistry;
 
 /**
  * @author leeyazhou
@@ -103,14 +104,24 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
       if (registryFactory != null) {
         URL url = config.toURL();
         Registry registry = registryFactory.createRegistry(url);
-        if (registry instanceof SimpleRegistry) {
-          ((SimpleRegistry) registry).setFlowerFactory(this);
+        if (registry.getClass().getName().equals("com.ly.train.flower.registry.simple.SimpleRegistry")) {
+          setFlowerFactory(registry);
         }
         ret.add(registry);
         logger.info("find registry : {}", url);
       }
     }
     return ret;
+  }
+
+  private void setFlowerFactory(Registry registry) {
+    Method method;
+    try {
+      method = registry.getClass().getMethod("setFlowerFactory", FlowerFactory.class);
+      method.invoke(registry, this);
+    } catch (Exception e) {
+      throw new FlowerException(e);
+    }
   }
 
 

@@ -16,7 +16,7 @@
 /**
  * 
  */
-package com.ly.train.flower.core.akka.actor;
+package com.ly.train.flower.core.akka;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeoutException;

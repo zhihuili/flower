@@ -267,20 +267,22 @@ public class ServiceActor extends AbstractFlowerActor {
   }
 
   private FilterChain buildFilterChain(ServiceContext serviceContext) {
-    FlowConfig flowConfig =
-        flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName()).getFlowConfig();
-    Set<String> filterNames = flowConfig.getFilters();
     List<Filter> filters = new ArrayList<>();
-    if (filterNames != null) {
-      for (String f : filterNames) {
-        if (StringUtil.isBlank(f)) {
-          continue;
+    if (serviceContext.getFlowName() != null) {
+      FlowConfig flowConfig =
+          flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName()).getFlowConfig();
+      Set<String> filterNames = flowConfig.getFilters();
+      if (filterNames != null) {
+        for (String f : filterNames) {
+          if (StringUtil.isBlank(f)) {
+            continue;
+          }
+          Filter temp = ExtensionLoader.load(Filter.class).load(f);
+          if (temp == null) {
+            continue;
+          }
+          filters.add(temp);
         }
-        Filter temp = ExtensionLoader.load(Filter.class).load(f);
-        if (temp == null) {
-          continue;
-        }
-        filters.add(temp);
       }
     }
     return new FilterChainApplication(filters.toArray(new Filter[filters.size()]), (Service) service);

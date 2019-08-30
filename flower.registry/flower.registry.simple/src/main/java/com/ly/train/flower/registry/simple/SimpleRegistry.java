@@ -68,6 +68,7 @@ public class SimpleRegistry extends AbstractRegistry {
     serviceConfig.addAddress(getUrl());
     serviceConfig.setLocal(false);
     serviceConfig.setApplication(url.getParam(Constant.applicationName));
+    serviceConfig.setFlowName("flower-simple-registry-" + serviceName);
     ServiceMeta serviceMeta = new ServiceMeta("no class name, register service name");
     serviceConfig.setServiceMeta(serviceMeta);
 
@@ -114,6 +115,7 @@ public class SimpleRegistry extends AbstractRegistry {
     }
     List<ServiceInfo> ret2 = new ArrayList<ServiceInfo>();
     if (obj != null) {
+      @SuppressWarnings("unchecked")
       Set<ServiceInfo> ret = (Set<ServiceInfo>) obj;
       if (ret != null && !ret.isEmpty()) {
         ret2.addAll(ret);

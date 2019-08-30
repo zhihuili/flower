@@ -143,7 +143,7 @@ public class ServiceFactory extends AbstractInit {
    * @return {@code ServiceFlow}
    */
   public ServiceFlow getOrCreateServiceFlow(String flowName) {
-    Assert.notNull(flowName, "flowName can't be null !");
+    Assert.notNull(flowName, "flowName");
     ServiceFlow serviceFlow = serviceFlows.get(flowName);
     if (serviceFlow != null) {
       return serviceFlow;

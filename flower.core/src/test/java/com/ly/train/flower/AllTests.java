@@ -18,13 +18,12 @@ package com.ly.train.flower;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import com.ly.train.flower.core.akka.ServiceFacadeTest;
 import com.ly.train.flower.core.akka.actor.ActorSelectionTest;
-import com.ly.train.flower.core.akka.actor.ServiceFacadeTest;
 import com.ly.train.flower.core.akka.router.ServiceRouterTest;
 import com.ly.train.flower.core.bytecode.ClassGeneratorTest;
 import com.ly.train.flower.core.service.ServiceFlowTest;
 import com.ly.train.flower.core.util.HttpClientTest;
-import com.ly.train.flower.registry.simple.SimpleRegistryTest;
 
 /**
  * @author leeyazhou
@@ -32,7 +31,7 @@ import com.ly.train.flower.registry.simple.SimpleRegistryTest;
  */
 @RunWith(Suite.class)
 @SuiteClasses({ActorSelectionTest.class, ServiceFacadeTest.class, ServiceRouterTest.class, ClassGeneratorTest.class,
-    ServiceFlowTest.class, HttpClientTest.class, SimpleRegistryTest.class})
+    ServiceFlowTest.class, HttpClientTest.class})
 public class AllTests {
 
 }
