@@ -13,32 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package com.ly.train.flower.common.exception;
+package com.ly.train.flower.core.akka.mailbox.unbounded;
+
+import com.typesafe.config.Config;
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import akka.dispatch.MailboxType;
+import akka.dispatch.MessageQueue;
+import akka.dispatch.ProducesMessageQueue;
+import scala.Option;
 
 /**
  * @author leeyazhou
- * 
  */
-public class ServiceNotFoundException extends ServiceException {
+public class FlowerUnboundedMailbox implements MailboxType, ProducesMessageQueue<FlowerUnboundedMessageQueue> {
 
-  private static final long serialVersionUID = 1L;
+  public FlowerUnboundedMailbox(ActorSystem.Settings settings, Config config) {}
 
-  public ServiceNotFoundException() {
-    super();
+  @Override
+  public MessageQueue create(Option<ActorRef> owner, Option<ActorSystem> system) {
+    return new FlowerUnboundedMessageQueue(owner.get(), system.get());
   }
 
-  public ServiceNotFoundException(String message) {
-    super(message);
-  }
-
-  public ServiceNotFoundException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public ServiceNotFoundException(Throwable cause) {
-    super(cause);
-  }
 }

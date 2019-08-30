@@ -22,7 +22,7 @@ package com.ly.train.flower.common.exception;
  * @author leeyazhou
  * 
  */
-public class ServiceException extends RuntimeException {
+public class ServiceException extends FlowerException {
 
   private static final long serialVersionUID = 6532232062131720108L;
 

@@ -13,32 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package com.ly.train.flower.common.exception;
+package com.ly.train.flower.core.akka.mailbox;
 
 /**
+ * 
  * @author leeyazhou
- * 
  */
-public class ServiceNotFoundException extends ServiceException {
-
-  private static final long serialVersionUID = 1L;
-
-  public ServiceNotFoundException() {
-    super();
-  }
-
-  public ServiceNotFoundException(String message) {
-    super(message);
-  }
-
-  public ServiceNotFoundException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public ServiceNotFoundException(Throwable cause) {
-    super(cause);
-  }
+public interface FlowerMessageQueueSemantics extends akka.event.LoggerMessageQueueSemantics{
 }

@@ -19,26 +19,34 @@
 package com.ly.train.flower.common.exception;
 
 /**
+ * flower 框架异常
+ * 
  * @author leeyazhou
  * 
  */
-public class ServiceNotFoundException extends ServiceException {
+public class FlowerException extends RuntimeException {
 
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 6532232062131720108L;
 
-  public ServiceNotFoundException() {
+  public FlowerException() {
     super();
   }
 
-  public ServiceNotFoundException(String message) {
+  public FlowerException(String message) {
     super(message);
   }
 
-  public ServiceNotFoundException(String message, Throwable cause) {
+  public FlowerException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  public ServiceNotFoundException(Throwable cause) {
+  public FlowerException(Throwable cause) {
     super(cause);
+  }
+
+  @Override
+  public void printStackTrace() {
+    // TODO Auto-generated method stub
+    super.printStackTrace();
   }
 }
