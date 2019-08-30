@@ -37,7 +37,6 @@ import com.ly.train.flower.core.service.container.simple.SimpleFlowerFactory;
  * 
  */
 public class TestBase {
-  protected static final String flowName = "sample";
   protected static FlowerFactory flowerFactory;
   protected static ServiceFactory serviceFactory;
   protected static ServiceLoader serviceLoader;
@@ -66,5 +65,9 @@ public class TestBase {
     System.out.println("休眠" + sleep + "ms后stopFlower。");
     Thread.sleep(sleep);
     flowerFactory.stop();
+  }
+
+  protected String generateFlowName(String methodName) {
+    return getClass().getSimpleName() + "-" + methodName;
   }
 }

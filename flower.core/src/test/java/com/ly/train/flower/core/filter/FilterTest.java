@@ -29,10 +29,11 @@ import com.ly.train.flower.core.service.container.ServiceFlow;
 /**
  * @author leeyazhou
  */
-public class OpentracingFilterTest extends TestBase {
+public class FilterTest extends TestBase {
 
   @Test
   public void testSyncCallServiceSimple() throws Exception {
+    String flowName = generateFlowName("testSyncCallServiceSimple");
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
@@ -50,6 +51,7 @@ public class OpentracingFilterTest extends TestBase {
 
   @Test
   public void testCounterFilter() throws Exception {
+    String flowName = generateFlowName("testCounterFilter");
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
@@ -66,28 +68,8 @@ public class OpentracingFilterTest extends TestBase {
   }
 
   @Test
-  public void testOpentracingFilter() throws Exception {
-    ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
-    serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
-    serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
-    serviceFlow.buildFlow(UserServiceC1.class, OpenTracerService.class);
-    serviceFlow.setFilters(Sets.newSet("mockOneFilter", "mockTwoFilter", "opentracingFilter"));
-    serviceFlow.build();
-    final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 3);
-
-    User user = new User();
-    user.setName("响应式编程 ");
-    user.setAge(2);
-    int i = 0;
-    while (i++ < 1000) {
-      Thread.sleep(2000);
-      Object o = router.syncCallService(user);
-      System.out.println("响应结果： " + o);
-    }
-  }
-
-  @Test
   public void testAccessLogFilter() throws Exception {
+    String flowName = generateFlowName("testAccessLogFilter");
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);

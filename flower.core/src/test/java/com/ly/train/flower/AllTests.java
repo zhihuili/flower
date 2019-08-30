@@ -19,10 +19,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import com.ly.train.flower.core.akka.ServiceFacadeTest;
-import com.ly.train.flower.core.akka.actor.ActorSelectionTest;
+import com.ly.train.flower.core.akka.router.FlowerRouterTest;
 import com.ly.train.flower.core.akka.router.ServiceRouterTest;
 import com.ly.train.flower.core.bytecode.ClassGeneratorTest;
+import com.ly.train.flower.core.filter.FilterTest;
 import com.ly.train.flower.core.service.ServiceFlowTest;
+import com.ly.train.flower.core.service.container.ServiceLoaderTest;
+import com.ly.train.flower.core.service.container.simple.SimpleFlowerFactoryTest;
 import com.ly.train.flower.core.util.HttpClientTest;
 
 /**
@@ -30,8 +33,9 @@ import com.ly.train.flower.core.util.HttpClientTest;
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses({ActorSelectionTest.class, ServiceFacadeTest.class, ServiceRouterTest.class, ClassGeneratorTest.class,
-    ServiceFlowTest.class, HttpClientTest.class})
+@SuiteClasses({ServiceFacadeTest.class, FlowerRouterTest.class, ServiceRouterTest.class, ClassGeneratorTest.class,
+    FilterTest.class, ServiceFlowTest.class, ServiceLoaderTest.class, SimpleFlowerFactoryTest.class,
+    HttpClientTest.class})
 public class AllTests {
 
 }

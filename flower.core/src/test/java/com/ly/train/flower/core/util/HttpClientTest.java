@@ -18,6 +18,7 @@
  */
 package com.ly.train.flower.core.util;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import com.ly.train.flower.common.util.Assert;
 import com.ly.train.flower.common.util.HttpClient;
@@ -29,13 +30,14 @@ import com.ly.train.flower.common.util.HttpClient;
 public class HttpClientTest {
   @Test
   public void testGet() {
-    String ret = HttpClient.builder().setUrl("https://www.baidu.com").build().get();
+    String ret = HttpClient.builder().setUrl("http://www.baidu.com").build().get();
     Assert.notNull(ret, "success");
   }
 
   @Test
+  @Ignore
   public void testPost() {
-    String ret = HttpClient.builder().setUrl("https://www.baidu.com").setParam("name=liyazhou").build().post();
+    String ret = HttpClient.builder().setUrl("http://www.baidu.com").setParam("name=liyazhou").build().post();
     Assert.notNull(ret, "success");
   }
 }

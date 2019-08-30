@@ -40,6 +40,7 @@ public class ServiceFacadeTest extends TestBase {
 
   @Test
   public void testSyncCallService() throws Exception {
+    String flowName = generateFlowName("testSyncCallService");
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, Arrays.asList(UserServiceC1.class, UserServiceC2.class));
@@ -53,6 +54,7 @@ public class ServiceFacadeTest extends TestBase {
 
   @Test
   public void testSyncCallAggregateService() throws Exception {
+    String flowName = generateFlowName("testSyncCallAggregateService");
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, Arrays.asList(UserServiceC1.class, UserServiceC2.class));
@@ -68,6 +70,7 @@ public class ServiceFacadeTest extends TestBase {
 
   @Test
   public void testAsyncCallService() throws Exception {
+    String flowName = generateFlowName("testAsyncCallService");
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
@@ -81,7 +84,7 @@ public class ServiceFacadeTest extends TestBase {
 
   @Test(expected = FlowException.class)
   public void testSyncException() throws TimeoutException {
-
+    String flowName = generateFlowName("testSyncException");
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
