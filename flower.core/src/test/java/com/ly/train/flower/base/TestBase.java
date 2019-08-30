@@ -67,7 +67,8 @@ public class TestBase {
     flowerFactory.stop();
   }
 
-  protected String generateFlowName(String methodName) {
-    return getClass().getSimpleName() + "-" + methodName;
+  protected String generateFlowName() {
+    StackTraceElement element = Thread.currentThread().getStackTrace()[1];
+    return getClass().getName() + "-" + element.getMethodName();
   }
 }

@@ -35,7 +35,7 @@ public class FlowerRouterTest extends TestBase {
 
   @Test
   public void testSyncCallServiceSimple() throws Exception {
-    String flowName = "testSyncCallServiceSimple";
+    String flowName = generateFlowName();
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
@@ -52,7 +52,7 @@ public class FlowerRouterTest extends TestBase {
 
   @Test
   public void testSyncCallServiceSimple2() throws Exception {
-    String flowName = "testSyncCallServiceSimple2";
+    String flowName = generateFlowName();
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
@@ -70,7 +70,7 @@ public class FlowerRouterTest extends TestBase {
 
   @Test
   public void testAsyncCallServiceSimple() throws Exception {
-    String flowName = getClass().getSimpleName() + "testAsyncCallServiceSimple";
+    String flowName = generateFlowName();
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
@@ -88,7 +88,7 @@ public class FlowerRouterTest extends TestBase {
   @Test
   public void testSyncCallServiceMutliThread() throws Exception {
     sleep = 5000;
-    String flowName = getClass().getSimpleName() + "testSyncCallServiceMutliThread";
+    String flowName = generateFlowName();
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
@@ -120,7 +120,7 @@ public class FlowerRouterTest extends TestBase {
   @Test
   public void testAsyncCallServiceMutliThread() throws Exception {
     sleep = 5000;
-    String flowName = getClass().getSimpleName() + "testAsyncCallServiceMutliThread";
+    String flowName = generateFlowName();
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);

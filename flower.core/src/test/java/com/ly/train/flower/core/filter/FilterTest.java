@@ -33,7 +33,7 @@ public class FilterTest extends TestBase {
 
   @Test
   public void testSyncCallServiceSimple() throws Exception {
-    String flowName = generateFlowName("testSyncCallServiceSimple");
+    String flowName = generateFlowName();
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
@@ -51,7 +51,7 @@ public class FilterTest extends TestBase {
 
   @Test
   public void testCounterFilter() throws Exception {
-    String flowName = generateFlowName("testCounterFilter");
+    String flowName = generateFlowName();
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
@@ -69,7 +69,7 @@ public class FilterTest extends TestBase {
 
   @Test
   public void testAccessLogFilter() throws Exception {
-    String flowName = generateFlowName("testAccessLogFilter");
+    String flowName = generateFlowName();
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);

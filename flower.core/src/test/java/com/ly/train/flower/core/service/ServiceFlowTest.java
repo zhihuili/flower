@@ -39,7 +39,7 @@ public class ServiceFlowTest extends TestBase {
 
   @Test
   public void testBuildFlowSimple() throws Exception {
-    final String flowName = generateFlowName("testBuildFlowSimple");
+    final String flowName = generateFlowName();
     ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
@@ -50,7 +50,7 @@ public class ServiceFlowTest extends TestBase {
 
   @Test
   public void testBuildFlowAggregate() throws Exception {
-    final String flowName = generateFlowName("testBuildFlowAggregate");
+    final String flowName = generateFlowName();
     ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, Arrays.asList(UserServiceC1.class, UserServiceC2.class));
@@ -61,7 +61,7 @@ public class ServiceFlowTest extends TestBase {
 
   @Test
   public void testBuildFlowManyToOne() {
-    final String flowName = generateFlowName("testBuildFlowManyToOne");
+    final String flowName = generateFlowName();
     ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceC1.class);
@@ -73,7 +73,7 @@ public class ServiceFlowTest extends TestBase {
 
   @Test
   public void testBuildFlowManyToOneString() {
-    final String flowName = generateFlowName("testBuildFlowManyToOneString");
+    final String flowName = generateFlowName();
     ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceC1.class);
@@ -84,7 +84,7 @@ public class ServiceFlowTest extends TestBase {
 
   @Test
   public void testBuildFlowOneToMany() {
-    final String flowName = generateFlowName("testBuildFlowOneToMany");
+    final String flowName = generateFlowName();
     ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
     serviceFlow.buildFlow(UserServiceA.class,
         Arrays.asList(UserServiceB.class, UserServiceC1.class, UserServiceC2.class));
@@ -93,7 +93,7 @@ public class ServiceFlowTest extends TestBase {
 
   @Test
   public void testBuildFlowOneToManyString() {
-    final String flowName = generateFlowName("testBuildFlowOneToManyString");
+    final String flowName = generateFlowName();
     ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
     serviceFlow.buildFlow("UserServiceA", Arrays.asList("UserServiceB", "UserServiceC1", "UserServiceC2"));
     serviceFlow.build();
@@ -101,7 +101,7 @@ public class ServiceFlowTest extends TestBase {
 
   @Test
   public void testBuildFlowList() {
-    final String flowName = generateFlowName("testBuildFlowList");
+    final String flowName = generateFlowName();
     List<Pair<String, String>> list = new ArrayList<>();
     list.add(new Pair<String, String>("UserServiceA", "UserServiceB"));
     list.add(new Pair<String, String>("UserServiceA", "UserServiceC1"));
