@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
+import com.ly.train.flower.common.core.config.FlowConfig;
 import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.core.config.ServiceMeta;
 import com.ly.train.flower.common.core.service.ServiceContext;
@@ -43,8 +44,8 @@ public class SimpleRegistry extends AbstractRegistry {
 
   private ServiceRouter serviceInfoRegisterRouter;
   private ServiceRouter serviceInfoListRouter;
-  private ServiceRouter serviceConfigRegisterRouter;
-  private ServiceRouter serviceConfigListRouter;
+  private ServiceRouter flowConfigRegisterRouter;
+  private ServiceRouter flowConfigListRouter;
 
   public SimpleRegistry(URL url) {
     super(url);
@@ -56,10 +57,10 @@ public class SimpleRegistry extends AbstractRegistry {
         getServiceRouter("ServiceInfoRegisterService", ServiceInfo.class.getName(), Boolean.class.getName());
     this.serviceInfoListRouter =
         getServiceRouter("ServiceInfoListService", ServiceInfo.class.getName(), HashSet.class.getName());
-    this.serviceConfigRegisterRouter =
-        getServiceRouter("ServiceConfigRegisterService", ServiceConfig.class.getName(), Boolean.class.getName());
-    this.serviceConfigListRouter =
-        getServiceRouter("ServiceConfigListService", ServiceConfig.class.getName(), HashSet.class.getName());
+    this.flowConfigRegisterRouter =
+        getServiceRouter("FlowConfigRegisterService", FlowConfig.class.getName(), Boolean.class.getName());
+    this.flowConfigListRouter =
+        getServiceRouter("FlowConfigListService", FlowConfig.class.getName(), HashSet.class.getName());
   }
 
   private ServiceRouter getServiceRouter(String serviceName, String paramType, String resultType) {
@@ -94,11 +95,11 @@ public class SimpleRegistry extends AbstractRegistry {
   }
 
   @Override
-  public boolean doRegisterServiceConfig(ServiceConfig serviceConfig) {
+  public boolean doRegisterFlowConfig(FlowConfig serviceConfig) {
     ServiceContext serviceContext = makeServiceContext(serviceConfig);
     serviceContext.setCurrentServiceName("ServiceConfigRegisterService");
     serviceContext.setSync(false);
-    serviceConfigRegisterRouter.asyncCallService(serviceContext);
+    flowConfigRegisterRouter.asyncCallService(serviceContext);
     return false;
   }
 
@@ -125,19 +126,19 @@ public class SimpleRegistry extends AbstractRegistry {
   }
 
   @Override
-  public List<ServiceConfig> doGetServiceConfig(ServiceConfig serviceConfig) {
+  public List<FlowConfig> doGetFlowConfig(FlowConfig serviceConfig) {
     ServiceContext serviceContext = makeServiceContext(serviceConfig);
     serviceContext.setCurrentServiceName("ServiceConfigListService");
     serviceContext.setSync(false);
     Object result = null;
     try {
-      result = serviceConfigListRouter.syncCallService(serviceContext);
+      result = flowConfigListRouter.syncCallService(serviceContext);
     } catch (TimeoutException e) {
       logger.error("", e);
     }
-    List<ServiceConfig> ret2 = new ArrayList<ServiceConfig>();
+    List<FlowConfig> ret2 = new ArrayList<>();
     if (result != null) {
-      ServiceConfig ret = (ServiceConfig) result;
+      FlowConfig ret = (FlowConfig) result;
       if (ret != null) {
         ret2.add(ret);
       }

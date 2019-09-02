@@ -18,7 +18,7 @@ package com.ly.train.flower.center.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.ly.train.flower.center.core.store.ServiceConfigStore;
+import com.ly.train.flower.center.core.store.FlowConfigStore;
 import com.ly.train.flower.center.core.store.ServiceInfoStore;
 import com.ly.train.flower.common.util.ExtensionLoader;
 
@@ -33,9 +33,9 @@ public class StoreConfig {
 
 
   @Bean
-  public ServiceConfigStore serviceConfigStore() {
-    ServiceConfigStore serviceConfigStore = ExtensionLoader.load(ServiceConfigStore.class).load(storeType);
-    return serviceConfigStore;
+  public FlowConfigStore flowConfigStore() {
+    FlowConfigStore flowConfigStore = ExtensionLoader.load(FlowConfigStore.class).load(storeType);
+    return flowConfigStore;
   }
 
   @Bean

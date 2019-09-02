@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.core.service.config;
+package com.ly.train.flower.center.core.store;
+
+import com.ly.train.flower.common.core.config.FlowConfig;
 
 /**
  * @author leeyazhou
  */
-public class FlowConfig {
+public interface FlowConfigStore {
 
+  boolean addFlowConfig(FlowConfig flowConfig);
+
+  FlowConfig getFlowConfig(FlowConfig flowConfig);
 }

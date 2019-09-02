@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.ly.train.flower.center.core.controller.BaseController;
 import com.ly.train.flower.center.core.service.ReturnService;
-import com.ly.train.flower.center.core.service.ServiceConfigListService;
+import com.ly.train.flower.center.core.service.FlowConfigListService;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.core.config.ServiceConfig;
 
@@ -49,6 +49,6 @@ public class ServiceConfigListController extends BaseController {
 
   @Override
   public void buildFlower() {
-    getServiceFlow().buildFlow(ServiceConfigListService.class, ReturnService.class);
+    getServiceFlow().buildFlow(FlowConfigListService.class, ReturnService.class);
   }
 }

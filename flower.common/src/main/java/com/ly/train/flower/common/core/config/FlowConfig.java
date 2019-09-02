@@ -30,6 +30,7 @@ public class FlowConfig implements Serializable {
   private ServiceConfig serviceConfig;
   private String flowName;
   private Long timeout;
+  private String application;
 
   public FlowConfig() {}
 
@@ -76,6 +77,13 @@ public class FlowConfig implements Serializable {
   }
 
   /**
+   * @param flowName the flowName to set
+   */
+  public void setFlowName(String flowName) {
+    this.flowName = flowName;
+  }
+
+  /**
    * @param timeout the timeout to set
    */
   public void setTimeout(Long timeout) {
@@ -87,6 +95,20 @@ public class FlowConfig implements Serializable {
    */
   public Long getTimeout() {
     return timeout;
+  }
+
+  /**
+   * @return the application
+   */
+  public String getApplication() {
+    return application;
+  }
+
+  /**
+   * @param application the application to set
+   */
+  public void setApplication(String application) {
+    this.application = application;
   }
 
   @Override
@@ -101,6 +123,7 @@ public class FlowConfig implements Serializable {
     builder.append("\n]");
     return builder.toString();
   }
+
 
   private void buildString(ServiceConfig header, StringBuilder builder) {
     if (header == null) {

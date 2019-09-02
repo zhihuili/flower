@@ -88,10 +88,10 @@ public class ActorSelectionTest {
     serviceFlow.build();
 
     try {
-      Object ret = flowerFactory1.getServiceFacade().syncCallService(flowName, message);
-      System.out.println("返回结果：" + ret);
+      User ret = (User)flowerFactory1.getServiceFacade().syncCallService(flowName, message);
+      System.out.println("返回结果：" + ret.getDesc());
       final String expectDesc = " --> UserServiceA --> UserServiceB --> UserServiceC1 --> UserServiceC2";
-      Assert.assertEquals(expectDesc, ((User) ret).getDesc());
+      Assert.assertEquals(expectDesc, ret.getDesc());
     } catch (Exception e) {
       System.err.println(e.getMessage());
       e.printStackTrace();

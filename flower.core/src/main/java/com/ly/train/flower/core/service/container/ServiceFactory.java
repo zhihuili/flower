@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.annotation.FlowerServiceUtil;
+import com.ly.train.flower.common.core.config.FlowConfig;
 import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.core.config.ServiceMeta;
 import com.ly.train.flower.common.core.service.FlowerService;
@@ -204,7 +205,6 @@ public class ServiceFactory extends AbstractInit {
       List<ServiceInfo> serviceInfos = registry.getProvider(queryInfo);
       if (serviceInfos != null) {
         for (ServiceInfo serviceInfo : serviceInfos) {
-          logger.info("注册中心获取连接 {} : {}", serviceConfig.getServiceName(), serviceInfo.getServiceMeta());
           if (serviceInfo.getServiceMeta().getServiceName().equals(serviceConfig.getServiceName())) {
             // add service address
             ret.add(serviceInfo);
@@ -221,15 +221,15 @@ public class ServiceFactory extends AbstractInit {
 
   private ServiceFlow getServiceFlowFromRegistry(String flowName) {
     Set<Registry> registries = flowerFactory.getRegistry();
-    ServiceConfig serviceConfig = new ServiceConfig(flowName);
-    serviceConfig.setApplication(flowerConfig.getName());
+    FlowConfig flowConfig = new FlowConfig(flowName, null);
+    flowConfig.setApplication(flowerFactory.getFlowerConfig().getName());
     for (Registry registry : registries) {
-      List<ServiceConfig> configs = registry.getServiceConfig(serviceConfig);
-      for (ServiceConfig config : configs) {
+      List<FlowConfig> configs = registry.getFlowConfig(flowConfig);
+      for (FlowConfig config : configs) {
         if (flowName.contentEquals(config.getFlowName())) {
           ServiceFlow serviceFlow = new ServiceFlow(flowName, config, flowerFactory);
           serviceFlows.putIfAbsent(flowName, serviceFlow);
-          logger.info("load ServiceConfig from registry {} ：{}", flowName, serviceFlow);
+          logger.info("load FlowConfig from registry {} ：{}", flowName, serviceFlow);
           return serviceFlow;
         }
       }

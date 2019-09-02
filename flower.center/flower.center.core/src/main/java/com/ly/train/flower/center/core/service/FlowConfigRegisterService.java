@@ -19,9 +19,9 @@
 package com.ly.train.flower.center.core.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import com.ly.train.flower.center.core.store.ServiceConfigStore;
+import com.ly.train.flower.center.core.store.FlowConfigStore;
 import com.ly.train.flower.common.annotation.FlowerService;
-import com.ly.train.flower.common.core.config.ServiceConfig;
+import com.ly.train.flower.common.core.config.FlowConfig;
 import com.ly.train.flower.common.core.service.Service;
 import com.ly.train.flower.common.core.service.ServiceContext;
 
@@ -29,22 +29,15 @@ import com.ly.train.flower.common.core.service.ServiceContext;
  * @author leeyazhou
  * 
  */
-@FlowerService(timeout = 1000)
-public class ServiceConfigListService implements Service<ServiceConfig, ServiceConfig> {
-
+@FlowerService
+public class FlowConfigRegisterService implements Service<FlowConfig, Boolean> {
   @Autowired
-  protected ServiceConfigStore serviceConfigStore;
+  protected FlowConfigStore flowConfigStore;
 
   @Override
-  public ServiceConfig process(ServiceConfig message, ServiceContext context) throws Throwable {
-    ServiceConfig result = null;
-    if (message != null) {
-      result = serviceConfigStore.getServiceConfig(message);
-    }
-    if (result == null) {
-      return new ServiceConfig();
-    }
-    return result;
+  public Boolean process(FlowConfig message, ServiceContext context) throws Throwable {
+    flowConfigStore.addFlowConfig(message);
+    return Boolean.TRUE;
   }
 
 }

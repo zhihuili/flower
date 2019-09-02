@@ -26,7 +26,7 @@ import com.ly.train.flower.base.TestBase;
 import com.ly.train.flower.base.service.user.UserServiceA;
 import com.ly.train.flower.base.service.user.UserServiceB;
 import com.ly.train.flower.base.service.user.UserServiceC1;
-import com.ly.train.flower.common.core.config.ServiceConfig;
+import com.ly.train.flower.common.core.config.FlowConfig;
 import com.ly.train.flower.common.core.config.ServiceMeta;
 import com.ly.train.flower.common.util.ExtensionLoader;
 import com.ly.train.flower.common.util.URL;
@@ -88,12 +88,10 @@ public class SimpleRegistryTest extends TestBase {
     Registry registry = factory.createRegistry(url);
     ((SimpleRegistry) registry).setFlowerFactory(flowerFactory);
 
-    ServiceConfig serviceConfig =
+    FlowConfig serviceConfig =
         ServiceFlow.getOrCreate("registerFlow", serviceFactory).buildFlow(UserServiceA.class, UserServiceB.class)
-            .buildFlow(UserServiceB.class, UserServiceC1.class).getServiceConfig("ServiceA");
-    serviceConfig.addAddress(new URL("flower", "127.0.0.1", 12001));
-    serviceConfig.addAddress(new URL("flower", "127.0.0.1", 12002));
-    registry.registerServiceConfig(serviceConfig);
+            .buildFlow(UserServiceB.class, UserServiceC1.class).getFlowConfig();
+    registry.registerFlowConfig(serviceConfig);
   }
 
   @Test
@@ -103,7 +101,7 @@ public class SimpleRegistryTest extends TestBase {
     RegistryFactory factory = ExtensionLoader.load(RegistryFactory.class).load();
     Registry registry = factory.createRegistry(url);
     ((SimpleRegistry) registry).setFlowerFactory(flowerFactory);
-    List<ServiceConfig> serviceInfos = registry.getServiceConfig(null);
+    List<FlowConfig> serviceInfos = registry.getFlowConfig(null);
     System.out.println("请求结果:" + serviceInfos);
   }
 }

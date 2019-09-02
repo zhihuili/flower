@@ -76,20 +76,25 @@ public final class ServiceFlow {
   /*
    * flow config
    */
-  private FlowConfig flowConfig;
+  private final FlowConfig flowConfig;
 
   public ServiceFlow(String flowName, FlowerFactory flowerFactory) {
     this(flowName, null, flowerFactory);
   }
 
-  public ServiceFlow(String flowName, ServiceConfig header, FlowerFactory flowerFactory) {
+  public ServiceFlow(String flowName, FlowConfig flowConfig, FlowerFactory flowerFactory) {
     Assert.notNull(flowName, "flowName");
-    this.flowConfig = new FlowConfig(flowName, header);
+    if (flowConfig == null) {
+      this.flowConfig = new FlowConfig(flowName, null);
+      this.flowConfig.setApplication(flowerFactory.getFlowerConfig().getName());
+    } else {
+      this.flowConfig = flowConfig;
+    }
     this.flowerFactory = flowerFactory;
     this.serviceFactory = flowerFactory.getServiceFactory();
     this.serviceLoader = serviceFactory.getServiceLoader();
-    if (header != null) {
-      initServiceConfigsCache(header);
+    if (this.flowConfig.getServiceConfig() != null) {
+      initServiceConfigsCache(flowConfig.getServiceConfig());
     }
   }
 
@@ -166,15 +171,13 @@ public final class ServiceFlow {
   public ServiceFlow build() {
     logger.info(" build flow [{}] success. \n{}", this.flowConfig.getFlowName(), flowConfig);
     flowerFactory.getActorFactory().buildFlowRouter(this.flowConfig.getFlowName(), 1);
-    String json = JSONObject.toJSONString(flowConfig.getServiceConfig());
-    ServiceConfig config = JSONObject.parseObject(json, ServiceConfig.class);
-    config.getAddresses().clear();
-    config.addAddress(flowerFactory.getFlowerConfig().toURL());
+    String json = JSONObject.toJSONString(flowConfig);
+    FlowConfig config = JSONObject.parseObject(json, FlowConfig.class);
     Set<Registry> registries = flowerFactory.getRegistry();
     if (registries.size() > 0) {
       logger.info("start register ServiceConfig : {}", flowConfig.getServiceConfig());
       for (Registry registry : registries) {
-        registry.registerServiceConfig(config);
+        registry.registerFlowConfig(config);
       }
     }
 
@@ -324,7 +327,7 @@ public final class ServiceFlow {
     if (preServiceConfigs == null) {
       preServiceConfigs = new HashSet<ServiceConfig>();
     }
-  
+
     Set<ServiceConfig> nexts = header.getNextServiceConfigs();
     if (nexts != null) {
       for (ServiceConfig item : nexts) {
@@ -336,7 +339,7 @@ public final class ServiceFlow {
         }
       }
     }
-  
+
     return preServiceConfigs;
   }
 
@@ -370,7 +373,7 @@ public final class ServiceFlow {
    * @return {@link ServiceConfig}
    */
   public Set<ServiceConfig> getNextServiceConfig(String serviceName) {
-    if (flowConfig == null || StringUtil.isBlank(serviceName)) {
+    if (flowConfig == null || StringUtil.isBlank(serviceName) || flowConfig.getServiceConfig() == null) {
       return null;
     }
     if (flowConfig.getServiceConfig().getServiceName().equals(serviceName)) {

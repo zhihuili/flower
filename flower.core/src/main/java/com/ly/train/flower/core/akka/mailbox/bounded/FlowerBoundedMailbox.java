@@ -39,10 +39,12 @@ public class FlowerBoundedMailbox
   }
 
   public FlowerBoundedMailbox(int capacity, Duration pushTimeOut) {
-    if (capacity < 0)
+    if (capacity < 0) {
       throw new IllegalArgumentException("The capacity for BoundedMailbox can not be negative");
-    if (pushTimeOut == null)
+    }
+    if (pushTimeOut == null) {
       throw new IllegalArgumentException("The push time-out for BoundedMailbox can not be null");
+    }
     this.capacity = capacity;
     this.pushTimeOut = pushTimeOut;
   }

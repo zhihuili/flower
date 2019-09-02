@@ -25,6 +25,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.exception.FlowException;
 import com.ly.train.flower.common.exception.FlowNotFoundException;
+import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.lifecyle.AbstractLifecycle;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
@@ -118,25 +119,30 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
   }
 
   private ActorRemoteWrapper createRemoteActor(URL url, ActorCommand command) throws Exception {
-    ActorRemoteWrapper superActor = getOrCreateRemoteSupervisorActor(url.getHost(), url.getPort());
-    // superActor.tell(command);
-    Future<Object> future = Patterns.ask(superActor.getActorRef(), command, FlowerActorSystem.DEFAULT_TIMEOUT - 1);
-    Await.result(future, FlowerActorSystem.timeout);
-    ActorRef remoteActor =
-        flowerActorSystem.createRemoteActor(url.getHost(), url.getPort(), command.getServiceName(), command.getIndex());
-    return new ActorRemoteWrapper(remoteActor).setServiceName(command.getServiceName()).setUrl(url);
+    try {
+      ActorRemoteWrapper superActor = getOrCreateRemoteSupervisorActor(url.getHost(), url.getPort());
+      // superActor.tell(command);
+      Future<Object> future = Patterns.ask(superActor.getActorRef(), command, FlowerActorSystem.DEFAULT_TIMEOUT - 1);
+      Await.result(future, FlowerActorSystem.timeout);
+      ActorRef remoteActor = flowerActorSystem.createRemoteActor(url.getHost(), url.getPort(), command.getServiceName(),
+          command.getIndex());
+      return new ActorRemoteWrapper(remoteActor).setServiceName(command.getServiceName()).setUrl(url);
+    } catch (Throwable e) {
+      throw new FlowerException("", e);
+    }
   }
 
   private ActorRemoteWrapper getOrCreateRemoteSupervisorActor(String host, int port) {
     final String cacheKey = host + ":" + port;
     ActorRemoteWrapper result = remoteSupervisorActorsCache.get(cacheKey);
     if (result == null) {
-      String actorPath = flowerActorSystem.getSupervisorActorPath(host, port);
+      final String actorPath = flowerActorSystem.getSupervisorActorPath(host, port);
       ActorRef actorRef = flowerActorSystem.createRemoteActor(actorPath);
       result = new ActorRemoteWrapper(actorRef);
       remoteSupervisorActorsCache.putIfAbsent(cacheKey, result);
     }
     return result;
+
   }
 
 
