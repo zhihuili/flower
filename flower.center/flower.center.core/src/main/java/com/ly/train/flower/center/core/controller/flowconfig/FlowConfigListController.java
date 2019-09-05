@@ -16,7 +16,7 @@
 /**
  * 
  */
-package com.ly.train.flower.center.core.controller.serviceconfig;
+package com.ly.train.flower.center.core.controller.flowconfig;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.ly.train.flower.center.core.controller.BaseController;
-import com.ly.train.flower.center.core.service.ReturnService;
 import com.ly.train.flower.center.core.service.FlowConfigListService;
+import com.ly.train.flower.center.core.service.ReturnService;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.core.config.ServiceConfig;
 
@@ -35,8 +35,8 @@ import com.ly.train.flower.common.core.config.ServiceConfig;
  */
 @RestController
 @RequestMapping("/config/")
-@Flower(value = "service_config_list", flowNumber = 32)
-public class ServiceConfigListController extends BaseController {
+@Flower(value = "flow_config_list", flowNumber = 32)
+public class FlowConfigListController extends BaseController {
 
   @RequestMapping("list")
   protected void process(String data, HttpServletRequest req) throws IOException {
