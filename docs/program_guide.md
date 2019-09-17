@@ -181,9 +181,9 @@ ConditionService是一个通用的消息分发服务，
 serviceCondition的服务注册方法为
 ```
     ServiceFactory.registerService("serviceCondition",
-        "com.ly.train.flower.common.service.ConditionService;serviceF,serviceG");
+        "com.ly.train.flower.core.service.impl.ConditionService;serviceF,serviceG");
 ```
-com.ly.train.flower.common.service.ConditionService为框架内置服务
+com.ly.train.flower.core.service.impl.ConditionService 为框架内置服务
 
 ```
 public class ServiceE implements Service {
