@@ -21,7 +21,7 @@
     <parent>
         <groupId>com.ly.train</groupId>
         <artifactId>flower.center</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </parent>
     <artifactId>flower.center.impl</artifactId>
     <packaging>jar</packaging>
@@ -41,25 +41,8 @@
             <artifactId>flower.web</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-http-testkit_2.12</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-http_2.12</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-stream_2.12</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-testkit_2.12</artifactId>
-            <scope>test</scope>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
     </dependencies>
 
@@ -67,7 +50,6 @@
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.6</version>
                 <configuration>
                     <descriptor>src/main/assembly/assembly.xml</descriptor>
                 </configuration>

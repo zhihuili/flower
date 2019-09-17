@@ -35,12 +35,10 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
   static final Logger logger = LoggerFactory.getLogger(AggregateService.class);
   private static final Long DefaultTimeOutMilliseconds = 60000L;
 
-  private int sourceNumber = 0;
+  private int aggregateNumber = 0;
   private Long timeoutMillis = DefaultTimeOutMilliseconds;
 
   private static final String cacheKeyPrefix = "FLOWER_AGGREGATE_SERVICE_";
-
-  // private ReentrantLock lock = new ReentrantLock();
 
   public AggregateService() {}
 
@@ -51,7 +49,6 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
   @Override
   public List<Object> process(Object message, ServiceContext context) {
     FlowMessage flowMessage = context.getFlowMessage();
-
     final String transactionId = flowMessage.getTransactionId();
     AggregateInfo aggregateInfo = getAndCacheResult(context.getFlowName(), transactionId, flowMessage);
     if (aggregateInfo.getResultNum().get() <= 0) {
@@ -76,7 +73,7 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
       if (cache == null) {
         cache = cacheManager.getCache(transactionId);
         if (cache == null) {
-          aggregateInfo = new AggregateInfo(transactionId, sourceNumber);
+          aggregateInfo = new AggregateInfo(transactionId, aggregateNumber);
           Cache<AggregateInfo> temp = cacheManager.add(transactionId, aggregateInfo, timeoutMillis);
           if (temp != null) {
             cache = temp;
@@ -97,8 +94,8 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
   /**
    * subclass should override the method.
    * 
-   * @param messages Set<Message>
-   * @param context
+   * @param messages Set&lt;Message&gt;
+   * @param context {@link ServiceContext}
    * @return Object
    */
   public List<Object> buildMessage(List<FlowMessage> messages, ServiceContext context) {
@@ -117,7 +114,7 @@ public class AggregateService implements Service<Object, List<Object>>, Aggregat
 
   // sourceNumber++ when initialize
   public void setSourceNumber(int sourceNumber) {
-    this.sourceNumber = sourceNumber;
+    this.aggregateNumber = sourceNumber;
   }
 
 

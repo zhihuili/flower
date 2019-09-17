@@ -17,6 +17,7 @@ package com.ly.train.flower.core.service.container;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -24,7 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.annotation.FlowerServiceUtil;
 import com.ly.train.flower.common.core.config.ServiceMeta;
+import com.ly.train.flower.common.core.proxy.MethodProxy;
 import com.ly.train.flower.common.core.service.FlowerService;
+import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.exception.FlowException;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;
 import com.ly.train.flower.common.io.resource.Resource;
@@ -34,17 +37,14 @@ import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.FileUtil;
 import com.ly.train.flower.common.util.Pair;
 import com.ly.train.flower.common.util.StringUtil;
-import com.ly.train.flower.common.util.TypeParameterUtil;
-import com.ly.train.flower.core.service.impl.AggregateService;
-import com.ly.train.flower.core.service.impl.ConditionService;
-import com.ly.train.flower.core.service.impl.NothingService;
+import com.ly.train.flower.core.service.container.util.ServiceLoaderUtil;
 
 public class ServiceLoader extends AbstractInit {
   private static final Logger logger = LoggerFactory.getLogger(ServiceLoader.class);
   private final ClassLoader classLoader;
 
   // <serviceName, Flowservice>
-  private volatile ConcurrentMap<String, Object> servicesCache = new ConcurrentHashMap<>();
+  private volatile ConcurrentMap<String, MethodProxy> servicesCache = new ConcurrentHashMap<>();
 
   private volatile ConcurrentMap<String, ServiceMeta> serviceMetaCache = new ConcurrentHashMap<>();
 
@@ -58,28 +58,36 @@ public class ServiceLoader extends AbstractInit {
 
   @Override
   protected void doInit() {
-    // this.loadInnerFlowService();
     try {
-      this.loadServiceAndFlow();
+      this.loadServiceAndFlowFromFiles();
     } catch (Exception e) {
       logger.error("", e);
     }
   }
 
   public boolean registerFlowerService(String serviceName, FlowerService flowerService) {
-    Object ret = servicesCache.putIfAbsent(serviceName, flowerService);
-    if (ret == null) {
-      logger.info("register flowerservice success , serviceName : {}, flowerService : {}", serviceName, flowerService);
+    Method method = FlowerServiceUtil.getProcessMethod(flowerService.getClass());
+    if (method != null) {
+      MethodProxy methodProxy = new MethodProxy(flowerService, method);
+      methodProxy.setComplete(ServiceLoaderUtil.isComplete(flowerService));
+      methodProxy.setFlush(ServiceLoaderUtil.isFlush(flowerService));
+
+      MethodProxy pre = servicesCache.putIfAbsent(serviceName, methodProxy);
+      if (pre == null) {
+        logger.info("register flowerservice success , serviceName : {}, flowerService : {}", serviceName, methodProxy);
+      }
     }
+    initFlowerServiceOfClass(flowerService);
     return true;
   }
 
-  public FlowerService loadService(String serviceName) {
-    FlowerService service = (FlowerService) servicesCache.get(serviceName);
-    if (service == null) {
+
+  public MethodProxy loadService(String serviceName) {
+    MethodProxy methodProxy = servicesCache.get(serviceName);
+    if (methodProxy == null) {
       synchronized (logger) {
-        service = (FlowerService) servicesCache.get(serviceName);;
-        if (service == null) {
+        methodProxy = servicesCache.get(serviceName);;
+        if (methodProxy == null) {
           try {
             ServiceMeta serviceMeta = loadServiceMeta(serviceName);
             if (serviceMeta == null) {
@@ -88,33 +96,102 @@ public class ServiceLoader extends AbstractInit {
             final String serviceClassName = serviceMeta.getServiceClassName();
             Class<?> serviceClass = classLoader.loadClass(serviceClassName);
             String param = loadServiceMeta(serviceName).getConfig(0);
+            Object flowerService = null;
             if (param != null) {
               Constructor<?> constructor = serviceClass.getConstructor(String.class);
-              service = (FlowerService) constructor.newInstance(param);
+              flowerService = constructor.newInstance(param);
             } else {
-              service = (FlowerService) serviceClass.newInstance();
+              flowerService = serviceClass.newInstance();
             }
-            logger.info("load flower service --> {} : {}", serviceName, service);
-            servicesCache.put(serviceName, service);
+            Method method = FlowerServiceUtil.getProcessMethod(serviceClass);
+            if (method != null) {
+              MethodProxy proxy = new MethodProxy(flowerService, method);
+              proxy.setComplete(ServiceLoaderUtil.isComplete(flowerService));
+              proxy.setFlush(ServiceLoaderUtil.isFlush(flowerService));
+              logger.info("load flower service --> {} : {}", serviceName, proxy);
+              servicesCache.put(serviceName, proxy);
+            }
+            initFlowerServiceOfClass(flowerService);
+            methodProxy = servicesCache.get(serviceName);
           } catch (Exception e) {
             throw new FlowException("fail to load service : " + serviceName, e);
           }
         }
       }
     }
-    return service;
+    return methodProxy;
+  }
+
+  /**
+   * @param flowerService
+   */
+  private void initFlowerServiceOfClass(Object flowerService) {
+    Method[] methods = flowerService.getClass().getDeclaredMethods();
+    if (methods == null) {
+      return;
+    }
+    for (Method method : methods) {
+      com.ly.train.flower.common.annotation.FlowerService flowerServiceAnno =
+          method.getAnnotation(com.ly.train.flower.common.annotation.FlowerService.class);
+      if (flowerServiceAnno == null) {
+        continue;
+      }
+      String flowerServiceName = flowerServiceAnno.value();
+      if (StringUtil.isBlank(flowerServiceName)) {
+        flowerServiceName = flowerService.getClass().getName() + "." + method.getName();
+      }
+      MethodProxy methodProxy = new MethodProxy(flowerService, method);
+      methodProxy.setFlush(flowerServiceAnno.flush());
+      methodProxy.setComplete(flowerServiceAnno.complete());
+      MethodProxy temp = servicesCache.putIfAbsent(flowerServiceName, methodProxy);
+      if (temp == null) {
+        logger.info("register flowerservice success , serviceName : {}, flowerService : {}", flowerServiceName,
+            methodProxy);
+      }
+    }
   }
 
   /**
    * 获取服务参数类型
    * 
-   * @param serviceName
+   * @param serviceName serviceName
    * @return {@link ServiceMeta}
    */
   public ServiceMeta loadServiceMeta(String serviceName) {
     return serviceMetaCache.get(serviceName);
   }
 
+  public boolean registerServiceType(Class<?> serviceClass) {
+    Method[] methods = serviceClass.getDeclaredMethods();
+    if (methods == null) {
+      return false;
+    }
+    for (Method method : methods) {
+      com.ly.train.flower.common.annotation.FlowerService flowerService =
+          method.getAnnotation(com.ly.train.flower.common.annotation.FlowerService.class);
+      if (flowerService == null || method.getParameterCount() != 2
+          || method.getParameterTypes()[1] != ServiceContext.class) {
+        continue;
+      }
+      String flowerServiceName = flowerService.value();
+      if (StringUtil.isBlank(flowerServiceName)) {
+        flowerServiceName = serviceClass.getName() + "." + method.getName();
+      }
+      ServiceMeta serviceMeta = new ServiceMeta();
+      serviceMeta.setServiceName(flowerServiceName);
+      serviceMeta.setServiceClassName(serviceClass.getName());
+      serviceMeta.setFlowerType(FlowerServiceUtil.getFlowerType(serviceClass));
+      serviceMeta.setTimeout(FlowerServiceUtil.getTimeout(serviceClass));
+      serviceMeta.setMethodName(method.getName());
+
+      serviceMeta.setResultType(method.getReturnType().getName());
+      serviceMeta.setParamType(method.getParameterTypes()[0].getName());
+
+      serviceMetaCache.put(flowerServiceName, serviceMeta);
+      logger.info("register FlowerService type -> {} : {}", flowerServiceName, serviceClass);
+    }
+    return true;
+  }
 
   public boolean registerServiceType(String serviceName, String serviceClassName) {
     Class<?> serviceClass = null;
@@ -139,48 +216,36 @@ public class ServiceLoader extends AbstractInit {
 
   public boolean registerServiceType(String serviceName, Class<?> serviceClass, String config) {
     if (!serviceMetaCache.containsKey(serviceName)) {
-      initServiceMeta(serviceName, serviceClass, config);
-      logger.info("register service type -> {} : {}", serviceName, serviceClass);
+      Method processMethod = FlowerServiceUtil.getProcessMethod(serviceClass);
+      if (processMethod != null) {
+        ServiceMeta serviceMeta = new ServiceMeta();
+        serviceMeta.setServiceName(serviceName);
+        serviceMeta.setServiceClassName(serviceClass.getName());
+        serviceMeta.setFlowerType(FlowerServiceUtil.getFlowerType(serviceClass));
+        serviceMeta.setInnerAggregateService(Constant.AGGREGATE_SERVICE_NAME.equals(serviceClass.getName()));
+        serviceMeta.setTimeout(FlowerServiceUtil.getTimeout(serviceClass));
+        serviceMeta.setParamType(processMethod.getParameterTypes()[0].getName());
+        serviceMeta.setResultType(processMethod.getReturnType().getName());
+        if (StringUtil.isNotBlank(config)) {
+          String[] tt = config.split(";");
+          if (tt.length > 1) {
+            for (int i = 1; i < tt.length; i++) {
+              serviceMeta.addConfig(tt[i]);
+            }
+          }
+        }
+        serviceMetaCache.put(serviceName, serviceMeta);
+
+        logger.info("register FlowerService type -> {} : {}", serviceName, serviceClass);
+      }
+      registerServiceType(serviceClass);
     }
     return true;
   }
 
-  private void initServiceMeta(String serviceName, Class<?> serviceClass, String config) {
-    ServiceMeta serviceMeta = new ServiceMeta();
-    serviceMeta.setServiceName(serviceName);
-    serviceMeta.setServiceClassName(serviceClass.getName());
-    serviceMeta.setAggregateService(FlowerServiceUtil.isAggregateType(serviceClass));
-    serviceMeta.setInnerAggregateService(Constant.AGGREGATE_SERVICE_NAME.equals(serviceClass.getName()));
-    serviceMeta.setTimeout(FlowerServiceUtil.getTimeout(serviceClass));
-    try {
-      Pair<Class<?>, Class<?>> params = TypeParameterUtil.getServiceClassParam(serviceClass);
-      serviceMeta.setParamType(params.getKey().getName());
-      serviceMeta.setResultType(params.getValue().getName());
-
-      if (StringUtil.isNotBlank(config)) {
-        String[] tt = config.split(";");
-        if (tt.length > 1) {
-          for (int i = 1; i < tt.length; i++) {
-            serviceMeta.addConfig(tt[i]);
-          }
-        }
-      }
-
-    } catch (Exception e) {
-      logger.error("init service meta, serviceName : " + serviceName + ", serviceClass : " + serviceClass, e);
-    }
-    logger.debug("init ServiceMeta. {} : {}", serviceName, serviceMeta);
-    serviceMetaCache.put(serviceName, serviceMeta);
-  }
 
 
-  protected void loadInnerFlowService() {
-    registerServiceType(AggregateService.class.getSimpleName(), AggregateService.class);
-    registerServiceType(ConditionService.class.getSimpleName(), ConditionService.class);
-    registerServiceType(NothingService.class.getSimpleName(), NothingService.class);
-  }
-
-  protected void loadServiceAndFlow() throws IOException {
+  protected void loadServiceAndFlowFromFiles() throws IOException {
     Resource[] resources = new ResourceLoader("", ".services").getResources();
     for (Resource resource : resources) {
       logger.info("find service, path : {}", resource.getURL());

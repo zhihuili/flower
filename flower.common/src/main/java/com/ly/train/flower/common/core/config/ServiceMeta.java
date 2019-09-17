@@ -29,10 +29,11 @@ public class ServiceMeta implements Serializable {
   private static final long serialVersionUID = 1L;
   private String serviceName;
   private String serviceClassName;
+  private String methodName;
   private String paramType;
   private String resultType;
   private List<String> configs = new ArrayList<>();
-  private boolean aggregateService;
+  private FlowerType flowerType;
   private boolean innerAggregateService;
   private int timeout;
 
@@ -102,22 +103,15 @@ public class ServiceMeta implements Serializable {
     return configs.get(index);
   }
 
-  /**
-   * 指服务的类型是否是聚合类型
-   * 
-   * @return
-   * @see FlowerType#AGGREGATE
-   * @see FlowerType#COMMON return true/false
-   */
-  public boolean isAggregateService() {
-    return aggregateService;
+
+  public FlowerType getFlowerType() {
+    return flowerType;
   }
 
-  public void setAggregateService(boolean aggregateService) {
-    this.aggregateService = aggregateService;
+  public void setFlowerType(FlowerType flowerType) {
+    this.flowerType = flowerType;
   }
 
-  // {@link AggregateService}
   /**
    * 指服务是否是聚合类型
    * 
@@ -141,6 +135,16 @@ public class ServiceMeta implements Serializable {
 
   public void setTimeout(int timeout) {
     this.timeout = timeout;
+  }
+
+
+
+  public String getMethodName() {
+    return methodName;
+  }
+
+  public void setMethodName(String methodName) {
+    this.methodName = methodName;
   }
 
   @Override

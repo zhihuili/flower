@@ -19,7 +19,7 @@
 package com.ly.train.flower.registry.zookeeper;
 
 import java.util.List;
-import com.ly.train.flower.common.core.config.ServiceConfig;
+import com.ly.train.flower.common.core.config.FlowConfig;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.registry.AbstractRegistry;
 import com.ly.train.flower.registry.config.ServiceInfo;
@@ -46,12 +46,12 @@ public class ZookeeperRegistry extends AbstractRegistry {
   }
 
   @Override
-  public boolean doRegisterServiceConfig(ServiceConfig serviceConfig) {
+  public boolean doRegisterFlowConfig(FlowConfig flowConfig) {
     return false;
   }
 
   @Override
-  public List<ServiceConfig> doGetServiceConfig(ServiceConfig serviceConfig) {
+  public List<FlowConfig> doGetFlowConfig(FlowConfig flowConfig) {
     return null;
   }
 

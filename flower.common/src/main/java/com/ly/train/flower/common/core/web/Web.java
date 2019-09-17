@@ -96,10 +96,10 @@ public class Web {
     if (null == charsetName) {
       charsetName = Constant.ENCODING_UTF_8;
     }
-    byte[] b = new byte[httpSr.getContentLength()];
+    byte[] bytes = new byte[httpSr.getContentLength()];
     try (InputStream is = httpSr.getInputStream()) {
-      int len = is.read(b, 0, httpSr.getContentLength());
-      return len <= 0 ? null : new String(b, charsetName);
+      int len = is.read(bytes, 0, httpSr.getContentLength());
+      return len <= 0 ? null : new String(bytes, charsetName);
     } catch (UnsupportedEncodingException uee) {
       throw new UnsupportedEncodingException("UnsupportedEncoding");
     }

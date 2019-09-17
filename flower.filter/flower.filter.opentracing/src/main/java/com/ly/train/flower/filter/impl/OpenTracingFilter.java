@@ -19,10 +19,15 @@
 package com.ly.train.flower.filter.impl;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.exception.FlowException;
+import com.ly.train.flower.common.logging.Logger;
+import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.filter.AbstractFilter;
+import com.ly.train.flower.filter.FilterChain;
 import brave.Tracing;
 import brave.opentracing.BraveTracer;
 import io.opentracing.Scope;
@@ -32,8 +37,8 @@ import io.opentracing.Tracer;
 import io.opentracing.Tracer.SpanBuilder;
 import io.opentracing.log.Fields;
 import io.opentracing.propagation.Format;
-import io.opentracing.propagation.TextMapExtractAdapter;
-import io.opentracing.propagation.TextMapInjectAdapter;
+import io.opentracing.propagation.TextMap;
+import io.opentracing.propagation.TextMapAdapter;
 import io.opentracing.tag.Tags;
 import zipkin2.reporter.AsyncReporter;
 import zipkin2.reporter.okhttp3.OkHttpSender;
@@ -42,46 +47,41 @@ import zipkin2.reporter.okhttp3.OkHttpSender;
  * @author leeyazhou
  * 
  */
-public class OpenTracingFilter extends AbstractFilter<Object, Object> {
-
-  private static final String endpoint = "http://10.100.216.147:9411/api/v2/spans";
-  private static final Tracer tracer = BraveTracer.create(Tracing.newBuilder()
-      .spanReporter(AsyncReporter.create(OkHttpSender.create(endpoint)))// .spanReporter(Reporter.CONSOLE)
-      .localServiceName("flower-demo").build());
+public class OpenTracingFilter extends AbstractFilter {
+  static final Logger logger = LoggerFactory.getLogger(OpenTracingFilter.class);
+  private volatile Tracer tracer = null;
 
   @Override
-  public Object doFilter(Object message, ServiceContext context) {
-    logger.info("分布式调用链追踪start");
+  public Object doFilter(Object message, ServiceContext context, FilterChain chain) {
     String spanName = context.getFlowName() + "." + context.getCurrentServiceName();
-    logger.info("spanName : " + spanName);
-    SpanBuilder spanBuilder = tracer.buildSpan(spanName);
-    String log = "客户端";
+    SpanBuilder spanBuilder = getTracer().buildSpan(spanName);
     SpanContext spanContext = null;
     Map<String, String> headerMap = getMap(context);
     if (headerMap != null) {
-      spanContext = tracer.extract(Format.Builtin.TEXT_MAP, new TextMapExtractAdapter(headerMap));
+      spanContext = getTracer().extract(Format.Builtin.TEXT_MAP, new TextMapAdapter(headerMap));
       if (spanContext != null) {
-        logger.info("" + spanContext);
         spanBuilder.asChildOf(spanContext);
-        log = "服务端";
       }
     }
 
 
     Span span = spanBuilder.start();
+    span.log("Flower Trace start.");
 
-    span.log("flower Trace start ...");
     span.setTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER);
-    Scope scope = tracer.scopeManager().activate(span, false);
+    Scope scope = tracer.scopeManager().activate(span);
+    addAttachements(context, span);
+
+    span.setTag("id", context.getId());
+    span.setTag("sync", context.isSync());
+    span.setTag("codec", context.getCodec());
+    span.setTag("flowName", context.getFlowName());
+    span.setTag("serviceName", context.getCurrentServiceName());
+    span.setTag("flowMessage.transactionId", context.getFlowMessage().getTransactionId());
+    span.setTag("flowMessage.messageType", context.getFlowMessage().getMessageType());
+
     try {
-      span.setOperationName(log);
-      if (spanContext == null) {
-        if (headerMap == null) {
-          headerMap = new HashMap<String, String>();
-        }
-        tracer.inject(span.context(), Format.Builtin.TEXT_MAP, new TextMapInjectAdapter(headerMap));
-        addAttachements(context, headerMap);
-      }
+      return chain.doFilter(message, context);
     } catch (Exception ex) {
       Tags.ERROR.set(span, true);
       Map<String, Object> map = new HashMap<String, Object>();
@@ -91,12 +91,11 @@ public class OpenTracingFilter extends AbstractFilter<Object, Object> {
       span.log(map);
       throw new FlowException(ex);
     } finally {
-      span.log("flower Trace end.");
+      span.log("Flower Trace end.");
       scope.close();
       span.finish();
-      logger.info("分布式调用链追踪end");
     }
-    return message;
+
   }
 
   private Map<String, String> getMap(ServiceContext context) {
@@ -107,7 +106,7 @@ public class OpenTracingFilter extends AbstractFilter<Object, Object> {
     String key = "X-B3-TraceId";
     String value = (String) context.getAttachment(key);
     if (value != null) {
-      map = new HashMap<String, String>();
+      map = new HashMap<>();
       map.put(key, value);
       key = "X-B3-SpanId";
       value = (String) context.getAttachment(key);
@@ -120,11 +119,35 @@ public class OpenTracingFilter extends AbstractFilter<Object, Object> {
     return map;
   }
 
-  private void addAttachements(ServiceContext request, Map<String, String> map) {
-    for (Map.Entry<String, String> entry : map.entrySet()) {
-      logger.info("注入请求头:" + entry.toString());
-      request.addAttachment(entry.getKey(), entry.getValue());
-    }
+  private void addAttachements(ServiceContext request, Span span) {
+    getTracer().inject(span.context(), Format.Builtin.TEXT_MAP, new TextMap() {
+
+      @Override
+      public Iterator<Entry<String, String>> iterator() {
+        throw new UnsupportedOperationException("TextMapInjectAdapter should only be used with Tracer.inject()");
+      }
+
+      @Override
+      public void put(String key, String value) {
+        request.addAttachment(key, value);
+      }
+    });
   }
 
+  public Tracer getTracer() {
+    if (tracer != null) {
+      return tracer;
+    }
+    final String endpoint = "http://10.100.216.147:9411/api/v2/spans";
+    tracer = BraveTracer.create(Tracing.newBuilder()
+        // send to zipkin by okhttp
+        .spanReporter(AsyncReporter.create(OkHttpSender.create(endpoint)))
+        // log to the console
+        .spanReporter(span -> {
+          logger.info("flower report span : {}", span.toString());
+        })
+        //
+        .localServiceName("flower-filter").build());
+    return tracer;
+  }
 }

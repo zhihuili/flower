@@ -36,7 +36,7 @@ public class ServiceConfig implements Serializable {
   private String serviceName;
   private ServiceMeta serviceMeta;
   private Set<ServiceConfig> nextServiceConfigs;
-  private AtomicInteger jointSourceNumber = new AtomicInteger(0);
+  private AtomicInteger aggregateNumber = new AtomicInteger(0);
   private int index;
   private boolean local = true;
   private Set<URL> addresses;
@@ -47,17 +47,16 @@ public class ServiceConfig implements Serializable {
     this.flowName = flowName;
   }
 
-  public AtomicInteger getJointSourceNumber() {
-    return jointSourceNumber;
+  public AtomicInteger getAggregateNumber() {
+    return aggregateNumber;
   }
 
-  public void setJointSourceNumber(AtomicInteger jointSourceNumber) {
-    this.jointSourceNumber = jointSourceNumber;
+  public void setAggregateNumber(AtomicInteger aggregateNumber) {
+    this.aggregateNumber = aggregateNumber;
   }
 
-
-  public int jointSourceNumberPlus() {
-    return this.jointSourceNumber.incrementAndGet();
+  public int increaseAggregateNumber() {
+    return this.aggregateNumber.incrementAndGet();
   }
 
   public String getServiceName() {
@@ -172,7 +171,7 @@ public class ServiceConfig implements Serializable {
       timeout = serviceMeta.getTimeout();
     }
     if (timeout <= 0) {
-      timeout = 3000;
+      timeout = 10000;
     }
     return timeout;
   }
@@ -214,23 +213,30 @@ public class ServiceConfig implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     ServiceConfig other = (ServiceConfig) obj;
     if (flowName == null) {
-      if (other.flowName != null)
+      if (other.flowName != null) {
         return false;
-    } else if (!flowName.equals(other.flowName))
+      }
+    } else if (!flowName.equals(other.flowName)) {
       return false;
+    }
     if (serviceName == null) {
-      if (other.serviceName != null)
+      if (other.serviceName != null) {
         return false;
-    } else if (!serviceName.equals(other.serviceName))
+      }
+    } else if (!serviceName.equals(other.serviceName)) {
       return false;
+    }
     return true;
   }
 
@@ -242,7 +248,7 @@ public class ServiceConfig implements Serializable {
     builder.append(", serviceName=");
     builder.append(serviceName);
     builder.append(", jointSourceNumber=");
-    builder.append(jointSourceNumber);
+    builder.append(aggregateNumber);
     builder.append("]");
     return builder.toString();
   }

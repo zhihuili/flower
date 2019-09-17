@@ -70,9 +70,9 @@ public abstract class Bootstrap {
       logger.error("", e);
     }
 
-    URL[] u = new URL[urls.size()];
+    URL[] url = new URL[urls.size()];
 
-    ClassLoader classLoader = new BootstrapClassLoader(urls.toArray(u), Bootstrap.class.getClassLoader());
+    ClassLoader classLoader = new BootstrapClassLoader(urls.toArray(url), Bootstrap.class.getClassLoader());
     return classLoader;
   }
 

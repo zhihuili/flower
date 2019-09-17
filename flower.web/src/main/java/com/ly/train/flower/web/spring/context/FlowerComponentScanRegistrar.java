@@ -46,11 +46,10 @@ public class FlowerComponentScanRegistrar implements ImportBeanDefinitionRegistr
    * 
    * @param registry {@link BeanDefinitionRegistry}
    */
-  private void registerReferenceAnnotationBeanPostProcessor(BeanDefinitionRegistry registry, Set<String> packagesToScan) {
-
+  private void registerReferenceAnnotationBeanPostProcessor(BeanDefinitionRegistry registry,
+      Set<String> packagesToScan) {
     registerInfrastructureBean(registry, FlowerBeanRegistryPostProcessor.class.getSimpleName(),
         FlowerBeanRegistryPostProcessor.class, packagesToScan);
-
   }
 
   public static void registerInfrastructureBean(BeanDefinitionRegistry beanDefinitionRegistry, String beanName,

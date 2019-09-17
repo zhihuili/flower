@@ -1,1 +1,4 @@
-logging=com.ly.train.flower.filter.impl.LoggingFilter
+accessLogFilter=com.ly.train.flower.filter.impl.AccessLogFilter
+counterFilter=com.ly.train.flower.filter.impl.CounterFilter
+timeoutFilter=com.ly.train.flower.filter.impl.TimeoutFilter
+limitRatioFilter=com.ly.train.flower.filter.impl.LimitRatioFilter

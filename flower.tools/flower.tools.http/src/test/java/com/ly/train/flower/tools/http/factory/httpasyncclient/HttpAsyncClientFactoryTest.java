@@ -34,7 +34,7 @@ public class HttpAsyncClientFactoryTest {
   public void testGet() {
     RequestContext requestContext = new RequestContext(baseUrl + "demo/get");
     int i = 0;
-    while (i++ < 1000) {
+    while (i++ < 10) {
       CompletableFuture<String> result = HttpFactory.httpAsyncClientFactory.get(requestContext);
       result.whenComplete((r, e) -> {
         System.out.println(Thread.currentThread().getName() + "-结果：" + r);

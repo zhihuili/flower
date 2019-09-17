@@ -21,12 +21,13 @@
     <parent>
         <groupId>com.ly.train</groupId>
         <artifactId>flower.parent</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </parent>
     <artifactId>flower.registry</artifactId>
     <packaging>pom</packaging>
     <modules>
         <module>flower.registry.api</module>
         <module>flower.registry.zookeeper</module>
+        <module>flower.registry.simple</module>
     </modules>
 </project>

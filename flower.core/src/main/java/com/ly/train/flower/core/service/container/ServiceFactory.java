@@ -25,8 +25,10 @@ import java.util.concurrent.ConcurrentMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ly.train.flower.common.annotation.FlowerServiceUtil;
+import com.ly.train.flower.common.core.config.FlowConfig;
 import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.core.config.ServiceMeta;
+import com.ly.train.flower.common.core.proxy.MethodProxy;
 import com.ly.train.flower.common.core.service.FlowerService;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;
 import com.ly.train.flower.common.lifecyle.AbstractInit;
@@ -41,7 +43,7 @@ public class ServiceFactory extends AbstractInit {
   private static final Logger logger = LoggerFactory.getLogger(ServiceFactory.class);
   private final ServiceLoader serviceLoader = new ServiceLoader(this);
   // <flowName, ServiceFlow>
-  private final ConcurrentMap<String, ServiceFlow> serviceFlows = new ConcurrentHashMap<>();
+  private final ConcurrentMap<String, ServiceFlow> serviceFlowCache = new ConcurrentHashMap<>();
   private final FlowerConfig flowerConfig;
   private final FlowerFactory flowerFactory;
 
@@ -58,9 +60,8 @@ public class ServiceFactory extends AbstractInit {
       return;
     }
 
-    Set<Class<?>> flowers =
-        DefaultClassScanner.getInstance().getClassListByAnnotation(basePackage,
-            com.ly.train.flower.common.annotation.FlowerService.class);
+    Set<Class<?>> flowers = DefaultClassScanner.getInstance().getClassListByAnnotation(basePackage,
+        com.ly.train.flower.common.annotation.FlowerService.class);
     logger.info("scan flowerService, basePackage : {}, find flowerService : {}", basePackage, flowers.size());
     for (Class<?> clazz : flowers) {
       serviceLoader.registerServiceType(FlowerServiceUtil.getServiceName(clazz), clazz);
@@ -69,6 +70,20 @@ public class ServiceFactory extends AbstractInit {
 
   public ServiceLoader getServiceLoader() {
     return serviceLoader;
+  }
+
+  public void registerService(Class<?> serviceClass) {
+    com.ly.train.flower.common.annotation.FlowerService flowerService =
+        serviceClass.getAnnotation(com.ly.train.flower.common.annotation.FlowerService.class);
+    if (flowerService == null) {
+      return;
+    }
+    if (FlowerService.class.isAssignableFrom(serviceClass)) {
+      final String flowerServiceName = FlowerServiceUtil.getServiceName(serviceClass);
+      registerService(flowerServiceName, serviceClass);
+    }
+
+    serviceLoader.registerServiceType(serviceClass);
   }
 
   public void registerService(String serviceName, String serviceClassName) {
@@ -80,10 +95,8 @@ public class ServiceFactory extends AbstractInit {
     serviceConfig.setServiceName(serviceName);
     serviceConfig.setServiceMeta(serviceMeta);
     serviceConfig.setApplication(flowerConfig.getName());
-    // flowerFactory.getActorFactory().buildServiceRouter(serviceConfig, -1);
 
     Set<Registry> registries = flowerFactory.getRegistry();
-    // logger.info("注册中心 {} : {}", serviceName, registries.size());
     if (registries.isEmpty()) {
       return;
     }
@@ -116,7 +129,7 @@ public class ServiceFactory extends AbstractInit {
     serviceLoader.registerFlowerService(serviceName, flowerService);
   }
 
-  public FlowerService getService(String serviceName) {
+  public MethodProxy getService(String serviceName) {
     return serviceLoader.loadService(serviceName);
   }
 
@@ -144,15 +157,15 @@ public class ServiceFactory extends AbstractInit {
    * @return {@code ServiceFlow}
    */
   public ServiceFlow getOrCreateServiceFlow(String flowName) {
-    Assert.notNull(flowName, "flowName can't be null !");
-    ServiceFlow serviceFlow = serviceFlows.get(flowName);
+    Assert.notNull(flowName, "flowName");
+    ServiceFlow serviceFlow = serviceFlowCache.get(flowName);
     if (serviceFlow != null) {
       return serviceFlow;
     }
     serviceFlow = getServiceFlowFromRegistry(flowName);
     if (serviceFlow == null) {
       serviceFlow = new ServiceFlow(flowName, flowerFactory);
-      serviceFlows.putIfAbsent(flowName, serviceFlow);
+      serviceFlowCache.putIfAbsent(flowName, serviceFlow);
     }
     return serviceFlow;
   }
@@ -172,7 +185,7 @@ public class ServiceFactory extends AbstractInit {
     }
 
     List<ServiceInfo> serviceInfos = this.loadServiceInfoFromRegistrry(serviceConfig);
-    if(serviceInfos!=null &&serviceInfos.size()>0) {
+    if (serviceInfos != null && serviceInfos.size() > 0) {
       serviceConfig.getAddresses().clear();
     }
     for (ServiceInfo serviceInfo : serviceInfos) {
@@ -186,8 +199,8 @@ public class ServiceFactory extends AbstractInit {
       serviceConfig.setLocal(false);
       return serviceMeta;
     }
-    throw new ServiceNotFoundException("serviceName : " + serviceConfig.getServiceName() + ", serviceConfig : "
-        + serviceConfig);
+    throw new ServiceNotFoundException(
+        "serviceName : " + serviceConfig.getServiceName() + ", serviceConfig : " + serviceConfig);
   }
 
   public List<ServiceInfo> loadServiceInfoFromRegistrry(ServiceConfig serviceConfig) {
@@ -205,7 +218,6 @@ public class ServiceFactory extends AbstractInit {
       List<ServiceInfo> serviceInfos = registry.getProvider(queryInfo);
       if (serviceInfos != null) {
         for (ServiceInfo serviceInfo : serviceInfos) {
-          logger.info("注册中心获取连接 {} : {}", serviceConfig.getServiceName(), serviceInfo.getServiceMeta());
           if (serviceInfo.getServiceMeta().getServiceName().equals(serviceConfig.getServiceName())) {
             // add service address
             ret.add(serviceInfo);
@@ -222,15 +234,15 @@ public class ServiceFactory extends AbstractInit {
 
   private ServiceFlow getServiceFlowFromRegistry(String flowName) {
     Set<Registry> registries = flowerFactory.getRegistry();
-    ServiceConfig serviceConfig = new ServiceConfig(flowName);
-    serviceConfig.setApplication(flowerConfig.getName());
+    FlowConfig flowConfig = new FlowConfig(flowName, null);
+    flowConfig.setApplication(flowerFactory.getFlowerConfig().getName());
     for (Registry registry : registries) {
-      List<ServiceConfig> configs = registry.getServiceConfig(serviceConfig);
-      for (ServiceConfig config : configs) {
+      List<FlowConfig> configs = registry.getFlowConfig(flowConfig);
+      for (FlowConfig config : configs) {
         if (flowName.contentEquals(config.getFlowName())) {
           ServiceFlow serviceFlow = new ServiceFlow(flowName, config, flowerFactory);
-          serviceFlows.putIfAbsent(flowName, serviceFlow);
-          logger.info("load ServiceConfig from registry {} ：{}", flowName, serviceFlow);
+          serviceFlowCache.putIfAbsent(flowName, serviceFlow);
+          logger.info("load FlowConfig from registry {} ：{}", flowName, serviceFlow);
           return serviceFlow;
         }
       }

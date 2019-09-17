@@ -22,7 +22,7 @@ package com.ly.train.flower.common.exception;
  * @author leeyazhou
  * 
  */
-public class ServiceNotFoundException extends RuntimeException {
+public class ServiceNotFoundException extends ServiceException {
 
   private static final long serialVersionUID = 1L;
 

@@ -28,8 +28,8 @@ public class HttpClientCallback extends CompletableFuture<String> implements Fut
   @Override
   public void completed(HttpResponse result) {
     try {
-      String r = EntityUtils.toString(result.getEntity());
-      complete(r);
+      String re = EntityUtils.toString(result.getEntity());
+      complete(re);
     } catch (Exception e) {
       completeExceptionally(e);
     }

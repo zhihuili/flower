@@ -37,9 +37,9 @@ public class ServiceInfoMemoryStore implements ServiceInfoStore {
     final String cacheKey = serviceInfo.getApplication() + "_" + serviceInfo.getServiceMeta().getServiceName();
     Cache<Set<ServiceInfo>> cache = cacheManager.getCache(cacheKey);
     if (cache == null) {
-      Set<ServiceInfo> c = new HashSet<ServiceInfo>();
-      c.add(serviceInfo);
-      cacheManager.add(cacheKey, c, 6000L);
+      Set<ServiceInfo> infos = new HashSet<ServiceInfo>();
+      infos.add(serviceInfo);
+      cacheManager.add(cacheKey, infos, 6000L);
       cache = cacheManager.getCache(cacheKey);
     } else {
       cache.getValue().add(serviceInfo);

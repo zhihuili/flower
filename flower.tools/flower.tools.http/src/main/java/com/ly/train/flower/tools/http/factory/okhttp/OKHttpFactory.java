@@ -159,9 +159,9 @@ public class OKHttpFactory implements HttpFactory {
           .writeTimeout(requestContext.getWriteTimeout(), TimeUnit.MILLISECONDS)
           // .callTimeout(60, TimeUnit.SECONDS)
           .readTimeout(requestContext.getReadTimeout(), TimeUnit.MILLISECONDS).build();
-      OkHttpClient a = okHttpClientCache.putIfAbsent(key, httpClient);
-      if (a != null) {
-        httpClient = a;
+      OkHttpClient acliClient = okHttpClientCache.putIfAbsent(key, httpClient);
+      if (acliClient != null) {
+        httpClient = acliClient;
       }
 
     }

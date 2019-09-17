@@ -19,10 +19,12 @@
 package com.ly.train.flower.common.exception;
 
 /**
+ * flower 流程异常
+ * 
  * @author leeyazhou
  * 
  */
-public class FlowException extends RuntimeException {
+public class FlowException extends FlowerException {
 
   private static final long serialVersionUID = 6532232062131720108L;
 
@@ -44,7 +46,6 @@ public class FlowException extends RuntimeException {
 
   @Override
   public void printStackTrace() {
-    // TODO Auto-generated method stub
     super.printStackTrace();
   }
 }

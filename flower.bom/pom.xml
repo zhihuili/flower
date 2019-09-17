@@ -5,7 +5,7 @@
     <artifactId>flower.bom</artifactId>
     <packaging>pom</packaging>
     <properties>
-        <revision>1.0.0</revision>
+        <revision>1.0.1</revision>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -87,6 +87,11 @@
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.registry.api</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ly.train</groupId>
+                <artifactId>flower.registry.simple</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>

@@ -21,7 +21,7 @@
     <parent>
         <groupId>com.ly.train</groupId>
         <artifactId>flower.parent</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </parent>
     <artifactId>flower.common</artifactId>
     <dependencies>
@@ -38,4 +38,12 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
     </dependencies>
+    <build>
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+    </build>
 </project>

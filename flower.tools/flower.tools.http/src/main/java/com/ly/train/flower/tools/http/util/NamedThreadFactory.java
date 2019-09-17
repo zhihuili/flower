@@ -29,17 +29,19 @@ public class NamedThreadFactory implements ThreadFactory {
   }
 
   public NamedThreadFactory(String threadPrefixName) {
-    SecurityManager s = System.getSecurityManager();
-    group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+    SecurityManager securityManager = System.getSecurityManager();
+    group = (securityManager != null) ? securityManager.getThreadGroup() : Thread.currentThread().getThreadGroup();
     namePrefix = threadPrefixName + "-" + poolNumber.getAndIncrement() + "-";
   }
 
-  public Thread newThread(Runnable r) {
-    Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
-    if (t.isDaemon())
-      t.setDaemon(false);
-    if (t.getPriority() != Thread.NORM_PRIORITY)
-      t.setPriority(Thread.NORM_PRIORITY);
-    return t;
+  public Thread newThread(Runnable run) {
+    Thread thread = new Thread(group, run, namePrefix + threadNumber.getAndIncrement(), 0);
+    if (thread.isDaemon()) {
+      thread.setDaemon(false);
+    }
+    if (thread.getPriority() != Thread.NORM_PRIORITY) {
+      thread.setPriority(Thread.NORM_PRIORITY);
+    }
+    return thread;
   }
 }

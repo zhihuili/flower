@@ -15,17 +15,19 @@
  */
 package com.ly.train.flower.core.akka.actor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import com.ly.train.flower.common.core.config.FlowConfig;
 import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.core.config.ServiceMeta;
 import com.ly.train.flower.common.core.message.FlowMessage;
-import com.ly.train.flower.common.core.service.FlowerService;
-import com.ly.train.flower.common.core.service.Service;
+import com.ly.train.flower.common.core.proxy.MethodProxy;
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.core.web.Web;
 import com.ly.train.flower.common.exception.ServiceException;
@@ -39,14 +41,13 @@ import com.ly.train.flower.common.util.cache.CacheManager;
 import com.ly.train.flower.core.akka.actor.wrapper.ActorRemoteRouterWrapper;
 import com.ly.train.flower.core.akka.actor.wrapper.ActorWrapper;
 import com.ly.train.flower.core.service.Aggregate;
-import com.ly.train.flower.core.service.Complete;
 import com.ly.train.flower.core.service.container.FlowerFactory;
 import com.ly.train.flower.core.service.container.util.ServiceContextUtil;
 import com.ly.train.flower.core.service.impl.AggregateService;
 import com.ly.train.flower.core.service.message.Condition;
-import com.ly.train.flower.core.service.web.Flush;
-import com.ly.train.flower.core.service.web.HttpComplete;
 import com.ly.train.flower.filter.Filter;
+import com.ly.train.flower.filter.FilterChain;
+import com.ly.train.flower.filter.FilterChainApplication;
 import com.ly.train.flower.serializer.Serializer;
 import akka.actor.ActorRef;
 import akka.actor.Props;
@@ -55,20 +56,21 @@ import akka.actor.Props;
  * Wrap service by actor, make service driven by message.
  * 
  * @author zhihui.li
+ * @author leeyazhou
  * 
  */
+@SuppressWarnings({"unchecked"})
 public class ServiceActor extends AbstractFlowerActor {
 
   public static final Long defaultTimeToLive = TimeUnit.SECONDS.toMillis(60);
   private static final String serviceActorCachePrefix = "FLOWER_SERVICE_ACTOR_";
   private static final ConcurrentMap<String, Set<RefType>> nextServiceActorCache = new ConcurrentHashMap<>();
-  private FlowerService service;
+  private MethodProxy methodProxy;
   private String paramType;
   private int index;
   private final FlowerFactory flowerFactory;
-  private Filter<Object, ?> filter;
 
-  static public Props props(String serviceName, FlowerFactory flowerFactory, int index) {
+  public static Props props(String serviceName, FlowerFactory flowerFactory, int index) {
     return Props.create(ServiceActor.class, serviceName, flowerFactory, index);
   }
 
@@ -83,7 +85,6 @@ public class ServiceActor extends AbstractFlowerActor {
     this.flowerFactory = flowerFactory;
   }
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
   @Override
   public void onServiceContextReceived(ServiceContext serviceContext) throws Throwable {
     FlowMessage flowMessage = serviceContext.getFlowMessage();
@@ -97,41 +98,37 @@ public class ServiceActor extends AbstractFlowerActor {
     Object param = null;
     try {
       ServiceContextUtil.fillServiceContext(serviceContext);
-      String pType = getParamType(serviceContext);
-      if (flowMessage.getMessage() != null && ClassUtil.exists(flowMessage.getMessageType())) {
-        pType = flowMessage.getMessageType();
-      }
-      param = serializer.decode(flowMessage.getMessage(), pType);
-      if (getFilter(serviceContext) != null) {
-        getFilter(serviceContext).filter(param, serviceContext);
-      }
+      param = getAndDecodeParam(serviceContext);
+      FilterChain filterChain = buildFilterChain(serviceContext);
       // logger.info("服务参数类型 {} : {}", pType, getService(serviceContext));
-      result = ((Service) getService(serviceContext)).process(param, serviceContext);
+      result = filterChain.doFilter(param, serviceContext);
     } catch (Throwable e) {
       handleException(serviceContext, e, param, serializer);
     }
     if (result != null && result instanceof CompletableFuture) {
       final Object tempParam = param;
-      ((CompletableFuture<Object>) result).whenComplete((r, e) -> {
-        if (e != null) {
-          handleException(serviceContext, e, tempParam, serializer);
+      ((CompletableFuture<Object>) result).whenComplete((re, ex) -> {
+        if (ex != null) {
+          handleException(serviceContext, ex, tempParam, serializer);
           return;
         }
-        handleNextServices(serviceContext, r, flowMessage.getTransactionId(), serializer);
+        handleNextServices(serviceContext, re, flowMessage.getTransactionId(), serializer);
       });
     } else {
       handleNextServices(serviceContext, result, flowMessage.getTransactionId(), serializer);
     }
   }
 
-  private void handleException(ServiceContext serviceContext, Throwable e, Object param, Serializer serializer) {
+  private void handleException(ServiceContext serviceContext, Throwable throwable, Object param,
+      Serializer serializer) {
     Web web = serviceContext.getWeb();
     if (web != null) {
       web.complete();
     }
 
     ServiceException e2 = new ServiceException(
-        "invoke service " + serviceContext.getCurrentServiceName() + " : " + service + "\r\n, param : " + param, e);
+        "invoke service " + serviceContext.getCurrentServiceName() + " : " + methodProxy + "\r\n, param : " + param,
+        throwable);
     if (serviceContext.isSync()) {
       handleSyncResult(serviceContext, ExceptionUtil.getErrorMessage(e2), true, serializer);
     } else {
@@ -197,15 +194,16 @@ public class ServiceActor extends AbstractFlowerActor {
 
     Web web = serviceContext.getWeb();
     if (web != null) {
-      if (service instanceof Flush) {
+      if (methodProxy.isFlush()) {
         web.flush();
       }
-      if (service instanceof HttpComplete || service instanceof Complete) {
+      if (methodProxy.isCompleted()) {
         web.complete();
       }
     }
 
-    if (result == null) {// for joint service
+    if (result == null) {
+      // for joint service
       return;
     }
     Set<RefType> refTypes = getNextServiceActors(serviceContext);
@@ -249,60 +247,57 @@ public class ServiceActor extends AbstractFlowerActor {
   /**
    * 懒加载方式获取服务实例
    * 
-   * @return {@link FlowerService}
+   * @return {@link MethodProxy}
    */
-  public FlowerService getService(ServiceContext serviceContext) {
-    if (this.service == null) {
-      this.service = flowerFactory.getServiceFactory().getServiceLoader().loadService(serviceName);
+  public MethodProxy getService(ServiceContext serviceContext) {
+    if (this.methodProxy == null) {
+      this.methodProxy = flowerFactory.getServiceFactory().getServiceLoader().loadService(serviceName);
       ServiceMeta serviceMeta = flowerFactory.getServiceFactory().getServiceLoader().loadServiceMeta(serviceName);
       this.paramType = serviceMeta.getParamType();
-      if (service instanceof Aggregate) {
+      if (methodProxy.getFlowerService() instanceof Aggregate) {
         int num = flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName())
-            .getServiceConfig(serviceName).getJointSourceNumber().get();
-        ((AggregateService) service).setSourceNumber(num);
+            .getServiceConfig(serviceName).getAggregateNumber().get();
+        ((AggregateService) methodProxy.getFlowerService()).setSourceNumber(num);
       }
     }
-    return service;
+    return methodProxy;
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  public Filter getFilter(ServiceContext serviceContext) {
-    if (this.filter != null) {
-      return filter;
-    }
-    FlowerService service = getService(serviceContext);
-    com.ly.train.flower.common.annotation.FlowerService flowerService =
-        service.getClass().getAnnotation(com.ly.train.flower.common.annotation.FlowerService.class);
-    if (flowerService == null) {
-      return null;
-    }
-    String[] filters = flowerService.filter();
-    if (filters == null) {
-      return null;
-    }
-    Filter ret = null;
-    for (String f : filters) {
-      if (StringUtil.isBlank(f)) {
-        continue;
-      }
-      Filter temp = ExtensionLoader.load(Filter.class).load(f);
-      if (temp == null) {
-        continue;
-      }
-      if (ret == null) {
-        ret = temp;
-      } else {
-        ret.setNext(ret);
+  private FilterChain buildFilterChain(ServiceContext serviceContext) {
+    List<Filter> filters = new ArrayList<>();
+    if (serviceContext.getFlowName() != null) {
+      FlowConfig flowConfig =
+          flowerFactory.getServiceFactory().getOrCreateServiceFlow(serviceContext.getFlowName()).getFlowConfig();
+      Set<String> filterNames = flowConfig.getFilters();
+      if (filterNames != null) {
+        for (String f : filterNames) {
+          if (StringUtil.isBlank(f)) {
+            continue;
+          }
+          Filter temp = ExtensionLoader.load(Filter.class).load(f);
+          if (temp == null) {
+            continue;
+          }
+          filters.add(temp);
+        }
       }
     }
-    this.filter = ret;
+    return new FilterChainApplication(filters.toArray(new Filter[filters.size()]), methodProxy);
+  }
 
-    return filter;
+  private Object getAndDecodeParam(ServiceContext serviceContext) {
+    FlowMessage flowMessage = serviceContext.getFlowMessage();
+    Serializer serializer = ExtensionLoader.load(Serializer.class).load(serviceContext.getCodec());
+    String paramType = getParamType(serviceContext);
+    if (flowMessage.getMessage() != null && ClassUtil.exists(flowMessage.getMessageType())) {
+      paramType = flowMessage.getMessageType();
+    }
+    return serializer.decode(flowMessage.getMessage(), paramType);
   }
 
   private String getParamType(ServiceContext serviceContext) {
     if (this.paramType == null) {
-      this.service = getService(serviceContext);
+      this.methodProxy = getService(serviceContext);
       ServiceMeta serviceMeta = flowerFactory.getServiceFactory().getServiceLoader().loadServiceMeta(serviceName);
       this.paramType = serviceMeta.getParamType();
     }
