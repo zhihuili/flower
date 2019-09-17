@@ -18,9 +18,9 @@ package com.ly.train.flower.core.service.container;
 import org.junit.Assert;
 import org.junit.Test;
 import com.ly.train.flower.common.core.config.ServiceMeta;
+import com.ly.train.flower.common.core.proxy.MethodProxy;
 import com.ly.train.flower.common.core.service.Service;
 import com.ly.train.flower.common.core.service.ServiceContext;
-import com.ly.train.flower.core.service.container.ServiceLoader;
 import com.ly.train.flower.core.service.impl.AbstractService;
 import com.ly.train.flower.core.service.web.HttpComplete;
 
@@ -42,28 +42,33 @@ public class ServiceLoaderTest {
   @Test
   public void testLoadServiceMeta2() {
     serviceLoader.registerServiceType(SuperService.class.getName(), SuperService.class);
+    MethodProxy methodProxy = serviceLoader.loadService(SuperService.class.getName());
+    Assert.assertEquals(true, methodProxy.isCompleted());
     ServiceMeta serviceMeta = serviceLoader.loadServiceMeta(SuperService.class.getName());
-    Assert.assertEquals(String.class.getName(), serviceMeta.getParamType());
+    Assert.assertEquals(Object.class.getName(), serviceMeta.getParamType());
   }
 
 
-  public class ObjectService implements Service<Object, Object> {
-    @Override
-    public Object process(Object message, ServiceContext context) throws Throwable {
-      return null;
-    }
+
+}
+
+
+class ObjectService implements Service<Object, Object> {
+  @Override
+  public Object process(Object message, ServiceContext context) throws Throwable {
+    return message;
+  }
+}
+
+
+class SuperService extends AbstractService<String, String> implements HttpComplete {
+  @Override
+  public String doProcess(String message, ServiceContext context) throws Throwable {
+    return null;
   }
 
-  public class SuperService extends AbstractService<String, String> implements HttpComplete {
-    @Override
-    public String doProcess(String message, ServiceContext context) throws Throwable {
-      return null;
-    }
-
-    @Override
-    public void onError(String param, ServiceContext context, Throwable throwable) {
-      super.onError(param, context, throwable);
-    }
+  @Override
+  public void onError(String param, ServiceContext context, Throwable throwable) {
+    super.onError(param, context, throwable);
   }
-
 }

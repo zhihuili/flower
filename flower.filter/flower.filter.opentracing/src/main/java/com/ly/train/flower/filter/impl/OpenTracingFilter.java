@@ -54,11 +54,11 @@ public class OpenTracingFilter extends AbstractFilter {
   @Override
   public Object doFilter(Object message, ServiceContext context, FilterChain chain) {
     String spanName = context.getFlowName() + "." + context.getCurrentServiceName();
-    SpanBuilder spanBuilder = tracer.buildSpan(spanName);
+    SpanBuilder spanBuilder = getTracer().buildSpan(spanName);
     SpanContext spanContext = null;
     Map<String, String> headerMap = getMap(context);
     if (headerMap != null) {
-      spanContext = tracer.extract(Format.Builtin.TEXT_MAP, new TextMapAdapter(headerMap));
+      spanContext = getTracer().extract(Format.Builtin.TEXT_MAP, new TextMapAdapter(headerMap));
       if (spanContext != null) {
         spanBuilder.asChildOf(spanContext);
       }
@@ -120,7 +120,7 @@ public class OpenTracingFilter extends AbstractFilter {
   }
 
   private void addAttachements(ServiceContext request, Span span) {
-    tracer.inject(span.context(), Format.Builtin.TEXT_MAP, new TextMap() {
+    getTracer().inject(span.context(), Format.Builtin.TEXT_MAP, new TextMap() {
 
       @Override
       public Iterator<Entry<String, String>> iterator() {

@@ -34,6 +34,7 @@ public class OpentracingFilterTest extends TestBase {
 
   @Test
   public void testOpentracingFilter() throws Exception {
+    final String flowName = generateFlowName();
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
@@ -45,15 +46,13 @@ public class OpentracingFilterTest extends TestBase {
     User user = new User();
     user.setName("响应式编程 ");
     user.setAge(2);
-    int i = 0;
-    while (i++ < 1) {
-      // Thread.sleep(2);
-      Object o = router.syncCallService(user);
-      System.out.println("响应结果： " + o);
-    }
+    Object o = router.syncCallService(user);
+    System.out.println("响应结果： " + o);
   }
+
   @Test
   public void testOpentracingFilterAggreage() throws Exception {
+    final String flowName = generateFlowName();
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
@@ -63,16 +62,12 @@ public class OpentracingFilterTest extends TestBase {
     serviceFlow.setFilters(Sets.newSet("opentracingFilter"));
     serviceFlow.build();
     final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 3);
-    
+
     User user = new User();
     user.setName("响应式编程 ");
     user.setAge(2);
-    int i = 0;
-    while (i++ < 1) {
-      // Thread.sleep(2);
-      Object o = router.syncCallService(user);
-      System.out.println("响应结果： " + o);
-    }
+    Object o = router.syncCallService(user);
+    System.out.println("响应结果： " + o);
   }
 
 

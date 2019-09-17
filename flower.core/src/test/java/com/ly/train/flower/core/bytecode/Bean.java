@@ -13,39 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package com.ly.train.flower.common.exception;
+package com.ly.train.flower.core.bytecode;
 
-/**
- * flower 框架异常
- * 
- * @author leeyazhou
- * 
- */
-public class FlowerException extends RuntimeException {
+public class Bean {
+  int age = 30;
 
-  private static final long serialVersionUID = 1L;
+  private String name = "flower";
 
-  public FlowerException() {
-    super();
+  public int getAge() {
+    return age;
   }
 
-  public FlowerException(String message) {
-    super(message);
-  }
-
-  public FlowerException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public FlowerException(Throwable cause) {
-    super(cause);
-  }
-
-  @Override
-  public void printStackTrace() {
-    super.printStackTrace();
+  public String getName() {
+    return name;
   }
 }

@@ -23,6 +23,9 @@ import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
 import com.ly.train.flower.base.TestBase;
+import com.ly.train.flower.base.service.MethodService;
+import com.ly.train.flower.base.service.str.StringServiceA;
+import com.ly.train.flower.base.service.str.StringServiceB;
 import com.ly.train.flower.base.service.user.UserServiceA;
 import com.ly.train.flower.base.service.user.UserServiceB;
 import com.ly.train.flower.base.service.user.UserServiceC1;
@@ -106,6 +109,20 @@ public class ServiceFlowTest extends TestBase {
     list.add(new Pair<String, String>("UserServiceA", "UserServiceB"));
     list.add(new Pair<String, String>("UserServiceA", "UserServiceC1"));
     list.add(new Pair<String, String>("UserServiceA", "UserServiceC2"));
+
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
+    serviceFlow.buildFlow(list);
+    serviceFlow.build();
+  }
+
+  @Test
+  public void testMethodService() {
+    final String flowName = generateFlowName();
+    List<Pair<String, String>> list = new ArrayList<>();
+    list.add(new Pair<String, String>(StringServiceA.class.getSimpleName(), StringServiceB.class.getSimpleName()));
+    list.add(new Pair<String, String>(StringServiceA.class.getSimpleName(),
+        MethodService.class.getName() + ".transformMessage"));
+    list.add(new Pair<String, String>(StringServiceA.class.getSimpleName(), "transformMessage2"));
 
     ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
     serviceFlow.buildFlow(list);

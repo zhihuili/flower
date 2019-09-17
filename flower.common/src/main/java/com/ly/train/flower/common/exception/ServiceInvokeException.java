@@ -19,33 +19,26 @@
 package com.ly.train.flower.common.exception;
 
 /**
- * flower 框架异常
- * 
  * @author leeyazhou
  * 
  */
-public class FlowerException extends RuntimeException {
+public class ServiceInvokeException extends FlowerException {
 
   private static final long serialVersionUID = 1L;
 
-  public FlowerException() {
+  public ServiceInvokeException() {
     super();
   }
 
-  public FlowerException(String message) {
+  public ServiceInvokeException(String message) {
     super(message);
   }
 
-  public FlowerException(String message, Throwable cause) {
+  public ServiceInvokeException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  public FlowerException(Throwable cause) {
+  public ServiceInvokeException(Throwable cause) {
     super(cause);
-  }
-
-  @Override
-  public void printStackTrace() {
-    super.printStackTrace();
   }
 }

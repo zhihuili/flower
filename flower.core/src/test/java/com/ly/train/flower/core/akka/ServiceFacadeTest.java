@@ -18,7 +18,10 @@
  */
 package com.ly.train.flower.core.akka;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 import org.junit.Test;
 import com.ly.train.flower.base.TestBase;
@@ -44,6 +47,8 @@ public class ServiceFacadeTest extends TestBase {
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, Arrays.asList(UserServiceC1.class, UserServiceC2.class));
+    serviceFlow.buildFlow(Arrays.asList(UserServiceC1.class, UserServiceC2.class), UserServiceD.class);
+    serviceFlow.build();
     User user = new User();
     user.setName("响应式编程");
     user.setAge(2);
@@ -64,8 +69,11 @@ public class ServiceFacadeTest extends TestBase {
     user.setName("响应式编程");
     user.setAge(2);
 
-    Object o = serviceFacade.syncCallService(flowName, user);
-    System.out.println(o);
+    List<User> ret = (List<User>) serviceFacade.syncCallService(flowName, user);
+    assertNotNull(ret);
+    assertEquals(ret.size(), 2);
+    assertEquals(5, ret.get(0).getAge());
+    assertEquals(5, ret.get(1).getAge());
   }
 
   @Test

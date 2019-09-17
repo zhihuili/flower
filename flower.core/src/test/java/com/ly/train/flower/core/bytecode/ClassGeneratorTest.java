@@ -18,11 +18,11 @@
  */
 package com.ly.train.flower.core.bytecode;
 
+import static org.junit.Assert.assertEquals;
 import java.lang.reflect.Field;
 import org.junit.Test;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.bytecode.ClassGenerator;
-import javassist.bytecode.annotation.Annotation;
 
 /**
  * @author leeyazhou
@@ -55,35 +55,13 @@ public class ClassGeneratorTest {
 
 
     for (java.lang.annotation.Annotation an : cl.getAnnotations()) {
-      System.out.println(an);
+      assertEquals(an.annotationType(), FlowerService.class);
     }
-    System.out.println(cl.getName());
+    assertEquals("com.ly.train.flower.core.bytecode.Bean$Builder", cl.getName());
     Builder<String> builder = (Builder<String>) cl.newInstance();
     System.out.println(b.getName());
     builder.setName(b, "ok");
     System.out.println(b.getName());
   }
 
-}
-
-
-interface Builder<T> {
-  T getName(Bean bean);
-
-  void setName(Bean bean, T name);
-}
-
-
-class Bean {
-  int age = 30;
-
-  private String name = "flower";
-
-  public int getAge() {
-    return age;
-  }
-
-  public String getName() {
-    return name;
-  }
 }

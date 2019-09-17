@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import com.alibaba.fastjson.JSONObject;
 import com.ly.train.flower.common.annotation.FlowerServiceUtil;
+import com.ly.train.flower.common.annotation.FlowerType;
 import com.ly.train.flower.common.core.config.FlowConfig;
 import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.core.config.ServiceMeta;
@@ -169,7 +170,7 @@ public final class ServiceFlow {
   }
 
   public ServiceFlow build() {
-    logger.info(" build flow [{}] success. \n{}", this.flowConfig.getFlowName(), flowConfig);
+    logger.info(" buildFlow [{}] success. \n{}", this.flowConfig.getFlowName(), flowConfig);
     flowerFactory.getActorFactory().buildFlowRouter(this.flowConfig.getFlowName(), 1);
     String json = JSONObject.toJSONString(flowConfig);
     FlowConfig config = JSONObject.parseObject(json, FlowConfig.class);
@@ -216,7 +217,7 @@ public final class ServiceFlow {
     ServiceMeta preServiceMeta = serviceFactory.loadServiceMeta(preConfig);
     ServiceMeta nextServiceMeta = serviceFactory.loadServiceMeta(nextConfig);
 
-    if (!preServiceMeta.isInnerAggregateService() && nextServiceMeta.isAggregateService()) {
+    if (!preServiceMeta.isInnerAggregateService() && nextServiceMeta.getFlowerType() == FlowerType.AGGREGATE) {
       ServiceConfig serviceConfig = null;
       Set<ServiceConfig> previousServiceConfigs =
           findPreviousServiceConfig(this.flowConfig.getServiceConfig(), nextConfig, null);
@@ -244,7 +245,7 @@ public final class ServiceFlow {
       preConfig.addNextServiceConfig(nextConfig);
 
       if (nextConfig.isAggregateService()) {
-        nextConfig.jointSourceNumberPlus();
+        nextConfig.increaseAggregateNumber();
       }
       logger.info(" buildFlow : {}, preService : {}, nextService : {}", this.flowConfig.getFlowName(), preServiceName,
           nextServiceName);
@@ -437,8 +438,12 @@ public final class ServiceFlow {
           + nextServiceMata.getServiceClassName() + "-> nextParamType : " + nextParamType);
     }
 
+    if (nextParamType == Object.class || preReturnType == Object.class) {
+      return;
+    }
+
     if (!nextParamType.isAssignableFrom(preReturnType)) {
-      throw new FlowException("build flower error, because " + preServiceMata.getServiceClassName() + " ("
+      throw new FlowException("build flow error, because " + preServiceMata.getServiceClassName() + " ("
           + preReturnType.getSimpleName() + ") is not compatible for " + nextServiceMata.getServiceClassName() + "("
           + nextParamType.getSimpleName() + ")");
     }

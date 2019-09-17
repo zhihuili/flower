@@ -16,7 +16,7 @@
 package com.ly.train.flower.filter;
 
 import java.util.Arrays;
-import com.ly.train.flower.common.core.service.Service;
+import com.ly.train.flower.common.core.proxy.MethodProxy;
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.exception.ServiceException;
 import com.ly.train.flower.common.util.Assert;
@@ -26,13 +26,13 @@ import com.ly.train.flower.common.util.Assert;
  */
 public class FilterChainApplication implements FilterChain {
 
-  private Service<Object, Object> service;
+  private MethodProxy methodProxy;
   private Filter[] filters;
   private int pos;
 
-  public FilterChainApplication(Filter[] filters, Service<Object, Object> service) {
-    Assert.notNull(service, "service");
-    this.service = service;
+  public FilterChainApplication(Filter[] filters, MethodProxy methodProxy) {
+    Assert.notNull(methodProxy, "service");
+    this.methodProxy = methodProxy;
     this.filters = filters;
     if (filters == null) {
       this.filters = new Filter[0];
@@ -53,9 +53,9 @@ public class FilterChainApplication implements FilterChain {
       return filters[pos++].doFilter(message, context, this);
     }
     try {
-      return service.process(message, context);
+      return methodProxy.process(message, context);
     } catch (Throwable e) {
-      throw new ServiceException("fail to invoke service : " + service + ", message : " + message, e);
+      throw new ServiceException("fail to invoke service : " + methodProxy + ", message : " + message, e);
     }
 
   }

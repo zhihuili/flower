@@ -21,6 +21,11 @@ package com.ly.train.flower.base;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import com.ly.train.flower.base.service.ExceptionService;
+import com.ly.train.flower.base.service.str.StringServiceA;
+import com.ly.train.flower.base.service.str.StringServiceB;
+import com.ly.train.flower.base.service.str.StringServiceC1;
+import com.ly.train.flower.base.service.str.StringServiceC2;
+import com.ly.train.flower.base.service.str.StringServiceD;
 import com.ly.train.flower.base.service.user.UserServiceA;
 import com.ly.train.flower.base.service.user.UserServiceB;
 import com.ly.train.flower.base.service.user.UserServiceC1;
@@ -56,6 +61,13 @@ public class TestBase {
     serviceFactory.registerService(UserServiceC2.class.getSimpleName(), UserServiceC2.class);
     serviceFactory.registerService(UserServiceD.class.getSimpleName(), UserServiceD.class);
     serviceFactory.registerService(ExceptionService.class.getSimpleName(), ExceptionService.class);
+
+
+    serviceFactory.registerService(StringServiceA.class.getSimpleName(), StringServiceA.class);
+    serviceFactory.registerService(StringServiceB.class.getSimpleName(), StringServiceB.class);
+    serviceFactory.registerService(StringServiceC1.class.getSimpleName(), StringServiceC1.class);
+    serviceFactory.registerService(StringServiceC2.class.getSimpleName(), StringServiceC2.class);
+    serviceFactory.registerService(StringServiceD.class.getSimpleName(), StringServiceD.class);
   }
 
   public static int sleep = 2000;
@@ -68,7 +80,7 @@ public class TestBase {
   }
 
   protected String generateFlowName() {
-    StackTraceElement element = Thread.currentThread().getStackTrace()[1];
+    StackTraceElement element = Thread.currentThread().getStackTrace()[2];
     return getClass().getName() + "-" + element.getMethodName();
   }
 }

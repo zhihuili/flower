@@ -87,7 +87,6 @@ public class FlowerRouterTest extends TestBase {
 
   @Test
   public void testSyncCallServiceMutliThread() throws Exception {
-    sleep = 5000;
     String flowName = generateFlowName();
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
