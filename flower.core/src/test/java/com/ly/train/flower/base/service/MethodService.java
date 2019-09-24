@@ -29,13 +29,13 @@ public class MethodService {
 
   @FlowerService
   public String transformMessage(String message, ServiceContext serviceContext) {
-    logger.info("方法服务");
+    logger.info("方法服务1");
     return message;
   }
 
   @FlowerService("transformMessage2")
   public String transformMessage2(String message, ServiceContext serviceContext) {
-    logger.info("方法服务");
+    logger.info("方法服务2");
     return message;
   }
 
