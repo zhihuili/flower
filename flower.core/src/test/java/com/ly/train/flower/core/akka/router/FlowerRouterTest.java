@@ -15,14 +15,20 @@
  */
 package com.ly.train.flower.core.akka.router;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import com.ly.train.flower.base.TestBase;
 import com.ly.train.flower.base.model.User;
+import com.ly.train.flower.base.service.MethodService;
+import com.ly.train.flower.base.service.str.StringServiceA;
+import com.ly.train.flower.base.service.str.StringServiceB;
 import com.ly.train.flower.base.service.user.UserServiceA;
 import com.ly.train.flower.base.service.user.UserServiceB;
 import com.ly.train.flower.base.service.user.UserServiceC1;
 import com.ly.train.flower.base.service.user.UserServiceC2;
+import com.ly.train.flower.common.util.Pair;
 import com.ly.train.flower.core.service.container.ServiceFlow;
 
 /**
@@ -31,7 +37,24 @@ import com.ly.train.flower.core.service.container.ServiceFlow;
  */
 public class FlowerRouterTest extends TestBase {
 
+  @Test
+  public void testMethodService() throws Exception {
+    final String flowName = generateFlowName();
+    List<Pair<String, String>> list = new ArrayList<>();
+    list.add(new Pair<String, String>(StringServiceA.class.getSimpleName(), StringServiceB.class.getSimpleName()));
+    final String transformMessage1 = MethodService.class.getName() + ".transformMessage";
+    list.add(new Pair<String, String>(StringServiceB.class.getSimpleName(), transformMessage1));
+    list.add(new Pair<String, String>(transformMessage1, "transformMessage2"));
 
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
+    serviceFlow.buildFlow(list);
+    serviceFlow.build();
+
+    final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 3);
+
+    Object o = router.syncCallService("Hello world.");
+    System.out.println("响应结果： " + o);
+  }
 
   @Test
   public void testSyncCallServiceSimple() throws Exception {
