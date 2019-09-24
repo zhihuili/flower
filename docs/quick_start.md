@@ -1,36 +1,44 @@
 # Flower反应式编程Quick Start
+
 Flower框架的主要元素包括：Flower Service（服务）、Flower 流程和Flow容器。Service实现一个细粒度的服务功能，Service之间通过Message关联，前一个Service的返回值（Message），必须是后一个Service的输入参数（Message），Service按照业务逻辑编辑成一个Flow（流程），Flower容器负责将前一个Service的返回消息，传递给后一个Service。
 
 ### 安装
+
 Maven
+
 ```xml
 <dependency>
-	<groupId>com.ly.train</groupId>
-	<artifactId>flower.core</artifactId>
-	<version>A.B.C</version>
+  <groupId>com.ly.train</groupId>
+  <artifactId>flower.core</artifactId>
+  <version>A.B.C</version>
 </dependency>
 ```
 
 Gradle
-```
+
+```text
 compile group: 'com.ly.train', name: 'flower.core', version: 'A.B.C'
 ```
 
 SBT
-```
+
+```text
 libraryDependencies += "com.ly.train" % "flower.core" % "A.B.C"
 ```
 
 Ivy
-```
+
+```xml
 <dependency org="com.ly.train" name="flower.core" rev="A.B.C"/>
 ```
 
 ### Flower初始化
+
 Flower使用前需要进行初始化，这里演示最简单的方式。
 
 Flower初始化
-```
+
+```java
  FlowerFactory flowerFactory = new SimpleFlowerFactory();
 ```
 
@@ -38,7 +46,8 @@ Flower初始化
 
 开发Service类必须实现Flower框架的Service接口或者继承AbstractService基类，在process方法内完成服务业务逻辑处理。
 
-**UserServiceA**
+UserServiceA
+
 ```java
 public class UserServiceA implements Service<User, User> {
   static final Logger logger = LoggerFactory.getLogger(UserServiceA.class);
@@ -53,7 +62,8 @@ public class UserServiceA implements Service<User, User> {
 }
 ```
 
-**UserServiceB**
+UserServiceB
+
 ```java
 public class UserServiceB implements Service<User, User> {
   static final Logger logger = LoggerFactory.getLogger(UserServiceB.class);
@@ -68,7 +78,8 @@ public class UserServiceB implements Service<User, User> {
 }
 ```
 
-**UserServiceC1**
+UserServiceC1
+
 ```java
 public class UserServiceC1 implements Service<User, User> {
   static final Logger logger = LoggerFactory.getLogger(UserServiceC1.class);
@@ -88,32 +99,37 @@ public class UserServiceC1 implements Service<User, User> {
 Flower提供两种服务注册方式：配置文件方式和编程方式。
 
 - 编程方式
-```
+
+```java
  ServiceFactory serviceFactory = flowerFactory.getServiceFactory();
  serviceFactory.registerService(UserServiceA.class.getSimpleName(), UserServiceA.class);
  serviceFactory.registerService(UserServiceB.class.getSimpleName(), UserServiceB.class);
  serviceFactory.registerService(UserServiceC1.class.getSimpleName(), UserServiceC1.class);
 ```
 
-- 配置文件方式 
+- 配置文件方式
 服务定义配置文件扩展名: .services，放在classpath下，Flower框架自动加载注册。
 flower_test.services
-``` 
+
+```java
 UserServiceA = com.ly.train.flower.base.service.user.UserServiceA
 UserServiceB = com.ly.train.flower.base.service.user.UserServiceB
 UserServiceC1 = com.ly.train.flower.base.service.user.UserServiceC1
 ```
 
 ### 服务流程编排
+
 Flower框架提供两种服务流程编排方式：配置文件方式和编程方式。
 
 两种编排方式的结果是一样：
-```
+
+```text
 UserServiceA -> UserServiceB -> UserServiceC1
 ```
 
 - 编程方式编排流程
-```
+
+```java
 // UserServiceA -> UserServiceB -> UserServiceC1
 final String flowName = "flower_test";
 ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
@@ -125,31 +141,36 @@ serviceFlow.build();
 - 配置文件方式编排流程
 流程配置文件扩展名: .flow，放在classpath下，Flower框架自动加载编排流程。
 flower_test.flow
-```
+
+```text
 UserServiceA -> UserServiceB
 UserServiceB -> UserServiceC1
 ```
 
 ### 调用Flower流程
+
 前面定义了3个Flower服务，并编排了名称为flower_test的服务流程。那么怎么使用它呢？
+
 1. 同步调用，需要Flower服务流程响应结果。
 2. 异步调用，不需要Flower服务流程响应结果。
 
 - 同步调用
-```
+
+```java
 final FlowRouter flowRouter = flowerFactory.buildFlowRouter(flowName, 16);
 Object result = flowRouter.syncCallService(user);
 ```
 
 - 异步调用
-```
+
+```java
 final FlowRouter flowRouter = flowerFactory.buildFlowRouter(flowName, 16);
 flowRouter.asyncCallService(user);
 ```
 
 ### 完整示例
 
-```
+```java
     FlowerFactory flowerFactory = new SimpleFlowerFactory();
     ServiceFactory serviceFactory = flowerFactory.getServiceFactory();
     serviceFactory.registerService(UserServiceA.class.getSimpleName(), UserServiceA.class);
@@ -170,12 +191,13 @@ flowRouter.asyncCallService(user);
 
     Object o = flowRouter.syncCallService(user);
     System.out.println("响应结果： " + o);
-    
+
     flowRouter.asyncCallService(user);
 ```
 
 ### 运行结果
-```
+
+```text
 2019-07-11 15:13:19.739 [main] INFO  c.ly.train.flower.config.parser.FlowerConfigParser - parse FlowerConfig, configLocation : flower.yml
 2019-07-11 15:13:19.839 [main] INFO  c.ly.train.flower.config.parser.FlowerConfigParser - flowerConfig : FlowerConfig [name=LocalFlower, host=127.0.0.1, port=25005, basePackage=com.ly.train.flower, registry=null]
 2019-07-11 15:13:19.840 [main] DEBUG com.ly.train.flower.common.lifecyle.AbstractInit - init class : com.ly.train.flower.core.service.container.simple.SimpleFlowerFactory@39aeed2f
@@ -233,11 +255,10 @@ dispatcher.fork-join-executor.parallelism-factor = "8"
 2019-07-11 15:13:21.789 [main] INFO  c.l.t.flower.core.service.container.ServiceLoader - register service type -> UserServiceC1 : class com.ly.train.flower.base.service.user.UserServiceC1
 2019-07-11 15:13:21.790 [main] INFO  c.l.t.flower.core.service.container.ServiceFlow -  buildFlow : flower_test, preService : UserServiceA, nextService : UserServiceB
 2019-07-11 15:13:21.790 [main] INFO  c.l.t.flower.core.service.container.ServiceFlow -  buildFlow : flower_test, preService : UserServiceB, nextService : UserServiceC1
-2019-07-11 15:13:21.790 [main] INFO  c.l.t.flower.core.service.container.ServiceFlow -  build flower_test success. 
+2019-07-11 15:13:21.790 [main] INFO  c.l.t.flower.core.service.container.ServiceFlow -  build flower_test success.
  ServiceFlow [ flowName = flower_test
-	UserServiceA(1) ---> UserServiceB(1), 
-	UserServiceB(1) ---> UserServiceC1(0), 
-	
+  UserServiceA(1) ---> UserServiceB(1),
+  UserServiceB(1) ---> UserServiceC1(0)
 ]
 2019-07-11 15:13:21.790 [main] INFO  c.l.t.flower.core.service.container.ServiceFlow - start register ServiceConfig : ServiceConfig [flowName=flower_test, serviceName=UserServiceA, jointSourceNumber=0]
 2019-07-11 15:13:21.790 [main] DEBUG com.ly.train.flower.common.lifecyle.AbstractInit - init class : com.ly.train.flower.core.akka.router.FlowRouter@bcef303
