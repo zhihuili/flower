@@ -1,0 +1,9 @@
+
+
+spring:
+   flower:
+      config:
+         name: testflower
+         host: 127.0.0.1
+         port: 12501
+         basePackage: com.ly.train.flower.ddd
