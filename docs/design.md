@@ -3,10 +3,11 @@
 了解关于Flower的内部设计，有助于你更好地利用Flower开发一个反应式系统。
 
 ## Flower core模块（进程内流式微服务框架）设计
+
 Flower基于Akka的Actor进行开发，将Service封装到Actor里面，Actor收到的消息作为参数传入Service进行调用，Service的输出发送给后续Actor作为Service的输入。
 
-
 ### Flower核心类
+
 <img src="img/FlowerCommonClass.png" height="600"/>
 
 * 用户开发的Service实现Service或者HttpService接口
@@ -15,9 +16,11 @@ Flower基于Akka的Actor进行开发，将Service封装到Actor里面，Actor收
 * ServiceActor将Service封装到Actor
 
 ### Flower初始化及调用时序
+
 <img src="img/FlowerCommonSequence.png" height="600"/>
 
 服务流程初始化
+
 * 开发者通过ServiceFacade调用已经定义好的服务流程
 * ServiceFacade根据传入的flow名和service名，创建第一个ServiceActor
 * ServiceActor通过ServiceFactory装载Service实例，并通过ServiceFlow获得配置在流程中当前Service的后续Service（可能有多个）
@@ -30,7 +33,6 @@ Flower基于Akka的Actor进行开发，将Service封装到Actor里面，Actor收
 * ServiceActor将Service实例的返回值作为消息发送给流程定义的后续ServiceActor
 
 Flower的核心设计不过如此。但是由此延伸出来的应用方法和设计模式却和Akka有了极大的不同。
-
 
 ## 分布式流式微服务框架设计
 
@@ -45,10 +47,11 @@ Flower的核心设计不过如此。但是由此延伸出来的应用方法和�
 * 服务之间消息驱动，不需要直接依赖，没有代码耦合
 * 服务之间异步调用，前面的服务完成后，发送消息后不用管，后面的服务异步处理消息
 * 服务的粒度天然控制在消息的层面，每个服务只处理一个消息，而消息对于通常的web开发是天然的，一个请求就是一个消息，一个订单就是一个消息，一个用户也是一个消息，而消息就是模型，所以只要做好领域模型设计，无需用模型再去驱动设计，只需要让模型，也就是消息流动起来就可以了，模型流动到不同的服务，被不断计算、填充完善，最后完成处理就可以了，是真正的面向模型设计。
- 
 
 ### 架构
+
 #### 部署模型
+
 <img src="img/dep.png" height="400"/>
 
 Flower将整个应用系统集群统一管理控制，控制中心控制管理集群的所有资源
@@ -59,14 +62,12 @@ Agent部署在集群每一台服务器上，负责加载服务实例，并向控
 
 控制中心和Agent基于Akka开发，每个服务包装一个actor里面，actor之间负责消息的通信
 
- 
-
 #### 集群启动与服务部署时序模型
-![](img/dep_seq.png)
 
-
+![dep_seq](img/dep_seq.png)
 
 ### 注册服务数据结构
+
 1. 服务名：字符串，全局唯一
 2. 服务路径名：class全路径名，全局唯一
 3. 服务jar包名：服务所在的jar文件名，全局唯一
@@ -75,8 +76,9 @@ Agent部署在集群每一台服务器上，负责加载服务实例，并向控
 6. 服务编排与消息通信
 
 ### 服务之间的依赖关系在控制中心编排
+
 1. 服务编排时，只需要编排每个服务的后续服务，1:0..n
 2. 从整个系统看，所有服务构成一个有向无环图DAG
-1. 服务自身不负责消息通信，消息通信由akka的actor完成
-1. 每个服务只处理一种消息
-1. //TODO 服务接口定义 public object process(object message)
+3. 服务自身不负责消息通信，消息通信由akka的actor完成
+4. 每个服务只处理一种消息
+5. //TODO 服务接口定义 public object process(object message)
