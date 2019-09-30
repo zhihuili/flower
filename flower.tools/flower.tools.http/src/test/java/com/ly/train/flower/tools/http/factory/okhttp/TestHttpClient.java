@@ -18,6 +18,7 @@ package com.ly.train.flower.tools.http.factory.okhttp;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import com.alibaba.fastjson.JSONObject;
 import com.ly.train.flower.tools.http.HttpFactory;
@@ -33,6 +34,7 @@ public class TestHttpClient {
   AtomicInteger total = new AtomicInteger();
 
   @Test
+  @Ignore
   public void testHttp() {
     int i = 0;
     while (i++ < 500) {
@@ -97,8 +99,9 @@ public class TestHttpClient {
   }
 
   @After
+  @Ignore
   public void after() throws InterruptedException {
-    long sleep = 3000000;
+    long sleep = 3;
     System.out.println("休眠（ms）" + sleep);
     Thread.sleep(sleep);
   }

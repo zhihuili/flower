@@ -36,7 +36,7 @@ public class ServiceConfig implements Serializable {
   private String serviceName;
   private ServiceMeta serviceMeta;
   private Set<ServiceConfig> nextServiceConfigs;
-  private AtomicInteger jointSourceNumber = new AtomicInteger(0);
+  private AtomicInteger aggregateNumber = new AtomicInteger(0);
   private int index;
   private boolean local = true;
   private Set<URL> addresses;
@@ -47,17 +47,16 @@ public class ServiceConfig implements Serializable {
     this.flowName = flowName;
   }
 
-  public AtomicInteger getJointSourceNumber() {
-    return jointSourceNumber;
+  public AtomicInteger getAggregateNumber() {
+    return aggregateNumber;
   }
 
-  public void setJointSourceNumber(AtomicInteger jointSourceNumber) {
-    this.jointSourceNumber = jointSourceNumber;
+  public void setAggregateNumber(AtomicInteger aggregateNumber) {
+    this.aggregateNumber = aggregateNumber;
   }
 
-
-  public int jointSourceNumberPlus() {
-    return this.jointSourceNumber.incrementAndGet();
+  public int increaseAggregateNumber() {
+    return this.aggregateNumber.incrementAndGet();
   }
 
   public String getServiceName() {
@@ -249,7 +248,7 @@ public class ServiceConfig implements Serializable {
     builder.append(", serviceName=");
     builder.append(serviceName);
     builder.append(", jointSourceNumber=");
-    builder.append(jointSourceNumber);
+    builder.append(aggregateNumber);
     builder.append("]");
     return builder.toString();
   }

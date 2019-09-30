@@ -26,7 +26,7 @@ package com.ly.train.flower.common.exception;
  */
 public class FlowerException extends RuntimeException {
 
-  private static final long serialVersionUID = 6532232062131720108L;
+  private static final long serialVersionUID = 1L;
 
   public FlowerException() {
     super();
@@ -46,7 +46,6 @@ public class FlowerException extends RuntimeException {
 
   @Override
   public void printStackTrace() {
-    // TODO Auto-generated method stub
     super.printStackTrace();
   }
 }

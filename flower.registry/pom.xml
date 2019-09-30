@@ -28,5 +28,6 @@
     <modules>
         <module>flower.registry.api</module>
         <module>flower.registry.zookeeper</module>
+        <module>flower.registry.simple</module>
     </modules>
 </project>

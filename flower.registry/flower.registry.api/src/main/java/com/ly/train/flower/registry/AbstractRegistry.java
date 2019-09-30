@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import com.ly.train.flower.common.core.config.ServiceConfig;
+import com.ly.train.flower.common.core.config.FlowConfig;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.StringUtil;
@@ -41,7 +41,7 @@ import com.ly.train.flower.registry.config.ServiceInfo;
 public abstract class AbstractRegistry implements Registry {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
   protected final ConcurrentMap<String, ServiceInfo> serviceInfoCache = new ConcurrentHashMap<>();
-  protected final ConcurrentMap<String, ServiceConfig> serviceConfigCache = new ConcurrentHashMap<>();
+  protected final ConcurrentMap<String, FlowConfig> flowConfigCache = new ConcurrentHashMap<>();
   private static final ScheduledExecutorService executorService =
       Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("flower-registry"));
 
@@ -63,11 +63,11 @@ public abstract class AbstractRegistry implements Registry {
               serviceInfoCache.put(info.getServiceMeta().getServiceClassName(), info);
             }
           }
-          List<ServiceConfig> t2 = doGetServiceConfig(null);
+          List<FlowConfig> t2 = doGetFlowConfig(null);
           if (t2 != null && !t2.isEmpty()) {
-            for (ServiceConfig info : t2) {
+            for (FlowConfig info : t2) {
               if (StringUtil.isNotBlank(info.getFlowName())) {
-                serviceConfigCache.put(info.getFlowName(), info);
+                flowConfigCache.put(info.getFlowName(), info);
               }
             }
           }
@@ -109,31 +109,31 @@ public abstract class AbstractRegistry implements Registry {
 
 
   @Override
-  public boolean registerServiceConfig(ServiceConfig serviceConfig) {
-    serviceConfigCache.put(serviceConfig.getFlowName(), serviceConfig);
-    return doRegisterServiceConfig(serviceConfig);
+  public boolean registerFlowConfig(FlowConfig flowConfig) {
+    flowConfigCache.put(flowConfig.getFlowName(), flowConfig);
+    return doRegisterFlowConfig(flowConfig);
   }
 
   @Override
-  public List<ServiceConfig> getServiceConfig(ServiceConfig serviceConfig) {
-    List<ServiceConfig> ret = doGetServiceConfig(serviceConfig);
+  public List<FlowConfig> getFlowConfig(FlowConfig flowConfig) {
+    List<FlowConfig> ret = doGetFlowConfig(flowConfig);
     if (ret != null) {
-      for (ServiceConfig i : ret) {
+      for (FlowConfig i : ret) {
         if (StringUtil.isNotBlank(i.getFlowName())) {
-          serviceConfigCache.put(i.getFlowName(), i);
+          flowConfigCache.put(i.getFlowName(), i);
         }
       }
     }
-    return new ArrayList<ServiceConfig>(serviceConfigCache.values());
+    return new ArrayList<FlowConfig>(flowConfigCache.values());
   }
 
 
   public abstract boolean doRegister(ServiceInfo serviceInfo);
 
-  public abstract boolean doRegisterServiceConfig(ServiceConfig serviceConfig);
-
 
   public abstract List<ServiceInfo> doGetProvider(ServiceInfo serviceInfo);
 
-  public abstract List<ServiceConfig> doGetServiceConfig(ServiceConfig serviceConfig);
+  public abstract boolean doRegisterFlowConfig(FlowConfig flowConfig);
+
+  public abstract List<FlowConfig> doGetFlowConfig(FlowConfig flowConfig);
 }

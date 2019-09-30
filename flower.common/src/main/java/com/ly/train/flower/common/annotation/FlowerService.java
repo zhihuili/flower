@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
 package com.ly.train.flower.common.annotation;
 
 import java.lang.annotation.Documented;
@@ -34,9 +31,9 @@ import java.lang.annotation.Target;
 public @interface FlowerService {
 
   /**
-   * 服务名字
+   * 服务名称
    * 
-   * @return 服务名字
+   * @return 服务名称
    */
   String value() default "";
 
@@ -50,5 +47,8 @@ public @interface FlowerService {
    */
   FlowerType type() default FlowerType.COMMON;
 
+  boolean flush() default false;
+
+  boolean complete() default false;
 
 }

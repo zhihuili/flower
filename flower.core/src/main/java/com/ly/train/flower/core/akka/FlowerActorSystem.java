@@ -17,6 +17,7 @@ package com.ly.train.flower.core.akka;
 
 import java.util.concurrent.TimeUnit;
 import com.ly.train.flower.common.exception.FlowException;
+import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.lifecyle.AbstractLifecycle;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
@@ -147,9 +148,8 @@ public class FlowerActorSystem extends AbstractLifecycle {
       actorContext.watch(actorRef);
       return actorRef;
     } catch (Exception e) {
-      logger.error("fail to create remote actor, actor path : " + actorPath, e);
+      throw new FlowerException("fail to create remote actor, actor path : " + actorPath, e);
     }
-    return null;
   }
 
   public String getActorPath(String host, int port, String serviceName, int index) {

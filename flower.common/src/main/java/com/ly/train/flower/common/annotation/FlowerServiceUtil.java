@@ -15,6 +15,9 @@
  */
 package com.ly.train.flower.common.annotation;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.util.StringUtil;
 
 /**
@@ -22,7 +25,6 @@ import com.ly.train.flower.common.util.StringUtil;
  * 
  */
 public class FlowerServiceUtil {
-
   public static String getServiceName(Class<?> clazz) {
     if (clazz == null) {
       return null;
@@ -37,20 +39,41 @@ public class FlowerServiceUtil {
     return serviceName;
   }
 
+  public static Method getProcessMethod(Class<?> clazz) {
+    if (clazz == null) {
+      return null;
+    }
+    Method[] methods = clazz.getMethods();
+    if (methods == null) {
+      return null;
+    }
+    for (int i = methods.length; i > 0; i--) {
+      Method method = methods[i - 1];
+      if ("process".equals(method.getName()) && method.getParameterCount() == 2) {
+        Parameter pa = method.getParameters()[1];
+        if (pa.getType().equals(ServiceContext.class)) {
+          return method;
+        }
+      }
+    }
+    return null;
+  }
+
   /**
    * 注意： 不是内部聚合类,是指服务的类型标记为聚合<br/>
    * 服务是否是聚合类型<br/>
    * 
    * @param clazz clazz
-   * @return true/false
+   * @return {@link FlowerType}
    */
-  public static boolean isAggregateType(Class<?> clazz) {
+  public static FlowerType getFlowerType(Class<?> clazz) {
     FlowerService flowerService = null;
     if (clazz == null || (flowerService = clazz.getAnnotation(FlowerService.class)) == null) {
-      return false;
+      return null;
     }
-    return FlowerType.AGGREGATE.equals(flowerService.type());
+    return flowerService.type();
   }
+
 
   public static int getTimeout(Class<?> clazz) {
     FlowerService flowerService = null;

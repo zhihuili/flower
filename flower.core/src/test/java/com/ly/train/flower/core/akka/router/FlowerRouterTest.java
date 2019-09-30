@@ -15,16 +15,20 @@
  */
 package com.ly.train.flower.core.akka.router;
 
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import com.ly.train.flower.base.TestBase;
 import com.ly.train.flower.base.model.User;
+import com.ly.train.flower.base.service.MethodService;
+import com.ly.train.flower.base.service.str.StringServiceA;
+import com.ly.train.flower.base.service.str.StringServiceB;
 import com.ly.train.flower.base.service.user.UserServiceA;
 import com.ly.train.flower.base.service.user.UserServiceB;
 import com.ly.train.flower.base.service.user.UserServiceC1;
 import com.ly.train.flower.base.service.user.UserServiceC2;
-import com.ly.train.flower.core.akka.router.FlowRouter;
+import com.ly.train.flower.common.util.Pair;
 import com.ly.train.flower.core.service.container.ServiceFlow;
 
 /**
@@ -33,10 +37,28 @@ import com.ly.train.flower.core.service.container.ServiceFlow;
  */
 public class FlowerRouterTest extends TestBase {
 
+  @Test
+  public void testMethodService() throws Exception {
+    final String flowName = generateFlowName();
+    List<Pair<String, String>> list = new ArrayList<>();
+    list.add(new Pair<String, String>(StringServiceA.class.getSimpleName(), StringServiceB.class.getSimpleName()));
+    final String transformMessage1 = MethodService.class.getName() + ".transformMessage";
+    list.add(new Pair<String, String>(StringServiceB.class.getSimpleName(), transformMessage1));
+    list.add(new Pair<String, String>(transformMessage1, "transformMessage2"));
 
+    ServiceFlow serviceFlow = ServiceFlow.getOrCreate(flowName, serviceFactory);
+    serviceFlow.buildFlow(list);
+    serviceFlow.build();
+
+    final FlowRouter router = serviceFacade.buildFlowRouter(flowName, 2 << 3);
+
+    Object o = router.syncCallService("Hello world.");
+    System.out.println("响应结果： " + o);
+  }
 
   @Test
   public void testSyncCallServiceSimple() throws Exception {
+    String flowName = generateFlowName();
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
@@ -53,6 +75,7 @@ public class FlowerRouterTest extends TestBase {
 
   @Test
   public void testSyncCallServiceSimple2() throws Exception {
+    String flowName = generateFlowName();
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
@@ -70,6 +93,7 @@ public class FlowerRouterTest extends TestBase {
 
   @Test
   public void testAsyncCallServiceSimple() throws Exception {
+    String flowName = generateFlowName();
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
@@ -81,13 +105,12 @@ public class FlowerRouterTest extends TestBase {
     user.setName("响应式编程 ");
     user.setAge(2);
     router.asyncCallService(user);
-    Thread.sleep(TimeUnit.SECONDS.toMillis(2));
   }
 
 
   @Test
   public void testSyncCallServiceMutliThread() throws Exception {
-    sleep = 5000;
+    String flowName = generateFlowName();
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
@@ -119,6 +142,7 @@ public class FlowerRouterTest extends TestBase {
   @Test
   public void testAsyncCallServiceMutliThread() throws Exception {
     sleep = 5000;
+    String flowName = generateFlowName();
     ServiceFlow serviceFlow = serviceFactory.getOrCreateServiceFlow(flowName);
     serviceFlow.buildFlow(UserServiceA.class, UserServiceB.class);
     serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);

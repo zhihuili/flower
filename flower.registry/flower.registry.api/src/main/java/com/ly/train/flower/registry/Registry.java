@@ -19,7 +19,7 @@
 package com.ly.train.flower.registry;
 
 import java.util.List;
-import com.ly.train.flower.common.core.config.ServiceConfig;
+import com.ly.train.flower.common.core.config.FlowConfig;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.registry.config.ServiceInfo;
 
@@ -37,7 +37,7 @@ public interface Registry {
    */
   boolean register(ServiceInfo serviceInfo);
 
-  boolean registerServiceConfig(ServiceConfig serviceConfig);
+  boolean registerFlowConfig(FlowConfig flowConfig);
 
   /**
    * 查询服务提供者
@@ -47,7 +47,7 @@ public interface Registry {
    */
   List<ServiceInfo> getProvider(ServiceInfo serviceInfo);
 
-  List<ServiceConfig> getServiceConfig(ServiceConfig serviceConfig);
+  List<FlowConfig> getFlowConfig(FlowConfig flowConfig);
 
   URL getUrl();
 }

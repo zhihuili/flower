@@ -15,11 +15,14 @@
  */
 package flower.center;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 import org.junit.Test;
 import com.ly.train.flower.center.core.store.ServiceInfoStore;
+import com.ly.train.flower.center.core.store.memory.ServiceInfoMemoryStore;
 import com.ly.train.flower.common.util.ExtensionLoader;
 
 /**
@@ -30,14 +33,14 @@ public class ExtensionLoaderTest {
   @Test
   public void testLoadServiceConfig() throws ClassNotFoundException, IOException {
 
-    Enumeration<URL> it =
-        Thread.currentThread().getContextClassLoader()
-            .getResources("META-INF/services/flower/com.ly.train.flower.center.core.store.ServiceInfoStore");
+    Enumeration<URL> it = Thread.currentThread().getContextClassLoader()
+        .getResources("META-INF/services/flower/com.ly.train.flower.center.core.store.ServiceInfoStore");
     while (it.hasMoreElements()) {
       System.out.println(it.nextElement());
     }
 
-    System.out.println(ExtensionLoader.load(ServiceInfoStore.class).load("memory"));
-    System.out.println(ExtensionLoader.load(ServiceInfoStore.class).load("redis"));
+    ServiceInfoStore infoStore = ExtensionLoader.load(ServiceInfoStore.class).load("memory");
+    assertNotNull(infoStore);
+    assertEquals(infoStore.getClass(), ServiceInfoMemoryStore.class);
   }
 }

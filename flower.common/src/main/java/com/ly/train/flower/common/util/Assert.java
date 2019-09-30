@@ -66,6 +66,12 @@ public class Assert {
     }
   }
 
+  public static void notNull(Object object) {
+    if (object == null) {
+      throw new IllegalArgumentException("the argument can not be null.");
+    }
+  }
+
   public static void notNull(Object object, String message) {
     if (object == null) {
       throw new IllegalArgumentException(message + " can not be null.");
