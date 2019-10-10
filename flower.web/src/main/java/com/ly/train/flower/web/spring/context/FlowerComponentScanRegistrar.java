@@ -19,6 +19,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -31,14 +34,12 @@ import org.springframework.util.ClassUtils;
  * flower {@link FlowerComponentScan} Bean Registrar
  * 
  */
-public class FlowerComponentScanRegistrar implements ImportBeanDefinitionRegistrar {
+public class FlowerComponentScanRegistrar implements BeanFactoryAware, ImportBeanDefinitionRegistrar {
+  protected BeanFactory beanFactory;
 
   @Override
   public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-
     Set<String> packagesToScan = getPackagesToScan(importingClassMetadata);
-
-
     registerReferenceAnnotationBeanPostProcessor(registry, packagesToScan);
   }
 
@@ -81,4 +82,8 @@ public class FlowerComponentScanRegistrar implements ImportBeanDefinitionRegistr
     return packagesToScan;
   }
 
+  @Override
+  public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+    this.beanFactory = beanFactory;
+  }
 }

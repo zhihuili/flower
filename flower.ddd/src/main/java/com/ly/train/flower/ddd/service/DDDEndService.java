@@ -13,33 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.ddd.api.command;
+package com.ly.train.flower.ddd.service;
 
-import java.io.Serializable;
+import com.ly.train.flower.common.core.service.ServiceContext;
+import com.ly.train.flower.core.service.Complete;
+import com.ly.train.flower.core.service.web.Flush;
 
 /**
  * @author leeyazhou
  */
-public class SelectOrderCommand implements Serializable {
+public class DDDEndService extends BaseService implements Flush, Complete {
 
-  private static final long serialVersionUID = 1L;
-  private Long id;
-
-  /**
-   * 
-   */
-  public SelectOrderCommand(Long id) {
-    this.id = id;
+  @Override
+  public Object doProcess(Object message, ServiceContext context) throws Throwable {
+    return message;
   }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-
 
 }

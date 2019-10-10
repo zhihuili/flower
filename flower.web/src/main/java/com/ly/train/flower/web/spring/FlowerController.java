@@ -20,8 +20,10 @@ package com.ly.train.flower.web.spring;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import com.ly.train.flower.common.annotation.Flower;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
@@ -33,26 +35,30 @@ import com.ly.train.flower.core.service.container.ServiceFlow;
  * 
  * @author leeyazhou
  */
-public abstract class FlowerController implements InitializingBean {
+public abstract class FlowerController implements InitializingBean, ApplicationContextAware {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
   private FlowRouter flowRouter;
   private String flowerName;
   private int flowerNumber;
-
-
-  @Autowired
+  private ApplicationContext applicationContext;
   private FlowerFactory flowerFactory;
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
+  }
 
   protected void doProcess(Object param, HttpServletRequest req) {
     AsyncContext context = null;
     if (req != null) {
       context = req.startAsync();
     }
-    flowRouter.asyncCallService(param, context);
+    this.flowRouter.asyncCallService(param, context);
   }
 
   @Override
   public void afterPropertiesSet() throws Exception {
+    this.flowerFactory = applicationContext.getBean(FlowerFactory.class);
     getFlowName();
     buildFlower();
     this.flowRouter = initFlowRouter();

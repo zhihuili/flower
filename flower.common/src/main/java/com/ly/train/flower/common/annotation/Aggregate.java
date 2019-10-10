@@ -13,33 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.ddd.api.command;
+package com.ly.train.flower.common.annotation;
 
-import java.io.Serializable;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
+ * 领域聚合标识符
+ * 
  * @author leeyazhou
  */
-public class SelectOrderCommand implements Serializable {
-
-  private static final long serialVersionUID = 1L;
-  private Long id;
-
-  /**
-   * 
-   */
-  public SelectOrderCommand(Long id) {
-    this.id = id;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Aggregate {
 
 }

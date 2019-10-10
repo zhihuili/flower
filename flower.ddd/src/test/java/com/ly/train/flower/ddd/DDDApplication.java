@@ -13,33 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.ddd.api.command;
+package com.ly.train.flower.ddd;
 
-import java.io.Serializable;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.ly.train.flower.web.spring.context.FlowerComponentScan;
 
-/**
- * @author leeyazhou
- */
-public class SelectOrderCommand implements Serializable {
+@SpringBootApplication
+@FlowerComponentScan("com.ly.train.flower.ddd")
+public class DDDApplication {
 
-  private static final long serialVersionUID = 1L;
-  private Long id;
-
-  /**
-   * 
-   */
-  public SelectOrderCommand(Long id) {
-    this.id = id;
+  public static void main(String[] args) {
+    SpringApplication.run(DDDApplication.class, args);
   }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-
 
 }

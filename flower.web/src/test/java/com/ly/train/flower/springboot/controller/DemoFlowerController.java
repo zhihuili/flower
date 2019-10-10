@@ -41,7 +41,6 @@ import com.ly.train.flower.web.spring.FlowerController;
 @RestController
 public class DemoFlowerController extends FlowerController {
 
-
   @RequestMapping("test")
   public void test(User user, HttpServletRequest req) throws IOException {
     doProcess(user, req);

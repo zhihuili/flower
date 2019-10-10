@@ -13,33 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.ddd.api.command;
+package com.ly.train.flower.common.util;
 
 import java.io.Serializable;
 
 /**
  * @author leeyazhou
  */
-public class SelectOrderCommand implements Serializable {
-
+public class AsyncResult<T> implements Serializable {
   private static final long serialVersionUID = 1L;
-  private Long id;
+  private T result;
+  private Throwable exception;
 
-  /**
-   * 
-   */
-  public SelectOrderCommand(Long id) {
-    this.id = id;
+  public AsyncResult(T result) {
+    this.result = result;
   }
 
-  public Long getId() {
-    return id;
+  public AsyncResult(Throwable exception) {
+    this.exception = exception;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public boolean isSuccess() {
+    return exception == null;
   }
 
+  public boolean isError() {
+    return !this.isSuccess();
+  }
 
+  public T getResult() {
+    return result;
+  }
 
+  public static <R> AsyncResult<R> success(R result) {
+    return new AsyncResult<>(result);
+  }
+
+  public static <R> AsyncResult<R> fail(Throwable ex) {
+    return new AsyncResult<>(ex);
+  }
 }

@@ -13,33 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.ddd.api.command;
+package com.ly.train.flower.ddd.exception;
 
-import java.io.Serializable;
+import com.ly.train.flower.common.exception.FlowerException;
 
 /**
  * @author leeyazhou
  */
-public class SelectOrderCommand implements Serializable {
+public class EventHandlerNotFoundException extends FlowerException{
+
 
   private static final long serialVersionUID = 1L;
-  private Long id;
 
-  /**
-   * 
-   */
-  public SelectOrderCommand(Long id) {
-    this.id = id;
+  public EventHandlerNotFoundException() {
+    super();
   }
 
-  public Long getId() {
-    return id;
+  public EventHandlerNotFoundException(String message) {
+    super(message);
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public EventHandlerNotFoundException(String message, Throwable cause) {
+    super(message, cause);
   }
 
+  public EventHandlerNotFoundException(Throwable cause) {
+    super(cause);
+  }
 
+  @Override
+  public void printStackTrace() {
+    super.printStackTrace();
+  }
 
 }

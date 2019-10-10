@@ -13,33 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.ddd.api.command;
+package com.ly.train.flower.ddd.config;
 
 import java.io.Serializable;
 
 /**
  * @author leeyazhou
  */
-public class SelectOrderCommand implements Serializable {
-
-  private static final long serialVersionUID = 1L;
-  private Long id;
+public class EventMessage implements Serializable {
 
   /**
    * 
    */
-  public SelectOrderCommand(Long id) {
-    this.id = id;
+  private static final long serialVersionUID = 1L;
+  private Object message;
+
+  public EventMessage() {}
+
+  public EventMessage(Object message) {
+    this.message = message;
   }
 
-  public Long getId() {
-    return id;
+  /**
+   * @param message the message to set
+   */
+  public void setMessage(Object message) {
+    this.message = message;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  /**
+   * @return the message
+   */
+  public Object getMessage() {
+    return message;
   }
 
-
+  public static EventMessage asEventMessage(Object message) {
+    return new EventMessage(message);
+  }
 
 }

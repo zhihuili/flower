@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.ddd;
+package com.ly.train.flower.ddd.config;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.util.function.Supplier;
 
-@SpringBootApplication
-public class Application {
+public interface ApplyMore {
 
-  public static void main(String[] args) {
-    SpringApplication.run(Application.class, args);
-  }
+    ApplyMore andThenApply(Supplier<?> payloadOrMessageSupplier);
 
+    ApplyMore andThen(Runnable runnable);
 }

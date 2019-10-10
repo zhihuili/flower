@@ -29,6 +29,7 @@ import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.StringUtil;
 import com.ly.train.flower.core.service.container.FlowerFactory;
+import com.ly.train.flower.web.spring.boot.autoconfigure.FlowerProperties;
 
 /**
  * @author leeyazhou
@@ -40,8 +41,12 @@ public class FlowerApplicationListener implements ApplicationListener<ContextRef
 
   @Override
   public void onApplicationEvent(ContextRefreshedEvent event) {
+    registerFlowerService();
+  }
 
+  private void registerFlowerService() {
     String[] beanNames = applicationContext.getBeanDefinitionNames();
+    applicationContext.getBean(FlowerProperties.class);
     FlowerFactory flowerFactory = applicationContext.getBean(FlowerFactory.class);
     for (String beanName : beanNames) {
       Class<?> beanType = applicationContext.getType(beanName);
@@ -54,9 +59,10 @@ public class FlowerApplicationListener implements ApplicationListener<ContextRef
           serviceName = flowerService2.value();
         }
         flowerFactory.getServiceFactory().registerFlowerService(serviceName, flowerService);
-        // logger.info("注入实例 : " + flowerService);
+        // logger.info("注入服务实例 : " + flowerService);
       }
     }
+
 
   }
 

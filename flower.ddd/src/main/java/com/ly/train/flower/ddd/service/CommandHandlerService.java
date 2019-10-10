@@ -1,24 +1,55 @@
+/**
+ * Copyright © 2019 同程艺龙 (zhihui.li@ly.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ly.train.flower.ddd.service;
 
+import java.util.Set;
+import java.util.stream.Collectors;
 import com.ly.train.flower.common.core.service.ServiceContext;
-import com.ly.train.flower.core.service.impl.AbstractService;
+import com.ly.train.flower.common.logging.Logger;
+import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.ddd.config.DDDConfig;
+import com.ly.train.flower.ddd.exception.CommandHandlerNotFoundException;
 import com.ly.train.flower.ddd.proxy.MethodProxy;
 
 /**
  * @author leeyazhou
  */
-public class CommandHandlerService extends AbstractService<Object, Object> {
+public class CommandHandlerService extends BaseService {
+  static final Logger logger = LoggerFactory.getLogger(CommandHandlerService.class);
   private DDDConfig dddConfig;
 
   public CommandHandlerService(DDDConfig dddConfig) {
     this.dddConfig = dddConfig;
   }
-  
+
   @Override
   public Object doProcess(Object message, ServiceContext context) throws Throwable {
-    MethodProxy method = dddConfig.getCommandHandler(message.getClass());
-    return method.invoke(message, context);
+    startLifecycle();
+    try {
+      Set<MethodProxy> methodProxies = dddConfig.getCommandHandler(message.getClass());
+      if (methodProxies == null || methodProxies.isEmpty()) {
+        throw new CommandHandlerNotFoundException("for " + message.getClass());
+      }
+      for (MethodProxy method : methodProxies) {
+        method.invoke(message, context);
+      }
+      return getAppliedMessages().stream().filter(em -> em.getMessage() != null).collect(Collectors.toList());
+    } finally {
+      endLifecycle();
+    }
   }
 
 }
