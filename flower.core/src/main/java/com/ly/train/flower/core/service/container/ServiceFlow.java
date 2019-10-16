@@ -170,7 +170,7 @@ public final class ServiceFlow {
   }
 
   public ServiceFlow build() {
-    logger.info(" buildFlow [{}] success. \n{}", this.flowConfig.getFlowName(), flowConfig);
+    logger.info("buildFlow [{}] success. \n{}", this.flowConfig.getFlowName(), flowConfig);
     flowerFactory.getActorFactory().buildFlowRouter(this.flowConfig.getFlowName(), 1);
     String json = JSONObject.toJSONString(flowConfig);
     FlowConfig config = JSONObject.parseObject(json, FlowConfig.class);
@@ -247,7 +247,7 @@ public final class ServiceFlow {
       if (nextConfig.isAggregateService()) {
         nextConfig.increaseAggregateNumber();
       }
-      logger.info(" buildFlow : {}, preService : {}, nextService : {}", this.flowConfig.getFlowName(), preServiceName,
+      logger.info("buildFlow : {}, preService : {}, nextService : {}", this.flowConfig.getFlowName(), preServiceName,
           nextServiceName);
     }
     return this;

@@ -15,7 +15,6 @@
  */
 package com.ly.train.flower.web.spring.context;
 
-import static org.springframework.context.annotation.AnnotationConfigUtils.registerAnnotationConfigProcessors;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
@@ -47,22 +46,15 @@ public class FlowerClassPathBeanDefinitionScanner extends ClassPathBeanDefinitio
 
   public FlowerClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry, boolean useDefaultFilters,
       Environment environment, ResourceLoader resourceLoader) {
-
     super(registry, useDefaultFilters);
-
     setEnvironment(environment);
-
     setResourceLoader(resourceLoader);
-
-    registerAnnotationConfigProcessors(registry);
-
+    AnnotationConfigUtils.registerAnnotationConfigProcessors(registry);
   }
 
   public FlowerClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry, Environment environment,
       ResourceLoader resourceLoader) {
-
     this(registry, false, environment, resourceLoader);
-
   }
 
   public Set<BeanDefinitionHolder> doScan(String... basePackages) {

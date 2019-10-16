@@ -21,9 +21,12 @@ package com.ly.train.flower.springboot.service;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.alibaba.fastjson.JSON;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.core.service.Service;
 import com.ly.train.flower.common.core.service.ServiceContext;
+import com.ly.train.flower.core.service.Complete;
+import com.ly.train.flower.core.service.web.Flush;
 import com.ly.train.flower.springboot.model.User;
 
 /**
@@ -31,7 +34,7 @@ import com.ly.train.flower.springboot.model.User;
  * 
  */
 @FlowerService
-public class EndService implements Service<List<User>, Integer> {
+public class EndService implements Service<List<User>, Integer> , Flush, Complete {
 
   private static final Logger logger = LoggerFactory.getLogger(EndService.class);
 
@@ -43,6 +46,7 @@ public class EndService implements Service<List<User>, Integer> {
       age += user.getAge();
     }
     logger.info("年龄：{}", age);
+    context.getWeb().printJSON(JSON.toJSONString(message));
     return age;
   }
 

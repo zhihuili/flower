@@ -17,32 +17,45 @@ package com.ly.train.flower.web.spring.boot.autoconfigure;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import com.alibaba.fastjson.JSON;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.config.FlowerConfig;
 import com.ly.train.flower.config.RegistryConfig;
 import com.ly.train.flower.core.service.container.FlowerFactory;
 import com.ly.train.flower.web.spring.container.SpringFlowerFactory;
+import com.ly.train.flower.web.spring.context.FlowerAnnotationBeanPostProcessor;
 
 /**
  * @author leeyazhou
  */
 @Configuration
 @EnableConfigurationProperties(FlowerProperties.class)
+@ConditionalOnClass(value = SpringFlowerFactory.class)
+@ConditionalOnMissingBean(value = FlowerFactory.class)
 public class FlowerAutoConfiguration {
   private static final Logger logger = LoggerFactory.getLogger(FlowerAutoConfiguration.class);
 
+  @Bean
+  @ConditionalOnMissingBean
+  public FlowerAnnotationBeanPostProcessor flowerAnnotationBeanPostProcessor() {
+    return new FlowerAnnotationBeanPostProcessor();
+  }
 
   @Bean
   @ConditionalOnMissingBean
-  public FlowerFactory flowerFactory(FlowerProperties flowerProperties) {
-    logger.info("flower auto configure.");
-    FlowerConfig flowerConfig = flowerProperties.getConfig();
-    Set<RegistryConfig> registry = buildRegistryConfig(flowerProperties.getRegistry());
+  public FlowerFactory flowerFactory(FlowerProperties properties) {
+    logger.info("flower auto configure FlowerFactory. config : " + JSON.toJSONString(properties));
+    FlowerConfig flowerConfig = properties.getConfig();
+    if (flowerConfig == null) {
+      flowerConfig = new FlowerConfig();
+    }
+    Set<RegistryConfig> registry = buildRegistryConfig(properties.getRegistry());
     flowerConfig.setRegistry(registry);
     FlowerFactory factory = new SpringFlowerFactory(flowerConfig);
     return factory;

@@ -50,6 +50,7 @@
         <module>flower.tools</module>
         <module>flower.config</module>
         <module>flower.boot.starter</module>
+        <module>flower.ddd</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:${github.org}/${github.repo}.git</connection>

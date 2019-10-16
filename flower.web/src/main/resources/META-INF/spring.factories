@@ -1,3 +1,8 @@
+
+# Application Listeners
+org.springframework.context.ApplicationListener=\
+com.ly.train.flower.web.spring.context.FlowerApplicationListener
+
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.ly.train.flower.web.spring.boot.autoconfigure.FlowerAutoConfiguration
