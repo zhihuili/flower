@@ -15,6 +15,8 @@
  */
 package com.ly.train.flower.ddd.command;
 
+import java.io.IOException;
+import com.alibaba.fastjson.JSON;
 import com.ly.train.flower.common.annotation.Aggregate;
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.logging.Logger;
@@ -48,8 +50,9 @@ public class FoodCart {
   }
 
   @EventHandler
-  public void on(CreateOrderEvent event, ServiceContext context) {
+  public void on(CreateOrderEvent event, ServiceContext context) throws IOException {
     logger.info("处理订单事件：{}", event);
+    context.getWeb().printJSON(JSON.toJSONString(event));
     // dao
   }
 
