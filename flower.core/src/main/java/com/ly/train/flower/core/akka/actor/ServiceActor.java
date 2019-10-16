@@ -80,6 +80,7 @@ public class ServiceActor extends AbstractFlowerActor {
   private String serviceName;
 
   public ServiceActor(String serviceName, FlowerFactory flowerFactory, int index) {
+    super(flowerFactory.getActorFactory());
     this.serviceName = serviceName;
     this.index = index;
     this.flowerFactory = flowerFactory;

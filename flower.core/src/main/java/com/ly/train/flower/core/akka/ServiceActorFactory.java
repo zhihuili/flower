@@ -63,10 +63,13 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
   private volatile Lock flowRouterLock = new ReentrantLock();
   private volatile Lock serviceRouterLock = new ReentrantLock();
   private final FlowerActorSystem flowerActorSystem;
+  private final BlockedThreadChecker blockedThreadChecker;
 
   public ServiceActorFactory(FlowerFactory flowerFactory) {
     this.flowerFactory = flowerFactory;
     this.flowerConfig = flowerFactory.getFlowerConfig();
+    this.blockedThreadChecker =
+        new BlockedThreadChecker(flowerConfig.getBlockedThreadCheckInterval(), flowerConfig.getWarningExceptionTime());
     this.serviceFactory = flowerFactory.getServiceFactory();
     this.flowerActorSystem = new FlowerActorSystem(flowerConfig, this, flowerFactory);
   }
@@ -210,7 +213,12 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
   @Override
   protected void doStop() {
     flowerActorSystem.stop();
+    blockedThreadChecker.close();
     CacheManager.stop();
+  }
+
+  public BlockedThreadChecker getBlockedThreadChecker() {
+    return blockedThreadChecker;
   }
 
 }

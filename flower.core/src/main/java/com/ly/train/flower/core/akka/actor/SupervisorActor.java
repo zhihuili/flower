@@ -44,10 +44,8 @@ public class SupervisorActor extends AbstractFlowerActor {
     return Props.create(SupervisorActor.class, actorFactory);
   }
 
-  private ActorFactory actorFactory;
-
   public SupervisorActor(ActorFactory actorFactory) {
-    this.actorFactory = actorFactory;
+    super(actorFactory);
   }
 
   @Override
