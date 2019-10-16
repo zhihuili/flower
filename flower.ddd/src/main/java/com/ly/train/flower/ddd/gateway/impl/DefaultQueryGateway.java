@@ -15,7 +15,11 @@
  */
 package com.ly.train.flower.ddd.gateway.impl;
 
+import javax.servlet.AsyncContext;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import com.ly.train.flower.core.akka.router.FlowRouter;
 import com.ly.train.flower.core.service.container.FlowerFactory;
 import com.ly.train.flower.ddd.factory.DDDFactory;
@@ -39,7 +43,9 @@ public class DefaultQueryGateway implements QueryGateway, InitializingBean {
 
   @Override
   public <Q> void query(Q query) {
-    this.flowRouter.asyncCallService(query);
+    HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+    AsyncContext asyncContext = request == null ? null : request.startAsync();
+    this.flowRouter.asyncCallService(query, asyncContext);
   }
 
   @Override
