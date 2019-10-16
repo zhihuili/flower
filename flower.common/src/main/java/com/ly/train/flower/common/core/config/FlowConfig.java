@@ -117,7 +117,9 @@ public class FlowConfig implements Serializable {
     StringBuilder builder = new StringBuilder();
     builder.append("FlowConfig [");
     builder.append(newLine).append("flowName = ").append(flowName);
-    builder.append(newLine).append("timeout = ").append(this.timeout);
+    if (this.timeout != null) {
+      builder.append(newLine).append("timeout = ").append(this.timeout);
+    }
 
     buildString(serviceConfig, builder);
     builder.append("\n]");

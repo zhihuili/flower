@@ -15,15 +15,24 @@
  */
 package com.ly.train.flower.web.spring.container;
 
+import java.util.HashSet;
+import java.util.Set;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import com.ly.train.flower.common.annotation.FlowerServiceUtil;
 import com.ly.train.flower.config.FlowerConfig;
 import com.ly.train.flower.core.service.container.simple.SimpleFlowerFactory;
 
 /**
- * @author leeyazhou
+ * spring flower factory
  * 
+ * @author leeyazhou
  */
-public class SpringFlowerFactory extends SimpleFlowerFactory implements InitializingBean {
+public class SpringFlowerFactory extends SimpleFlowerFactory implements InitializingBean, ApplicationContextAware {
+  private Set<String> serviceTypes = new HashSet<>();
+  ApplicationContext applicationContext;
 
   public SpringFlowerFactory() {
     super();
@@ -40,6 +49,23 @@ public class SpringFlowerFactory extends SimpleFlowerFactory implements Initiali
   @Override
   public void afterPropertiesSet() throws Exception {
     init();
+    if (serviceTypes == null) {
+      return;
+    }
+    for (String beanTypeStr : serviceTypes) {
+      Class<?> beanType = Class.forName(beanTypeStr);
+      String serviceName = FlowerServiceUtil.getServiceName(beanType);
+      getServiceFactory().registerService(serviceName, beanType);
+    }
+  }
+
+  public void setServiceTypes(Set<String> serviceTypes) {
+    this.serviceTypes = serviceTypes;
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
   }
 
 }

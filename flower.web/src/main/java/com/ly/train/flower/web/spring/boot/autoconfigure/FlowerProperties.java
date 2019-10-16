@@ -15,7 +15,6 @@
  */
 package com.ly.train.flower.web.spring.boot.autoconfigure;
 
-import java.util.HashSet;
 import java.util.Set;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -24,16 +23,20 @@ import com.ly.train.flower.config.FlowerConfig;
 /**
  * @author leeyazhou
  */
-@ConfigurationProperties(prefix = "spring.flower", ignoreUnknownFields = true)
+@ConfigurationProperties(prefix = "flower", ignoreUnknownFields = true)
 public class FlowerProperties {
 
+  /**
+   * flower configuration
+   */
   @NestedConfigurationProperty
   private FlowerConfig config = new FlowerConfig();
 
+  /**
+   * flower registry configuration
+   */
   @NestedConfigurationProperty
-  private Set<String> registry = new HashSet<>();
-
-  public FlowerProperties() {}
+  private Set<String> registry;
 
   public FlowerConfig getConfig() {
     return config;

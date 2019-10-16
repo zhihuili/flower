@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import com.ly.train.flower.common.annotation.Aggregate;
 import com.ly.train.flower.common.annotation.FlowerService;
 
 /**
@@ -35,6 +36,7 @@ public class FlowerAnnotationBeanPostProcessor extends AutowiredAnnotationBeanPo
   public FlowerAnnotationBeanPostProcessor() {
     Set<Class<? extends Annotation>> autowiredAnnotationType = new HashSet<>();
     autowiredAnnotationType.add(FlowerService.class);
+    autowiredAnnotationType.add(Aggregate.class);
     setAutowiredAnnotationTypes(autowiredAnnotationType);
   }
 
