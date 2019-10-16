@@ -19,6 +19,9 @@ import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.exception.handler.ExceptionHandlerManager;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
+import com.ly.train.flower.core.akka.ActorFactory;
+import com.ly.train.flower.core.akka.BlockedThreadChecker;
+import com.ly.train.flower.core.akka.BlockedThreadChecker.Task;
 import akka.actor.AbstractActor;
 
 /**
@@ -27,14 +30,25 @@ import akka.actor.AbstractActor;
  */
 public abstract class AbstractFlowerActor extends AbstractActor {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
+  protected ActorFactory actorFactory;
+  private final BlockedThreadChecker blockedThreadChecker;
+
+  public AbstractFlowerActor(ActorFactory actorFactory) {
+    this.actorFactory = actorFactory;
+    this.blockedThreadChecker = actorFactory.getBlockedThreadChecker();
+  }
 
   @Override
   public Receive createReceive() {
     return receiveBuilder().match(ServiceContext.class, context -> {
+      Thread current = Thread.currentThread();
       try {
+        blockedThreadChecker.registerThread(current, new Task(3000L));
         onServiceContextReceived(context);
       } catch (Throwable e) {
         onException(e, context);
+      } finally {
+        blockedThreadChecker.unregisterThread(current);
       }
     }).matchAny(message -> {
       unhandled(message);

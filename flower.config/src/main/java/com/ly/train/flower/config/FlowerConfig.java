@@ -35,6 +35,8 @@ public class FlowerConfig implements Serializable {
   private int port = 25001;
   private Set<RegistryConfig> registry;
   private String basePackage;
+  private long blockedThreadCheckInterval;
+  private long warningExceptionTime;
 
   /**
    * 最小并行度
@@ -123,6 +125,24 @@ public class FlowerConfig implements Serializable {
 
   public void setParallelismFactor(int parallelismFactor) {
     this.parallelismFactor = parallelismFactor;
+  }
+
+
+
+  public long getBlockedThreadCheckInterval() {
+    return blockedThreadCheckInterval;
+  }
+
+  public void setBlockedThreadCheckInterval(long blockedThreadCheckInterval) {
+    this.blockedThreadCheckInterval = blockedThreadCheckInterval;
+  }
+
+  public long getWarningExceptionTime() {
+    return warningExceptionTime;
+  }
+
+  public void setWarningExceptionTime(long warningExceptionTime) {
+    this.warningExceptionTime = warningExceptionTime;
   }
 
   @Override

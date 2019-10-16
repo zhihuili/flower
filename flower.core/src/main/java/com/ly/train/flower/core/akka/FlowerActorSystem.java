@@ -15,8 +15,9 @@
  */
 package com.ly.train.flower.core.akka;
 
+import java.util.Arrays;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-import com.ly.train.flower.common.exception.FlowException;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.lifecyle.AbstractLifecycle;
 import com.ly.train.flower.common.logging.Logger;
@@ -75,29 +76,19 @@ public class FlowerActorSystem extends AbstractLifecycle {
   }
 
   private ActorSystem initActorSystem() {
-    StringBuffer configBuilder = new StringBuffer();
-
-    final String sepator = "\r\n";
+    Properties properties = new Properties();
     if (StringUtil.isNotBlank(flowerConfig.getHost())) {
-      configBuilder.append(getFormatString("akka.actor.provider = %s", "remote"));
-      configBuilder.append(sepator);
-      configBuilder.append(getFormatString("akka.remote.enabled-transports = [%s]", "akka.remote.netty.tcp"));
-      configBuilder.append(sepator);
-      configBuilder.append(getFormatString("akka.remote.netty.tcp.hostname = %s", flowerConfig.getHost()));
-      configBuilder.append(sepator);
-      configBuilder.append(getFormatString("akka.remote.netty.tcp.port = %s", flowerConfig.getPort()));
-      configBuilder.append(sepator);
+      properties.put("akka.actor.provider", "remote");
+      properties.put("akka.remote.enabled-transports", Arrays.asList("akka.remote.netty.tcp"));
+      properties.put("akka.remote.netty.tcp.hostname", flowerConfig.getHost());
+      properties.put("akka.remote.netty.tcp.port", flowerConfig.getPort());
     }
-    configBuilder.append(
-        getFormatString("dispatcher.fork-join-executor.parallelism-min = %s", flowerConfig.getParallelismMin()));
-    configBuilder.append(sepator);
-    configBuilder.append(
-        getFormatString("dispatcher.fork-join-executor.parallelism-max = %s", flowerConfig.getParallelismMax()));
-    configBuilder.append(sepator);
-    configBuilder.append(
-        getFormatString("dispatcher.fork-join-executor.parallelism-factor = %s", flowerConfig.getParallelismFactor()));
-    logger.info("akka config ：{}", configBuilder.toString());
-    Config config = ConfigFactory.parseString(configBuilder.toString()).withFallback(ConfigFactory.load());
+
+    properties.put("dispatcher.fork-join-executor.parallelism-min", flowerConfig.getParallelismMin());
+    properties.put("dispatcher.fork-join-executor.parallelism-max", flowerConfig.getParallelismMax());
+    properties.put("dispatcher.fork-join-executor.parallelism-factor", flowerConfig.getParallelismFactor());
+    logger.info("akka config ：{}", properties);
+    Config config = ConfigFactory.parseProperties(properties).withFallback(ConfigFactory.load());
     ActorSystem actorSystem = ActorSystem.create(actorSystemName, config);
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override
@@ -112,10 +103,6 @@ public class FlowerActorSystem extends AbstractLifecycle {
     return actorSystem;
   }
 
-  private String getFormatString(String format, Object data) {
-    return String.format(format, "\"" + data + "\"");
-  }
-
   private void initActorContext() {
     try {
       Props props = SupervisorActor.props(actorFactory).withDispatcher(dispatcherName);
@@ -123,7 +110,7 @@ public class FlowerActorSystem extends AbstractLifecycle {
       Future<Object> future = Patterns.ask(supervierActor, new ActorContextCommand(), DEFAULT_TIMEOUT - 1);
       this.actorContext = (ActorContext) Await.result(future, timeout);
     } catch (Exception e) {
-      throw new FlowException("fail to start flower", e);
+      throw new FlowerException("fail to start flower", e);
     }
   }
 
