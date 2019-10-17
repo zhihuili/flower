@@ -29,6 +29,7 @@ import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.scanner.DefaultMethodScanner;
 import com.ly.train.flower.ddd.annotation.CommandHandler;
 import com.ly.train.flower.ddd.annotation.EventHandler;
+import com.ly.train.flower.ddd.annotation.QueryHandler;
 import com.ly.train.flower.ddd.proxy.MethodProxy;
 
 /**
@@ -37,6 +38,7 @@ import com.ly.train.flower.ddd.proxy.MethodProxy;
 public class DDDConfig implements ApplicationContextAware {
   private static final Logger logger = LoggerFactory.getLogger(DDDConfig.class);
   private final ConcurrentMap<Class<?>, Set<MethodProxy>> commandHandlerCache = new ConcurrentHashMap<>();
+  private final ConcurrentMap<Class<?>, Set<MethodProxy>> queryHandlerCache = new ConcurrentHashMap<>();
   private final ConcurrentMap<Class<?>, Set<MethodProxy>> eventHandlerCache = new ConcurrentHashMap<>();
   private ApplicationContext applicationContext;
 
@@ -48,12 +50,19 @@ public class DDDConfig implements ApplicationContextAware {
     return eventHandlerCache.get(clazz);
   }
 
+  public Set<MethodProxy> getQueryHandler(Class<?> clazz) {
+    return this.queryHandlerCache.get(clazz);
+  }
+
   public void dealHandlers(Class<?> clazz) {
     List<Method> commandHandlers =
         DefaultMethodScanner.getInstance().getMethodListByAnnotation(clazz, CommandHandler.class);
     List<Method> eventHandlers =
         DefaultMethodScanner.getInstance().getMethodListByAnnotation(clazz, EventHandler.class);
+    List<Method> queryHandlers =
+        DefaultMethodScanner.getInstance().getMethodListByAnnotation(clazz, QueryHandler.class);
     dealCommandHandlers(commandHandlers, clazz);
+    dealQueryHandlers(queryHandlers, clazz);
     dealEventHandlers(eventHandlers, clazz);
   }
 
@@ -71,6 +80,23 @@ public class DDDConfig implements ApplicationContextAware {
     Class<?> eventType = types[0];
     logger.info("Command Handler ：{}", eventType);
     Set<MethodProxy> methodProxies = commandHandlerCache.computeIfAbsent(eventType, i -> new HashSet<>());
+    methodProxies.add(new MethodProxy(applicationContext.getBean(target), method));
+  }
+
+  private void dealQueryHandlers(List<Method> commandHandlers, Class<?> target) {
+    for (Method method : commandHandlers) {
+      doDealQueryHandler(method, target);
+    }
+  }
+
+  private void doDealQueryHandler(Method method, Class<?> target) {
+    Class<?>[] types = method.getParameterTypes();
+    if (types == null || types.length == 0) {
+      return;
+    }
+    Class<?> eventType = types[0];
+    logger.info("Query Handler ：{}", eventType);
+    Set<MethodProxy> methodProxies = queryHandlerCache.computeIfAbsent(eventType, i -> new HashSet<>());
     methodProxies.add(new MethodProxy(applicationContext.getBean(target), method));
   }
 

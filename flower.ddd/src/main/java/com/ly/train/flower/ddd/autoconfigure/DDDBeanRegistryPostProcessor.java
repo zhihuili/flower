@@ -33,6 +33,7 @@ import com.ly.train.flower.ddd.service.CommandHandlerService;
 import com.ly.train.flower.ddd.service.DDDEndService;
 import com.ly.train.flower.ddd.service.DDDStartService;
 import com.ly.train.flower.ddd.service.EventHandlerService;
+import com.ly.train.flower.ddd.service.QueryHandlerService;
 
 /**
  * @author leeyazhou
@@ -49,8 +50,9 @@ public class DDDBeanRegistryPostProcessor implements BeanDefinitionRegistryPostP
   @Override
   public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
     Set<String> serviceTypes = new HashSet<>();
-    Class<?> services[] = new Class<?>[] {CommandHandlerService.class, EventHandlerService.class, DDDStartService.class,
-        DDDEndService.class, DefaultCommandGateway.class, DefaultQueryGateway.class};
+    Class<?> services[] =
+        new Class<?>[] {CommandHandlerService.class, EventHandlerService.class, QueryHandlerService.class,
+            DDDStartService.class, DDDEndService.class, DefaultCommandGateway.class, DefaultQueryGateway.class};
 
     for (Class<?> service : services) {
       BeanDefinition beanDefinition = new RootBeanDefinition(service);

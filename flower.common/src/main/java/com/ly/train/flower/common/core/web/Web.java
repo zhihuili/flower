@@ -46,11 +46,11 @@ public class Web {
     }
   }
 
-  public void print(String message) throws IOException {
+  public void print(String message) {
     writer.print(message);
   }
 
-  public void printJSON(String json) throws IOException {
+  public void printJSON(String json) {
     servletResponse.setContentType(Constant.DEFAULT_CONTENT_JSON);
     print(json);
   }
