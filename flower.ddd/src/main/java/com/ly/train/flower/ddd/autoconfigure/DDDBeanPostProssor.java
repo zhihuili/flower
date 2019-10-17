@@ -31,13 +31,12 @@ public class DDDBeanPostProssor implements BeanPostProcessor, ApplicationContext
   @Override
   public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
     if (bean instanceof EventHandlerService) {
-      try {
+      String[] names = applicationContext.getBeanNamesForType(TransactionTemplate.class);
+      if (names != null && names.length > 0) {
         TransactionTemplate transactionTemplate = applicationContext.getBean(TransactionTemplate.class);
         if (transactionTemplate != null) {
           ((EventHandlerService) bean).setTransactionTemplate(transactionTemplate);
         }
-      } catch (Exception e) {
-        // ignore
       }
 
     }

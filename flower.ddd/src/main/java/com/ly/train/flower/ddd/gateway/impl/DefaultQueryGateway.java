@@ -24,10 +24,10 @@ import com.ly.train.flower.core.akka.router.FlowRouter;
 import com.ly.train.flower.core.service.container.FlowerFactory;
 import com.ly.train.flower.ddd.factory.DDDFactory;
 import com.ly.train.flower.ddd.gateway.QueryGateway;
-import com.ly.train.flower.ddd.service.CommandHandlerService;
 import com.ly.train.flower.ddd.service.DDDEndService;
 import com.ly.train.flower.ddd.service.DDDStartService;
 import com.ly.train.flower.ddd.service.EventHandlerService;
+import com.ly.train.flower.ddd.service.QueryHandlerService;
 
 /**
  * @author leeyazhou
@@ -58,8 +58,8 @@ public class DefaultQueryGateway implements QueryGateway, InitializingBean {
       synchronized (flowName) {
         if (flowRouter == null) {
           this.flowerFactory.getServiceFactory().getOrCreateServiceFlow(flowName)
-              .buildFlow(DDDStartService.class, CommandHandlerService.class)
-              .buildFlow(CommandHandlerService.class, EventHandlerService.class)
+              .buildFlow(DDDStartService.class, QueryHandlerService.class)
+              .buildFlow(QueryHandlerService.class, EventHandlerService.class)
               .buildFlow(EventHandlerService.class, DDDEndService.class).build();
           this.flowRouter = this.flowerFactory.getActorFactory().buildFlowRouter(flowName, 0);
         }
