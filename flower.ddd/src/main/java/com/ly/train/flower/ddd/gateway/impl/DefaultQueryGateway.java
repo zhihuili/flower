@@ -26,7 +26,6 @@ import com.ly.train.flower.ddd.factory.DDDFactory;
 import com.ly.train.flower.ddd.gateway.QueryGateway;
 import com.ly.train.flower.ddd.service.DDDEndService;
 import com.ly.train.flower.ddd.service.DDDStartService;
-import com.ly.train.flower.ddd.service.EventHandlerService;
 import com.ly.train.flower.ddd.service.QueryHandlerService;
 
 /**
@@ -59,8 +58,8 @@ public class DefaultQueryGateway implements QueryGateway, InitializingBean {
         if (flowRouter == null) {
           this.flowerFactory.getServiceFactory().getOrCreateServiceFlow(flowName)
               .buildFlow(DDDStartService.class, QueryHandlerService.class)
-              .buildFlow(QueryHandlerService.class, EventHandlerService.class)
-              .buildFlow(EventHandlerService.class, DDDEndService.class).build();
+//              .buildFlow(QueryHandlerService.class, EventHandlerService.class)
+              .buildFlow(QueryHandlerService.class, DDDEndService.class).build();
           this.flowRouter = this.flowerFactory.getActorFactory().buildFlowRouter(flowName, 0);
         }
       }

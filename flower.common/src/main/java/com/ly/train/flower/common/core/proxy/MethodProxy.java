@@ -46,6 +46,21 @@ public class MethodProxy {
     }
   }
 
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("MethodProxy [method=");
+    builder.append(method);
+    builder.append(", target=");
+    builder.append(target);
+    builder.append(", flush=");
+    builder.append(flush);
+    builder.append(", complete=");
+    builder.append(complete);
+    builder.append("]");
+    return builder.toString();
+  }
+
   public Object getFlowerService() {
     return target;
   }

@@ -47,16 +47,26 @@ public class FlowerServiceUtil {
     if (methods == null) {
       return null;
     }
+    Method paramIsObjectMethod = null;
+    Method result = null;
     for (int i = methods.length; i > 0; i--) {
       Method method = methods[i - 1];
       if ("process".equals(method.getName()) && method.getParameterCount() == 2) {
+        Parameter param = method.getParameters()[0];
         Parameter pa = method.getParameters()[1];
         if (pa.getType().equals(ServiceContext.class)) {
-          return method;
+          if (param.getType().equals(Object.class)) {
+            paramIsObjectMethod = method;
+          } else {
+            result = method;
+          }
         }
       }
     }
-    return null;
+    if (result != null) {
+      return result;
+    }
+    return paramIsObjectMethod;
   }
 
   /**
