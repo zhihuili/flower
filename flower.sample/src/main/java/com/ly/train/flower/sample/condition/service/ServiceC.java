@@ -17,16 +17,16 @@ package com.ly.train.flower.sample.condition.service;
 
 import com.ly.train.flower.common.core.service.Service;
 import com.ly.train.flower.common.core.service.ServiceContext;
-import com.ly.train.flower.sample.condition.model.Message;
+import com.ly.train.flower.sample.condition.model.MessageC;
 import com.ly.train.flower.sample.condition.model.MessageX;
 
-public class ServiceC implements Service<Message, MessageX> {
+public class ServiceC implements Service<MessageC, MessageX> {
 
   @Override
   /**
    * print service
    */
-  public MessageX process(Message message, ServiceContext context) {
+  public MessageX process(MessageC message, ServiceContext context) {
     System.out.println("I am Service C.");
     MessageX mx = new MessageX();
     mx.setCondition("serviceE,serviceD");

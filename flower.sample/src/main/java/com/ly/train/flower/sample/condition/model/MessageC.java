@@ -15,10 +15,9 @@
  */
 package com.ly.train.flower.sample.condition.model;
 
-public class MessageC implements Message {
-  /**
-   * 
-   */
+import java.io.Serializable;
+
+public class MessageC implements Serializable {
   private static final long serialVersionUID = 1L;
   private int i;
   private String s;

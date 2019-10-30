@@ -17,14 +17,13 @@ package com.ly.train.flower.sample.condition.service;
 
 import com.ly.train.flower.common.core.service.Service;
 import com.ly.train.flower.common.core.service.ServiceContext;
-import com.ly.train.flower.sample.condition.model.Message;
 import com.ly.train.flower.sample.condition.model.MessageB;
 import com.ly.train.flower.sample.condition.model.MessageC;
 
-public class ServiceA implements Service<String, Message> {
+public class ServiceA implements Service<String, Object> {
 
   @Override
-  public Message process(String message, ServiceContext context) {
+  public Object process(String message, ServiceContext context) {
     System.out.println(getClass().getSimpleName() + " 进行处理 ： " + message);
     if ("b".equals(message)) {
       return new MessageB();

@@ -15,6 +15,21 @@
  */
 package com.ly.train.flower.sample.condition.model;
 
-public class MessageB implements Message {
+import java.io.Serializable;
+
+public class MessageB implements Serializable {
+  private static final long serialVersionUID = 1L;
+  private int i;
+  public int getI() {
+    return i;
+  }
+  public void setI(int i) {
+    this.i = i;
+  }
+  public static long getSerialversionuid() {
+    return serialVersionUID;
+  }
+  
+  
 
 }
