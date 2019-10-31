@@ -37,6 +37,7 @@ import com.ly.train.flower.common.util.Constant;
 import com.ly.train.flower.common.util.FileUtil;
 import com.ly.train.flower.common.util.Pair;
 import com.ly.train.flower.common.util.StringUtil;
+import com.ly.train.flower.common.util.TypeParameterUtil;
 import com.ly.train.flower.core.service.container.util.ServiceLoaderUtil;
 
 public class ServiceLoader extends AbstractInit {
@@ -224,8 +225,10 @@ public class ServiceLoader extends AbstractInit {
         serviceMeta.setFlowerType(FlowerServiceUtil.getFlowerType(serviceClass));
         serviceMeta.setInnerAggregateService(Constant.AGGREGATE_SERVICE_NAME.equals(serviceClass.getName()));
         serviceMeta.setTimeout(FlowerServiceUtil.getTimeout(serviceClass));
-        serviceMeta.setParamType(processMethod.getParameterTypes()[0].getName());
-        serviceMeta.setResultType(processMethod.getReturnType().getName());
+
+        Pair<Class<?>, Class<?>> paramAndResultType = TypeParameterUtil.getServiceClassParam(serviceClass);
+        serviceMeta.setParamType(paramAndResultType.getKey().getName());
+        serviceMeta.setResultType(paramAndResultType.getValue().getName());
         if (StringUtil.isNotBlank(config)) {
           String[] tt = config.split(";");
           if (tt.length > 1) {
