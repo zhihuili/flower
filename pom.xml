@@ -21,7 +21,7 @@
 
     <groupId>com.ly.train</groupId>
     <artifactId>flower.parent</artifactId>
-    <version>1.0.1.RELEASE</version>
+    <version>1.0.2</version>
     <packaging>pom</packaging>
 
     <name>flower</name>
@@ -66,8 +66,8 @@
         <url>https://travis-ci.org/${github.org}/${github.repo}</url>
     </ciManagement>
     <properties>
-        <akka-http.version>10.1.7</akka-http.version>
-        <akka.version>2.5.22</akka.version>
+        <akka-http.version>10.1.10</akka-http.version>
+        <akka.version>2.5.26</akka.version>
         <brave.version>5.6.0</brave.version>
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <commons-io.version>2.6</commons-io.version>
@@ -108,7 +108,6 @@
 
         <protostuff.version>1.5.2</protostuff.version>
         <reflections.version>0.9.11</reflections.version>
-        <scala-library.version>2.12.8</scala-library.version>
         <servlet.version>4.0.1</servlet.version>
         <slf4j-api.version>1.7.26</slf4j-api.version>
         <sonar-maven-plugin.version>3.0.2</sonar-maven-plugin.version>
@@ -149,27 +148,27 @@
             </dependency>
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
-                <artifactId>akka-actor_2.12</artifactId>
+                <artifactId>akka-actor_2.13</artifactId>
                 <version>${akka.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
-                <artifactId>akka-http_2.12</artifactId>
+                <artifactId>akka-http_2.13</artifactId>
                 <version>${akka-http.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
-                <artifactId>akka-remote_2.12</artifactId>
+                <artifactId>akka-remote_2.13</artifactId>
                 <version>${akka.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
-                <artifactId>akka-slf4j_2.12</artifactId>
+                <artifactId>akka-slf4j_2.13</artifactId>
                 <version>${akka.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
-                <artifactId>akka-stream_2.12</artifactId>
+                <artifactId>akka-stream_2.13</artifactId>
                 <version>${akka.version}</version>
             </dependency>
             <dependency>
@@ -273,11 +272,6 @@
                 <version>${reflections.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-library</artifactId>
-                <version>${scala-library.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j-api.version}</version>
@@ -329,13 +323,13 @@
             </dependency>
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
-                <artifactId>akka-http-testkit_2.12</artifactId>
+                <artifactId>akka-http-testkit_2.13</artifactId>
                 <version>${akka-http.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
-                <artifactId>akka-testkit_2.12</artifactId>
+                <artifactId>akka-testkit_2.13</artifactId>
                 <version>${akka.version}</version>
                 <scope>test</scope>
             </dependency>
