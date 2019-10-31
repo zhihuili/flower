@@ -104,6 +104,15 @@ public class ServiceFacadeTest extends TestBase {
 
     Object o = serviceFacade.syncCallService(flowName, user);
     System.out.println(o);
+  }
 
+  @Test
+  public void testAsyncCall() {
+    serviceFacade.asyncCall("UserServiceA", new User());
+  }
+
+  @Test
+  public void testSyncCall() {
+    serviceFacade.asyncCall("UserServiceA", new User());
   }
 }

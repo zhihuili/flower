@@ -103,20 +103,25 @@ public class ServiceActor extends AbstractFlowerActor {
       FilterChain filterChain = buildFilterChain(serviceContext);
       // logger.info("服务参数类型 {} : {}", pType, getService(serviceContext));
       result = filterChain.doFilter(param, serviceContext);
+
+      if (result != null && result instanceof CompletableFuture) {
+        final Object tempParam = param;
+        ((CompletableFuture<Object>) result).whenComplete((re, ex) -> {
+          if (ex != null) {
+            handleException(serviceContext, ex, tempParam, serializer);
+            return;
+          }
+          try {
+            handleNextServices(serviceContext, re, flowMessage.getTransactionId(), serializer);
+          } catch (Exception e) {
+            handleException(serviceContext, e, tempParam, serializer);
+          }
+        });
+      } else {
+        handleNextServices(serviceContext, result, flowMessage.getTransactionId(), serializer);
+      }
     } catch (Throwable e) {
       handleException(serviceContext, e, param, serializer);
-    }
-    if (result != null && result instanceof CompletableFuture) {
-      final Object tempParam = param;
-      ((CompletableFuture<Object>) result).whenComplete((re, ex) -> {
-        if (ex != null) {
-          handleException(serviceContext, ex, tempParam, serializer);
-          return;
-        }
-        handleNextServices(serviceContext, re, flowMessage.getTransactionId(), serializer);
-      });
-    } else {
-      handleNextServices(serviceContext, result, flowMessage.getTransactionId(), serializer);
     }
   }
 
@@ -169,15 +174,6 @@ public class ServiceActor extends AbstractFlowerActor {
     }
   }
 
-  private void handleNextServices(ServiceContext serviceContext, Object result, final String oldTransactionId,
-      Serializer serializer) {
-    try {
-      doHandleNextServices(serviceContext, result, oldTransactionId, serializer);
-    } catch (Exception e) {
-      logger.error("fail to handle next services ", e);
-    }
-  }
-
   /**
    * 处理当前服务的下行服务节点
    * 
@@ -185,7 +181,7 @@ public class ServiceActor extends AbstractFlowerActor {
    * @param result 消息内容
    * @param oldTransactionId oldTransactionId 聚合服务时会用到
    */
-  private void doHandleNextServices(ServiceContext serviceContext, Object result, final String oldTransactionId,
+  private void handleNextServices(ServiceContext serviceContext, Object result, final String oldTransactionId,
       Serializer serializer) {
     Set<RefType> nextActorRef = getNextServiceActors(serviceContext);
     if (serviceContext.isSync() && CollectionUtil.isEmpty(nextActorRef)) {
