@@ -350,7 +350,7 @@ public final class ServiceFlow {
    * @param serviceName 服务节点名称
    * @return {@link ServiceConfig}
    */
-  private ServiceConfig getOrCreateServiceConfig(String serviceName) {
+  public ServiceConfig getOrCreateServiceConfig(String serviceName) {
     Assert.notNull(serviceName, "serviceName can't be null.");
     ServiceConfig serviceConfig = serviceConfigsCache.get(serviceName);
     if (serviceConfig == null) {
