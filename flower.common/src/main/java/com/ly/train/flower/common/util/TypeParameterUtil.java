@@ -25,6 +25,12 @@ import com.ly.train.flower.common.core.service.Service;
  */
 public class TypeParameterUtil {
 
+  /**
+   * key is paramType Class, value is the resultType Class
+   * 
+   * @param serviceClass service Class
+   * @return {@link Pair}
+   */
   public static Pair<Class<?>, Class<?>> getServiceClassParam(Class<?> serviceClass) {
     Type[] paramTypes = null;
     Type[] types = serviceClass.getGenericInterfaces();

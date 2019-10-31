@@ -40,11 +40,20 @@ public class ServiceLoaderTest {
   }
 
   @Test
-  public void testLoadServiceMeta2() {
+  public void testLoadServiceMetaAndParamTypeFromSuperclass() {
     serviceLoader.registerServiceType(SuperService.class.getName(), SuperService.class);
     MethodProxy methodProxy = serviceLoader.loadService(SuperService.class.getName());
     Assert.assertEquals(true, methodProxy.isCompleted());
     ServiceMeta serviceMeta = serviceLoader.loadServiceMeta(SuperService.class.getName());
+    Assert.assertEquals(String.class.getName(), serviceMeta.getParamType());
+  }
+
+  @Test
+  public void testLoadServiceMetaAndParamTypeFromSuperclass2() {
+    serviceLoader.registerServiceType(SuperService2.class.getName(), SuperService2.class);
+    MethodProxy methodProxy = serviceLoader.loadService(SuperService2.class.getName());
+    Assert.assertEquals(false, methodProxy.isCompleted());
+    ServiceMeta serviceMeta = serviceLoader.loadServiceMeta(SuperService2.class.getName());
     Assert.assertEquals(Object.class.getName(), serviceMeta.getParamType());
   }
 
@@ -66,9 +75,19 @@ class SuperService extends AbstractService<String, String> implements HttpComple
   public String doProcess(String message, ServiceContext context) throws Throwable {
     return null;
   }
+}
+
+
+class BaseService implements Service<String, Object> {
 
   @Override
-  public void onError(String param, ServiceContext context, Throwable throwable) {
-    super.onError(param, context, throwable);
+  public Object process(String message, ServiceContext context) throws Throwable {
+    return null;
   }
+
+}
+
+
+class SuperService2 extends BaseService {
+
 }
