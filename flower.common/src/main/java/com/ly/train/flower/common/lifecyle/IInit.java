@@ -22,5 +22,8 @@ package com.ly.train.flower.common.lifecyle;
 public interface IInit {
 
 
+  /**
+   * init
+   */
   void init();
 }

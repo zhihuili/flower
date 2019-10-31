@@ -39,6 +39,7 @@ public class ServiceFactoryTest {
       return Mockito.mock(FlowerConfig.class);
     });
     serviceFactory = new ServiceFactory(flowerFactory);
+    serviceFactory.init();
   }
 
   @Test

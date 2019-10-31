@@ -27,8 +27,6 @@ import com.ly.train.flower.common.exception.FlowException;
 import com.ly.train.flower.common.exception.FlowNotFoundException;
 import com.ly.train.flower.common.exception.FlowerException;
 import com.ly.train.flower.common.lifecyle.AbstractLifecycle;
-import com.ly.train.flower.common.logging.Logger;
-import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.URL;
 import com.ly.train.flower.common.util.cache.CacheManager;
 import com.ly.train.flower.config.FlowerConfig;
@@ -47,7 +45,6 @@ import scala.concurrent.Await;
 import scala.concurrent.Future;
 
 public class ServiceActorFactory extends AbstractLifecycle implements ActorFactory {
-  private static final Logger logger = LoggerFactory.getLogger(ServiceActorFactory.class);
   private final ConcurrentMap<String, FlowRouter> flowRoutersCache = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, ServiceRouter> serviceRoutersCache = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, ActorWrapper> serviceRouterActorsCache = new ConcurrentHashMap<>();
@@ -56,26 +53,28 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
 
 
   private final FlowerFactory flowerFactory;
-  private final ServiceFactory serviceFactory;
-  private final FlowerConfig flowerConfig;
+  private ServiceFactory serviceFactory;
+  private FlowerConfig flowerConfig;
 
   private volatile Lock actorLock = new ReentrantLock();
   private volatile Lock flowRouterLock = new ReentrantLock();
   private volatile Lock serviceRouterLock = new ReentrantLock();
-  private final FlowerActorSystem flowerActorSystem;
-  private final BlockedThreadChecker blockedThreadChecker;
+  private FlowerActorSystem flowerActorSystem;
+  private BlockedThreadChecker blockedThreadChecker;
 
   public ServiceActorFactory(FlowerFactory flowerFactory) {
     this.flowerFactory = flowerFactory;
-    this.flowerConfig = flowerFactory.getFlowerConfig();
-    this.blockedThreadChecker =
-        new BlockedThreadChecker(flowerConfig.getBlockedThreadCheckInterval(), flowerConfig.getWarningExceptionTime());
-    this.serviceFactory = flowerFactory.getServiceFactory();
-    this.flowerActorSystem = new FlowerActorSystem(flowerConfig, this, flowerFactory);
   }
 
   @Override
-  protected void doInit() {}
+  protected void doInit() {
+    this.flowerConfig = flowerFactory.getFlowerConfig();
+    this.serviceFactory = flowerFactory.getServiceFactory();
+    this.blockedThreadChecker =
+        new BlockedThreadChecker(flowerConfig.getBlockedThreadCheckInterval(), flowerConfig.getWarningExceptionTime());
+    this.flowerActorSystem = new FlowerActorSystem(this, flowerFactory);
+    this.flowerActorSystem.init();
+  }
 
   @Override
   public ActorWrapper buildServiceActor(ServiceConfig serviceConfig, int index) {
@@ -207,13 +206,13 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
 
   @Override
   protected void doStart() {
-    flowerActorSystem.start();
+    this.flowerActorSystem.start();
   }
 
   @Override
   protected void doStop() {
-    flowerActorSystem.stop();
-    blockedThreadChecker.close();
+    this.flowerActorSystem.stop();
+    this.blockedThreadChecker.close();
     CacheManager.stop();
   }
 
