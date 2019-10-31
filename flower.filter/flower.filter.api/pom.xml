@@ -28,6 +28,7 @@
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.common</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 </project>

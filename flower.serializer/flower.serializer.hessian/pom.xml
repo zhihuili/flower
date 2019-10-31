@@ -33,6 +33,7 @@
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.serializer.api</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 </project>

@@ -17,12 +17,12 @@ package com.ly.train.flower.sample.condition.service;
 
 import com.ly.train.flower.common.core.service.Service;
 import com.ly.train.flower.common.core.service.ServiceContext;
-import com.ly.train.flower.sample.condition.model.Message;
+import com.ly.train.flower.sample.condition.model.MessageB;
 
-public class ServiceB implements Service<Message, Object> {
+public class ServiceB implements Service<MessageB, Object> {
 
   @Override
-  public Object process(Message message, ServiceContext context) {
+  public Object process(MessageB message, ServiceContext context) {
     System.out.println("I am Service B.");
     return null;
   }

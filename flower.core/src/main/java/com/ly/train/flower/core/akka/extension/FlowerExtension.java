@@ -13,17 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package com.ly.train.flower.sample.condition.model;
+package com.ly.train.flower.core.akka.extension;
 
-import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicInteger;
+import akka.actor.ActorSystem;
+import akka.actor.ExtendedActorSystem;
+import akka.actor.Extension;
 
 /**
  * @author leeyazhou
- * 
  */
-public interface Message extends Serializable {
+public class FlowerExtension implements Extension {
+  ActorSystem actorSystem;
+  private AtomicInteger counter = new AtomicInteger();
 
+  public FlowerExtension(ExtendedActorSystem system) {
+    this.actorSystem = system;
+  }
+
+  public void increase() {
+    System.err.println(this + "统计邮箱个数：" + counter.incrementAndGet());
+  }
 }

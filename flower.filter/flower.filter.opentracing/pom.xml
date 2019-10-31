@@ -39,10 +39,12 @@
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.core</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.filter.api</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>io.opentracing.brave</groupId>

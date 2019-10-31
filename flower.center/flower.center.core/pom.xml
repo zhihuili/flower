@@ -29,10 +29,12 @@
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.center.api</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.web</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 </project>

@@ -27,6 +27,8 @@ import com.ly.train.flower.config.FlowerConfig;
 import com.ly.train.flower.core.akka.actor.ServiceActor;
 import com.ly.train.flower.core.akka.actor.SupervisorActor;
 import com.ly.train.flower.core.akka.actor.command.ActorContextCommand;
+import com.ly.train.flower.core.akka.extension.FlowerExtension;
+import com.ly.train.flower.core.akka.extension.FlowerExtensionConfiguration;
 import com.ly.train.flower.core.service.container.FlowerFactory;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -145,6 +147,10 @@ public class FlowerActorSystem extends AbstractLifecycle {
 
   public String getSupervisorActorPath(String host, int port) {
     return String.format(supervisorActorPathFormat, actorSystemName, host, port);
+  }
+
+  public FlowerExtension getConfigurationExtension() {
+    return FlowerExtensionConfiguration.getFlowerExtension(actorSystem);
   }
 
   @Override

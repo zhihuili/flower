@@ -44,10 +44,12 @@
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.core</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.web</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
