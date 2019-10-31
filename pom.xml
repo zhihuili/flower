@@ -21,7 +21,7 @@
 
     <groupId>com.ly.train</groupId>
     <artifactId>flower.parent</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.1.RELEASE</version>
     <packaging>pom</packaging>
 
     <name>flower</name>
