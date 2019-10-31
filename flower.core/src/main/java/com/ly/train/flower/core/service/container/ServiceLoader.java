@@ -123,7 +123,7 @@ public class ServiceLoader extends AbstractInit {
   }
 
   /**
-   * @param flowerService
+   * @param flowerService flowerService
    */
   private void initFlowerServiceOfClass(Object flowerService) {
     Method[] methods = flowerService.getClass().getDeclaredMethods();
