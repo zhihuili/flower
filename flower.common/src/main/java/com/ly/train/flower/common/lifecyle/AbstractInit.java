@@ -24,13 +24,13 @@ import com.ly.train.flower.common.logging.LoggerFactory;
  * 
  */
 public abstract class AbstractInit implements IInit {
-  private static final Logger logger = LoggerFactory.getLogger(AbstractInit.class);
-  private AtomicBoolean init = new AtomicBoolean();
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  private final AtomicBoolean init = new AtomicBoolean();
 
   @Override
   public void init() {
     if (init.compareAndSet(false, true)) {
-      logger.debug("init class : {}", this);
+      logger.debug("Init {}", this);
       doInit();
     }
   }

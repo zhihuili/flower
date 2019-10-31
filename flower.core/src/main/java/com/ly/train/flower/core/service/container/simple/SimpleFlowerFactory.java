@@ -59,18 +59,23 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
   private ExceptionHandlerManager exceptionHandlerManager = ExceptionHandlerManager.getInstance();
 
   public SimpleFlowerFactory() {
-    this((String) null);
+    newFlowerFactory();
   }
 
   public SimpleFlowerFactory(String configLocation) {
     this.configLocation = configLocation;
-    FlowerVersion.logVersionInfo();
-    this.flowerConfig = new FlowerConfigParser(this.configLocation).parse();
-    this.start();
+    newFlowerFactory();
   }
 
   public SimpleFlowerFactory(FlowerConfig flowerConfig) {
     this.flowerConfig = flowerConfig;
+    newFlowerFactory();
+  }
+  
+  private void newFlowerFactory() {
+    this.actorFactory = new ServiceActorFactory(this);
+    this.serviceFactory = new ServiceFactory(this);
+    this.serviceFacade = new ServiceFacade(this);
     this.start();
   }
 
@@ -89,8 +94,12 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
 
   @Override
   protected void doInit() {
-    getServiceFactory().init();
-    getActorFactory().init();
+    FlowerVersion.logVersionInfo();
+    if (this.flowerConfig == null) {
+      this.flowerConfig = new FlowerConfigParser(this.configLocation).parse();
+    }
+    this.actorFactory.init();
+    this.serviceFactory.init();
   }
 
   private Set<Registry> initRegistryFactories() {
@@ -145,47 +154,32 @@ public class SimpleFlowerFactory extends AbstractLifecycle implements FlowerFact
 
   @Override
   public ActorFactory getActorFactory() {
-    if (actorFactory == null) {
-      synchronized (this) {
-        this.actorFactory = new ServiceActorFactory(this);
-        this.actorFactory.start();
-      }
-    }
     return actorFactory;
   }
 
+
   @Override
   public void doStart() {
-    logger.info("start FlowerFactory");
-    getActorFactory().start();
+    init();
+    logger.info("do start FlowerFactory");
+    this.actorFactory.start();
+    this.serviceFactory.start();
   }
 
   @Override
   public void doStop() {
-    logger.info("stop FlowerFactory");
-    getActorFactory().stop();
+    logger.info("do stop FlowerFactory");
+    this.actorFactory.stop();
+    this.serviceFactory.stop();
   }
 
   @Override
   public ServiceFactory getServiceFactory() {
-    if (serviceFactory == null) {
-      synchronized (this) {
-        if (serviceFactory == null) {
-          this.serviceFactory = new ServiceFactory(this);
-          this.serviceFactory.init();
-        }
-      }
-    }
     return serviceFactory;
   }
 
   @Override
   public ServiceFacade getServiceFacade() {
-    if (serviceFacade == null) {
-      synchronized (this) {
-        this.serviceFacade = new ServiceFacade(this);
-      }
-    }
     return serviceFacade;
   }
 

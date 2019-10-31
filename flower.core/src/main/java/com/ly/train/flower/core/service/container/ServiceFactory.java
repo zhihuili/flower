@@ -31,7 +31,7 @@ import com.ly.train.flower.common.core.config.ServiceMeta;
 import com.ly.train.flower.common.core.proxy.MethodProxy;
 import com.ly.train.flower.common.core.service.FlowerService;
 import com.ly.train.flower.common.exception.ServiceNotFoundException;
-import com.ly.train.flower.common.lifecyle.AbstractInit;
+import com.ly.train.flower.common.lifecyle.AbstractLifecycle;
 import com.ly.train.flower.common.scanner.DefaultClassScanner;
 import com.ly.train.flower.common.util.Assert;
 import com.ly.train.flower.common.util.StringUtil;
@@ -39,21 +39,21 @@ import com.ly.train.flower.config.FlowerConfig;
 import com.ly.train.flower.registry.Registry;
 import com.ly.train.flower.registry.config.ServiceInfo;
 
-public class ServiceFactory extends AbstractInit {
+public class ServiceFactory extends AbstractLifecycle {
   private static final Logger logger = LoggerFactory.getLogger(ServiceFactory.class);
   private final ServiceLoader serviceLoader = new ServiceLoader(this);
   // <flowName, ServiceFlow>
   private final ConcurrentMap<String, ServiceFlow> serviceFlowCache = new ConcurrentHashMap<>();
-  private final FlowerConfig flowerConfig;
   private final FlowerFactory flowerFactory;
+  private FlowerConfig flowerConfig;
 
   public ServiceFactory(FlowerFactory flowerFactory) {
     this.flowerFactory = flowerFactory;
-    this.flowerConfig = flowerFactory.getFlowerConfig();
   }
 
   @Override
   protected void doInit() {
+    this.flowerConfig = flowerFactory.getFlowerConfig();
     serviceLoader.init();
     String basePackage = flowerConfig.getBasePackage();
     if (StringUtil.isBlank(basePackage)) {
@@ -250,5 +250,14 @@ public class ServiceFactory extends AbstractInit {
     return null;
   }
 
+  @Override
+  protected void doStart() {
+    // nothing
+  }
+
+  @Override
+  protected void doStop() {
+    // nothing
+  }
 
 }

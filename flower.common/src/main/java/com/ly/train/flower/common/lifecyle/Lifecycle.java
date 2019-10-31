@@ -15,12 +15,28 @@
  */
 package com.ly.train.flower.common.lifecyle;
 
+/**
+ * control the life cyle of a component.
+ * 
+ * @author leeyazhou
+ */
 public interface Lifecycle extends IInit {
 
+  /**
+   * start
+   */
   void start();
 
+  /**
+   * stop
+   */
   void stop();
 
+  /**
+   * whether is running?
+   * 
+   * @return true if the component is running, or false.
+   */
   boolean isRunning();
 
 }

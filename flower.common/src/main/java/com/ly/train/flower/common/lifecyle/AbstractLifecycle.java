@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class AbstractLifecycle extends AbstractInit implements Lifecycle {
 
-  private AtomicBoolean running = new AtomicBoolean();
+  private final AtomicBoolean running = new AtomicBoolean();
 
   @Override
   public boolean isRunning() {
@@ -33,7 +33,7 @@ public abstract class AbstractLifecycle extends AbstractInit implements Lifecycl
   @Override
   public void start() {
     if (running.compareAndSet(false, true)) {
-      init();
+      logger.debug("Start {}", this);
       doStart();
     }
   }
@@ -42,6 +42,7 @@ public abstract class AbstractLifecycle extends AbstractInit implements Lifecycl
   @Override
   public void stop() {
     if (running.compareAndSet(true, false)) {
+      logger.debug("Stop {}", this);
       doStop();
     }
   }
@@ -49,7 +50,13 @@ public abstract class AbstractLifecycle extends AbstractInit implements Lifecycl
   @Override
   protected void doInit() {}
 
+  /**
+   * do start thing.
+   */
   protected abstract void doStart();
 
+  /**
+   * do stop thing.
+   */
   protected abstract void doStop();
 }
