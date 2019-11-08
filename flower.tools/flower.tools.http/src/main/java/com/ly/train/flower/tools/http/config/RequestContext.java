@@ -16,8 +16,10 @@
 package com.ly.train.flower.tools.http.config;
 
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.http.protocol.HTTP;
 import com.ly.train.flower.tools.http.enums.RequestMethod;
 
 /**
@@ -34,6 +36,7 @@ public class RequestContext implements Serializable {
   private int writeTimeout = 3000;
 
   private RequestMethod method = RequestMethod.GET;
+  private Charset charset = Charset.forName("UTF-8");
 
   private String url;
 
@@ -132,4 +135,18 @@ public class RequestContext implements Serializable {
     return this;
   }
 
+  public RequestContext setContentType(String contentValue) {
+    this.headers.put(HTTP.CONTENT_TYPE, contentValue);
+    return this;
+  }
+  
+  public RequestContext setCharset(Charset charset) {
+    this.charset = charset;
+    return this;
+  }
+  
+  public Charset getCharset() {
+    return charset;
+  }
+  
 }

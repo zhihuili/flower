@@ -61,7 +61,7 @@ public class OKHttpFactory implements HttpFactory {
     builder.readTimeout(httpConfig.getReadTimeout(), TimeUnit.MILLISECONDS);
 
     ExecutorService executorService = new ThreadPoolExecutor(8, Runtime.getRuntime().availableProcessors() * 8, 60,
-        TimeUnit.SECONDS, new SynchronousQueue<>(), new NamedThreadFactory("flower.http"));
+        TimeUnit.SECONDS, new SynchronousQueue<>(), new NamedThreadFactory("flower-http"));
 
     Dispatcher dispatcher = new Dispatcher(executorService);
     dispatcher.setMaxRequests(256);

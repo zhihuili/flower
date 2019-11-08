@@ -38,6 +38,7 @@ import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
 import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.nio.reactor.ConnectingIOReactor;
+import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ly.train.flower.tools.http.HttpFactory;
@@ -57,24 +58,28 @@ public class HttpAsyncClientFactory implements HttpFactory {
 
   public HttpAsyncClientFactory() {
     try {
+      int ioThreadCount = Runtime.getRuntime().availableProcessors() * 8;
+      IOReactorConfig ioReactorConfig =
+          IOReactorConfig.custom().setIoThreadCount(ioThreadCount)
+              .setConnectTimeout(httpConfig.getConnectTimeout()).setSoTimeout(httpConfig.getReadTimeout()).build();
+
+      ConnectingIOReactor ioReactor =
+          new DefaultConnectingIOReactor(ioReactorConfig, new NamedThreadFactory("flower-http"));
+      this.connectionManager = new PoolingNHttpClientConnectionManager(ioReactor);
+      this.connectionManager.setMaxTotal(1024);
+      this.connectionManager.setDefaultMaxPerRoute(256);
       initHttpClient();
     } catch (Exception e) {
       logger.error("", e);
     }
   }
 
+  public HttpAsyncClientFactory(PoolingNHttpClientConnectionManager connectionManager) {
+    this.connectionManager = connectionManager;
+    initHttpClient();
+  }
 
-
-  private void initHttpClient() throws Exception {
-    IOReactorConfig ioReactorConfig =
-        IOReactorConfig.custom().setIoThreadCount(Runtime.getRuntime().availableProcessors() * 8)
-            .setConnectTimeout(httpConfig.getConnectTimeout()).setSoTimeout(httpConfig.getReadTimeout()).build();
-
-    ConnectingIOReactor ioReactor =
-        new DefaultConnectingIOReactor(ioReactorConfig, new NamedThreadFactory("flower.http"));
-    this.connectionManager = new PoolingNHttpClientConnectionManager(ioReactor);
-    this.connectionManager.setMaxTotal(256);
-    this.connectionManager.setDefaultMaxPerRoute(Math.max(32, Runtime.getRuntime().availableProcessors() * 8));
+  private void initHttpClient() {
     this.asyncHttpClient = HttpAsyncClients.custom().setConnectionManager(connectionManager).build();
     this.asyncHttpClient.start();
   }
@@ -151,16 +156,21 @@ public class HttpAsyncClientFactory implements HttpFactory {
         break;
     }
     request.setConfig(config);
-
+    boolean containContentType = false;
     for (Map.Entry<String, String> entry : requestContext.getHeaders().entrySet()) {
       request.addHeader(entry.getKey(), entry.getValue());
+      if (entry.getKey().equals(HTTP.CONTENT_TYPE)) {
+        containContentType = true;
+      }
     }
     HttpEntity entity = null;
     try {
       if (requestContext.getRequestBody() != null) {
-        request.addHeader("Content-type", "application/json; charset=utf-8");
-        request.setHeader("Accept", "application/json");
-        entity = new StringEntity(requestContext.getRequestBody(), "UTF-8");
+        if (!containContentType) {
+          request.addHeader("Content-type", "application/json; charset=" + requestContext.getCharset());
+          request.setHeader("Accept", "application/json");
+        }
+        entity = new StringEntity(requestContext.getRequestBody(), requestContext.getCharset());
       } else {
         List<NameValuePair> parameters = new ArrayList<>();
         for (Map.Entry<String, String> entry : requestContext.getParameters().entrySet()) {

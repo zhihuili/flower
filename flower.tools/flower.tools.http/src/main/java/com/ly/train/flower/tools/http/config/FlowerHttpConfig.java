@@ -24,11 +24,11 @@ public class FlowerHttpConfig implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private int connectTimeout = 3000;
+  private int connectTimeout = 6000;
 
   private int readTimeout = 6000;
 
-  private int writeTimeout = 3000;
+  private int writeTimeout = 6000;
 
   public int getConnectTimeout() {
     return connectTimeout;
