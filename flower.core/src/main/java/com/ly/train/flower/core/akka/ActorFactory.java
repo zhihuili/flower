@@ -56,7 +56,4 @@ public interface ActorFactory extends Lifecycle {
    */
   ActorWrapper buildServiceActor(ServiceConfig serviceConfig, int index);
 
-
-  BlockedThreadChecker getBlockedThreadChecker();
-
 }
