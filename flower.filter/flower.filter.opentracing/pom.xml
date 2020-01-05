@@ -21,7 +21,7 @@
     <parent>
         <groupId>com.ly.train</groupId>
         <artifactId>flower.filter</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
     </parent>
     <artifactId>flower.filter.opentracing</artifactId>
 

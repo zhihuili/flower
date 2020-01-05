@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
 import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.exception.FlowException;
 import com.ly.train.flower.common.exception.FlowNotFoundException;
@@ -39,6 +40,7 @@ import com.ly.train.flower.core.akka.router.FlowRouter;
 import com.ly.train.flower.core.akka.router.ServiceRouter;
 import com.ly.train.flower.core.service.container.FlowerFactory;
 import com.ly.train.flower.core.service.container.ServiceFactory;
+
 import akka.actor.ActorRef;
 import akka.pattern.Patterns;
 import scala.concurrent.Await;
@@ -60,7 +62,6 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
   private volatile Lock flowRouterLock = new ReentrantLock();
   private volatile Lock serviceRouterLock = new ReentrantLock();
   private FlowerActorSystem flowerActorSystem;
-  private BlockedThreadChecker blockedThreadChecker;
 
   public ServiceActorFactory(FlowerFactory flowerFactory) {
     this.flowerFactory = flowerFactory;
@@ -70,8 +71,6 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
   protected void doInit() {
     this.flowerConfig = flowerFactory.getFlowerConfig();
     this.serviceFactory = flowerFactory.getServiceFactory();
-    this.blockedThreadChecker =
-        new BlockedThreadChecker(flowerConfig.getBlockedThreadCheckInterval(), flowerConfig.getWarningExceptionTime());
     this.flowerActorSystem = new FlowerActorSystem(this, flowerFactory);
     this.flowerActorSystem.init();
   }
@@ -212,12 +211,8 @@ public class ServiceActorFactory extends AbstractLifecycle implements ActorFacto
   @Override
   protected void doStop() {
     this.flowerActorSystem.stop();
-    this.blockedThreadChecker.close();
     CacheManager.stop();
   }
 
-  public BlockedThreadChecker getBlockedThreadChecker() {
-    return blockedThreadChecker;
-  }
 
 }
