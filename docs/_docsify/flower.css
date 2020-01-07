@@ -1,3 +1,38 @@
 a {
     text-decoration: none;
 }
+
+h2 {
+    counter-increment: counter_h2;
+    counter-reset: counter_h3;
+}
+
+h2::before {
+    content: counter(counter_h2) '. ';
+}
+
+h3 {
+    counter-increment: counter_h3;
+    counter-reset: counter_h4;
+}
+
+h3::before {
+    content: counter(counter_h2) '.' counter(counter_h3) ' ';
+}
+
+h4 {
+    counter-increment: counter_h4;
+}
+
+h4::before {
+    content: counter(counter_h2) '.' counter(counter_h3) '.' counter(counter_h4) ' ';
+}
+
+aside.nav > div.page_toc > ul > li > ul > li {
+    counter-increment: counter_li_1;
+    /*counter-reset: counter_li_1;*/
+}
+
+aside.nav > div.page_toc > ul > li > ul > li > a ::before {
+    content: counter(counter_li_1) '. ';
+}
