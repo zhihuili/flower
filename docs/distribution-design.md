@@ -14,18 +14,18 @@
 - 2. 开发Flower Service，启动业务服务Flower容器，自动向注册中心注册服务
 - 3. 开发Flower web网关，启动Flower网关服务，编排流程
 
-### 1. 注册中心
+### 注册中心
 
 Flower.center基于spring-boot开发，通过打包成fat-jar后通过命令行启动即可。
 
 Flower注册中心启动入口`/flower.center/src/main/java/com/ly/train/flower/center/CenterApplication.java`
 Flower注册中心启动命令`java -jar flower.center-0.1.2.jar`
 
-### 2. 启动业务Flower容器
+### 启动业务Flower容器
 
 Flower部署支持Flower容器和Spring容器，下面的例子基于spring-boot演示
 
-#### 2.1 创建配置文件flower.yml
+#### 创建配置文件flower.yml
 
 ```yaml
 name: "LocalFlower"
@@ -36,7 +36,7 @@ registry:
    - url:  "flower://127.0.0.1:8096?application=LocalFlower"
 ```
 
-#### 2.2 配置FlowerFactory
+#### 配置FlowerFactory
 
 ```java
 @Configuration
@@ -52,7 +52,7 @@ public class FlowerConfiguration {
 
 ```
 
-#### 2.3 开发flower服务
+#### 开发flower服务
 
 ```java
 @FlowerService
@@ -72,7 +72,7 @@ public class CreateOrderService implements Service<Order, Boolean> {
 }
 ```
 
-#### 2.4 创建启动类
+#### 创建启动类
 
 ```java
 @SpringBootApplication
@@ -90,11 +90,11 @@ public class OrderPlatformApplication {
 
 > 运行启动类即可实现Flower服务自动注册，并对外提供服务
 
-### 3. 启动网关服务器，编排流程
+### 启动网关服务器，编排流程
 
 > Flower网关服务器基于spring-mvc展示，跟flower服务一样，需要提供flower.yml配置信息，并配置FlowerFactory
 
-#### 3.1 创建flower.yml
+#### 创建flower.yml
 
 ```yaml
 name: "LocalFlower"
@@ -106,7 +106,7 @@ registry:
    - url: "flower://127.0.0.1:8096?application=LocalFlower"
 ```
 
-#### 3.2 配置FlowerFactory
+#### 配置FlowerFactory
 
 ```java
 @Configuration
@@ -121,7 +121,7 @@ public class FlowerConfiguration {
 }
 ```
 
-#### 3.3 开发Flower服务
+#### 开发Flower服务
 
 ```java
 @FlowerService(type = FlowerType.AGGREGATE)// 聚合服务类型
@@ -146,7 +146,7 @@ public class EndService extends AbstractService<List<Object>, Object> implements
 
 ```
 
-#### 3.4 开发网关Controller
+#### 开发网关Controller
 
 ```java
 @RestController
@@ -177,7 +177,7 @@ public class CreateOrderController extends FlowerController {
 
 > 集成Flower提供的基类FlowerController，使用方可以使用SpringMVC提供的注解，最大程度上保留SpringMVC的功能，学习成本几乎为零，里面封装了一些细节，让使用更关注业务开发。如果熟悉Flower的使用方式，使用方也可以完全自行扩展。
 
-#### 3.5 启动类
+#### 启动类
 
 ```java
 @SpringBootApplication
@@ -269,7 +269,9 @@ factory.stop();
   ServiceFacade getServiceFacade();
 ```
 
-### FlowRouter流程路由器，创建流程之后，通过FlowerFactory可以创建出对应的路由器，之后便可以进行服务的调用了
+### 调用
+
+FlowRouter流程路由器，创建流程之后，通过FlowerFactory可以创建出对应的路由器，之后便可以进行服务的调用了
 
 ```java
 FlowRouter flowRouter = factory.getServiceFacade().buildFlowRouter("flowerSample", 2 << 6);

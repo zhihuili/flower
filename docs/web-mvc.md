@@ -2,9 +2,9 @@
 
 Flower支持web开发，基于servlet 3.1+的异步模式，通过AsyncContext对象异步响应客户端请求。
 
-## 1. spring-mvc开发模式
+## spring-mvc开发模式
 
-### 1.1 安装
+### 安装
 
 ```xml
  <dependency>
@@ -14,7 +14,7 @@ Flower支持web开发，基于servlet 3.1+的异步模式，通过AsyncContext�
 </dependency>
 ```
 
-### 1.2 网关
+### 网关
 
 定义一个网关类IndexController，并继承类FlowerController，实现方法buildFlower()，buildFlower()方法负责编排服务流程。
 
@@ -50,12 +50,12 @@ public class IndexController extends FlowerController {
 }
 ```
 
-## 2. Servlet开发模式
+## Servlet开发模式
 
 示例开发一个流程服务类FlowService用于处理业务，基类FlowerHttpServlet用于处理Flower和Servlet的一些基础工作。
 Servlet类会编排一个服务流程，并在收到Get请求的时候，异步处理业务请求。
 
-### 2.1 安装
+### 安装
 
 ```xml
  <dependency>
@@ -65,7 +65,7 @@ Servlet类会编排一个服务流程，并在收到Get请求的时候，异步�
 </dependency>
 ```
 
-### 2.2 Servlet开发
+### Servlet开发
 
 FlowService.java
 ```java

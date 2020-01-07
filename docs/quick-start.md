@@ -108,7 +108,7 @@ public class UserServiceC1 implements Service<User, User> {
 
 Flower提供两种服务注册方式：配置文件方式和编程方式。
 
-### 1. 编程方式
+### 编程方式
 
 ```java
  ServiceFactory serviceFactory = flowerFactory.getServiceFactory();
@@ -117,7 +117,7 @@ Flower提供两种服务注册方式：配置文件方式和编程方式。
  serviceFactory.registerService(UserServiceC1.class.getSimpleName(), UserServiceC1.class);
 ```
 
-### 2. 配置文件方式
+### 配置文件方式
 服务定义配置文件扩展名: .services，放在classpath下，Flower框架自动加载注册。
 flower_test.services
 
@@ -137,7 +137,7 @@ Flower框架提供两种服务流程编排方式：配置文件方式和编程�
 UserServiceA -> UserServiceB -> UserServiceC1
 ```
 
-### 1. 编程方式编排流程
+### 编程方式编排流程
 
 ```java
 // UserServiceA -> UserServiceB -> UserServiceC1
@@ -148,7 +148,7 @@ serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
 serviceFlow.build();
 ```
 
-### 2. 配置文件方式编排流程
+### 配置文件方式编排流程
 流程配置文件扩展名: .flow，放在classpath下，Flower框架自动加载编排流程。
 flower_test.flow
 
