@@ -1,4 +1,3 @@
-![logo]()
 # Flower <small>1.0.3</small>
 
 > 响应式微服务框架

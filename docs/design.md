@@ -1,8 +1,8 @@
-# Flower框架设计
+# 框架设计
 
 了解关于Flower的内部设计，有助于你更好地利用Flower开发一个反应式系统。
 
-## Flower core模块（进程内流式微服务框架）设计
+## core模块（进程内流式微服务框架）设计
 
 Flower基于Akka的Actor进行开发，将Service封装到Actor里面，Actor收到的消息作为参数传入Service进行调用，Service的输出发送给后续Actor作为Service的输入。
 

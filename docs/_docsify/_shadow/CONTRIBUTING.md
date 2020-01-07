@@ -1,0 +1,1 @@
+[remoteMarkdownUrl](https://raw.githubusercontent.com/zhihuili/flower/master/CONTRIBUTING.md)
