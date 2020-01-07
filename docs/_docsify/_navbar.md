@@ -3,4 +3,4 @@
 * Getting started
 
   * [Quick start](quick_start.md)
-  * [Cover page](cover.md)
+  * [Program guide](program_guide.md)

@@ -1,6 +1,6 @@
-# Flower应用指南
+# 编程指南
 
-**在Flower里面消息是一等公民，基于Flower开发的应用系统是面向消息的应用系统。**
+**Flower内部，消息是一等公民，基于Flower开发的应用系统是面向消息的应用系统。**
 消息由Service产生，是Service的返回值；同时消息也是Service的输入。前一个Service的返回消息是下一个Service的输入消息，没有耦合的Service正是通过消息关联起来，组成一个Service流程，并最终构建出一个拥有完整处理能力的应用系统。流程举例：
 
 ```java

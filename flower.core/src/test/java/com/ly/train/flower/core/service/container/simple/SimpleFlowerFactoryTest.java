@@ -16,8 +16,11 @@
 package com.ly.train.flower.core.service.container.simple;
 
 import org.junit.Test;
+
+import com.ly.train.flower.common.exception.ServiceNotFoundException;
+import com.ly.train.flower.common.exception.handler.DefaultExceptionHandler;
+import com.ly.train.flower.common.exception.handler.ExceptionHandler;
 import com.ly.train.flower.core.service.container.FlowerFactory;
-import com.ly.train.flower.core.service.container.simple.SimpleFlowerFactory;
 
 /**
  * @author leeyazhou
@@ -25,25 +28,33 @@ import com.ly.train.flower.core.service.container.simple.SimpleFlowerFactory;
  */
 public class SimpleFlowerFactoryTest {
 
-  @Test
-  public void testDefaultFlowerFactory() {
-    FlowerFactory factory = SimpleFlowerFactory.get();
-    factory.start();
-    factory.stop();
-  }
+	@Test
+	public void testDefaultFlowerFactory() {
+		FlowerFactory factory = SimpleFlowerFactory.get();
+		factory.start();
+		factory.stop();
+	}
 
-  @Test
-  public void testFlowerFactory() {
-    FlowerFactory factory = new SimpleFlowerFactory();
-    factory.start();
-    factory.stop();
-  }
+	@Test
+	public void testFlowerFactory() {
+		FlowerFactory factory = new SimpleFlowerFactory();
+		factory.start();
+		factory.stop();
+	}
 
-  @Test
-  public void testFlowerFactoryWithConfig() {
-    FlowerFactory factory = new SimpleFlowerFactory("conf/flower_25003.yml");
-    factory.start();
-    factory.stop();
-  }
+	@Test
+	public void testFlowerFactoryWithConfig() {
+		FlowerFactory factory = new SimpleFlowerFactory("conf/flower_25003.yml");
+		factory.start();
+		factory.stop();
+	}
+
+	@Test
+	public void testRegisterExceptionHandler() {
+		FlowerFactory flowerFactory = new SimpleFlowerFactory();
+		ExceptionHandler exceptionHandler = new DefaultExceptionHandler();
+		flowerFactory.registerExceptionHandler(ServiceNotFoundException.class, exceptionHandler);
+		flowerFactory.setDefaultExceptionHandler(exceptionHandler);
+	}
 
 }

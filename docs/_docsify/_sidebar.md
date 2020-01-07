@@ -1,6 +1,16 @@
-* [开发指南](quick_start.md)
-* [编程指南](program_guide.md)
-* [拦截器](filter.md)
-* [异常处理](exception-handle.md)
-* [分布式设计](distribution_design.md)
-* [Flower设计](design.md)
+- 用户文档
+    - [快速上手](quick_start.md)
+    - [配置](configuration.md)
+    - [编程指南](program_guide.md)
+    - [过滤器](filter.md)
+    - [异常处理](exception-handle.md)
+- 开发者指南
+    - [Flower设计](design.md)
+    - [Flower分布式设计](distribution_design.md)
+- 更多
+    - [FAQ](FAQ.md)
+    - [参与者公约](_docsify/_shadow/CODE_OF_CONDUCT.md)
+    - [参与开发](_docsify/_shadow/CONTRIBUTING.md)
+    - [开源协议](https://github.com/zhihuili/flower/blob/master/LICENSE.txt)
+    - [更新日志](_docsify/_shadow/CHANGELOG.md)
+    

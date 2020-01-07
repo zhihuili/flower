@@ -1,4 +1,4 @@
-# <img src="img/flowerlogo.png" height="50"/>反应式微服务框架Flower
+# 反应式微服务框架Flower
 
 ![Build Status](https://travis-ci.org/zhihuili/flower.svg?branch=master)
 [![codecov](https://codecov.io/gh/zhihuili/flower/branch/master/graph/badge.svg)](https://codecov.io/gh/zhihuili/flower)
@@ -24,14 +24,14 @@ Flower是一个构建在Akka上的反应式微服务框架，开发者只需要�
 
 ## 文档
 
-* [Flower应用指南](/docs/program_guide.md)
-* [Flower分布式开发](/docs/distribution_design.md)
-* [Flower框架设计](/docs/design.md)
+* [Flower应用指南](program_guide.md)
+* [Flower分布式开发](distribution_design.md)
+* [Flower框架设计](design.md)
 
 ## 资料
 
-* [使用Flower构建高性能、高可用的应用系统.ppt](/docs/反应式编程框架Flower.pdf)
-* [Flower相关论文《下一代的反应式编程框架研究与实现》.pdf](/docs/论文《下一代的反应式编程框架研究与实现》.pdf)
+* [使用Flower构建高性能、高可用的应用系统.ppt](反应式编程框架Flower.pdf)
+* [Flower相关论文《下一代的反应式编程框架研究与实现》.pdf](论文《下一代的反应式编程框架研究与实现》.pdf)
 
 ## 参与开发
 
