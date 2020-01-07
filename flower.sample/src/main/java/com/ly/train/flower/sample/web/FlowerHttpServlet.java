@@ -24,12 +24,9 @@ import com.ly.train.flower.core.service.container.simple.SimpleFlowerFactory;
 
 /**
  * @author leeyazhou
- * 
  */
 public class FlowerHttpServlet extends HttpServlet {
-
   private static final long serialVersionUID = 1L;
-
   protected static FlowerFactory flowerFactory = null;
   protected static ServiceFactory serviceFactory;
   protected static ServiceFacade serviceFacade;

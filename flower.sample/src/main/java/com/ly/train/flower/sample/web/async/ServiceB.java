@@ -22,7 +22,7 @@ import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.core.service.Complete;
 import com.ly.train.flower.core.service.web.Flush;
 import com.ly.train.flower.sample.web.dao.UserDao;
-import com.ly.train.flower.sample.web.mode.User;
+import com.ly.train.flower.sample.web.model.User;
 
 @Service("serviceB")
 public class ServiceB implements com.ly.train.flower.common.core.service.Service<Integer, Void>, Flush, Complete {

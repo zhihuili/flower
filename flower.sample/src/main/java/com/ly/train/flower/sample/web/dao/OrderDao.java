@@ -17,7 +17,8 @@ package com.ly.train.flower.sample.web.dao;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
-import com.ly.train.flower.sample.web.mode.Order;
+
+import com.ly.train.flower.sample.web.model.Order;
 
 /**
  * @author fengyu.zhang

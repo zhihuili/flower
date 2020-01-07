@@ -15,7 +15,7 @@
  */
 package com.ly.train.flower.sample.web.dao;
 
-import com.ly.train.flower.sample.web.mode.User;
+import com.ly.train.flower.sample.web.model.User;
 
 public interface UserDao {
   User findUser(int id);

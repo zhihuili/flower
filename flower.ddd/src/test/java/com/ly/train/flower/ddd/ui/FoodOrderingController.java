@@ -17,9 +17,12 @@ package com.ly.train.flower.ddd.ui;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ly.train.flower.ddd.api.command.CreateOrderCommand;
+import com.ly.train.flower.ddd.api.command.SelectOrderCommand;
+import com.ly.train.flower.ddd.command.FoodCart;
 import com.ly.train.flower.ddd.gateway.CommandGateway;
 import com.ly.train.flower.ddd.gateway.QueryGateway;
 
@@ -40,4 +43,8 @@ public class FoodOrderingController {
     commandGateway.send(new CreateOrderCommand(index.incrementAndGet(), "foodcart"));
   }
 
+  @RequestMapping("{orderId}")
+  public void queryFoodcart(@PathVariable Long orderId) {
+	  queryGateway.query(new SelectOrderCommand(orderId));
+  }
 }

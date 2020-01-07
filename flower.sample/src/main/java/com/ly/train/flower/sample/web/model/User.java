@@ -13,27 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.sample.web;
+package com.ly.train.flower.sample.web.model;
 
-import java.io.PrintWriter;
-import javax.servlet.AsyncContext;
+public class User {
+  private int id;
+  private String name;
+  private String gender;
+  private int age;
 
-public class Executor implements Runnable {
-  private AsyncContext ctx = null;
-
-  public Executor(AsyncContext ctx) {
-    this.ctx = ctx;
+  public int getId() {
+    return id;
   }
 
-  public void run() {
-    try {
-      // Thread.sleep(100);
-      PrintWriter out = ctx.getResponse().getWriter();
-      out.println("- end：" + System.currentTimeMillis());
-      out.flush();
-      ctx.complete();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+  public void setId(int id) {
+    this.id = id;
   }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getGender() {
+    return gender;
+  }
+
+  public void setGender(String gender) {
+    this.gender = gender;
+  }
+
+  public int getAge() {
+    return age;
+  }
+
+  public void setAge(int age) {
+    this.age = age;
+  }
+
 }

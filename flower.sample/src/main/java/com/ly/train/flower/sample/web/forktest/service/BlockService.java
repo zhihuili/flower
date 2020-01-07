@@ -20,8 +20,9 @@ import org.springframework.stereotype.Service;
 import com.ly.train.flower.sample.web.dao.GoodsDao;
 import com.ly.train.flower.sample.web.dao.OrderDao;
 import com.ly.train.flower.sample.web.dao.UserDao;
-import com.ly.train.flower.sample.web.mode.Order;
-import com.ly.train.flower.sample.web.mode.User;
+import com.ly.train.flower.sample.web.model.Order;
+import com.ly.train.flower.sample.web.model.User;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
