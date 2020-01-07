@@ -65,7 +65,7 @@
 
 ### 六边形架构/端口适配器架构(Hexagonal Architecture)
 
-![六边形架构/端口适配器架构](img/ddd-layer-architecture.png)
+![六边形架构/端口适配器架构](img/ddd-hexagonal-architecture.png)
 
 ### 洋葱架构/简洁架构(Onion Architecture/The clean Architecture)
 
