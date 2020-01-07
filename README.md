@@ -20,12 +20,12 @@ Flower是一个构建在Akka上的反应式微服务框架，开发者只需要�
 
 ## 快速上手
 
-5分钟开发一个反应式应用，[Flower反应式编程快速上手](/docs/quick_start.md)
+5分钟开发一个反应式应用，[Flower反应式编程快速上手](/docs/quick-start.md)
 
 ## 文档
 
-* [Flower应用指南](/docs/program_guide.md)
-* [Flower分布式开发](/docs/distribution_design.md)
+* [Flower应用指南](/docs/program-guide.md)
+* [Flower分布式开发](/docs/distribution-design.md)
 * [Flower框架设计](/docs/design.md)
 
 ## 资料
