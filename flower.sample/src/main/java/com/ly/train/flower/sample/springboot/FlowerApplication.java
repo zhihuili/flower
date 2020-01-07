@@ -20,9 +20,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.ly.train.flower.web.spring.context.FlowerComponentScan;
 
 @SpringBootApplication
-@FlowerComponentScan("com.ly.train.flower.sample.springboot")
+@FlowerComponentScan(basePackages = { "com.ly.train.flower.web.spring", "com.ly.train.flower.sample.springboot" })
 public class FlowerApplication {
-  public static void main(String[] args) {
-    SpringApplication.run(FlowerApplication.class, args);
-  }
+	public static void main(String[] args) {
+		SpringApplication.run(FlowerApplication.class, args);
+	}
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ly.train.flower.sample.web.mode;
+package com.ly.train.flower.sample.web.model;
 
 /**
  * @author fengyu.zhang

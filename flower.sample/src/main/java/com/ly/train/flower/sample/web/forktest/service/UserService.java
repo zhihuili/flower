@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.sample.web.dao.UserDao;
-import com.ly.train.flower.sample.web.mode.User;
+import com.ly.train.flower.sample.web.model.User;
 
 /**
  * @author fengyu.zhang

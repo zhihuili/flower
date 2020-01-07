@@ -21,22 +21,12 @@ import com.ly.train.flower.core.service.Complete;
 import com.ly.train.flower.core.service.web.Flush;
 import com.ly.train.flower.core.service.web.HttpComplete;
 
-public class FlowService implements Service, HttpComplete, Flush, Complete {
+public class FlowService implements Service<Object, Object>, HttpComplete, Flush, Complete {
 
-  public FlowService() {}
-
-  @Override
-  /**
-   * trim service
-   */
-  public Object process(Object message, ServiceContext context) throws Exception {
-
-    context.getWeb().println(" - end:" + System.currentTimeMillis());
-    return "";
-  }
-
-  public long delay() {
-    return 100;
-  }
+	@Override
+	public Object process(Object message, ServiceContext context) throws Exception {
+		context.getWeb().println(" - end:" + System.currentTimeMillis());
+		return message;
+	}
 
 }

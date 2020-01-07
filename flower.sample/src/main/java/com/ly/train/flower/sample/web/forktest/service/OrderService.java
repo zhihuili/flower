@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.sample.web.dao.OrderDao;
-import com.ly.train.flower.sample.web.mode.Order;
+import com.ly.train.flower.sample.web.model.Order;
 
 /**
  * @author fengyu.zhang

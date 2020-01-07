@@ -1,6 +1,6 @@
-# Flower分布式开发
+# 分布式设计
 
-## Flower分布式部署架构
+## 分布式部署架构
 
 <img src="img/flower-distribute.png" height="600"/>
 
@@ -10,20 +10,18 @@
 
 ## 开发流程
 
-一. 启动Flower.center注册中心
+- 1. 启动Flower.center注册中心
+- 2. 开发Flower Service，启动业务服务Flower容器，自动向注册中心注册服务
+- 3. 开发Flower web网关，启动Flower网关服务，编排流程
 
-二. 开发Flower Service，启动业务服务Flower容器，自动向注册中心注册服务
-
-三. 开发Flower web网关，启动Flower网关服务，编排流程
-
-### 一. 注册中心
+### 1. 注册中心
 
 Flower.center基于spring-boot开发，通过打包成fat-jar后通过命令行启动即可。
 
 Flower注册中心启动入口`/flower.center/src/main/java/com/ly/train/flower/center/CenterApplication.java`
 Flower注册中心启动命令`java -jar flower.center-0.1.2.jar`
 
-### 二. 启动业务Flower容器
+### 2. 启动业务Flower容器
 
 Flower部署支持Flower容器和Spring容器，下面的例子基于spring-boot演示
 
@@ -92,7 +90,7 @@ public class OrderPlatformApplication {
 
 > 运行启动类即可实现Flower服务自动注册，并对外提供服务
 
-### 三. 启动网关服务器，编排流程
+### 3. 启动网关服务器，编排流程
 
 > Flower网关服务器基于spring-mvc展示，跟flower服务一样，需要提供flower.yml配置信息，并配置FlowerFactory
 
@@ -199,7 +197,7 @@ public class WebApplication {
 [flower分布式实例](https://github.com/leeyazhou/flower.showcase.git)
 `https://github.com/leeyazhou/flower.showcase.git`
 
-## More
+## 更多细节
 
 ### 核心概念
 
@@ -307,5 +305,3 @@ basePackage: com.ly.train.flower
 1. Flower容器启动后，会把本地的服务元数据注册到注册中心，便可以为其他应用提供服务；流程编排的过程中，会优先使用本地容器中包含的容器，如果在本地找不到对应的服务信息，会从注册中心拉取服务信息，并创建RemoteActor备用。
 
 2. 流程创建完毕，会把流程配置信息上传到注册中心。如果流程中涉及到本地Service和远程Service进行混排时，那么远程Service执行完毕后，可能需要把消息回传到本地Service中，这时需要从注册中心拉取Flow的配置信息，然后才能获取到当前服务的下一个Service的地址。
-
-## 流程图
