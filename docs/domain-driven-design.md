@@ -1,6 +1,6 @@
 # DDD
 
-## 1. 领域驱动设计优势
+## 领域驱动设计优势
 
 - 领域专家和开发人员共同工作，这样软件可以准确表达业务规则，就像是领域专家开发出来的一样
 - 帮助业务人员自我提高
@@ -9,14 +9,14 @@
 - 设计就是代码，代码就是设计
 - DDD同时提供战略设计和战术设计。战略设计帮助理解必要的投入、团队人员构成；战术设计帮助创建DDD中的各个组件。
 
-## 2. 通用语言(Ubiquitous Language)
+## 通用语言(Ubiquitous Language)
 
 领域模型和软件设计是紧密联系在一起的，软件系统的各个方面的设计都要忠实的反映领域模型，以便明确二者的对应关系。而且需要经常反复检查修改模型，以便更优雅的实现模型。
 那么，领域专家、设计人员和开发人员就要有一套交流的专业术语，可以称之为Ubiquitous Language
 
 ![通用语言](img/ddd-ubiquitous-language.png)
 
-## 3. 领域驱动设计概念
+## 领域驱动设计概念
 
 - 实体(Entity/Reference Object）
 - 值对象(Value object)
@@ -51,7 +51,7 @@
 
 实体对象需要存储，可以存储在内存(In Memory)或者磁盘(Database)上，在需要实体对象时再从仓储中重构出实体对象。在实践中，数据库存储是仓储的一种实现方式。
 
-## 4. 领域驱动模式
+## 领域驱动模式
 
 - 分层架构(Layers Architecture)
 - 六边形理论(Hexagonal Architecture)
@@ -81,7 +81,7 @@
 
 ![事件溯源](img/ddd-es-architecture.png)
 
-## 5. Flower Domain Driven Design
+## Flower Domain Driven Design
 
 ### Flower DDD的设计思路
 - Flower基于akka，是一个反应式微服务框架，原生支持消息驱动模式。
