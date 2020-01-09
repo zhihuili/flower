@@ -1,1 +1,0 @@
-[remoteMarkdownUrl](https://raw.githubusercontent.com/zhihuili/flower/master/CHANGELOG.md)
