@@ -71,6 +71,7 @@ public class FlowerRouterTest extends TestBase {
 
     Object o = router.syncCallService(user);
     System.out.println("响应结果： " + o);
+    sleep = Integer.MAX_VALUE;
   }
 
   @Test
