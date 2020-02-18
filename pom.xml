@@ -21,7 +21,7 @@
 
     <groupId>com.ly.train</groupId>
     <artifactId>flower.parent</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <packaging>pom</packaging>
 
     <name>flower</name>
@@ -67,12 +67,12 @@
     </ciManagement>
     <properties>
         <akka-http.version>10.1.10</akka-http.version>
-        <akka.version>2.5.26</akka.version>
+        <akka.version>2.6.3</akka.version>
         <brave.version>5.6.0</brave.version>
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <commons-io.version>2.6</commons-io.version>
         <druid.version>1.0.12</druid.version>
-        <fastjson.version>1.2.58</fastjson.version>
+        <fastjson.version>1.2.62</fastjson.version>
         <findbugs-maven-plugin.version>3.0.5</findbugs-maven-plugin.version>
         <gatling-charts-highcharts.version>3.0.3</gatling-charts-highcharts.version>
 
@@ -134,7 +134,7 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>hessian-lite</artifactId>
-                <version>3.2.5</version>
+                <version>3.2.6</version>
             </dependency>
             <dependency>
                 <groupId>com.caucho</groupId>

@@ -22,5 +22,9 @@ spring:
          force: true
          
 flower:
+   config:
+      name: "FlowerCenter"
+      host: 127.0.0.1
+      port: 8096
    center:
       store: memory
