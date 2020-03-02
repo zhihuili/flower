@@ -21,7 +21,7 @@
 
     <groupId>com.ly.train</groupId>
     <artifactId>flower.parent</artifactId>
-    <version>1.0.4</version>
+    <version>${reversion}</version>
     <packaging>pom</packaging>
 
     <name>flower</name>
@@ -108,6 +108,7 @@
 
         <protostuff.version>1.5.2</protostuff.version>
         <reflections.version>0.9.11</reflections.version>
+        <reversion>1.0.4</reversion>
         <servlet.version>4.0.1</servlet.version>
         <slf4j-api.version>1.7.26</slf4j-api.version>
         <sonar-maven-plugin.version>3.0.2</sonar-maven-plugin.version>

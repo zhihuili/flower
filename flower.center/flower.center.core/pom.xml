@@ -21,7 +21,7 @@
     <parent>
         <groupId>com.ly.train</groupId>
         <artifactId>flower.center</artifactId>
-        <version>1.0.4</version>
+        <version>${reversion}</version>
     </parent>
     <artifactId>flower.center.core</artifactId>
 
@@ -29,12 +29,12 @@
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.center.api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${reversion}</version>
         </dependency>
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.web</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${reversion}</version>
         </dependency>
     </dependencies>
 </project>

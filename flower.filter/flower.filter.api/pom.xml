@@ -21,14 +21,14 @@
     <parent>
         <groupId>com.ly.train</groupId>
         <artifactId>flower.filter</artifactId>
-        <version>1.0.4</version>
+        <version>${reversion}</version>
     </parent>
     <artifactId>flower.filter.api</artifactId>
     <dependencies>
         <dependency>
             <groupId>com.ly.train</groupId>
             <artifactId>flower.common</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${reversion}</version>
         </dependency>
     </dependencies>
 </project>
