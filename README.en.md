@@ -41,12 +41,14 @@ Build a reactive programming system in 5 minutes with this [quick start guide](/
 [How to contribute to Flower ?](CONTRIBUTING.md)
 
 
-## [Versions](https://semver.org/lang/zh-CN/)
+## [Versions](https://semver.org)
 
-Versioning: MajorVersion.MinorVersion.PatchVersion
-* Major Version：non compatible API changes
-* Minor Version：backwards compatible new features 
-* Patch Version：backwards compatible bug fixes
+Given a version number MAJOR.MINOR.PATCH, increment the:  
+1. MAJOR version when you make incompatible API changes,
+2. MINOR version when you add functionality in a backwards compatible manner, and
+3. PATCH version when you make backwards compatible bug fixes.
+
+Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
 
 ## License
 
