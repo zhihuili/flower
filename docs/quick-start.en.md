@@ -1,20 +1,21 @@
-[English](/docs/quick-start.en.md)
+[简体中文](/docs/quick-start.md)
 
-# 快速上手
+# Quick Start
 
-Flower框架的主要元素包括：Flower Service（服务）、Flower 流程和Flow容器。Service实现一个细粒度的服务功能，Service之间通过Message关联，前一个Service的返回值（Message），必须是后一个Service的输入参数（Message），Service按照业务逻辑编辑成一个Flow（流程），Flower容器负责将前一个Service的返回消息，传递给后一个Service。
+The main component of Flower framework are Flower Service, Flower Flow and Flower Container. Serivces implement business logic. Services communicate via messages, the return value (a.k.a message) from the previous service will become the input of the next service. Services are chained together to form Flows based on business logic. Containers delivery the messages between services. 
 
-## 系统要求
 
-Flower要求Java 8作为基础。如果使用servlet开发，最低要求是servlet 3.1+，才能支持异步请求。在开始前，最好确认当前安装的JDK版本号是否符合要求。
+## System Requirements 
+
+Flower requires Java 8. If you are using servlet, flower requires servlet 3.1+ for asynchornous support. Confirm your systems meet these requirements before you start.   
 
 ```shell script
 $ java -version
 ```
 
-## 安装
+## Installation 
 
-Flower当前最新发布版本是1.0.3。
+The latestest version of Flower is 1.0.3.
 
 ### Maven
 
@@ -44,19 +45,20 @@ libraryDependencies += "com.ly.train" % "flower.core" % "A.B.C"
 <dependency org="com.ly.train" name="flower.core" rev="A.B.C"/>
 ```
 
-## Flower初始化
+## Initialization  
 
-Flower使用前需要进行初始化，这里演示最简单的方式。
+Flower requires initialization before you start using it. The easiest way to set it up is as following:  
 
-Flower初始化
+Initialize Flower
 
 ```java
  FlowerFactory flowerFactory = new SimpleFlowerFactory();
 ```
 
-## 定义Flower服务
+## Create a Flower service
 
-开发Service类必须实现Flower框架的Service接口或者继承AbstractService基类，在process方法内完成服务业务逻辑处理。
+To create a flower service, implement Service interface or extend AbstractService base class, and add your business logic in process().
+
 
 UserServiceA
 
@@ -67,7 +69,7 @@ public class UserServiceA implements Service<User, User> {
   public User process(User message, ServiceContext context) throws Throwable {
     message.setDesc(message.getDesc() + " --> " + getClass().getSimpleName());
     message.setAge(message.getAge() + 1);
-    logger.info("结束处理消息, message : {}", message);
+    logger.info("Message processing complete, message : {}", message);
     return message;
   }
 
@@ -83,7 +85,7 @@ public class UserServiceB implements Service<User, User> {
   public User process(User message, ServiceContext context) throws Throwable {
     message.setDesc(message.getDesc() + " --> " + getClass().getSimpleName());
     message.setAge(message.getAge() + 1);
-    logger.info("结束处理消息, message : {}", message);
+    logger.info("Message processing complete, message : {}", message);
     return message;
   }
 
@@ -99,18 +101,18 @@ public class UserServiceC1 implements Service<User, User> {
   public User process(User message, ServiceContext context) throws Throwable {
     message.setDesc(message.getDesc() + " --> " + getClass().getSimpleName());
     message.setAge(message.getAge() + 1);
-    logger.info("结束处理消息, message : {}", message);
+    logger.info("Message processing complete, message : {}", message);
     return message;
   }
 
 }
 ```
 
-## 服务注册
+## Register your services 
 
-Flower提供两种服务注册方式：配置文件方式和编程方式。
+Flower provides two ways to register your services: by configuration file or by code.
 
-### 编程方式
+### By code 
 
 ```java
  ServiceFactory serviceFactory = flowerFactory.getServiceFactory();
@@ -119,8 +121,9 @@ Flower提供两种服务注册方式：配置文件方式和编程方式。
  serviceFactory.registerService(UserServiceC1.class.getSimpleName(), UserServiceC1.class);
 ```
 
-### 配置文件方式
-服务定义配置文件扩展名: .services，放在classpath下，Flower框架自动加载注册。
+### By configuration file
+The extension for services configuration files is ".services". Simply put the configuration files under /classpath and Flower will load the configurations and register your services automatically.
+
 flower_test.services
 
 ```java
@@ -129,17 +132,17 @@ UserServiceB = com.ly.train.flower.base.service.user.UserServiceB
 UserServiceC1 = com.ly.train.flower.base.service.user.UserServiceC1
 ```
 
-## 服务流程编排
+## Create a Flow 
 
-Flower框架提供两种服务流程编排方式：配置文件方式和编程方式。
+Flower provide two ways to create a Flow: by configuration file or by code.
 
-两种编排方式的结果是一样：
+Both methods produce a similar result:
 
 ```text
 UserServiceA -> UserServiceB -> UserServiceC1
 ```
 
-### 编程方式编排流程
+### By code
 
 ```java
 // UserServiceA -> UserServiceB -> UserServiceC1
@@ -150,8 +153,9 @@ serviceFlow.buildFlow(UserServiceB.class, UserServiceC1.class);
 serviceFlow.build();
 ```
 
-### 配置文件方式编排流程
-流程配置文件扩展名: .flow，放在classpath下，Flower框架自动加载编排流程。
+### By configuration file
+The extension for flow configuration files is ".flow". Simply put it under /classpath and Flower will create the flows automatically.
+
 flower_test.flow
 
 ```text
@@ -159,28 +163,28 @@ UserServiceA -> UserServiceB
 UserServiceB -> UserServiceC1
 ```
 
-## 调用Flower流程
+## Use Flow 
 
-前面定义了3个Flower服务，并编排了名称为flower_test的服务流程。那么怎么使用它呢？
+We have create 3 Flower services and one flow called flower_test. How do we use them? 
 
-1. 同步调用，需要Flower服务流程响应结果。
-2. 异步调用，不需要Flower服务流程响应结果。
+1. Synchronous calls if you require a response from flow execution.
+2. Asynchronous calls if you don't require a response from flow execution.
 
-- 同步调用
+- Synchronous call 
 
 ```java
 final FlowRouter flowRouter = flowerFactory.buildFlowRouter(flowName, 16);
 Object result = flowRouter.syncCallService(user);
 ```
 
-- 异步调用
+- Asynchronous call 
 
 ```java
 final FlowRouter flowRouter = flowerFactory.buildFlowRouter(flowName, 16);
 flowRouter.asyncCallService(user);
 ```
 
-## 完整示例
+## Complete example 
 
 ```java
     FlowerFactory flowerFactory = new SimpleFlowerFactory();
@@ -198,11 +202,11 @@ flowRouter.asyncCallService(user);
     final FlowRouter flowRouter = flowerFactory.buildFlowRouter(flowName, 16);
 
     User user = new User();
-    user.setName("响应式编程 ");
+    user.setName("reactive-programming ");
     user.setAge(2);
 
     Object o = flowRouter.syncCallService(user);
-    System.out.println("响应结果： " + o);
+    System.out.println("reactive-programming: " + o);
 
     flowRouter.asyncCallService(user);
 ```
@@ -287,15 +291,15 @@ dispatcher.fork-join-executor.parallelism-factor = "8"
 2019-07-11 15:13:21.958 [flower-dispatcher-20] INFO  com.ly.train.flower.base.service.user.UserServiceA - 结束处理消息, message : User [name=响应式编程 , desc= --> UserServiceA, age=3]
 2019-07-11 15:13:21.961 [flower-dispatcher-20] DEBUG c.l.t.f.core.akka.actor.wrapper.ActorRefWrapper - Local message. serviceName : UserServiceB, actor : Actor[akka://flower/user/flower/UserServiceB_1#-39642247], message : ServiceContext [id=b66cc2e27fea491593b9e862e1b311a6, flowName=flower_test, currentServiceName=UserServiceB, sync=true, attachments=null, flowMessage=FlowMessage [transactionId=6e440adf3f8c41f793d7c700a4a36deb, message=[B@611ed8fb], web=null], sender : Actor[akka://flower/user/flower/UserServiceA_1#518152440]
 2019-07-11 15:13:21.963 [flower-dispatcher-19] INFO  c.l.t.flower.core.service.container.ServiceLoader - load flower service --> UserServiceB : com.ly.train.flower.base.service.user.UserServiceB@ffcaad2
-2019-07-11 15:13:21.963 [flower-dispatcher-19] INFO  com.ly.train.flower.base.service.user.UserServiceB - 结束处理消息, message : User [name=响应式编程 , desc= --> UserServiceA --> UserServiceB, age=4]
+2019-07-11 15:13:21.963 [flower-dispatcher-19] INFO  com.ly.train.flower.base.service.user.UserServiceB - Message processing complete, message : User [name=reactive-programming, desc= --> UserServiceA --> UserServiceB, age=4]
 2019-07-11 15:13:21.964 [flower-dispatcher-19] DEBUG c.l.t.f.core.akka.actor.wrapper.ActorRefWrapper - Local message. serviceName : UserServiceC1, actor : Actor[akka://flower/user/flower/UserServiceC1_1#-1935204307], message : ServiceContext [id=b66cc2e27fea491593b9e862e1b311a6, flowName=flower_test, currentServiceName=UserServiceC1, sync=true, attachments=null, flowMessage=FlowMessage [transactionId=6e440adf3f8c41f793d7c700a4a36deb, message=[B@40065f66], web=null], sender : Actor[akka://flower/user/flower/UserServiceB_1#-39642247]
 2019-07-11 15:13:21.964 [flower-dispatcher-19] INFO  c.l.t.flower.core.service.container.ServiceLoader - load flower service --> UserServiceC1 : com.ly.train.flower.base.service.user.UserServiceC1@2a46d78e
-2019-07-11 15:13:21.964 [flower-dispatcher-19] INFO  c.ly.train.flower.base.service.user.UserServiceC1 - 结束处理消息, message : User [name=响应式编程 , desc= --> UserServiceA --> UserServiceB --> UserServiceC1, age=5]
-响应结果： User [name=响应式编程 , desc= --> UserServiceA --> UserServiceB --> UserServiceC1, age=5]
+2019-07-11 15:13:21.964 [flower-dispatcher-19] INFO  c.ly.train.flower.base.service.user.UserServiceC1 - Message processing complete, message : User [name=reactive-programming , desc= --> UserServiceA --> UserServiceB --> UserServiceC1, age=5]
+Response： User [name=reactive-programming , desc= --> UserServiceA --> UserServiceB --> UserServiceC1, age=5]
 2019-07-11 15:13:21.965 [main] DEBUG c.l.t.f.core.akka.actor.wrapper.ActorRefWrapper - Local message. serviceName : UserServiceA, actor : Actor[akka://flower/user/flower/UserServiceA_2#1690671066], message : ServiceContext [id=2e6fcef3852a48eeb7cb182d2bd62ef4, flowName=flower_test, currentServiceName=UserServiceA, sync=false, attachments=null, flowMessage=FlowMessage [transactionId=52565043086d49abaa2ca88c3527883e, message=[B@54dcfa5a], web=null], sender : null
-2019-07-11 15:13:21.966 [flower-dispatcher-19] INFO  com.ly.train.flower.base.service.user.UserServiceA - 结束处理消息, message : User [name=响应式编程 , desc= --> UserServiceA, age=3]
+2019-07-11 15:13:21.966 [flower-dispatcher-19] INFO  com.ly.train.flower.base.service.user.UserServiceA - Message processing complete, message : User [name=reactive-programming , desc= --> UserServiceA, age=3]
 2019-07-11 15:13:21.967 [flower-dispatcher-19] DEBUG c.l.t.f.core.akka.actor.wrapper.ActorRefWrapper - Local message. serviceName : UserServiceB, actor : Actor[akka://flower/user/flower/UserServiceB_2#1505663876], message : ServiceContext [id=2e6fcef3852a48eeb7cb182d2bd62ef4, flowName=flower_test, currentServiceName=UserServiceB, sync=false, attachments=null, flowMessage=FlowMessage [transactionId=52565043086d49abaa2ca88c3527883e, message=[B@3ccff905], web=null], sender : Actor[akka://flower/user/flower/UserServiceA_2#1690671066]
-2019-07-11 15:13:21.967 [flower-dispatcher-20] INFO  com.ly.train.flower.base.service.user.UserServiceB - 结束处理消息, message : User [name=响应式编程 , desc= --> UserServiceA --> UserServiceB, age=4]
+2019-07-11 15:13:21.967 [flower-dispatcher-20] INFO  com.ly.train.flower.base.service.user.UserServiceB - Message processing complete, message : User [name=reactive-programming , desc= --> UserServiceA --> UserServiceB, age=4]
 2019-07-11 15:13:21.968 [flower-dispatcher-20] DEBUG c.l.t.f.core.akka.actor.wrapper.ActorRefWrapper - Local message. serviceName : UserServiceC1, actor : Actor[akka://flower/user/flower/UserServiceC1_2#-770155619], message : ServiceContext [id=2e6fcef3852a48eeb7cb182d2bd62ef4, flowName=flower_test, currentServiceName=UserServiceC1, sync=false, attachments=null, flowMessage=FlowMessage [transactionId=52565043086d49abaa2ca88c3527883e, message=[B@76ecc10a], web=null], sender : Actor[akka://flower/user/flower/UserServiceB_2#1505663876]
-2019-07-11 15:13:21.969 [flower-dispatcher-19] INFO  c.ly.train.flower.base.service.user.UserServiceC1 - 结束处理消息, message : User [name=响应式编程 , desc= --> UserServiceA --> UserServiceB --> UserServiceC1, age=5]
+2019-07-11 15:13:21.969 [flower-dispatcher-19] INFO  c.ly.train.flower.base.service.user.UserServiceC1 - Message processing complete, message : User [name=reactive-programming , desc= --> UserServiceA --> UserServiceB --> UserServiceC1, age=5]
 ```
