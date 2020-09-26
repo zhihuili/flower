@@ -25,12 +25,6 @@ Flower is a reactive programming framework based on Akka. To create a reactive s
 
 Build a reactive programming system in 5 minutes with this [quick start guide](/docs/quick-start.en.md)
 
-## Documentations 
-
-* [Flower program guide](/docs/program-guide.en.md)
-* [Flower distributed design](/docs/distribution-design.en.md)
-* [Flower framework design](/docs/design.en.md)
-
 ## Related documents
 
 * [Build high performance, high availability system with Flower (in simplified Chinese)](/docs/反应式编程框架Flower.pdf)
