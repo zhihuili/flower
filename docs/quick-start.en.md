@@ -15,7 +15,7 @@ $ java -version
 
 ## Installation 
 
-The latestest version of Flower is 1.0.3.
+The latest version of Flower is 1.0.3.
 
 ### Maven
 
@@ -110,7 +110,7 @@ public class UserServiceC1 implements Service<User, User> {
 
 ## Register your services 
 
-Flower provides two ways to register your services: by configuration file or by code.
+Flower provides two ways to register your services: by configuration files or by code.
 
 ### By code 
 
@@ -134,7 +134,7 @@ UserServiceC1 = com.ly.train.flower.base.service.user.UserServiceC1
 
 ## Create a Flow 
 
-Flower provide two ways to create a Flow: by configuration file or by code.
+Flower provide two ways to create a Flow: by configuration files or by code.
 
 Both methods produce a similar result:
 
