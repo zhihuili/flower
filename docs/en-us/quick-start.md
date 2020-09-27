@@ -1,5 +1,3 @@
-[简体中文](/docs/quick-start.md)
-
 # Quick Start
 
 The main component of Flower framework are Flower Service, Flower Flow and Flower Container. Serivces implement business logic. Services communicate via messages, the return value (a.k.a message) from the previous service will become the input of the next service. Services are chained together to form Flows based on business logic. Containers delivery the messages between services. 
