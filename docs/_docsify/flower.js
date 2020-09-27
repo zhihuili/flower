@@ -16,7 +16,7 @@
 window.$docsify = {
 	name : 'Flower文档',
 	repo : 'https://github.com/zhihuili/flower',
-	loadSidebar : "_docsify/_sidebar.md",
+	loadSidebar : true,
 	loadNavbar : "_docsify/_navbar.md",
 	auto2top : true,
 	search : 'auto',
@@ -25,12 +25,13 @@ window.$docsify = {
     maxLevel: 4,
 	subMaxLevel : 1,
 	coverpage : {
-		"/" : "_docsify/_coverpage.md"
+		"/" : "_docsify/_coverpage.md",
+		"/en-us/": "_docsify/_coverpage.md"
 	},
 	toc : {
 		scope : '.markdown-section',
 		headings : 'h1, h2, h3',
-		title : 'Contents',
+		title : '目录',
 	},
 	footer : {
 		copy : '<span>Flower &copy; 2019 ~ 2020</span>',

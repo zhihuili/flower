@@ -1,4 +1,5 @@
-# <img src="docs/img/flowerlogo.png" height="50"/>Flower, a reactive programming framework for microservices
+# Flower, a reactive programming framework for microservices#
+
 
 ![Build Status](https://travis-ci.org/zhihuili/flower.svg?branch=master)
 [![codecov](https://codecov.io/gh/zhihuili/flower/branch/master/graph/badge.svg)](https://codecov.io/gh/zhihuili/flower)
@@ -6,8 +7,6 @@
 ![license](https://img.shields.io/github/license/zhihuili/flower.svg)
 [![star this repo](http://githubbadges.com/star.svg?user=zhihuili&repo=flower&style=flat)](https://github.com/zhihuili/flower)
 [![fork this repo](http://githubbadges.com/fork.svg?user=zhihuili&repo=flower&style=flat)](https://github.com/zhihuili/flower/fork)
-
-[简体中文](/README.md)
 
 Flower is a reactive programming framework based on Akka. To create a reactive system with Flower, developers just need to create a service for each business requirement and build service flows based on the business flow with self-explanatory configuration files.  
 
