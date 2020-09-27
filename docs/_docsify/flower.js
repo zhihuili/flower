@@ -26,7 +26,7 @@ window.$docsify = {
 	subMaxLevel : 1,
 	coverpage : {
 		"/" : "_docsify/_coverpage.md",
-		"/en-us/": "_docsify/en-us/_coverpage.md"
+		"/en-us/": "_docsify/_coverpage.md"
 	},
 	toc : {
 		scope : '.markdown-section',

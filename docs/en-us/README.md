@@ -1,4 +1,5 @@
-# 反应式微服务框架Flower
+# Flower, a reactive programming framework for microservices#
+
 
 ![Build Status](https://travis-ci.org/zhihuili/flower.svg?branch=master)
 [![codecov](https://codecov.io/gh/zhihuili/flower/branch/master/graph/badge.svg)](https://codecov.io/gh/zhihuili/flower)
@@ -7,43 +8,40 @@
 [![star this repo](http://githubbadges.com/star.svg?user=zhihuili&repo=flower&style=flat)](https://github.com/zhihuili/flower)
 [![fork this repo](http://githubbadges.com/fork.svg?user=zhihuili&repo=flower&style=flat)](https://github.com/zhihuili/flower/fork)
 
-Flower是一个构建在Akka上的反应式微服务框架，开发者只需要针对每一个细粒度的业务功能开发一个Service服务，并将这些Service按照业务流程进行可视化编排，即可得到一个反应式系统。
+Flower is a reactive programming framework based on Akka. To create a reactive system with Flower, developers just need to create a service for each business requirement and build service flows based on the business flow with self-explanatory configuration files.  
 
-* 即时响应：服务流程的调用者可以得到即时响应，无需等待整个Service流程执行完毕；Service之间无调用阻塞，即时响应。
-* 回弹性：当Service失效、服务器失效，系统能够进行自修复，依然保持响应，不会出现系统崩溃。
-* 弹性：能够对调用负载压力做出响应，能够自动进行资源伸缩适应负载压力，能够根据系统负载能力控制请求的进入速度（回压）。
-* 消息驱动：Service之间通过消息驱动，完成服务流程，Service之间没有任何调用耦合，唯一的耦合就是消息，前一个Service的返回值，必须是后一个Service的输入参数，Flower框架负责将前一个Service的返回值封装成一个消息，发送给后一个Service。
 
-**Flower既是一个反应式编程框架，又是一个分布式微服务框架。**
+* Immediate response: The calling service will receive the response immediately, no need to wait for the whole flow to execute. No more synchronous calls.
+* Robust: Self-recover when during service crush or hardware failure.
+* Scalable: Auto scale based on load. Control request accepting rate based on system processing power.    
+* Message-drive: Services communicate via messages. No coupling between services except the message itself: the previous service's return value must be the next service's input. Flower will encapsulate the return value into a message and sent it to the next service. 
 
-**Flower框架使得开发者无需关注反应式编程细节，即可得到一个反应式系统。**
+**Flower is both a reactive programming framework, and a distributed micro-services framework**
 
-## 快速上手
+**Flower hides the complicity of implementing reactive system**
 
-5分钟开发一个反应式应用，[Flower反应式编程快速上手](/docs/quick-start.md)
+## Getting Started
 
-## 文档
+Build a reactive programming system in 5 minutes with this [quick start guide](/docs/quick-start.en.md)
 
-* [Flower应用指南](program-guide.md)
-* [Flower分布式开发](distribution-design.md)
-* [Flower框架设计](design.md)
+## Related documents
 
-## 资料
+* [Build high performance, high availability system with Flower (in simplified Chinese)](/docs/反应式编程框架Flower.pdf)
+* [Research Paper: Research and implementation of the next generation of reactive programming framework (in simplified Chinese)](/docs/论文《下一代的反应式编程框架研究与实现》.pdf)
 
-* [使用Flower构建高性能、高可用的应用系统.ppt](反应式编程框架Flower.pdf)
-* [Flower相关论文《下一代的反应式编程框架研究与实现》.pdf](论文《下一代的反应式编程框架研究与实现》.pdf)
+## Join us 
 
-## 参与开发
+[How to contribute to Flower ?](CONTRIBUTING.md)
 
-欢迎你参与到Flower的开发中，[如何参与](CONTRIBUTING.md)?
 
-## [版本号](https://semver.org/lang/zh-CN/)
+## [Versions](https://semver.org)
 
-版本格式：主版本号.次版本号.修订号，版本号递增规则如下：
+Given a version number MAJOR.MINOR.PATCH, increment the:  
+1. MAJOR version when you make incompatible API changes,
+2. MINOR version when you add functionality in a backwards compatible manner, and
+3. PATCH version when you make backwards compatible bug fixes.
 
-* 主版本号：做了不兼容的 API 修改
-* 次版本号：做了向下兼容的功能性新增
-* 修订号：做了向下兼容的问题修正
+Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
 
 ## License
 
