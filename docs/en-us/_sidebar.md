@@ -21,4 +21,5 @@
     - [参与开发](https://github.com/zhihuili/flower/blob/master/CONTRIBUTING.md)
     - [开源协议](https://github.com/zhihuili/flower/blob/master/LICENSE.txt)
     - [更新日志](https://github.com/zhihuili/flower/blob/master/CHANGELOG.md) -->
+    - [更新日志](https://github.com/zhihuili/flower/blob/master/CHANGELOG.md)
     
