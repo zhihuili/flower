@@ -1,6 +1,5 @@
 <!-- _navbar.md -->
 
-* Getting started
-
-  * [Quick start](quick_start.md)
-  * [Program guide](program_guide.md)
+* 语言
+    * [:us: English ](/en-us/)
+    * [:cn: 简体中文 ](/)
