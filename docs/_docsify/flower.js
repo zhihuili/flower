@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 window.$docsify = {
-	name : 'Flower文档',
+	name : 'Flower',
 	repo : 'https://github.com/zhihuili/flower',
 	loadSidebar : true,
 	loadNavbar : "_docsify/_navbar.md",
