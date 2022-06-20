@@ -72,7 +72,7 @@
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <commons-io.version>2.7</commons-io.version>
         <druid.version>1.0.12</druid.version>
-        <fastjson.version>1.2.62</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <findbugs-maven-plugin.version>3.0.5</findbugs-maven-plugin.version>
         <gatling-charts-highcharts.version>3.0.3</gatling-charts-highcharts.version>
 
