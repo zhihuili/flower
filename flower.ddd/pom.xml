@@ -25,9 +25,6 @@
     </parent>
     <artifactId>flower.ddd</artifactId>
     <description>domain driven design</description>
-    <properties>
-        <spring.version>5.1.7.RELEASE</spring.version>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>com.ly.train</groupId>
