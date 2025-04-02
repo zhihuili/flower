@@ -83,7 +83,7 @@
         <jmeter.version>5.1.1</jmeter.version>
         <junit.version>4.13.1</junit.version>
         <license-maven-plugin.version>3.0</license-maven-plugin.version>
-        <logback.version>1.2.3</logback.version>
+        <logback.version>1.2.13</logback.version>
         <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
         <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
         <maven-dependency-plugin.version>2.10</maven-dependency-plugin.version>
