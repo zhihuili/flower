@@ -68,7 +68,7 @@
     <properties>
         <brave.version>5.6.0</brave.version>
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
-        <commons.io.version>2.7</commons.io.version>
+        <commons.io.version>2.14.0</commons.io.version>
         <druid.version>1.0.12</druid.version>
         <fastjson.version>1.2.83</fastjson.version>
         <fastjson2.version>2.0.57</fastjson2.version>
