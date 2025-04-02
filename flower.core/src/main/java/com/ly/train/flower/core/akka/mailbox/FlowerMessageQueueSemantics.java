@@ -19,5 +19,5 @@ package com.ly.train.flower.core.akka.mailbox;
  * 
  * @author leeyazhou
  */
-public interface FlowerMessageQueueSemantics extends akka.event.LoggerMessageQueueSemantics{
+public interface FlowerMessageQueueSemantics extends org.apache.pekko.event.LoggerMessageQueueSemantics {
 }

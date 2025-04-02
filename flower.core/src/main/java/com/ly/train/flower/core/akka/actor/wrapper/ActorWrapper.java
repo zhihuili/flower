@@ -15,8 +15,9 @@
  */
 package com.ly.train.flower.core.akka.actor.wrapper;
 
+import org.apache.pekko.actor.ActorRef;
+
 import com.ly.train.flower.common.core.message.Message;
-import akka.actor.ActorRef;
 
 /**
  * @author leeyazhou

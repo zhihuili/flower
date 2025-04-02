@@ -15,11 +15,12 @@
  */
 package com.ly.train.flower.core.akka.actor.wrapper;
 
+import org.apache.pekko.actor.ActorRef;
+
 import com.ly.train.flower.common.core.message.Message;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.common.util.URL;
-import akka.actor.ActorRef;
 
 /**
  * @author leeyazhou

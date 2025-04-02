@@ -18,9 +18,11 @@ package com.ly.train.flower.core.akka.mailbox.bounded;
 import java.time.Duration;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import org.apache.pekko.dispatch.BoundedQueueBasedMessageQueue;
+import org.apache.pekko.dispatch.Envelope;
+
 import com.ly.train.flower.core.akka.mailbox.FlowerMessageQueueSemantics;
-import akka.dispatch.BoundedQueueBasedMessageQueue;
-import akka.dispatch.Envelope;
 
 /**
  * @author leeyazhou

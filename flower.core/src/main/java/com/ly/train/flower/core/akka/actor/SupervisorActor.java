@@ -16,6 +16,13 @@
 package com.ly.train.flower.core.akka.actor;
 
 import java.util.concurrent.TimeUnit;
+
+import org.apache.pekko.actor.OneForOneStrategy;
+import org.apache.pekko.actor.Props;
+import org.apache.pekko.actor.SupervisorStrategy;
+import org.apache.pekko.actor.Terminated;
+import org.apache.pekko.japi.pf.DeciderBuilder;
+
 import com.ly.train.flower.common.core.config.ServiceConfig;
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.logging.Logger;
@@ -25,11 +32,7 @@ import com.ly.train.flower.core.akka.actor.command.ActorCommand;
 import com.ly.train.flower.core.akka.actor.command.ActorContextCommand;
 import com.ly.train.flower.core.akka.actor.command.MessageType;
 import com.ly.train.flower.core.akka.actor.command.PingCommand;
-import akka.actor.OneForOneStrategy;
-import akka.actor.Props;
-import akka.actor.SupervisorStrategy;
-import akka.actor.Terminated;
-import akka.japi.pf.DeciderBuilder;
+
 import scala.concurrent.duration.Duration;
 
 public class SupervisorActor extends AbstractFlowerActor {

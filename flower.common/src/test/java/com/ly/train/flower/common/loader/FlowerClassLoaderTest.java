@@ -16,9 +16,9 @@
 package com.ly.train.flower.common.loader;
 
 import java.net.URL;
+
 import org.junit.Ignore;
 import org.junit.Test;
-import com.ly.train.flower.common.loader.FlowerClassLoader;
 
 /**
  * @author leeyazhou
