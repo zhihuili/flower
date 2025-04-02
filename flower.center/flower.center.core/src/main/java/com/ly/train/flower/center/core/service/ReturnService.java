@@ -18,8 +18,8 @@
  */
 package com.ly.train.flower.center.core.service;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.JSONWriter.Feature;
 import com.ly.train.flower.center.core.util.R;
 import com.ly.train.flower.common.annotation.FlowerService;
 import com.ly.train.flower.common.core.service.Service;
@@ -34,10 +34,10 @@ import com.ly.train.flower.core.service.web.Flush;
 @FlowerService
 public class ReturnService implements Service<Object, Object>, Flush, Complete {
 
-  @Override
-  public Object process(Object message, ServiceContext context) throws Throwable {
-    context.getWeb().println(JSONObject.toJSONString(R.ok(message), SerializerFeature.PrettyFormat));
-    return message;
-  }
+	@Override
+	public Object process(Object message, ServiceContext context) throws Throwable {
+		context.getWeb().println(JSONObject.toJSONString(R.ok(message), Feature.PrettyFormat));
+		return message;
+	}
 
 }

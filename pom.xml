@@ -116,11 +116,6 @@
     </properties>
     <dependencyManagement>
         <dependencies>
-<dependency>
-    <groupId>com.alibaba.fastjson2</groupId>
-    <artifactId>fastjson2</artifactId>
-    <version>${fastjson2.version}</version>
-</dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
@@ -140,6 +135,16 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>hessian-lite</artifactId>
                 <version>3.2.6</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjson2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2-extension-spring5</artifactId>
+                <version>${fastjson2.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.caucho</groupId>
