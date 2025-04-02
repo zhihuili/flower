@@ -16,7 +16,8 @@
 package com.ly.train.flower.ddd.command;
 
 import java.io.IOException;
-import com.alibaba.fastjson.JSON;
+
+import com.alibaba.fastjson2.JSON;
 import com.ly.train.flower.common.annotation.Aggregate;
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.logging.Logger;

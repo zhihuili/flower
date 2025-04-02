@@ -17,10 +17,12 @@ package com.ly.train.flower.tools.http.factory.okhttp;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
-import com.alibaba.fastjson.JSONObject;
+
+import com.alibaba.fastjson2.JSONObject;
 import com.ly.train.flower.tools.http.HttpFactory;
 import com.ly.train.flower.tools.http.config.RequestContext;
 

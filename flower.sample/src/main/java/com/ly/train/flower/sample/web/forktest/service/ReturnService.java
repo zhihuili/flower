@@ -16,7 +16,8 @@
 package com.ly.train.flower.sample.web.forktest.service;
 
 import java.util.Set;
-import com.alibaba.fastjson.JSONObject;
+
+import com.alibaba.fastjson2.JSONObject;
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.core.service.Complete;
 import com.ly.train.flower.core.service.web.Flush;
