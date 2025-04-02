@@ -21,7 +21,7 @@
     <parent>
         <groupId>com.ly.train</groupId>
         <artifactId>flower.center</artifactId>
-        <version>1.0.4</version>
+        <version>2.0.0</version>
     </parent>
     <artifactId>flower.center.impl</artifactId>
     <packaging>jar</packaging>
@@ -56,7 +56,9 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <descriptor>src/main/assembly/assembly.xml</descriptor>
+                    <descriptors>
+                        <descriptor>src/main/assembly/assembly.xml</descriptor>
+                    </descriptors>
                 </configuration>
                 <executions>
                     <execution>

@@ -20,12 +20,16 @@ package com.ly.train.flower.center.core.config;
 
 import java.nio.charset.Charset;
 import java.util.List;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.support.config.FastJsonConfig;
-import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+
+import com.alibaba.fastjson2.JSONReader;
+import com.alibaba.fastjson2.JSONWriter;
+import com.alibaba.fastjson2.support.config.FastJsonConfig;
+import com.alibaba.fastjson2.support.spring.http.converter.FastJsonHttpMessageConverter;
 
 /**
  * @author leeyazhou
@@ -34,19 +38,19 @@ import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 @Configuration
 public class FastJsonConfiguration implements WebMvcConfigurer {
 
-  @Override
-  public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-    FastJsonConfig fastJsonConfig = new FastJsonConfig();
-    fastJsonConfig.setSerializerFeatures(
-        SerializerFeature.DisableCircularReferenceDetect, // SerializerFeature.WriteMapNullValue,
-        SerializerFeature.WriteNullListAsEmpty, SerializerFeature.WriteNullStringAsEmpty,
-        SerializerFeature.WriteNullBooleanAsFalse, SerializerFeature.PrettyFormat);
-    fastJsonConfig.setCharset(Charset.forName("UTF-8"));
-    fastJsonConfig.setDateFormat("yyyy-MM-dd HH:mm:ss");
+	@Override
+	public void configureMessageConverters(@NonNull List<HttpMessageConverter<?>> converters) {
+		FastJsonConfig fastJsonConfig = new FastJsonConfig();
+		fastJsonConfig.setReaderFeatures(JSONReader.Feature.SupportSmartMatch);
+		fastJsonConfig.setWriterFeatures(JSONWriter.Feature.PrettyFormat, JSONWriter.Feature.WriteNullListAsEmpty,
+				JSONWriter.Feature.WriteNullStringAsEmpty, JSONWriter.Feature.WriteNullBooleanAsFalse);
 
-    FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
-    converter.setFastJsonConfig(fastJsonConfig);
-    converters.add(0, converter);
-  }
+		fastJsonConfig.setCharset(Charset.forName("UTF-8"));
+		fastJsonConfig.setDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
+		converter.setFastJsonConfig(fastJsonConfig);
+		converters.add(0, converter);
+	}
 
 }

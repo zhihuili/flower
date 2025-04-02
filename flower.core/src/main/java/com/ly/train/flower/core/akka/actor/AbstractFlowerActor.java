@@ -15,13 +15,13 @@
  */
 package com.ly.train.flower.core.akka.actor;
 
+import org.apache.pekko.actor.AbstractActor;
+
 import com.ly.train.flower.common.core.service.ServiceContext;
 import com.ly.train.flower.common.exception.handler.ExceptionHandlerManager;
 import com.ly.train.flower.common.logging.Logger;
 import com.ly.train.flower.common.logging.LoggerFactory;
 import com.ly.train.flower.core.akka.ActorFactory;
-
-import akka.actor.AbstractActor;
 
 /**
  * @author leeyazhou

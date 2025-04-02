@@ -15,12 +15,13 @@
  */
 package com.ly.train.flower.core.akka.serializer.hessian;
 
+import org.apache.pekko.actor.Extension;
+import org.apache.pekko.serialization.JSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.ly.train.flower.common.util.ExtensionLoader;
 import com.ly.train.flower.serializer.Serializer;
-import akka.actor.Extension;
-import akka.serialization.JSerializer;
 
 /**
  * @author leeyazhou

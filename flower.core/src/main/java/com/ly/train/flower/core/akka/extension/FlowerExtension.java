@@ -16,9 +16,10 @@
 package com.ly.train.flower.core.akka.extension;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import akka.actor.ActorSystem;
-import akka.actor.ExtendedActorSystem;
-import akka.actor.Extension;
+
+import org.apache.pekko.actor.ActorSystem;
+import org.apache.pekko.actor.ExtendedActorSystem;
+import org.apache.pekko.actor.Extension;
 
 /**
  * @author leeyazhou
