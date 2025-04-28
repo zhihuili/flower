@@ -48,3 +48,7 @@ Flower是一个构建在Akka上的反应式微服务框架，开发者只需要�
 ## License
 
 Flower is released under the [Apache License 2.0](https://github.com/zhihuili/flower/blob/master/LICENSE.txt)
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=zhihuili/flower&type=Date)](https://www.star-history.com/#zhihuili/flower&Date)
