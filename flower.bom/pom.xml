@@ -16,12 +16,13 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.ly.train</groupId>
         <artifactId>flower.parent</artifactId>
-        <version>2.0.0</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>flower.bom</artifactId>
     <packaging>pom</packaging>
@@ -30,107 +31,107 @@
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.center</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.center.api</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.center.core</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.center.impl</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.common</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.config</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.container</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.core</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.ddd</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.filter</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.filter.api</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.filter.opentracing</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.registry.api</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.registry.simple</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.registry.zookeeper</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.sample</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.serializer</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.serializer.api</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.serializer.hessian</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.tools.http</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.ly.train</groupId>
                 <artifactId>flower.web</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${revision}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
